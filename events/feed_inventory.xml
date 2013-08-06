@@ -1,0 +1,284 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tryton>
+    <data>
+        <!-- farm.feed.inventory -->
+        <record model="ir.ui.view" id="farm_feed_inventory_form_view">
+            <field name="model">farm.feed.inventory</field>
+            <field name="type">form</field>
+            <field name="name">farm_feed_inventory_form</field>
+        </record>
+        <record model="ir.ui.view" id="farm_feed_inventory_list_view">
+            <field name="model">farm.feed.inventory</field>
+            <field name="type">tree</field>
+            <field name="name">farm_feed_inventory_list</field>
+        </record>
+
+        <record model="ir.model.button" id="confirm_feed_inventory_button">
+            <field name="name">confirm</field>
+            <field name="model"
+                search="[('model', '=', 'farm.feed.inventory')]"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="confirm_feed_inventory_button_group_farm_admin">
+            <field name="button" ref="confirm_feed_inventory_button"/>
+            <field name="group" ref="group_farm_admin"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="confirm_feed_inventory_button_group_farm_males">
+            <field name="button" ref="confirm_feed_inventory_button"/>
+            <field name="group" ref="group_farm_males"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="confirm_feed_inventory_button_group_farm_females">
+            <field name="button" ref="confirm_feed_inventory_button"/>
+            <field name="group" ref="group_farm_females"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="confirm_feed_inventory_button_group_farm_individuals">
+            <field name="button" ref="confirm_feed_inventory_button"/>
+            <field name="group" ref="group_farm_individuals"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="confirm_feed_inventory_button_group_farm_groups">
+            <field name="button" ref="confirm_feed_inventory_button"/>
+            <field name="group" ref="group_farm_groups"/>
+        </record>
+
+        <record model="ir.action.act_window" id="act_farm_feed_inventory">
+            <field name="name">Inventory</field>
+            <field name="res_model">farm.feed.inventory</field>
+            <field name="search_value"></field>
+        </record>
+        <record model="ir.action.act_window.view"
+            id="act_farm_feed_inventory_view1">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="farm_feed_inventory_list_view"/>
+            <field name="act_window" ref="act_farm_feed_inventory"/>
+        </record>
+        <record model="ir.action.act_window.view"
+            id="act_farm_feed_inventory_view2">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="farm_feed_inventory_form_view"/>
+            <field name="act_window" ref="act_farm_feed_inventory"/>
+        </record>
+
+        <record model="ir.model.access" id="access_farm_feed_inventory">
+            <field name="model"
+                search="[('model', '=', 'farm.feed.inventory')]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_farm_feed_inventory_admin">
+            <field name="model"
+                search="[('model', '=', 'farm.feed.inventory')]"/>
+            <field name="group" ref="group_farm_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+
+        <!-- farm.feed.provisional_inventory -->
+        <record model="ir.ui.view"
+            id="farm_feed_provisional_inventory_form_view">
+            <field name="model">farm.feed.provisional_inventory</field>
+            <field name="type">form</field>
+            <field name="name">farm_feed_provisional_inventory_form</field>
+        </record>
+        <record model="ir.ui.view"
+            id="farm_feed_provisional_inventory_list_view">
+            <field name="model">farm.feed.provisional_inventory</field>
+            <field name="type">tree</field>
+            <field name="name">farm_feed_provisional_inventory_list</field>
+        </record>
+
+        <record model="ir.model.button"
+            id="draft_feed_provisional_inventory_button">
+            <field name="name">draft</field>
+            <field name="model"
+                search="[('model', '=', 'farm.feed.provisional_inventory')]"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="draft_feed_provisional_inventory_button_group_farm_admin">
+            <field name="button"
+                ref="draft_feed_provisional_inventory_button"/>
+            <field name="group" ref="group_farm_admin"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="draft_feed_provisional_inventory_button_group_farm_males">
+            <field name="button"
+                ref="draft_feed_provisional_inventory_button"/>
+            <field name="group" ref="group_farm_males"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="draft_feed_provisional_inventory_button_group_farm_females">
+            <field name="button"
+                ref="draft_feed_provisional_inventory_button"/>
+            <field name="group" ref="group_farm_females"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="draft_feed_provisional_inventory_button_group_farm_individuals">
+            <field name="button"
+                ref="draft_feed_provisional_inventory_button"/>
+            <field name="group" ref="group_farm_individuals"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="draft_feed_provisional_inventory_button_group_farm_groups">
+            <field name="button"
+                ref="draft_feed_provisional_inventory_button"/>
+            <field name="group" ref="group_farm_groups"/>
+        </record>
+
+        <record model="ir.model.button"
+            id="confirm_feed_provisional_inventory_button">
+            <field name="name">confirm</field>
+            <field name="model"
+                search="[('model', '=', 'farm.feed.provisional_inventory')]"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="confirm_feed_provisional_inventory_button_group_farm_admin">
+            <field name="button"
+                ref="confirm_feed_provisional_inventory_button"/>
+            <field name="group" ref="group_farm_admin"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="confirm_feed_provisional_inventory_button_group_farm_males">
+            <field name="button"
+                ref="confirm_feed_provisional_inventory_button"/>
+            <field name="group" ref="group_farm_males"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="confirm_feed_provisional_inventory_button_group_farm_females">
+            <field name="button"
+                ref="confirm_feed_provisional_inventory_button"/>
+            <field name="group" ref="group_farm_females"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="confirm_feed_provisional_inventory_button_group_farm_individuals">
+            <field name="button"
+                ref="confirm_feed_provisional_inventory_button"/>
+            <field name="group" ref="group_farm_individuals"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="confirm_feed_provisional_inventory_button_group_farm_groups">
+            <field name="button"
+                ref="confirm_feed_provisional_inventory_button"/>
+            <field name="group" ref="group_farm_groups"/>
+        </record>
+
+        <record model="ir.model.button"
+            id="cancel_feed_provisional_inventory_button">
+            <field name="name">cancel</field>
+            <field name="model"
+                search="[('model', '=', 'farm.feed.provisional_inventory')]"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="cancel_feed_provisional_inventory_button_group_farm_admin">
+            <field name="button"
+                ref="cancel_feed_provisional_inventory_button"/>
+            <field name="group" ref="group_farm_admin"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="cancel_feed_provisional_inventory_button_group_farm_males">
+            <field name="button"
+                ref="cancel_feed_provisional_inventory_button"/>
+            <field name="group" ref="group_farm_males"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="cancel_feed_provisional_inventory_button_group_farm_females">
+            <field name="button"
+                ref="cancel_feed_provisional_inventory_button"/>
+            <field name="group" ref="group_farm_females"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="cancel_feed_provisional_inventory_button_group_farm_individuals">
+            <field name="button"
+                ref="cancel_feed_provisional_inventory_button"/>
+            <field name="group" ref="group_farm_individuals"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="cancel_feed_provisional_inventory_button_group_farm_groups">
+            <field name="button"
+                ref="cancel_feed_provisional_inventory_button"/>
+            <field name="group" ref="group_farm_groups"/>
+        </record>
+
+        <record model="ir.action.act_window"
+            id="act_farm_feed_provisional_inventory">
+            <field name="name">Provisional Inventory</field>
+            <field name="res_model">farm.feed.provisional_inventory</field>
+            <field name="search_value"></field>
+        </record>
+        <record model="ir.action.act_window.view"
+            id="act_farm_feed_provisional_inventory_view1">
+            <field name="sequence" eval="10"/>
+            <field name="view"
+                ref="farm_feed_provisional_inventory_list_view"/>
+            <field name="act_window"
+                ref="act_farm_feed_provisional_inventory"/>
+        </record>
+        <record model="ir.action.act_window.view"
+            id="act_farm_feed_provisional_inventory_view2">
+            <field name="sequence" eval="20"/>
+            <field name="view"
+                ref="farm_feed_provisional_inventory_form_view"/>
+            <field name="act_window"
+                ref="act_farm_feed_provisional_inventory"/>
+        </record>
+
+        <record model="ir.model.access"
+            id="access_farm_feed_provisional_inventory">
+            <field name="model"
+                search="[('model', '=', 'farm.feed.provisional_inventory')]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access"
+            id="access_farm_feed_provisional_inventory_admin">
+            <field name="model"
+                search="[('model', '=', 'farm.feed.provisional_inventory')]"/>
+            <field name="group" ref="group_farm_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+
+        <!-- farm.feed.inventory.line -->
+        <record model="ir.ui.view" id="farm_feed_inventory_line_form_view">
+            <field name="model">farm.feed.inventory.line</field>
+            <field name="type">form</field>
+            <field name="name">farm_feed_inventory_line_form</field>
+        </record>
+        <record model="ir.ui.view" id="farm_feed_inventory_line_list_view">
+            <field name="model">farm.feed.inventory.line</field>
+            <field name="type">tree</field>
+            <field name="name">farm_feed_inventory_line_list</field>
+        </record>
+
+        <record model="ir.model.access" id="access_farm_feed_inventory_line">
+            <field name="model"
+                search="[('model', '=', 'farm.feed.inventory.line')]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access"
+            id="access_farm_feed_inventory_line_admin">
+            <field name="model"
+                search="[('model', '=', 'farm.feed.inventory.line')]"/>
+            <field name="group" ref="group_farm_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+    </data>
+</tryton>

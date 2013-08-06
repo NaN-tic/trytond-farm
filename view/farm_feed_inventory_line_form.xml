@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--The COPYRIGHT file at the top level of this repository
+contains the full copyright notices and license terms. -->
+<form string="Feed Inventory Line">
+    <group id="inventory" colspan="4" col="6">
+        <label name="inventory"/>
+        <field name="inventory"/>
+        <label name="provisional_inventory"/>
+        <field name="provisional_inventory"/>
+        <label name="state"/>
+        <field name="state"/>
+    </group>
+    <label name="location"/>
+    <field name="location"/>
+    <label name="dest_location"/>
+    <field name="dest_location"/>
+    <label name="start_date"/>
+    <field name="start_date"/>
+    <label name="end_date"/>
+    <field name="end_date"/>
+    <label name="consumed_qty"/>
+    <field name="consumed_qty"/>
+    <label name="uom"/>
+    <field name="uom"/>
+    <label name="consumed_qty_animal_day"/>
+    <field name="consumed_qty_animal_day"/>
+</form>

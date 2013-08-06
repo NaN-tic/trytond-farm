@@ -1,0 +1,12 @@
+<tree string="Feed Inventory Line">
+	 <field name="inventory"/>
+	 <field name="provisional_inventory"/>
+     <field name="location"/>
+     <field name="dest_location"/>
+	 <field name="start_date"/>
+	 <field name="end_date"/>
+	 <field name="consumed_qty"/>
+	 <field name="uom"/>
+	 <field name="consumed_qty_animal_day"/>
+	 <field name="state"/>
+</tree>

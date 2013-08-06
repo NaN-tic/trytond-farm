@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tree string="Work Orders">
+    <field name="name"/>
+	<field name="farm"/>
+	<field name="timestamp"/>
+	<field name="employee"/>
+</tree>

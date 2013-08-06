@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<data>
+    <xpath expr="//notebook" position="inside">
+        <!-- TODO: only show the tab if you are farm admin -->
+        <page id="farm" string="Farm">
+            <field name="farms" colspan="4"/>
+        </page>
+    </xpath>
+</data>

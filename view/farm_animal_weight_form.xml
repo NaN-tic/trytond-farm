@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<form string="Weight" col="6">
+    <label name="animal"/>
+    <field name="animal"/>
+    <newline/>
+    <label name="timestamp"/>
+    <field name="timestamp"/>
+    <label name="weight"/>
+    <field name="weight"/>
+    <label name="uom"/>
+    <field name="uom"/>
+</form>

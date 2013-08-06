@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<data>
+    <xpath expr="//field[@name='timestamp']" position="after">
+        <field name="untreated_semen_qty"/>
+        <field name="untreated_semen_uom"/>
+        <field name="formula_result"/>
+        <field name="semen_qty"/>
+        <field name="formula_uom"/>
+        <field name="doses"/>
+        <field name="dose_location"/>
+        <field name="deliveries"/>
+    </xpath>
+</data>

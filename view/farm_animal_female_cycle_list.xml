@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tree string="Female Cycles">
+    <field name="animal"/>
+    <field name="sequence"/>
+    <field name="days_between_weaning_and_insemination"/>
+    <field name="pregnant"/>
+    <field name="live"/>
+    <field name="dead"/>
+    <field name="fostered"/>
+    <field name="weaned"/>
+    <field name="removed"/>
+    <field name="days_between_farrowing_weaning"/>
+    <field name="state"/>
+</tree>

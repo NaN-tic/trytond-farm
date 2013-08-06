@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tryton>
+    <data>
+        <!-- stock.lot -->
+        <record model="ir.ui.view" id="lot_view_form">
+            <field name="model">stock.lot</field>
+            <field name="type">form</field>
+            <field name="inherit" ref="stock_lot.lot_view_form"/>
+            <field name="name">stock_lot_form</field>
+        </record>
+
+        <!-- stock.location -->
+        <record model="ir.ui.view" id="location_view_form">
+            <field name="model">stock.location</field>
+            <field name="type">form</field>
+            <field name="inherit" ref="stock.location_view_form"/>
+            <field name="name">stock_location_form</field>
+        </record>
+        <record model="ir.ui.view" id="location_view_list">
+            <field name="model">stock.location</field>
+            <field name="type">tree</field>
+            <field name="inherit" ref="stock.location_view_list"/>
+            <field name="name">stock_location_list</field>
+        </record>
+    </data>
+</tryton>

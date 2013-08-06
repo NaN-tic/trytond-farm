@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tree string="Farm Lines">
+    <field name="specie"/>
+    <field name="farm"/>
+    <field name="has_male"/>
+    <field name="has_female"/>
+    <field name="has_individual"/>
+    <field name="has_group"/>
+</tree>

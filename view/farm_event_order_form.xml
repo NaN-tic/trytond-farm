@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<form string="Work Order">
+    <label name="name"/>
+    <field name="name"/>
+    <newline/>
+    <field name="animal_type"/>
+    <field name="specie"/>
+    <field name="event_type"/>
+    <newline/>
+	<label name="farm"/>
+	<field name="farm"/>
+	<label name="timestamp"/>
+	<field name="timestamp"/>
+    <label name="employee"/>
+    <field name="employee"/>
+    <separator id="events" string="" colspan="4"/>
+	<field name="medication_events" colspan="4"/>
+	<field name="insemination_events" colspan="4"/>
+	<field name="pregnancy_diagnosis_events" colspan="4"/>
+	<field name="abort_events" colspan="4"/>
+	<field name="farrowing_events" colspan="4"/>
+	<field name="foster_events" colspan="4"/>
+	<field name="weaning_events" colspan="4"/>
+    <group colspan="4" col="3" id="buttons">
+        <!--<button string="Cancel" name="cancel" icon="tryton-cancel" />-->
+        <button string="Confirm" name="confirm" icon="tryton-ok"/>
+        <!--<button string="Draft" name="draft" icon="tryton-go-previous"/>-->
+    </group>
+</form>

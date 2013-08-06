@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<form string="Semen Extraction Dose">
+    <label name="event"/>
+    <field name="event"/>
+    <label name="sequence"/>
+    <field name="sequence"/>
+    <newline/>
+    <label name="bom"/>
+    <field name="bom"/>
+    <label name="quantity"/>
+    <field name="quantity"/>
+    <label name="semen_qty"/>
+    <field name="semen_qty"/>
+    <label name="production"/>
+    <field name="production"/>
+    <label name="lot"/>
+    <field name="lot"/>
+</form>

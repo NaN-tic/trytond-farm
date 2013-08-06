@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<tryton>
+    <data>
+        <!-- farm.event -->
+        <record model="ir.ui.view" id="farm_abstract_event_form_view">
+            <field name="model">farm.event</field>
+            <field name="type">form</field>
+            <field name="name">farm_event_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="farm_abstract_event_list_view">
+            <field name="model">farm.event</field>
+            <field name="type">tree</field>
+            <field name="name">farm_event_list</field>
+        </record>
+
+        <!--
+        <record model="ir.model.button" id="farm_event_cancel_button">
+            <field name="name">cancel</field>
+            <field name="model" search="[('model', '=', 'farm.event')]"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="farm_event_cancel_button_group_farm_admin">
+            <field name="button" ref="farm_event_cancel_button"/>
+            <field name="group" ref="group_farm_admin"/>
+        </record>
+
+        <record model="ir.model.button" id="farm_event_draft_button">
+            <field name="name">draft</field>
+            <field name="model" search="[('model', '=', 'farm.event')]"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="farm_event_draft_button_group_farm_admin">
+            <field name="button" ref="farm_event_draft_button"/>
+            <field name="group" ref="group_farm_admin"/>
+        </record>
+
+        <record model="ir.model.button" id="farm_event_validate_button">
+            <field name="name">valid</field>
+            <field name="model" search="[('model', '=', 'farm.event')]"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="farm_event_validate_button_group_farm_admin">
+            <field name="button" ref="farm_event_validate_button"/>
+            <field name="group" ref="group_farm_admin"/>
+        </record>
+        -->
+    </data>
+</tryton>

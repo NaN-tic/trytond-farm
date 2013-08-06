@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tryton>
+    <data>
+        <!-- production.bom -->
+        <record model="ir.ui.view" id="bom_view_list">
+            <field name="model">production.bom</field>
+            <field name="type">tree</field>
+            <field name="inherit" ref="production.bom_view_list"/>
+            <field name="name">production_bom_list</field>
+        </record>
+        <record model="ir.ui.view" id="bom_view_form">
+            <field name="model">production.bom</field>
+            <field name="type">form</field>
+            <field name="inherit" ref="production.bom_view_form"/>
+            <field name="name">production_bom_form</field>
+        </record>
+    </data>
+</tryton>

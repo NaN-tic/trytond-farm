@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<form string="Farm Event">
+    <group id="header" colspan="4" col="6">
+        <!--<label name="order"/>
+        <field name="order"/>-->
+        <label name="farm"/>
+        <field name="farm"/>
+        <label name="timestamp"/>
+        <field name="timestamp"/>
+    </group>
+    <group id="animal_or_group" colspan="2" col="2">
+        <label name="animal"/>
+        <field name="animal"/>
+        <label name="animal_group"/>
+        <field name="animal_group"/>
+    </group>
+    <label name="employee"/>
+    <field name="employee"/>
+    <separator name="notes" colspan="4"/>
+    <field name="notes" colspan="4"/>
+    <group id="state_and_buttons" colspan="4" col="12">
+        <label name="state"/>
+        <field name="state"/>
+        <!--<button name="cancel" string="_Cancel" icon="tryton-cancel"
+            help="Are you sure to cancel this event?"/>
+        <button name="draft" string="_Draft" icon="tryton-go-previous"/>-->
+        <button name="validate_event" string="_Validate" icon="tryton-ok"
+            help="Are you sure to validate this event?"/>
+    </group>
+</form>

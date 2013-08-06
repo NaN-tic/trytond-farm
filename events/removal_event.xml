@@ -1,0 +1,198 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tryton>
+    <data>
+        <!-- Removal Types -->
+        <record id="removal_type_death_on_farm" model="farm.removal.type">
+            <field name="name">Death on Farm</field>
+        </record>
+
+        <record id="removal_type_slaughtered" model="farm.removal.type">
+            <field name="name">Slaughtered</field>
+        </record>
+
+        <record id="removal_type_transferred" model="farm.removal.type">
+            <field name="name">Transferred</field>
+        </record>
+
+        <record id="removal_type_export" model="farm.removal.type">
+            <field name="name">Export</field>
+        </record>
+
+        <record id="removal_type_missing" model="farm.removal.type">
+            <field name="name">Missing</field>
+        </record>
+
+        <!-- Removal Reasons -->
+        <record id="removal_reason_other_unknown" model="farm.removal.reason">
+            <field name="name">Other/Unknown</field>
+        </record>
+
+        <record id="removal_reason_low_viability" model="farm.removal.reason">
+            <field name="name">Low Viability</field>
+        </record>
+
+        <record id="removal_reason_starvation" model="farm.removal.reason">
+            <field name="name">Starvation</field>
+        </record>
+
+        <record id="removal_reason_injury" model="farm.removal.reason">
+            <field name="name">Injury</field>
+        </record>
+
+        <record id="removal_reason_digestive_process"
+            model="farm.removal.reason">
+            <field name="name">Digestive Process</field>
+        </record>
+
+        <record id="removal_reason_respiratory_process"
+            model="farm.removal.reason">
+            <field name="name">Respiratory Process</field>
+        </record>
+
+        <!-- farm.removal.type -->
+        <record model="ir.ui.view" id="farm_removal_type_form_view">
+            <field name="model">farm.removal.type</field>
+            <field name="type">form</field>
+            <field name="name">farm_removal_type_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="farm_removal_type_list_view">
+            <field name="model">farm.removal.type</field>
+            <field name="type">tree</field>
+            <field name="name">farm_removal_type_list</field>
+        </record>
+
+        <record model="ir.action.act_window" id="act_farm_removal_type">
+            <field name="name">Removal Types</field>
+            <field name="res_model">farm.removal.type</field>
+            <field name="search_value"></field>
+        </record>
+
+        <record model="ir.action.act_window.view"
+            id="act_farm_removal_type_view1">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="farm_removal_type_list_view"/>
+            <field name="act_window" ref="act_farm_removal_type"/>
+        </record>
+
+        <record model="ir.action.act_window.view"
+            id="act_farm_removal_type_view2">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="farm_removal_type_form_view"/>
+            <field name="act_window" ref="act_farm_removal_type"/>
+        </record>
+
+        <!-- farm.removal.reason -->
+        <record model="ir.ui.view" id="farm_removal_reason_form_view">
+            <field name="model">farm.removal.reason</field>
+            <field name="type">form</field>
+            <field name="name">farm_removal_reason_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="farm_removal_reason_list_view">
+            <field name="model">farm.removal.reason</field>
+            <field name="type">tree</field>
+            <field name="name">farm_removal_reason_list</field>
+        </record>
+
+        <record model="ir.action.act_window" id="act_farm_removal_reason">
+            <field name="name">Removal Reasons</field>
+            <field name="res_model">farm.removal.reason</field>
+            <field name="search_value"></field>
+            <field name="domain"></field>
+            <field name="context"></field>
+        </record>
+
+        <record model="ir.action.act_window.view"
+            id="act_farm_removal_reason_view1">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="farm_removal_reason_list_view"/>
+            <field name="act_window" ref="act_farm_removal_reason"/>
+        </record>
+
+        <record model="ir.action.act_window.view"
+            id="act_farm_removal_reason_view2">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="farm_removal_reason_form_view"/>
+            <field name="act_window" ref="act_farm_removal_reason"/>
+        </record>
+
+        <!-- farm.removal.event -->
+        <record model="ir.ui.view" id="farm_removal_event_form_view">
+            <field name="model">farm.removal.event</field>
+            <field name="type">form</field>
+            <field name="inherit" ref="farm.farm_abstract_event_form_view"/>
+            <field name="name">farm_removal_event_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="farm_removal_event_list_view">
+            <field name="model">farm.removal.event</field>
+            <field name="type">tree</field>
+            <field name="inherit" ref="farm.farm_abstract_event_list_view"/>
+            <field name="name">farm_removal_event_list</field>
+        </record>
+
+        <record model="ir.model.button" id="validate_removal_event_button">
+            <field name="name">validate_event</field>
+            <field name="model"
+                search="[('model', '=', 'farm.removal.event')]"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="validate_removal_event_button_group_farm_admin">
+            <field name="button" ref="validate_removal_event_button"/>
+            <field name="group" ref="group_farm_admin"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="validate_removal_event_button_group_farm_males">
+            <field name="button" ref="validate_removal_event_button"/>
+            <field name="group" ref="group_farm_males"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="validate_removal_event_button_group_farm_females">
+            <field name="button" ref="validate_removal_event_button"/>
+            <field name="group" ref="group_farm_females"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="validate_removal_event_button_group_farm_individuals">
+            <field name="button" ref="validate_removal_event_button"/>
+            <field name="group" ref="group_farm_individuals"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="validate_removal_event_button_group_farm_groups">
+            <field name="button" ref="validate_removal_event_button"/>
+            <field name="group" ref="group_farm_groups"/>
+        </record>
+
+        <record model="ir.action.act_window" id="act_farm_removal_event">
+            <field name="name">Removal Events</field>
+            <field name="res_model">farm.removal.event</field>
+            <field name="search_value"></field>
+            <field name="domain"></field>
+            <field name="context"></field>
+        </record>
+
+        <record model="ir.action.act_window.view"
+            id="act_farm_removal_event_view1">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="farm_removal_event_list_view"/>
+            <field name="act_window" ref="act_farm_removal_event"/>
+        </record>
+
+        <record model="ir.action.act_window.view"
+            id="act_farm_removal_event_view2">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="farm_removal_event_form_view"/>
+            <field name="act_window" ref="act_farm_removal_event"/>
+        </record>
+
+        <!-- Menus -->
+        <menuitem action="act_farm_removal_type"
+            id="menu_farm_removal_type"
+            parent="menu_configuration" sequence="10"/>
+        <menuitem action="act_farm_removal_reason"
+            id="menu_farm_removal_reason"
+            parent="menu_configuration" sequence="11"/>
+    </data>
+</tryton>

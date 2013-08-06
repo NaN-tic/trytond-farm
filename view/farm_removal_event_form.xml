@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<data>
+    <xpath expr="//field[@name='employee']" position="after">
+        <group id="removal_fields_group" colspan="4" col="4">
+            <separator id="removal_fields_separator" colspan="4"/>
+            <label name="from_location"/>
+            <field name="from_location"/>
+            <label name="quantity"/>
+            <field name="quantity"/>
+            <label name="move"/>
+            <field name="move"/>
+            <newline/>
+            <label name="removal_type"/>
+            <field name="removal_type"/>
+            <label name="reason"/>
+            <field name="reason"/>
+        </group>
+    </xpath>
+</data>

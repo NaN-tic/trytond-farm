@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tree string="Animals">
+    <field name="number"/>
+    <field name="breed"/>
+    <field name="arrival_date"/>
+    <field name="birthdate"/>
+    <field name="removal_date"/>
+    <field name="location"/>
+    <field name="last_extraction"/>
+    <field name="days_from_insemination"/>
+    <field name="days_from_farrowing"/>
+    <field name="state"/>
+    <field name="tags" tree_invisible="1"/>
+</tree>

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<data>
+    <xpath expr="//field[@name='employee']" position="after">
+        <group id="move_fields_group" colspan="4" col="4">
+            <separator id="move_fields_separator" colspan="4"/>
+            <label name="from_location"/>
+            <field name="from_location"/>
+            <label name="to_location"/>
+            <field name="to_location"/>
+            <label name="quantity"/>
+            <field name="quantity"/>
+            <label name="move"/>
+            <field name="move"/>
+        </group>
+        <group id="weight_fields_group" colspan="4" col="4">
+            <separator id="weight_fields" string="Weight Record" colspan="4"/>
+            <label name="weight"/>
+            <field name="weight"/>
+            <label name="uom"/>
+            <field name="uom"/>
+            <label name="weight_record" colspan="4"/>
+            <field name="weight_record" colspan="4"/>
+        </group>
+    </xpath>
+</data>

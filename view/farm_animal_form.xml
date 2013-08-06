@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<form string="Animal">
+    <group id="header" col="4">
+        <label name="number"/>
+        <field name="number"/>
+        <label name="breed"/>
+        <field name="breed"/>
+        <label name="sex"/>
+        <field name="sex"/>
+        <label name="purpose"/>
+        <field name="purpose"/>
+    </group>
+    <notebook>
+        <page string="General" id="general">
+            <group id="dates" colspan="3" col="4" yfill="1">
+                <label name="active"/>
+                <field name="active"/>
+                <newline/>
+                <label name="origin"/>
+                <field name="origin"/>
+                <label name="purchase_shipment"/>
+                <field name="purchase_shipment"/>
+                <label name="arrival_date"/>
+                <field name="arrival_date"/>
+                <label name="birthdate"/>
+                <field name="birthdate"/>
+                <label name="removal_date"/>
+                <field name="removal_date"/>
+                <label name="removal_reason"/>
+                <field name="removal_reason"/>
+                <newline/>
+                <label name="initial_location"/>
+                <field name="initial_location" colspan="3"/>
+                <label name="location"/>
+                <field name="location" colspan="3"/>
+                <!--
+                <label name="lot"/>
+                <field name="lot"/>
+                <label name="farm"/>
+                <field name="farm"/>
+                -->
+            </group>
+            <field name="tags"/>
+        </page>
+        <page name="extractions"
+            states="{'invisible': Not(Equal(Eval('animal_type'), 'male'))}">
+            <label name="last_extraction"/>
+            <field name="last_extraction"/>
+            <newline/>
+            <field name="extractions" colspan="4"/>
+        </page>
+        <page name="cycles">
+            <label name="current_cycle"/>
+            <field name="current_cycle"/>
+            <label name="state"/>
+            <field name="state"/>
+            <field name="cycles" colspan="4"/>
+            <group id="female_event_fields" colspan="4" col="6">
+                <label name="first_mating"/>
+                <field name="first_mating"/>
+                <label name="days_from_insemination"/>
+                <field name="days_from_insemination"/>
+                <label name="days_from_farrowing"/>
+                <field name="days_from_farrowing"/>
+                <newline/>
+                <label name="last_produced_group"/>
+                <field name="last_produced_group"/>
+            </group>
+        </page>
+        <page string="Weights" id="weights">
+            <label name="current_weight"/>
+            <field name="current_weight" colspan="3"/>
+            <field name="weights" colspan="4"/>
+        </page>
+        <page string="Notes" id="notes">
+            <field name="notes"/>
+        </page>
+    </notebook>
+</form>

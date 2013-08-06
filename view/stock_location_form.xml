@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<data>
+    <xpath expr="/form/field[@name='type']" position="after">
+        <label name="silo"/>
+        <field name="silo"/>
+        <label name="current_lot"/>
+        <field name="current_lot"/>
+        <newline/>
+        <notebook colspan="4">
+            <page name="locations_to_fed" string="Silo Configuration">
+                <field name="locations_to_fed" colspan="4"/>
+            </page>
+            <page name="feed_inventory_lines">
+                <field name="feed_inventory_lines" colspan="4"/>
+            </page>
+        </notebook>
+    </xpath>
+</data>

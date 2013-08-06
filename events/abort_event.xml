@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tryton>
+    <data>
+        <!-- farm.abort.event -->
+        <record model="ir.ui.view"
+            id="farm_abort_event_form_view">
+            <field name="model">farm.abort.event</field>
+            <field name="type">form</field>
+            <field name="inherit" ref="farm.farm_abstract_event_form_view"/>
+            <field name="name">farm_abort_event_form</field>
+        </record>
+
+        <record model="ir.ui.view"
+            id="farm_abort_event_list_view">
+            <field name="model">farm.abort.event</field>
+            <field name="type">tree</field>
+            <field name="inherit" ref="farm.farm_abstract_event_list_view"/>
+            <field name="name">farm_abort_event_list</field>
+        </record>
+
+        <record model="ir.model.button"
+            id="validate_abort_event_button">
+            <field name="name">validate_event</field>
+            <field name="model" search="[('model', '=', 'farm.abort.event')]"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="validate_abort_event_button_group_farm_admin">
+            <field name="button" ref="validate_abort_event_button"/>
+            <field name="group" ref="group_farm_admin"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="validate_abort_event_button_group_farm_females">
+            <field name="button" ref="validate_abort_event_button"/>
+            <field name="group" ref="group_farm_females"/>
+        </record>
+
+        <record model="ir.action.act_window" id="act_farm_abort_event">
+            <field name="name">Abort Events</field>
+            <field name="res_model">farm.abort.event</field>
+            <field name="search_value"></field>
+            <field name="domain"></field>
+            <field name="context">{'animal_type': 'female'}</field>
+        </record>
+        <record model="ir.action.act_window.view"
+            id="act_farm_abort_event_view1">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="farm_abort_event_list_view"/>
+            <field name="act_window" ref="act_farm_abort_event"/>
+        </record>
+        <record model="ir.action.act_window.view"
+            id="act_farm_abort_event_view2">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="farm_abort_event_form_view"/>
+            <field name="act_window" ref="act_farm_abort_event"/>
+        </record>
+    </data>
+</tryton>

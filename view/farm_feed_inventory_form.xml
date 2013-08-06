@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!--The COPYRIGHT file at the top level of this repository
+contains the full copyright notices and license terms. -->
+<form string="Feed Inventory">
+	<label name="location"/>
+	<field name="location"/>
+	<label name="timestamp"/>
+	<field name="timestamp"/>
+	<label name="quantity"/>
+	<field name="quantity"/>
+	<label name="uom"/>
+    <field name="uom"/>
+	<label name="prev_inventory"/>
+	<field name="prev_inventory"/>
+    <notebook colspan="4">
+        <page name="dest_locations">
+            <field name="dest_locations" colspan="4"/>
+        </page>
+        <page name="lines">
+            <field name="lines" colspan="4"/>
+        </page>
+        <page name="feed_events">
+            <field name="feed_events" colspan="4"/>
+        </page>
+    </notebook>
+    <group col="4" colspan="4" id="group_buttons">
+        <label name="state"/>
+        <field name="state"/>
+        <group colspan="2" col="3" id="buttons">
+            <button string="Confirm" name="confirm" icon="tryton-ok"/>
+        </group>
+    </group>
+</form>

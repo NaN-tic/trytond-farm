@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<data>
+    <xpath expr="//field[@name='employee']" position="after">
+        <group id="pregnancy_diagnosis_fields_group" colspan="4" col="4">
+            <separator id="pregnancy_diagnosis_fields_separator" colspan="4"/>
+            <label name="result"/>
+            <field name="result"/>
+            <label name="female_cycle"/>
+            <field name="female_cycle"/>
+        </group>
+    </xpath>
+</data>

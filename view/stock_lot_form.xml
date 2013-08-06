@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<data>
+    <xpath expr="/form/field[@name='product']" position="after">
+        <group id="farm_fields" colspan="2" col="2" string="Farm"> 
+            <label name="animal_type"/>
+            <field name="animal_type"/>
+            <label name="animal"/>
+            <field name="animal"/>
+            <label name="animal_group"/>
+            <field name="animal_group"/>
+        </group>
+    </xpath>
+</data>

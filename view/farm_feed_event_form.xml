@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<data>
+    <xpath expr="//field[@name='employee']" position="after">
+        <group id="feed_fields_group" colspan="4" col="4">
+            <separator id="feed_fields_separator" colspan="4"/>
+            <label name="location"/>
+            <field name="location"/>
+            <label name="feed_location"/>
+            <field name="feed_location"/>
+            <label name="feed_product"/>
+            <field name="feed_product"/>
+            <label name="feed_lot"/>
+            <field name="feed_lot"/>
+            <label name="quantity"/>
+            <field name="quantity"/>
+            <label name="uom"/>
+            <field name="uom"/>
+            <label name="start_date"/>
+            <field name="start_date"/>
+            <label name="end_date"/>
+            <field name="end_date"/>
+            <newline/>
+            <label name="feed_inventory"/>
+            <field name="feed_inventory"/>
+            <label name="move"/>
+            <field name="move"/>
+        </group>
+    </xpath>
+</data>

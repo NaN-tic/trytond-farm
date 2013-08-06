@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<form string="Farm Line">
+    <label name="specie"/>
+    <field name="specie" colspan="3"/>
+    <label name="farm"/>
+    <field name="farm"/>
+    <label name="event_order_sequence"/>
+    <field name="event_order_sequence"/>
+    <label name="has_male"/>
+    <field name="has_male"/>
+    <group id="male_events_sequences" colspan="2" col="2">
+        <label name="male_sequence"/>
+        <field name="male_sequence"/>
+        <label name="semen_lot_sequence"/>
+        <field name="semen_lot_sequence"/>
+        <label name="dose_lot_sequence"/>
+        <field name="dose_lot_sequence"/>
+    </group>
+    <newline/>
+    <label name="has_female"/>
+    <field name="has_female"/>
+    <label name="female_sequence"/>
+    <field name="female_sequence"/>
+    <label name="has_individual"/>
+    <field name="has_individual"/>
+    <label name="individual_sequence"/>
+    <field name="individual_sequence"/>
+    <label name="has_group"/>
+    <field name="has_group"/>
+    <label name="group_sequence"/>
+    <field name="group_sequence"/>
+</form>

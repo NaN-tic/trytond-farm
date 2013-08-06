@@ -1,0 +1,9 @@
+<tree string="Feed Inventory">
+	 <field name="location"/>
+	 <field name="timestamp"/>
+	 <field name="dest_locations"/>
+	 <field name="prev_inventory"/>
+	 <field name="quantity"/>
+	 <field name="uom"/>
+	 <field name="state"/>
+</tree>

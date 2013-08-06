@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tryton>
+    <data>
+        <record model="ir.ui.view" id="res_user_form_view">
+            <field name="model">res.user</field>
+            <field name="type">form</field>
+            <field name="inherit" ref="res.user_view_form"/>
+            <field name="name">res_user_form</field>
+        </record>
+    </data>
+</tryton>

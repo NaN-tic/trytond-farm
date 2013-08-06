@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<data>
+    <xpath expr="//field[@name='timestamp']" position="after">
+        <field name="location"/>
+        <field name="feed_location"/>
+        <field name="feed_product"/>
+        <field name="feed_lot"/>
+        <field name="quantity"/>
+    </xpath>
+</data>

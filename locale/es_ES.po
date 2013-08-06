@@ -1,0 +1,1096 @@
+# 
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
+
+msgctxt "error:farm.animal.group:"
+msgid "In Groups, the initial quantity must be positive (greater or equals 1)"
+msgstr ""
+
+msgctxt "error:farm.animal:"
+msgid "Arrival Move"
+msgstr ""
+
+msgctxt "error:farm.animal:"
+msgid ""
+"The company's partner '%(partner_name)s' has not defined a Supplier Location and it is required to create Arrival Stock Move for new animal.\n"
+"\n"
+"Please, fill in it in the tab 'Sales & Purchase' of partner's field."
+msgstr ""
+
+msgctxt "error:farm.animal:"
+msgid ""
+"The lot relation on Animal with id %s can not be modified because it is a "
+"static one2one relation."
+msgstr ""
+
+msgctxt "error:farm.specie.breed:"
+msgid "Breed name must be unique per specie."
+msgstr ""
+
+msgctxt "error:farm.specie:"
+msgid ""
+"The action \"Create menus and actions\" has been launched for the specie "
+"\"%s\" but it does not have any animal type enabled."
+msgstr ""
+
+msgctxt "error:farm.tag:"
+msgid "The Name of the Tag must be unique."
+msgstr ""
+
+msgctxt "error:stock.lot-farm.animal:"
+msgid "The Animal must be unique."
+msgstr ""
+
+msgctxt "error:stock.lot-farm.animal:"
+msgid "The Lot must be unique."
+msgstr ""
+
+#, fuzzy
+msgctxt "field:farm.animal,active:"
+msgid "Active"
+msgstr "Activo"
+
+msgctxt "field:farm.animal,animal_current_weight:"
+msgid "Current Weight"
+msgstr ""
+
+msgctxt "field:farm.animal,animal_weights:"
+msgid "Weight Records"
+msgstr ""
+
+msgctxt "field:farm.animal,arrival_date:"
+msgid "Arrival Date"
+msgstr ""
+
+msgctxt "field:farm.animal,birthdate:"
+msgid "Birthdate"
+msgstr ""
+
+msgctxt "field:farm.animal,breed:"
+msgid "Breed"
+msgstr ""
+
+#, fuzzy
+msgctxt "field:farm.animal,create_date:"
+msgid "Create Date"
+msgstr "Fecha creación"
+
+#, fuzzy
+msgctxt "field:farm.animal,create_uid:"
+msgid "Create User"
+msgstr "Usuario creación"
+
+#, fuzzy
+msgctxt "field:farm.animal,id:"
+msgid "ID"
+msgstr "ID"
+
+msgctxt "field:farm.animal,initial_location:"
+msgid "Initial Location"
+msgstr ""
+
+#, fuzzy
+msgctxt "field:farm.animal,location:"
+msgid "Location"
+msgstr "Ubicación"
+
+#, fuzzy
+msgctxt "field:farm.animal,lot:"
+msgid "Lot"
+msgstr "Lote"
+
+msgctxt "field:farm.animal,notes:"
+msgid "Notes"
+msgstr ""
+
+#, fuzzy
+msgctxt "field:farm.animal,number:"
+msgid "Number"
+msgstr "Número"
+
+#, fuzzy
+msgctxt "field:farm.animal,rec_name:"
+msgid "Name"
+msgstr "Nombre"
+
+msgctxt "field:farm.animal,removal_date:"
+msgid "Removal Date"
+msgstr ""
+
+msgctxt "field:farm.animal,specie:"
+msgid "Specie"
+msgstr ""
+
+msgctxt "field:farm.animal,tags:"
+msgid "Tags"
+msgstr ""
+
+#, fuzzy
+msgctxt "field:farm.animal,type:"
+msgid "Type"
+msgstr "Tipo"
+
+#, fuzzy
+msgctxt "field:farm.animal,warehouse:"
+msgid "Warehouse"
+msgstr "Almacén"
+
+#, fuzzy
+msgctxt "field:farm.animal,write_date:"
+msgid "Write Date"
+msgstr "Fecha modificación"
+
+#, fuzzy
+msgctxt "field:farm.animal,write_uid:"
+msgid "Write User"
+msgstr "Usuario modificación"
+
+msgctxt "field:farm.animal-farm.tag,animal:"
+msgid "Animal"
+msgstr ""
+
+#, fuzzy
+msgctxt "field:farm.animal-farm.tag,create_date:"
+msgid "Create Date"
+msgstr "Fecha creación"
+
+#, fuzzy
+msgctxt "field:farm.animal-farm.tag,create_uid:"
+msgid "Create User"
+msgstr "Usuario creación"
+
+#, fuzzy
+msgctxt "field:farm.animal-farm.tag,id:"
+msgid "ID"
+msgstr "ID"
+
+#, fuzzy
+msgctxt "field:farm.animal-farm.tag,rec_name:"
+msgid "Name"
+msgstr "Nombre"
+
+msgctxt "field:farm.animal-farm.tag,tag:"
+msgid "Tag"
+msgstr ""
+
+#, fuzzy
+msgctxt "field:farm.animal-farm.tag,write_date:"
+msgid "Write Date"
+msgstr "Fecha modificación"
+
+#, fuzzy
+msgctxt "field:farm.animal-farm.tag,write_uid:"
+msgid "Write User"
+msgstr "Usuario modificación"
+
+#, fuzzy
+msgctxt "field:farm.animal.group,active:"
+msgid "Active"
+msgstr "Activo"
+
+msgctxt "field:farm.animal.group,arrival_date:"
+msgid "Arrival Date"
+msgstr ""
+
+msgctxt "field:farm.animal.group,breed:"
+msgid "Breed"
+msgstr ""
+
+#, fuzzy
+msgctxt "field:farm.animal.group,create_date:"
+msgid "Create Date"
+msgstr "Fecha creación"
+
+#, fuzzy
+msgctxt "field:farm.animal.group,create_uid:"
+msgid "Create User"
+msgstr "Usuario creación"
+
+#, fuzzy
+msgctxt "field:farm.animal.group,id:"
+msgid "ID"
+msgstr "ID"
+
+msgctxt "field:farm.animal.group,initial_location:"
+msgid "Initial Location"
+msgstr ""
+
+msgctxt "field:farm.animal.group,initial_quantity:"
+msgid "Initial Quantity"
+msgstr ""
+
+#, fuzzy
+msgctxt "field:farm.animal.group,lot:"
+msgid "Lot"
+msgstr "Lote"
+
+msgctxt "field:farm.animal.group,notes:"
+msgid "Notes"
+msgstr ""
+
+#, fuzzy
+msgctxt "field:farm.animal.group,number:"
+msgid "Number"
+msgstr "Número"
+
+#, fuzzy
+msgctxt "field:farm.animal.group,rec_name:"
+msgid "Name"
+msgstr "Nombre"
+
+msgctxt "field:farm.animal.group,removal_date:"
+msgid "Removal Date"
+msgstr ""
+
+msgctxt "field:farm.animal.group,specie:"
+msgid "Specie"
+msgstr ""
+
+msgctxt "field:farm.animal.group,tags:"
+msgid "Tags"
+msgstr ""
+
+msgctxt "field:farm.animal.group,warehouses:"
+msgid "Current Farms"
+msgstr ""
+
+#, fuzzy
+msgctxt "field:farm.animal.group,write_date:"
+msgid "Write Date"
+msgstr "Fecha modificación"
+
+#, fuzzy
+msgctxt "field:farm.animal.group,write_uid:"
+msgid "Write User"
+msgstr "Usuario modificación"
+
+#, fuzzy
+msgctxt "field:farm.animal.group-farm.tag,create_date:"
+msgid "Create Date"
+msgstr "Fecha creación"
+
+#, fuzzy
+msgctxt "field:farm.animal.group-farm.tag,create_uid:"
+msgid "Create User"
+msgstr "Usuario creación"
+
+msgctxt "field:farm.animal.group-farm.tag,group:"
+msgid "Group"
+msgstr "Grupo"
+
+#, fuzzy
+msgctxt "field:farm.animal.group-farm.tag,id:"
+msgid "ID"
+msgstr "ID"
+
+#, fuzzy
+msgctxt "field:farm.animal.group-farm.tag,rec_name:"
+msgid "Name"
+msgstr "Nombre"
+
+msgctxt "field:farm.animal.group-farm.tag,tag:"
+msgid "Tag"
+msgstr ""
+
+#, fuzzy
+msgctxt "field:farm.animal.group-farm.tag,write_date:"
+msgid "Write Date"
+msgstr "Fecha modificación"
+
+#, fuzzy
+msgctxt "field:farm.animal.group-farm.tag,write_uid:"
+msgid "Write User"
+msgstr "Usuario modificación"
+
+#, fuzzy
+msgctxt "field:farm.lot.weight,create_date:"
+msgid "Create Date"
+msgstr "Fecha creación"
+
+#, fuzzy
+msgctxt "field:farm.lot.weight,create_uid:"
+msgid "Create User"
+msgstr "Usuario creación"
+
+#, fuzzy
+msgctxt "field:farm.lot.weight,id:"
+msgid "ID"
+msgstr "ID"
+
+#, fuzzy
+msgctxt "field:farm.lot.weight,rec_name:"
+msgid "Name"
+msgstr "Nombre"
+
+#, fuzzy
+msgctxt "field:farm.lot.weight,unit_digits:"
+msgid "Unit Digits"
+msgstr "Decimales de la unidad"
+
+#, fuzzy
+msgctxt "field:farm.lot.weight,write_date:"
+msgid "Write Date"
+msgstr "Fecha modificación"
+
+#, fuzzy
+msgctxt "field:farm.lot.weight,write_uid:"
+msgid "Write User"
+msgstr "Usuario modificación"
+
+#, fuzzy
+msgctxt "field:farm.specie,actions:"
+msgid "Actions"
+msgstr "Acciones"
+
+msgctxt "field:farm.specie,breeds:"
+msgid "Breeds"
+msgstr ""
+
+#, fuzzy
+msgctxt "field:farm.specie,create_date:"
+msgid "Create Date"
+msgstr "Fecha creación"
+
+#, fuzzy
+msgctxt "field:farm.specie,create_uid:"
+msgid "Create User"
+msgstr "Usuario creación"
+
+msgctxt "field:farm.specie,events:"
+msgid "Events"
+msgstr ""
+
+msgctxt "field:farm.specie,female_enabled:"
+msgid "Females Enabled"
+msgstr ""
+
+msgctxt "field:farm.specie,female_product:"
+msgid "Female's Product"
+msgstr ""
+
+msgctxt "field:farm.specie,foster_location:"
+msgid "Foster Location"
+msgstr ""
+
+msgctxt "field:farm.specie,group_enabled:"
+msgid "Groups Enabled"
+msgstr ""
+
+msgctxt "field:farm.specie,group_product:"
+msgid "Group's Product"
+msgstr ""
+
+#, fuzzy
+msgctxt "field:farm.specie,id:"
+msgid "ID"
+msgstr "ID"
+
+msgctxt "field:farm.specie,individual_enabled:"
+msgid "Individuals Enabled"
+msgstr ""
+
+msgctxt "field:farm.specie,individual_product:"
+msgid "Individual's Product"
+msgstr ""
+
+msgctxt "field:farm.specie,lost_found_location:"
+msgid "Lost Location"
+msgstr ""
+
+msgctxt "field:farm.specie,male_enabled:"
+msgid "Males Enabled"
+msgstr ""
+
+msgctxt "field:farm.specie,male_product:"
+msgid "Male's Product"
+msgstr ""
+
+msgctxt "field:farm.specie,menus:"
+msgid "Menus"
+msgstr ""
+
+#, fuzzy
+msgctxt "field:farm.specie,name:"
+msgid "Name"
+msgstr "Nombre"
+
+#, fuzzy
+msgctxt "field:farm.specie,rec_name:"
+msgid "Name"
+msgstr "Nombre"
+
+msgctxt "field:farm.specie,removed_location:"
+msgid "Removed Location"
+msgstr ""
+
+msgctxt "field:farm.specie,warehouse_line:"
+msgid "Farms"
+msgstr ""
+
+#, fuzzy
+msgctxt "field:farm.specie,write_date:"
+msgid "Write Date"
+msgstr "Fecha modificación"
+
+#, fuzzy
+msgctxt "field:farm.specie,write_uid:"
+msgid "Write User"
+msgstr "Usuario modificación"
+
+#, fuzzy
+msgctxt "field:farm.specie-ir.model,create_date:"
+msgid "Create Date"
+msgstr "Fecha creación"
+
+#, fuzzy
+msgctxt "field:farm.specie-ir.model,create_uid:"
+msgid "Create User"
+msgstr "Usuario creación"
+
+#, fuzzy
+msgctxt "field:farm.specie-ir.model,id:"
+msgid "ID"
+msgstr "ID"
+
+#, fuzzy
+msgctxt "field:farm.specie-ir.model,model:"
+msgid "Model"
+msgstr "Modelo"
+
+#, fuzzy
+msgctxt "field:farm.specie-ir.model,rec_name:"
+msgid "Name"
+msgstr "Nombre"
+
+msgctxt "field:farm.specie-ir.model,specie:"
+msgid "Specie"
+msgstr ""
+
+#, fuzzy
+msgctxt "field:farm.specie-ir.model,write_date:"
+msgid "Write Date"
+msgstr "Fecha modificación"
+
+#, fuzzy
+msgctxt "field:farm.specie-ir.model,write_uid:"
+msgid "Write User"
+msgstr "Usuario modificación"
+
+#, fuzzy
+msgctxt "field:farm.specie.breed,create_date:"
+msgid "Create Date"
+msgstr "Fecha creación"
+
+#, fuzzy
+msgctxt "field:farm.specie.breed,create_uid:"
+msgid "Create User"
+msgstr "Usuario creación"
+
+#, fuzzy
+msgctxt "field:farm.specie.breed,id:"
+msgid "ID"
+msgstr "ID"
+
+#, fuzzy
+msgctxt "field:farm.specie.breed,name:"
+msgid "Name"
+msgstr "Nombre"
+
+#, fuzzy
+msgctxt "field:farm.specie.breed,rec_name:"
+msgid "Name"
+msgstr "Nombre"
+
+msgctxt "field:farm.specie.breed,specie:"
+msgid "Specie"
+msgstr ""
+
+#, fuzzy
+msgctxt "field:farm.specie.breed,write_date:"
+msgid "Write Date"
+msgstr "Fecha modificación"
+
+#, fuzzy
+msgctxt "field:farm.specie.breed,write_uid:"
+msgid "Write User"
+msgstr "Usuario modificación"
+
+#, fuzzy
+msgctxt "field:farm.specie.warehouse_line,create_date:"
+msgid "Create Date"
+msgstr "Fecha creación"
+
+#, fuzzy
+msgctxt "field:farm.specie.warehouse_line,create_uid:"
+msgid "Create User"
+msgstr "Usuario creación"
+
+msgctxt "field:farm.specie.warehouse_line,event_order_sequence:"
+msgid "Events Order Sequence"
+msgstr ""
+
+msgctxt "field:farm.specie.warehouse_line,female_sequence:"
+msgid "Females' Sequence"
+msgstr ""
+
+msgctxt "field:farm.specie.warehouse_line,group_sequence:"
+msgid "Groups' Sequence"
+msgstr ""
+
+msgctxt "field:farm.specie.warehouse_line,has_female:"
+msgid "Females"
+msgstr "Hembras"
+
+msgctxt "field:farm.specie.warehouse_line,has_group:"
+msgid "Groups"
+msgstr "Grupos"
+
+msgctxt "field:farm.specie.warehouse_line,has_individual:"
+msgid "Individuals"
+msgstr ""
+
+msgctxt "field:farm.specie.warehouse_line,has_male:"
+msgid "Males"
+msgstr "Machos"
+
+#, fuzzy
+msgctxt "field:farm.specie.warehouse_line,id:"
+msgid "ID"
+msgstr "ID"
+
+msgctxt "field:farm.specie.warehouse_line,individual_sequence:"
+msgid "Individuals' Sequence"
+msgstr ""
+
+msgctxt "field:farm.specie.warehouse_line,male_sequence:"
+msgid "Males' Sequence"
+msgstr ""
+
+#, fuzzy
+msgctxt "field:farm.specie.warehouse_line,rec_name:"
+msgid "Name"
+msgstr "Nombre"
+
+msgctxt "field:farm.specie.warehouse_line,specie:"
+msgid "Specie"
+msgstr ""
+
+msgctxt "field:farm.specie.warehouse_line,warehouse:"
+msgid "Farm"
+msgstr ""
+
+#, fuzzy
+msgctxt "field:farm.specie.warehouse_line,write_date:"
+msgid "Write Date"
+msgstr "Fecha modificación"
+
+#, fuzzy
+msgctxt "field:farm.specie.warehouse_line,write_uid:"
+msgid "Write User"
+msgstr "Usuario modificación"
+
+msgctxt "field:farm.tag,animal_group:"
+msgid "Groups"
+msgstr "Grupos"
+
+msgctxt "field:farm.tag,animals:"
+msgid "Animals"
+msgstr ""
+
+#, fuzzy
+msgctxt "field:farm.tag,create_date:"
+msgid "Create Date"
+msgstr "Fecha creación"
+
+#, fuzzy
+msgctxt "field:farm.tag,create_uid:"
+msgid "Create User"
+msgstr "Usuario creación"
+
+#, fuzzy
+msgctxt "field:farm.tag,id:"
+msgid "ID"
+msgstr "ID"
+
+#, fuzzy
+msgctxt "field:farm.tag,name:"
+msgid "Name"
+msgstr "Nombre"
+
+#, fuzzy
+msgctxt "field:farm.tag,rec_name:"
+msgid "Name"
+msgstr "Nombre"
+
+#, fuzzy
+msgctxt "field:farm.tag,write_date:"
+msgid "Write Date"
+msgstr "Fecha modificación"
+
+#, fuzzy
+msgctxt "field:farm.tag,write_uid:"
+msgid "Write User"
+msgstr "Usuario modificación"
+
+msgctxt "field:ir.action.act_window,specie:"
+msgid "Specie"
+msgstr ""
+
+msgctxt "field:ir.ui.menu,specie:"
+msgid "Specie"
+msgstr ""
+
+msgctxt "field:stock.lot,animal:"
+msgid "Animal"
+msgstr ""
+
+msgctxt "field:stock.lot,animal_arrival_date:"
+msgid "Arrival Date"
+msgstr ""
+
+msgctxt "field:stock.lot,animal_current_weight:"
+msgid "Current Weight"
+msgstr ""
+
+msgctxt "field:stock.lot,animal_group:"
+msgid "Group"
+msgstr "Grupo"
+
+#, fuzzy
+msgctxt "field:stock.lot,animal_origin:"
+msgid "Origin"
+msgstr "Origen"
+
+msgctxt "field:stock.lot,animal_type:"
+msgid "Animal Type"
+msgstr ""
+
+msgctxt "field:stock.lot,animal_weights:"
+msgid "Weight Records"
+msgstr ""
+
+msgctxt "field:stock.lot,purchase_shipment:"
+msgid "Purchase Shipment"
+msgstr ""
+
+msgctxt "field:stock.lot,specie:"
+msgid "Specie"
+msgstr ""
+
+msgctxt "field:stock.lot,warehouses:"
+msgid "Current Warehouses"
+msgstr ""
+
+msgctxt "field:stock.lot-farm.animal,animal:"
+msgid "Animal"
+msgstr ""
+
+#, fuzzy
+msgctxt "field:stock.lot-farm.animal,create_date:"
+msgid "Create Date"
+msgstr "Fecha creación"
+
+#, fuzzy
+msgctxt "field:stock.lot-farm.animal,create_uid:"
+msgid "Create User"
+msgstr "Usuario creación"
+
+#, fuzzy
+msgctxt "field:stock.lot-farm.animal,id:"
+msgid "ID"
+msgstr "ID"
+
+#, fuzzy
+msgctxt "field:stock.lot-farm.animal,lot:"
+msgid "Lot"
+msgstr "Lote"
+
+#, fuzzy
+msgctxt "field:stock.lot-farm.animal,rec_name:"
+msgid "Name"
+msgstr "Nombre"
+
+#, fuzzy
+msgctxt "field:stock.lot-farm.animal,write_date:"
+msgid "Write Date"
+msgstr "Fecha modificación"
+
+#, fuzzy
+msgctxt "field:stock.lot-farm.animal,write_uid:"
+msgid "Write User"
+msgstr "Usuario modificación"
+
+#, fuzzy
+msgctxt "field:stock.lot-farm.animal.group,create_date:"
+msgid "Create Date"
+msgstr "Fecha creación"
+
+#, fuzzy
+msgctxt "field:stock.lot-farm.animal.group,create_uid:"
+msgid "Create User"
+msgstr "Usuario creación"
+
+msgctxt "field:stock.lot-farm.animal.group,group:"
+msgid "Group"
+msgstr "Grupo"
+
+#, fuzzy
+msgctxt "field:stock.lot-farm.animal.group,id:"
+msgid "ID"
+msgstr "ID"
+
+#, fuzzy
+msgctxt "field:stock.lot-farm.animal.group,lot:"
+msgid "Lot"
+msgstr "Lote"
+
+#, fuzzy
+msgctxt "field:stock.lot-farm.animal.group,rec_name:"
+msgid "Name"
+msgstr "Nombre"
+
+#, fuzzy
+msgctxt "field:stock.lot-farm.animal.group,write_date:"
+msgid "Write Date"
+msgstr "Fecha modificación"
+
+#, fuzzy
+msgctxt "field:stock.lot-farm.animal.group,write_uid:"
+msgid "Write User"
+msgstr "Usuario modificación"
+
+msgctxt "help:farm.animal,initial_location:"
+msgid ""
+"The Location where the animal was reached or where it was allocated when it was purchased.\n"
+"It is used as historical information and to get Serial Number."
+msgstr ""
+
+msgctxt "help:farm.animal,location:"
+msgid "Indicates where the animal currently resides."
+msgstr ""
+
+msgctxt "help:farm.animal,removal_date:"
+msgid "Get information from the corresponding removal event."
+msgstr ""
+
+msgctxt "help:farm.animal,warehouse:"
+msgid "The current farm of the animal. It is used for access management."
+msgstr ""
+
+msgctxt "help:farm.animal.group,initial_location:"
+msgid ""
+"The Location where the group was reached or where it was allocated when it was purchased.\n"
+"It is used as historical information and to get Serial Number."
+msgstr ""
+
+msgctxt "help:farm.animal.group,initial_quantity:"
+msgid ""
+"The number of animals in group when it was reached or purchased.\n"
+"It is used as historical information and to create the initial move."
+msgstr ""
+
+msgctxt "help:farm.animal.group,warehouses:"
+msgid "The current farm of the group. It is used for permission management."
+msgstr ""
+
+msgctxt "help:farm.specie,events:"
+msgid "Type of events available for this specie"
+msgstr ""
+
+msgctxt "help:farm.specie,female_enabled:"
+msgid ""
+"If checked the menus to manage this kind of animal will be generated. If you"
+" don't want it, uncheck and put a generic product or other type of animal "
+"because it is required."
+msgstr ""
+
+msgctxt "help:farm.specie,foster_location:"
+msgid "Virtual location where fostered animals are moved to."
+msgstr ""
+
+msgctxt "help:farm.specie,group_enabled:"
+msgid ""
+"If checked the menus to manage this kind of animal will be generated. If you"
+" don't want it, uncheck and put a generic product or other type of animal "
+"because it is required."
+msgstr ""
+
+msgctxt "help:farm.specie,individual_enabled:"
+msgid ""
+"If checked the menus to manage this kind of animal will be generated. If you"
+" don't want it, uncheck and put a generic product or other type of animal "
+"because it is required."
+msgstr ""
+
+msgctxt "help:farm.specie,lost_found_location:"
+msgid "Virtual location where lost animals are moved to."
+msgstr ""
+
+msgctxt "help:farm.specie,male_enabled:"
+msgid ""
+"If checked the menus to manage this kind of animal will be generated. If you"
+" don't want it, uncheck and put a generic product or other type of animal "
+"because it is required."
+msgstr ""
+
+msgctxt "help:farm.specie,name:"
+msgid "Name of the specie. ie. \"Pig\""
+msgstr ""
+
+msgctxt "help:farm.specie,removed_location:"
+msgid "Virtual location where removed animals are moved to."
+msgstr ""
+
+msgctxt "help:farm.specie.warehouse_line,event_order_sequence:"
+msgid "Sequence used for the Event Orders in this farm."
+msgstr ""
+
+msgctxt "help:farm.specie.warehouse_line,female_sequence:"
+msgid "Sequence used for female production lots and animals."
+msgstr ""
+
+msgctxt "help:farm.specie.warehouse_line,group_sequence:"
+msgid "Sequence used for group production lots and animals."
+msgstr ""
+
+msgctxt "help:farm.specie.warehouse_line,has_female:"
+msgid "In this farm there are females."
+msgstr ""
+
+msgctxt "help:farm.specie.warehouse_line,has_group:"
+msgid "In this farm there are groups."
+msgstr ""
+
+msgctxt "help:farm.specie.warehouse_line,has_individual:"
+msgid "In this farm there are individuals."
+msgstr ""
+
+msgctxt "help:farm.specie.warehouse_line,has_male:"
+msgid "In this farm there are males."
+msgstr ""
+
+msgctxt "help:farm.specie.warehouse_line,individual_sequence:"
+msgid "Sequence used for individual lots and animals."
+msgstr ""
+
+msgctxt "help:farm.specie.warehouse_line,male_sequence:"
+msgid "Sequence used for male production lots and animals."
+msgstr ""
+
+msgctxt "help:stock.lot,animal_arrival_date:"
+msgid ""
+"Calculates the date that the animal arrived from the date of the first "
+"incomming stock move"
+msgstr ""
+
+msgctxt "help:stock.lot,animal_origin:"
+msgid ""
+"If the first move comes from a production location it means it was raised, "
+"otherwise it was purchased."
+msgstr ""
+
+msgctxt "help:stock.lot,purchase_shipment:"
+msgid ""
+"If origin=Purchased, here we can jump directly to the incomming picking."
+msgstr ""
+
+msgctxt "model:farm.animal,name:"
+msgid "Farm Animal"
+msgstr ""
+
+msgctxt "model:farm.animal-farm.tag,name:"
+msgid "Animal - Tag"
+msgstr ""
+
+msgctxt "model:farm.animal.group,name:"
+msgid "Group of Farm Animals"
+msgstr ""
+
+msgctxt "model:farm.animal.group-farm.tag,name:"
+msgid "Animal Group - Tag"
+msgstr ""
+
+msgctxt "model:farm.lot.weight,name:"
+msgid "Farm Lot Weight Record"
+msgstr ""
+
+msgctxt "model:farm.specie,name:"
+msgid "Animal Specie"
+msgstr ""
+
+msgctxt "model:farm.specie-ir.model,name:"
+msgid "Specie - Model"
+msgstr ""
+
+msgctxt "model:farm.specie.breed,name:"
+msgid "Breed of Specie"
+msgstr ""
+
+msgctxt "model:farm.specie.warehouse_line,name:"
+msgid "Managed farm of specie"
+msgstr ""
+
+msgctxt "model:farm.tag,name:"
+msgid "Farm Tags"
+msgstr ""
+
+msgctxt "model:ir.action,name:act_farm_animal_female"
+msgid "Females"
+msgstr "Hembras"
+
+#, fuzzy
+msgctxt "model:ir.action,name:act_farm_animal_group"
+msgid "Animal Group"
+msgstr "Animal Group"
+
+msgctxt "model:ir.action,name:act_farm_animal_individual"
+msgid "Individuals"
+msgstr "Individuales"
+
+msgctxt "model:ir.action,name:act_farm_animal_male"
+msgid "Males"
+msgstr "Machos"
+
+msgctxt "model:ir.action,name:act_farm_specie"
+msgid "Species"
+msgstr ""
+
+msgctxt "model:ir.action,name:act_farm_specie_breed"
+msgid "Breeds"
+msgstr ""
+
+msgctxt "model:ir.action,name:act_farm_specie_warehouse_line"
+msgid "Warehouse Line"
+msgstr ""
+
+msgctxt "model:ir.action,name:act_farm_tag"
+msgid "Tags"
+msgstr ""
+
+#, fuzzy
+msgctxt "model:ir.ui.menu,name:menu_configuration"
+msgid "Configuration"
+msgstr "Configuración"
+
+msgctxt "model:ir.ui.menu,name:menu_farm"
+msgid "Farm"
+msgstr ""
+
+msgctxt "model:ir.ui.menu,name:menu_farm_specie"
+msgid "Species"
+msgstr ""
+
+msgctxt "model:ir.ui.menu,name:menu_farm_specie_breed"
+msgid "Breeds"
+msgstr ""
+
+msgctxt "model:ir.ui.menu,name:menu_farm_tag"
+msgid "Tags"
+msgstr ""
+
+msgctxt "model:res.group,name:group_farm"
+msgid "Farm"
+msgstr ""
+
+msgctxt "model:res.group,name:group_farm_admin"
+msgid "Farm Administration"
+msgstr ""
+
+msgctxt "model:res.group,name:group_farm_females"
+msgid "Farm / Females"
+msgstr ""
+
+msgctxt "model:res.group,name:group_farm_groups"
+msgid "Farm / Groups"
+msgstr ""
+
+msgctxt "model:res.group,name:group_farm_individuals"
+msgid "Farm / Individuals"
+msgstr ""
+
+msgctxt "model:res.group,name:group_farm_males"
+msgid "Farm / Males"
+msgstr ""
+
+msgctxt "model:stock.lot-farm.animal,name:"
+msgid "Lot - Animal"
+msgstr ""
+
+msgctxt "model:stock.lot-farm.animal.group,name:"
+msgid "Lot - Animal Group"
+msgstr ""
+
+msgctxt "selection:farm.animal,type:"
+msgid "Female"
+msgstr ""
+
+msgctxt "selection:farm.animal,type:"
+msgid "Individual"
+msgstr "Individual"
+
+#, fuzzy
+msgctxt "selection:farm.animal,type:"
+msgid "Male"
+msgstr "Male"
+
+msgctxt "selection:stock.lot,animal_origin:"
+msgid "Purchased"
+msgstr ""
+
+msgctxt "selection:stock.lot,animal_origin:"
+msgid "Raised"
+msgstr ""
+
+msgctxt "selection:stock.lot,animal_type:"
+msgid "Female"
+msgstr ""
+
+#, fuzzy
+msgctxt "selection:stock.lot,animal_type:"
+msgid "Group"
+msgstr "Grupo"
+
+msgctxt "selection:stock.lot,animal_type:"
+msgid "Individual"
+msgstr "Individual"
+
+#, fuzzy
+msgctxt "selection:stock.lot,animal_type:"
+msgid "Male"
+msgstr "Male"
+
+msgctxt "selection:stock.lot,animal_type:"
+msgid "None"
+msgstr ""
+
+msgctxt "view:farm.specie:"
+msgid "Females"
+msgstr "Hembras"
+
+msgctxt "view:farm.specie:"
+msgid "Females Orders"
+msgstr "Órdenes hembras"
+
+msgctxt "view:farm.specie:"
+msgid "Groups"
+msgstr "Grupos"
+
+msgctxt "view:farm.specie:"
+msgid "Groups Orders"
+msgstr "Órdenes grupos"
+
+msgctxt "view:farm.specie:"
+msgid "Individuals"
+msgstr "Individual"
+
+msgctxt "view:farm.specie:"
+msgid "Individuals Orders"
+msgstr "Órdenes individuales"
+
+msgctxt "view:farm.specie:"
+msgid "Males"
+msgstr "Machos"
+
+msgctxt "view:farm.specie:"
+msgid "Males Orders"
+msgstr "Órdenes machos"

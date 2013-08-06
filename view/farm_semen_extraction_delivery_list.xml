@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tree string="Semen Extraction Deliveries">
+    <field name="event"/>
+    <field name="dose"/>
+    <field name="quantity"/>
+    <field name="to_location"/>
+</tree>

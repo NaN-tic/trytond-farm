@@ -1,0 +1,298 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tryton>
+    <data>
+        <!-- Groups -->
+        <record model="res.group" id="group_farm_admin">
+            <field name="name">Farm Administration</field>
+        </record>
+        <record model="res.user-res.group" id="user_admin_group_farm_admin">
+            <field name="user" ref="res.user_admin"/>
+            <field name="group" ref="group_farm_admin"/>
+        </record>
+        <record model="res.user-res.group" id="user_trigger_group_farm_admin">
+            <field name="user" ref="res.user_trigger"/>
+            <field name="group" ref="group_farm_admin"/>
+        </record>
+
+        <record model="res.group" id="group_farm">
+            <field name="name">Farm</field>
+        </record>
+        <record model="res.user-res.group" id="user_admin_group_farm">
+            <field name="user" ref="res.user_admin"/>
+            <field name="group" ref="group_farm"/>
+        </record>
+        <record model="res.user-res.group" id="user_trigger_group_farm">
+            <field name="user" ref="res.user_trigger"/>
+            <field name="group" ref="group_farm"/>
+        </record>
+
+        <record model="res.group" id="group_farm_males">
+            <field name="name">Farm / Males</field>
+        </record>
+
+        <record model="res.group" id="group_farm_females">
+            <field name="name">Farm / Females</field>
+        </record>
+
+        <record model="res.group" id="group_farm_individuals">
+            <field name="name">Farm / Individuals</field>
+        </record>
+
+        <record model="res.group" id="group_farm_groups">
+            <field name="name">Farm / Groups</field>
+        </record>
+
+        <!-- Sequences Lot TODO: moure a stock_lot -->
+        <record model="ir.sequence.type" id="sequence_type_lot">
+            <field name="name">Stock Lot</field>
+            <field name="code">stock.lot</field>
+        </record>
+        <record model="ir.sequence.type-res.group"
+            id="sequence_type_lot_group_farm">
+            <field name="sequence_type" ref="sequence_type_lot"/>
+            <field name="group" ref="group_farm"/>
+        </record>
+        <record model="ir.sequence.type-res.group"
+            id="sequence_type_group_group_lot_admin">
+            <field name="sequence_type" ref="sequence_type_lot"/>
+            <field name="group" ref="group_farm"/>
+        </record>
+
+        <!--
+        farm.specie
+        -->
+        <!-- Translations -->
+        <record model="ir.translation" id="males_translation">
+            <field name="name">farm.specie</field>
+            <field name="lang">en_US</field>
+            <field name="type">view</field>
+            <field name="src">Males</field>
+            <field name="module">farm</field>
+        </record>
+        <record model="ir.translation" id="males_orders_translation">
+            <field name="name">farm.specie</field>
+            <field name="lang">en_US</field>
+            <field name="type">view</field>
+            <field name="src">Males Orders</field>
+            <field name="module">farm</field>
+        </record>
+        <record model="ir.translation" id="females_translation">
+            <field name="name">farm.specie</field>
+            <field name="lang">en_US</field>
+            <field name="type">view</field>
+            <field name="src">Females</field>
+            <field name="module">farm</field>
+        </record>
+        <record model="ir.translation" id="females_orders_translation">
+            <field name="name">farm.specie</field>
+            <field name="lang">en_US</field>
+            <field name="type">view</field>
+            <field name="src">Females Orders</field>
+            <field name="module">farm</field>
+        </record>
+        <record model="ir.translation" id="individuals_translation">
+            <field name="name">farm.specie</field>
+            <field name="lang">en_US</field>
+            <field name="type">view</field>
+            <field name="src">Individuals</field>
+            <field name="module">farm</field>
+        </record>
+        <record model="ir.translation" id="individuals_orders_translation">
+            <field name="name">farm.specie</field>
+            <field name="lang">en_US</field>
+            <field name="type">view</field>
+            <field name="src">Individuals Orders</field>
+            <field name="module">farm</field>
+        </record>
+        <record model="ir.translation" id="groups_translation">
+            <field name="name">farm.specie</field>
+            <field name="lang">en_US</field>
+            <field name="type">view</field>
+            <field name="src">Groups</field>
+            <field name="module">farm</field>
+        </record>
+        <record model="ir.translation" id="groups_orders_translation">
+            <field name="name">farm.specie</field>
+            <field name="lang">en_US</field>
+            <field name="type">view</field>
+            <field name="src">Groups Orders</field>
+            <field name="module">farm</field>
+        </record>
+        <record model="ir.translation" id="feed_inventories_translation">
+            <field name="name">farm.specie</field>
+            <field name="lang">en_US</field>
+            <field name="type">view</field>
+            <field name="src">Silo Inventories</field>
+            <field name="module">farm</field>
+        </record>
+
+        <!-- Buttons -->
+        <record model="ir.model.button" id="create_menu_entries_button">
+            <field name="name">create_menu_entries</field>
+            <field name="model" search="[('model', '=', 'farm.specie')]"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="farm_menu_entries_button_group_farm_admin">
+            <field name="button" ref="create_menu_entries_button"/>
+            <field name="group" ref="group_farm_admin"/>
+        </record>
+
+        <!-- Views -->
+        <record model="ir.ui.view" id="farm_specie_form_view">
+            <field name="model">farm.specie</field>
+            <field name="type">form</field>
+            <field name="name">farm_specie_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="farm_specie_list_view">
+            <field name="model">farm.specie</field>
+            <field name="type">tree</field>
+            <field name="name">farm_specie_list</field>
+        </record>
+
+        <!-- Actions -->
+        <record model="ir.action.act_window" id="act_farm_specie">
+            <field name="name">Species</field>
+            <field name="res_model">farm.specie</field>
+            <field name="search_value"></field>
+        </record>
+
+        <record model="ir.action.act_window.view" id="act_farm_specie_view1">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="farm_specie_list_view"/>
+            <field name="act_window" ref="act_farm_specie"/>
+        </record>
+
+        <record model="ir.action.act_window.view" id="act_farm_specie_view2">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="farm_specie_form_view"/>
+            <field name="act_window" ref="act_farm_specie"/>
+        </record>
+
+        <!-- Permissions -->
+        <record model="ir.model.access" id="access_farm_specie">
+            <field name="model" search="[('model', '=', 'farm.specie')]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+
+        <record model="ir.model.access" id="access_farm_specie_admin">
+            <field name="model" search="[('model', '=', 'farm.specie')]"/>
+            <field name="group" ref="group_farm_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+
+        <!--
+        farm.specie.breed
+        -->
+        <!-- Views -->
+        <record model="ir.ui.view" id="farm_specie_breed_form_view">
+            <field name="model">farm.specie.breed</field>
+            <field name="type">form</field>
+            <field name="name">farm_specie_breed_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="farm_specie_breed_list_view">
+            <field name="model">farm.specie.breed</field>
+            <field name="type">tree</field>
+            <field name="name">farm_specie_breed_list</field>
+        </record>
+
+        <!-- Actions -->
+        <record model="ir.action.act_window" id="act_farm_specie_breed">
+            <field name="name">Breeds</field>
+            <field name="res_model">farm.specie.breed</field>
+            <field name="search_value"></field>
+        </record>
+
+        <record model="ir.action.act_window.view" id="act_farm_specie_breed_view1">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="farm_specie_breed_list_view"/>
+            <field name="act_window" ref="act_farm_specie_breed"/>
+        </record>
+
+        <record model="ir.action.act_window.view" id="act_farm_specie_breed_view2">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="farm_specie_breed_form_view"/>
+            <field name="act_window" ref="act_farm_specie_breed"/>
+        </record>
+
+        <!-- Permissions -->
+        <record model="ir.model.access" id="access_farm_specie_breed">
+            <field name="model" search="[('model', '=', 'farm.specie.breed')]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+
+        <record model="ir.model.access" id="access_farm_specie_breed_admin">
+            <field name="model" search="[('model', '=', 'farm.specie.breed')]"/>
+            <field name="group" ref="group_farm_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+
+        <!--
+        farm.specie.farm_line
+        -->
+        <!-- Views -->
+        <record model="ir.ui.view" id="farm_specie_farm_line_form_view">
+            <field name="model">farm.specie.farm_line</field>
+            <field name="type">form</field>
+            <field name="name">farm_specie_farm_line_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="farm_specie_farm_line_list_view">
+            <field name="model">farm.specie.farm_line</field>
+            <field name="type">tree</field>
+            <field name="name">farm_specie_farm_line_list</field>
+        </record>
+
+        <!-- Permissions -->
+        <record model="ir.model.access" id="access_farm_specie_farm_line">
+            <field name="model"
+                search="[('model', '=', 'farm.specie.farm_line')]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+
+        <record model="ir.model.access"
+            id="access_farm_specie_farm_line_admin">
+            <field name="model"
+                search="[('model', '=', 'farm.specie.farm_line')]"/>
+            <field name="group" ref="group_farm_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+
+        <!-- Menus -->
+        <record model="ir.ui.icon" id="farm_icon">
+            <field name="name">tryton-farm</field>
+            <field name="path">icons/tryton-farm.svg</field>
+        </record>
+        <menuitem name="Farm" sequence="2" id="menu_farm"
+            icon="tryton-farm"/>
+
+        <menuitem name="Configuration" parent="menu_farm"
+            id="menu_configuration" sequence="0" icon="tryton-preferences"/>
+
+        <menuitem action="act_farm_specie" id="menu_farm_specie"
+            parent="menu_configuration" sequence="1"/>
+        <menuitem action="act_farm_specie_breed" id="menu_farm_specie_breed"
+            parent="menu_farm_specie" sequence="1"/>
+    </data>
+</tryton>

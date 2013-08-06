@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tryton>
+    <data>
+        <record model="ir.ui.view" id="quality_test_farm_view_form">
+            <field name="model">quality.test</field>
+            <field name="inherit"
+                ref="quality_control.quality_test_form_view"/>
+            <field name="name">quality_test_form</field>
+        </record>
+    </data>
+</tryton>

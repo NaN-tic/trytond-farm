@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tree string="Weights" editable="bottom">
+    <field name="group"/>
+    <field name="quantity"/>
+    <field name="timestamp"/>
+    <field name="weight"/>
+    <field name="uom"/>
+</tree>

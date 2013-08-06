@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tryton>
+    <data>
+        <!-- Farrowing Event Problems -->
+        <record id="farrowing_problem_extreme_difficulty"
+            model="farm.farrowing.problem">
+			<field name="name">Extreme difficulty</field>
+		</record>
+        <record id="farrowing_problem_force_required"
+            model="farm.farrowing.problem">
+			<field name="name">Force required</field>
+		</record>
+        <record id="farrowing_problem_needed_assistance"
+            model="farm.farrowing.problem">
+			<field name="name">Needed assistance</field>
+		</record>
+        <record id="farrowing_problem_minor_problems"
+            model="farm.farrowing.problem">
+			<field name="name">Minor problems</field>
+		</record>
+		<record id="farrowing_no_problems" model="farm.farrowing.problem">
+			<field name="name">No problems</field>
+        </record>
+
+        <!-- farm.farrowing.problem -->
+        <record model="ir.ui.view" id="farm_farrowing_problem_form_view">
+            <field name="model">farm.farrowing.problem</field>
+            <field name="type">form</field>
+            <field name="name">farm_farrowing_problem_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="farm_farrowing_problem_list_view">
+            <field name="model">farm.farrowing.problem</field>
+            <field name="type">tree</field>
+            <field name="name">farm_farrowing_problem_list</field>
+        </record>
+
+        <record model="ir.action.act_window" id="act_farm_farrowing_problem">
+            <field name="name">Farrowing Problems</field>
+            <field name="res_model">farm.farrowing.problem</field>
+            <field name="search_value"></field>
+        </record>
+
+        <record model="ir.action.act_window.view"
+            id="act_farm_farrowing_problem_view1">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="farm_farrowing_problem_list_view"/>
+            <field name="act_window" ref="act_farm_farrowing_problem"/>
+        </record>
+
+        <record model="ir.action.act_window.view"
+            id="act_farm_farrowing_problem_view2">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="farm_farrowing_problem_form_view"/>
+            <field name="act_window" ref="act_farm_farrowing_problem"/>
+        </record>
+
+        <!-- farm.farrowing.event -->
+        <record model="ir.ui.view"
+            id="farm_farrowing_event_form_view">
+            <field name="model">farm.farrowing.event</field>
+            <field name="type">form</field>
+            <field name="inherit" ref="farm.farm_abstract_event_form_view"/>
+            <field name="name">farm_farrowing_event_form</field>
+        </record>
+
+        <record model="ir.ui.view"
+            id="farm_farrowing_event_list_view">
+            <field name="model">farm.farrowing.event</field>
+            <field name="type">tree</field>
+            <field name="inherit" ref="farm.farm_abstract_event_list_view"/>
+            <field name="name">farm_farrowing_event_list</field>
+        </record>
+
+        <record model="ir.model.button"
+            id="validate_farrowing_event_button">
+            <field name="name">validate_event</field>
+            <field name="model"
+                search="[('model', '=', 'farm.farrowing.event')]"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="validate_farrowing_event_button_group_farm_admin">
+            <field name="button" ref="validate_farrowing_event_button"/>
+            <field name="group" ref="group_farm_admin"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="validate_farrowing_event_button_group_farm_females">
+            <field name="button" ref="validate_farrowing_event_button"/>
+            <field name="group" ref="group_farm_females"/>
+        </record>
+
+        <record model="ir.action.act_window" id="act_farm_farrowing_event">
+            <field name="name">Farrowing Events</field>
+            <field name="res_model">farm.farrowing.event</field>
+            <field name="search_value"></field>
+            <field name="domain"></field>
+            <field name="context">{'animal_type': 'female'}</field>
+        </record>
+
+        <record model="ir.action.act_window.view"
+            id="act_farm_farrowing_event_view1">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="farm_farrowing_event_list_view"/>
+            <field name="act_window" ref="act_farm_farrowing_event"/>
+        </record>
+
+        <record model="ir.action.act_window.view"
+            id="act_farm_farrowing_event_view2">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="farm_farrowing_event_form_view"/>
+            <field name="act_window" ref="act_farm_farrowing_event"/>
+        </record>
+
+        <!-- Menus -->
+        <menuitem action="act_farm_farrowing_problem"
+            id="menu_farm_farrowing_problem"
+            parent="menu_configuration" sequence="12"/>
+    </data>
+</tryton>

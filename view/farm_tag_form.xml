@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<form string="Tag">
+    <group id="name" colspan="4" col="2">
+        <label name="name"/>
+        <field name="name"/>
+    </group>
+    <field name="animals" colspan="2"/>
+    <field name="animal_group" colspan="2"/>
+</form>

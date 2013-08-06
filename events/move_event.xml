@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tryton>
+    <data>
+        <!-- farm.move.event -->
+        <record model="ir.ui.view" id="farm_move_event_form_view">
+            <field name="model">farm.move.event</field>
+            <field name="type">form</field>
+            <field name="inherit" ref="farm.farm_abstract_event_form_view"/>
+            <field name="name">farm_move_event_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="farm_move_event_list_view">
+            <field name="model">farm.move.event</field>
+            <field name="type">tree</field>
+            <field name="inherit" ref="farm.farm_abstract_event_list_view"/>
+            <field name="name">farm_move_event_list</field>
+        </record>
+
+        <record model="ir.model.button" id="validate_move_event_button">
+            <field name="name">validate_event</field>
+            <field name="model" search="[('model', '=', 'farm.move.event')]"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="validate_move_event_button_group_farm_admin">
+            <field name="button" ref="validate_move_event_button"/>
+            <field name="group" ref="group_farm_admin"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="validate_move_event_button_group_farm_males">
+            <field name="button" ref="validate_move_event_button"/>
+            <field name="group" ref="group_farm_males"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="validate_move_event_button_group_farm_females">
+            <field name="button" ref="validate_move_event_button"/>
+            <field name="group" ref="group_farm_females"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="validate_move_event_button_group_farm_individuals">
+            <field name="button" ref="validate_move_event_button"/>
+            <field name="group" ref="group_farm_individuals"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="validate_move_event_button_group_farm_groups">
+            <field name="button" ref="validate_move_event_button"/>
+            <field name="group" ref="group_farm_groups"/>
+        </record>
+
+        <record model="ir.action.act_window" id="act_farm_move_event">
+            <field name="name">Move Events</field>
+            <field name="res_model">farm.move.event</field>
+            <field name="search_value"></field>
+            <field name="domain"></field>
+            <field name="context"></field>
+        </record>
+
+        <record model="ir.action.act_window.view"
+            id="act_farm_move_event_view1">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="farm_move_event_list_view"/>
+            <field name="act_window" ref="act_farm_move_event"/>
+        </record>
+
+        <record model="ir.action.act_window.view"
+            id="act_farm_move_event_view2">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="farm_move_event_form_view"/>
+            <field name="act_window" ref="act_farm_move_event"/>
+        </record>
+    </data>
+</tryton>

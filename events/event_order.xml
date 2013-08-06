@@ -1,0 +1,212 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tryton>
+    <data>
+        <!-- Sequences -->
+        <record model="ir.sequence.type" id="sequence_type_event_order">
+            <field name="name">Farm Event Order</field>
+            <field name="code">farm.event.order</field>
+        </record>
+        <record model="ir.sequence.type-res.group"
+            id="sequence_type_event_order_group_farm">
+            <field name="sequence_type" ref="sequence_type_event_order"/>
+            <field name="group" ref="group_farm"/>
+        </record>
+        <record model="ir.sequence.type-res.group"
+            id="sequence_type_group_group_event_order_admin">
+            <field name="sequence_type" ref="sequence_type_event_order"/>
+            <field name="group" ref="group_farm"/>
+        </record>
+        <record model="ir.sequence.type-res.group"
+            id="sequence_type_group_group_event_order_males">
+            <field name="sequence_type" ref="sequence_type_event_order"/>
+            <field name="group" ref="group_farm_males"/>
+        </record>
+        <record model="ir.sequence.type-res.group"
+            id="sequence_type_group_group_event_order_females">
+            <field name="sequence_type" ref="sequence_type_event_order"/>
+            <field name="group" ref="group_farm_females"/>
+        </record>
+        <record model="ir.sequence.type-res.group"
+            id="sequence_type_group_group_event_order_individuals">
+            <field name="sequence_type" ref="sequence_type_event_order"/>
+            <field name="group" ref="group_farm_individuals"/>
+        </record>
+        <record model="ir.sequence.type-res.group"
+            id="sequence_type_group_group_event_order_groups">
+            <field name="sequence_type" ref="sequence_type_event_order"/>
+            <field name="group" ref="group_farm_groups"/>
+        </record>
+
+        <!-- farm.event.order -->
+        <record model="ir.ui.view" id="farm_event_order_form_view">
+            <field name="model">farm.event.order</field>
+            <field name="type">form</field>
+            <field name="name">farm_event_order_form</field>
+        </record>
+        <record model="ir.ui.view" id="farm_event_order_tree_view">
+            <field name="model">farm.event.order</field>
+            <field name="type">tree</field>
+            <field name="name">farm_event_order_list</field>
+        </record>
+
+        <record model="ir.model.button" id="draft_farm_event_order_button">
+            <field name="name">draft</field>
+            <field name="model"
+                search="[('model', '=', 'farm.event.order')]"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="draft_farm_event_order_button_group_farm_admin">
+            <field name="button" ref="draft_farm_event_order_button"/>
+            <field name="group" ref="group_farm_admin"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="draft_farm_event_order_button_group_farm_males">
+            <field name="button" ref="draft_farm_event_order_button"/>
+            <field name="group" ref="group_farm_males"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="draft_farm_event_order_button_group_farm_females">
+            <field name="button" ref="draft_farm_event_order_button"/>
+            <field name="group" ref="group_farm_females"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="draft_farm_event_order_button_group_farm_individuals">
+            <field name="button" ref="draft_farm_event_order_button"/>
+            <field name="group" ref="group_farm_individuals"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="draft_farm_event_order_button_group_farm_groups">
+            <field name="button" ref="draft_farm_event_order_button"/>
+            <field name="group" ref="group_farm_groups"/>
+        </record>
+
+        <record model="ir.model.button"
+            id="confirm_farm_event_order_button">
+            <field name="name">confirm</field>
+            <field name="model" search="[('model', '=', 'farm.event.order')]"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="confirm_farm_event_order_button_group_farm_admin">
+            <field name="button" ref="confirm_farm_event_order_button"/>
+            <field name="group" ref="group_farm_admin"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="confirm_farm_event_order_button_group_farm_males">
+            <field name="button" ref="confirm_farm_event_order_button"/>
+            <field name="group" ref="group_farm_males"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="confirm_farm_event_order_button_group_farm_females">
+            <field name="button" ref="confirm_farm_event_order_button"/>
+            <field name="group" ref="group_farm_females"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="confirm_farm_event_order_button_group_farm_individuals">
+            <field name="button" ref="confirm_farm_event_order_button"/>
+            <field name="group" ref="group_farm_individuals"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="confirm_farm_event_order_button_group_farm_groups">
+            <field name="button" ref="confirm_farm_event_order_button"/>
+            <field name="group" ref="group_farm_groups"/>
+        </record>
+
+        <record model="ir.model.button" id="cancel_farm_event_order_button">
+            <field name="name">cancel</field>
+            <field name="model" search="[('model', '=', 'farm.event.order')]"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="cancel_farm_event_order_button_group_farm_admin">
+            <field name="button" ref="cancel_farm_event_order_button"/>
+            <field name="group" ref="group_farm_admin"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="cancel_farm_event_order_button_group_farm_males">
+            <field name="button" ref="cancel_farm_event_order_button"/>
+            <field name="group" ref="group_farm_males"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="cancel_farm_event_order_button_group_farm_females">
+            <field name="button" ref="cancel_farm_event_order_button"/>
+            <field name="group" ref="group_farm_females"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="cancel_farm_event_order_button_group_farm_individuals">
+            <field name="button" ref="cancel_farm_event_order_button"/>
+            <field name="group" ref="group_farm_individuals"/>
+        </record>
+        <record model="ir.model.button-res.group"
+            id="cancel_farm_event_order_button_group_farm_groups">
+            <field name="button" ref="cancel_farm_event_order_button"/>
+            <field name="group" ref="group_farm_groups"/>
+        </record>
+
+        <record model="ir.action.act_window" id="act_farm_event_order">
+            <field name="name">Work Orders</field>
+            <field name="res_model">farm.event.order</field>
+            <field name="search_value"></field>
+        </record>
+        <record model="ir.action.act_window.view" id="act_farm_event_order_view1">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="farm_event_order_tree_view"/>
+            <field name="act_window" ref="act_farm_event_order"/>
+        </record>
+        <record model="ir.action.act_window.view" id="act_farm_event_order_view2">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="farm_event_order_form_view"/>
+            <field name="act_window" ref="act_farm_event_order"/>
+        </record>
+
+        <record model="ir.model.access" id="access_farm_event_order_farm">
+            <field name="model" search="[('model', '=', 'farm.event.order')]"/>
+            <field name="group" ref="group_farm"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_farm_event_order_admin">
+            <field name="model" search="[('model', '=', 'farm.event.order')]"/>
+            <field name="group" ref="group_farm_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+        <record model="ir.model.access" id="access_farm_event_order_males">
+            <field name="model" search="[('model', '=', 'farm.event.order')]"/>
+            <field name="group" ref="group_farm_males"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+        <record model="ir.model.access" id="access_farm_event_order_females">
+            <field name="model" search="[('model', '=', 'farm.event.order')]"/>
+            <field name="group" ref="group_farm_females"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+        <record model="ir.model.access"
+            id="access_farm_event_order_individuals">
+            <field name="model" search="[('model', '=', 'farm.event.order')]"/>
+            <field name="group" ref="group_farm_individuals"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+        <record model="ir.model.access" id="access_farm_event_order_groups">
+            <field name="model" search="[('model', '=', 'farm.event.order')]"/>
+            <field name="group" ref="group_farm_groups"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+    </data>
+</tryton>

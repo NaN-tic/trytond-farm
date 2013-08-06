@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<form string="Animal Group">
+    <group colspan="4" col="4" id="header">
+        <label name="number"/>
+        <field name="number"/>
+        <label name="breed"/>
+        <field name="breed"/>
+    </group>
+    <notebook>
+        <page string="General" id="general">
+            <group id="dates" colspan="3" col="4" yfill="1">
+                <label name="active"/>
+                <field name="active"/>
+                <newline/>
+                <label name="origin"/>
+                <field name="origin"/>
+                <label name="purchase_shipment"/>
+                <field name="purchase_shipment"/>
+                <label name="arrival_date"/>
+                <field name="arrival_date"/>
+                <label name="removal_date"/>
+                <field name="removal_date"/>
+                <newline/>
+                <label name="initial_location"/>
+                <field name="initial_location"/>
+                <label name="initial_quantity"/>
+                <field name="initial_quantity"/>
+                <!--
+                <label name="lot"/>
+                <field name="lot"/>
+                <field name="farms"/>
+                -->
+            </group>
+            <field name="tags"/>
+        </page>
+        <page string="Weights" id="weights">
+            <label name="current_weight"/>
+            <field name="current_weight" colspan="3"/>
+            <field name="weights" colspan="4"/>
+        </page>
+        <page string="Notes" id="notes">
+            <field name="notes"/>
+        </page>
+    </notebook>
+</form>

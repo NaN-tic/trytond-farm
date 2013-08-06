@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<form string="Weight">
+    <label name="group"/>
+    <field name="group"/>
+    <newline/>
+    <label name="quantity"/>
+    <field name="quantity"/>
+    <label name="timestamp"/>
+    <field name="timestamp"/>
+    <label name="weight"/>
+    <field name="weight"/>
+    <label name="uom"/>
+    <field name="uom"/>
+</form>

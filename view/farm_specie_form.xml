@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<form string="Specie">
+    <label name="name"/>
+    <field name="name"/>
+    <notebook>
+        <page string="General" id="general">
+            <group colspan="2" id="products">
+                <label name="male_product"/>
+                <field name="male_product"/>
+                <label name="male_enabled"/>
+                <field name="male_enabled"/>
+                <label name="female_product"/>
+                <field name="female_product"/>
+                <label name="female_enabled"/>
+                <field name="female_enabled"/>
+                <label name="semen_product"/>
+                <field name="semen_product"/>
+                <newline/>
+                <label name="individual_product"/>
+                <field name="individual_product"/>
+                <label name="individual_enabled"/>
+                <field name="individual_enabled"/>
+                <label name="group_product"/>
+                <field name="group_product"/>
+                <label name="group_enabled"/>
+                <field name="group_enabled"/>
+            </group>
+            <group colspan="2" id="breeds">
+                <field name="breeds" colspan="4"/>
+            </group>
+            <group colspan="4" col="6" id="locations">
+                <label name="foster_location"/>
+                <field name="foster_location"/>
+                <label name="lost_found_location"/>
+                <field name="lost_found_location"/>
+                <label name="removed_location"/>
+                <field name="removed_location"/>
+                <label name="feed_lost_found_location"/>
+                <field name="feed_lost_found_location"/>
+            </group>
+            <field name="farm_lines" colspan="4"/>
+        </page>
+        <page string="Menus &amp; Actions" id="actions">
+            <field name="events" colspan="4"/>
+            <field name="actions" colspan="2"/>
+            <field name="menus" colspan="2"/>
+            <button name="create_menu_entries" colspan="4"
+                string="_Create Menu Entries" icon="tryton-ok"/>
+        </page>
+    </notebook>
+</form>

@@ -1,0 +1,278 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tryton>
+    <data>
+        <!--
+        farm.tag
+        -->
+        <!-- Views -->
+        <record model="ir.ui.view" id="farm_tag_form_view">
+            <field name="model">farm.tag</field>
+            <field name="type">form</field>
+            <field name="name">farm_tag_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="farm_tag_list_view">
+            <field name="model">farm.tag</field>
+            <field name="type">tree</field>
+            <field name="name">farm_tag_list</field>
+        </record>
+
+        <!-- Actions -->
+        <record model="ir.action.act_window" id="act_farm_tag">
+            <field name="name">Tags</field>
+            <field name="res_model">farm.tag</field>
+            <field name="search_value"></field>
+            <!-- <field name="domain">[]</field> -->
+            <!-- <field name="context">{}</field> -->
+        </record>
+        <record model="ir.action.act_window.view" id="act_farm_tag_view1">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="farm_tag_list_view"/>
+            <field name="act_window" ref="act_farm_tag"/>
+        </record>
+        <record model="ir.action.act_window.view" id="act_farm_tag_view2">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="farm_tag_form_view"/>
+            <field name="act_window" ref="act_farm_tag"/>
+        </record>
+
+        <!-- Permissions -->
+        <record model="ir.model.access" id="access_farm_tag">
+            <field name="model" search="[('model', '=', 'farm.tag')]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+
+        <record model="ir.model.access" id="access_farm_tag_admin">
+            <field name="model" search="[('model', '=', 'farm.tag')]"/>
+            <field name="group" ref="group_farm_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+
+        <!--
+        farm.animal
+        -->
+        <!-- Views -->
+        <record model="ir.ui.view" id="farm_animal_form_view">
+            <field name="model">farm.animal</field>
+            <field name="type">form</field>
+            <field name="name">farm_animal_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="farm_animal_list_view">
+            <field name="model">farm.animal</field>
+            <field name="type">tree</field>
+            <field name="name">farm_animal_list</field>
+        </record>
+
+        <!-- Actions -->
+        <record model="ir.action.act_window" id="act_farm_animal_male">
+            <field name="name">Males</field>
+            <field name="res_model">farm.animal</field>
+            <field name="search_value"></field>
+            <field name="domain">[('type', '=', 'male')]</field>
+            <!-- <field name="context">{}</field> -->
+        </record>
+        <record model="ir.action.act_window.view"
+            id="act_farm_animal_male_view_list">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="farm_animal_list_view"/>
+            <field name="act_window" ref="act_farm_animal_male"/>
+        </record>
+        <record model="ir.action.act_window.view"
+            id="act_farm_animal_male_view_form">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="farm_animal_form_view"/>
+            <field name="act_window" ref="act_farm_animal_male"/>
+        </record>
+
+        <record model="ir.action.act_window" id="act_farm_animal_female">
+            <field name="name">Females</field>
+            <field name="res_model">farm.animal</field>
+            <field name="search_value"></field>
+            <field name="domain">[('type', '=', 'female')]</field>
+        </record>
+        <record model="ir.action.act_window.view"
+            id="act_farm_animal_female_view_list">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="farm_animal_list_view"/>
+            <field name="act_window" ref="act_farm_animal_female"/>
+        </record>
+        <record model="ir.action.act_window.view"
+            id="act_farm_animal_female_view_form">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="farm_animal_form_view"/>
+            <field name="act_window" ref="act_farm_animal_female"/>
+        </record>
+
+        <record model="ir.action.act_window" id="act_farm_animal_individual">
+            <field name="name">Individuals</field>
+            <field name="res_model">farm.animal</field>
+            <field name="search_value"></field>
+            <field name="domain">[('type', '=', 'individual')]</field>
+        </record>
+        <record model="ir.action.act_window.view"
+            id="act_farm_animal_individual_view_list">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="farm_animal_list_view"/>
+            <field name="act_window" ref="act_farm_animal_individual"/>
+        </record>
+        <record model="ir.action.act_window.view"
+            id="act_farm_animal_individual_view_form">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="farm_animal_form_view"/>
+            <field name="act_window" ref="act_farm_animal_individual"/>
+        </record>
+
+        <!-- Permissions -->
+        <record model="ir.model.access" id="access_farm_animal_farm">
+            <field name="model" search="[('model', '=', 'farm.animal')]"/>
+            <field name="group" ref="group_farm"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+
+        <record model="ir.model.access" id="access_farm_animal_admin">
+            <field name="model" search="[('model', '=', 'farm.animal')]"/>
+            <field name="group" ref="group_farm_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+
+        <record model="ir.model.access" id="access_farm_animal_males">
+            <field name="model" search="[('model', '=', 'farm.animal')]"/>
+            <field name="group" ref="group_farm_males"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+
+        <record model="ir.model.access" id="access_farm_animal_females">
+            <field name="model" search="[('model', '=', 'farm.animal')]"/>
+            <field name="group" ref="group_farm_females"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+
+        <record model="ir.model.access" id="access_farm_animal_individuals">
+            <field name="model" search="[('model', '=', 'farm.animal')]"/>
+            <field name="group" ref="group_farm_individuals"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+
+        <record model="ir.model.access" id="access_farm_animal_groups">
+            <field name="model" search="[('model', '=', 'farm.animal')]"/>
+            <field name="group" ref="group_farm_groups"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+
+        <!-- Sequences -->
+        <record model="ir.sequence.type" id="sequence_type_animal">
+            <field name="name">Farm Animal</field>
+            <field name="code">farm.animal</field>
+        </record>
+        <record model="ir.sequence.type-res.group"
+            id="sequence_type_animal_group_farm">
+            <field name="sequence_type" ref="sequence_type_animal"/>
+            <field name="group" ref="group_farm"/>
+        </record>
+        <record model="ir.sequence.type-res.group"
+            id="sequence_type_group_group_animal_admin">
+            <field name="sequence_type" ref="sequence_type_animal"/>
+            <field name="group" ref="group_farm"/>
+        </record>
+        <record model="ir.sequence.type-res.group"
+            id="sequence_type_group_group_animal_males">
+            <field name="sequence_type" ref="sequence_type_animal"/>
+            <field name="group" ref="group_farm_males"/>
+        </record>
+        <record model="ir.sequence.type-res.group"
+            id="sequence_type_group_group_animal_females">
+            <field name="sequence_type" ref="sequence_type_animal"/>
+            <field name="group" ref="group_farm_females"/>
+        </record>
+        <record model="ir.sequence.type-res.group"
+            id="sequence_type_group_group_animal_individuals">
+            <field name="sequence_type" ref="sequence_type_animal"/>
+            <field name="group" ref="group_farm_individuals"/>
+        </record>
+        <record model="ir.sequence.type-res.group"
+            id="sequence_type_group_group_animal_groups">
+            <field name="sequence_type" ref="sequence_type_animal"/>
+            <field name="group" ref="group_farm_groups"/>
+        </record>
+
+        <!--
+        farm.animal.weigh
+        -->
+        <!-- Views -->
+        <record model="ir.ui.view" id="farm_animal_weight_form_view">
+            <field name="model">farm.animal.weight</field>
+            <field name="type">form</field>
+            <field name="name">farm_animal_weight_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="farm_animal_weight_list_view">
+            <field name="model">farm.animal.weight</field>
+            <field name="type">tree</field>
+            <field name="name">farm_animal_weight_list</field>
+        </record>
+
+        <!-- Permissions -->
+        <record model="ir.model.access" id="access_farm_animal_weight">
+            <field name="model" search="[('model', '=', 'farm.animal.weight')]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+
+        <record model="ir.model.access" id="access_farm_animal_weight_admin">
+            <field name="model" search="[('model', '=', 'farm.animal.weight')]"/>
+            <field name="group" ref="group_farm_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+
+        <!--
+        farm.animal.female_cycle
+        -->
+        <record model="ir.ui.view" id="farm_animal_female_cycle_form_view">
+            <field name="model">farm.animal.female_cycle</field>
+            <field name="type">form</field>
+            <field name="name">farm_animal_female_cycle_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="farm_animal_female_cycle_list_view">
+            <field name="model">farm.animal.female_cycle</field>
+            <field name="type">tree</field>
+            <field name="name">farm_animal_female_cycle_list</field>
+        </record>
+
+        <!-- Menus -->
+        <menuitem action="act_farm_tag" id="menu_farm_tag"
+            parent="menu_configuration" sequence="2"/>
+    </data>
+</tryton>
