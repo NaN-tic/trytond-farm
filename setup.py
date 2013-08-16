@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# encoding: utf-8
 from setuptools import setup
 import re
 import os
@@ -43,9 +44,8 @@ setup(name='%s_%s' % (PREFIX, MODULE),
         'animals.'),
     long_description=read('README'),
     author='NaN·tic',
-    url='http://www.tryton.org/',
-    download_url=("http://downloads.tryton.org/" +
-        info.get('version', '0.0.1').rsplit('.', 1)[0] + '/'),
+    url='http://www.nan-tic.com/',
+    download_url="https://bitbucket.org/trytonspain/aeat_303",
     package_dir={'trytond.modules.%s' % MODULE: '.'},
     packages=[
         'trytond.modules.%s' % MODULE,
