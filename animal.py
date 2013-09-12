@@ -99,8 +99,6 @@ class AnimalMixin:
             effective_date=move_date,
             company=company,
             lot=self.lot,
-            # TODO: es suficient agafar el cost_price del producte o s'hauria
-            # de permetre a l'usuari especificar un preu de cost inicial?
             unit_price=self.lot.product.cost_price,
             origin=self)
 

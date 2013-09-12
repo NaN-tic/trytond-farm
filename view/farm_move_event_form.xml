@@ -11,6 +11,8 @@
             <field name="to_location"/>
             <label name="quantity"/>
             <field name="quantity"/>
+            <label name="unit_price"/>
+            <field name="unit_price"/>
             <label name="move"/>
             <field name="move"/>
         </group>

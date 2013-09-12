@@ -6,6 +6,7 @@
         <field name="from_location"/>
         <field name="to_location"/>
         <field name="quantity"/>
+        <field name="unit_price"/>
         <field name="weight"/>
     </xpath>
 </data>

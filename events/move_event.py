@@ -48,13 +48,12 @@ class MoveEvent(AbstractEvent):
         on_change_with=['animal_type', 'animal_group', 'timestamp',
             'from_location'],
         depends=['animal_type', 'animal_group', 'from_location', 'state'])
-    # TODO: register price? ajuntar explicacio amb la resta de 'cost_price'
-    #cost_price = fields.Numeric('Cost Price', required=True, digits=(16, 4),
-    #    states={,
-    #        'readonly': Not(Equal(Eval('state'), 'draft')),
-    #    }, on_change_with=['animal_type', 'animal_group'],
-    #    depends=['state', 'animal_type', 'animal_group'],
-    #    help='Product\'s cost of Animal or Group for analytical accounting.')
+    unit_price = fields.Numeric('Unit Price', required=True, digits=(16, 4),
+        states={
+            'readonly': Not(Equal(Eval('state'), 'draft')),
+            }, on_change_with=['animal_type', 'animal', 'animal_group'],
+        depends=['state'],
+        help='Unitary cost of Animal or Group for analytical accounting.')
     uom = fields.Many2One('product.uom', "UOM",
         domain=[('category', '=', Id('product', 'uom_cat_weight'))],
         states={
@@ -154,6 +153,12 @@ class MoveEvent(AbstractEvent):
                 stock_date_end=self.timestamp.date()):
             return self.animal_group.lot.quantity or None
 
+    def on_change_with_unit_price(self):
+        if self.animal_type != 'group' and self.animal:
+            return self.animal.lot.product.cost_price
+        elif self.animal_type == 'group' and self.animal_group:
+            return self.animal_group.lot.product.cost_price
+
     def on_change_with_unit_digits(self, name=None):
         if self.uom:
             return self.uom.digits
@@ -232,6 +237,7 @@ class MoveEvent(AbstractEvent):
             effective_date=self.timestamp.date(),
             company=context.get('company'),
             lot=lot,
+            unit_price=self.unit_price,
             origin=self)
 
     def _get_weight_record(self):
