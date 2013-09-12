@@ -508,6 +508,18 @@ class FeedInventory(ModelSQL, ModelView, Workflow):
                     'Inventory for inventory "%s".' % inventory.rec_name)
                 continue
 
+            # Associate provisional inventories to inventory and canel them
+            provisional_inventories = ProvisionalInventory.search([
+                    ('location', '=', inventory.location.id),
+                    ('feed_inventory', 'in', [None, inventory.id]),
+                    ('state', '=', 'validated'),
+                    ('timestamp', '<=', inventory.timestamp),
+                    ])
+            ProvisionalInventory.write(provisional_inventories, {
+                    'feed_inventory': inventory.id,
+                    })
+            ProvisionalInventory.cancel(provisional_inventories)
+
             inv_qty = inventory.quantity
             qty_in_silo = inventory.location.get_total_quantity(
                 inventory.timestamp.date(), inventory.uom)
@@ -548,17 +560,6 @@ class FeedInventory(ModelSQL, ModelView, Workflow):
             inventory.prev_inventory = prev_inventory.id
             inventory.save()
 
-            # Associate provisional inventories to inventory and canel them
-            provisional_inventories = ProvisionalInventory.search([
-                    ('location', '=', inventory.location.id),
-                    ('feed_inventory', 'in', [None, inventory.id]),
-                    ('state', '=', 'validated'),
-                    ('timestamp', '<=', inventory.timestamp),
-                    ])
-            ProvisionalInventory.write(provisional_inventories, {
-                    'feed_inventory': inventory.id,
-                    })
-            ProvisionalInventory.cancel(provisional_inventories)
         # Validate the created Feed Events
         inventories_events = FeedEvent.search([
                 ('feed_inventory', 'in', [i.id for i in inventories]),
@@ -936,22 +937,62 @@ class FeedProvisionalInventory(ModelSQL, ModelView, Workflow):
     @Workflow.transition('cancel')
     def cancel(cls, inventories):
         pool = Pool()
+        Date = pool.get('ir.date')
         InventoryLine = pool.get('farm.feed.inventory.line')
         StockInventory = pool.get('stock.inventory')
+        StockMove = pool.get('stock.move')
 
         todo_stock_inventories = []
+        todo_stock_moves = []
         inventory_lines = []
         for inventory in inventories:
             assert inventory.state == 'validated' and inventory.inventory, (
                 'Feed Provisional Inventory "%s" is not in Validated state or '
                 'it doesn\'t have stock inventory.' % inventory.rec_name)
             todo_stock_inventories.append(inventory.inventory)
+            todo_stock_moves += [l.move for l in inventory.inventory.lines
+                if l.move]
             inventory_lines += inventory.lines
 
-        StockInventory.cancel(todo_stock_inventories)
-        StockInventory.delete(todo_stock_inventories)
+        deny_modify_done_cancel_bak = StockMove._deny_modify_done_cancel.copy()
+        StockMove._deny_modify_done_cancel.remove('state')
+        StockMove._deny_modify_done_cancel.remove('effective_date')
+        today = Date.today()
+        for move in todo_stock_moves:
+            move.state = 'cancel'
+            move.effective_date = today
+            if (move.from_location.type in ('supplier', 'production')
+                    and move.to_location.type == 'storage'
+                    and move.product.cost_price_method == 'average'):
+                move._update_product_cost_price('out')
+            elif (move.to_location.type == 'supplier'
+                    and move.from_location.type == 'storage'
+                    and move.product.cost_price_method == 'average'):
+                move._update_product_cost_price('in')
+            move.effective_date = None
+            move.save()
+        StockMove._deny_modify_done_cancel = deny_modify_done_cancel_bak
+
+        StockInventory.write(todo_stock_inventories, {
+                'state': 'cancel',
+                })
 
         InventoryLine.delete(inventory_lines)
+
+    @classmethod
+    def write(cls, inventories, vals):
+        pool = Pool()
+        StockInventory = pool.get('stock.inventory')
+        StockMove = pool.get('stock.move')
+
+        super(FeedProvisionalInventory, cls).write(inventories, vals)
+
+        if vals.get('state', '') == 'cancel':
+            stock_inventories = [i.inventory for i in inventories]
+            stock_moves = [l.move for i in stock_inventories
+                for l in i.lines if l.move]
+            StockMove.delete(stock_moves)
+            StockInventory.delete(stock_inventories)
 
 
 class FeedProvisionalInventoryLocation(ModelSQL):

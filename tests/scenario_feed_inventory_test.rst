@@ -361,62 +361,62 @@ nor feed event::
     >>> feed_inventory0.feed_events
     []
 
-.. Create first privisional feed inventory for silo S1 and silo's locations to fed
-.. with 1000.00 Kg at 5 days before::
-.. 
-..     >>> FeedProvisionalInventory = Model.get('farm.feed.provisional_inventory')
-..     >>> feed_provisional_inventory1 = FeedProvisionalInventory(
-..     ...     location=silo1,
-..     ...     timestamp=(now - datetime.timedelta(days=5)),
-..     ...     quantity=Decimal('1000.00'),
-..     ...     uom=kg,
-..     ...     )
-..     >>> feed_provisional_inventory1.save()
-..     >>> feed_provisional_inventory1.state
-..     u'draft'
-.. 
-.. Confirm first provisional feed inventory and check it has an stock inventory in
-.. state 'Done' and the median of Consumed Quantity per Animal/Day is
-.. approximately 50 Kg::
-.. 
-..     >>> FeedProvisionalInventory.confirm([feed_provisional_inventory1.id],
-..     ...     config.context)
-..     >>> feed_provisional_inventory1.reload()
-..     >>> feed_provisional_inventory1.state
-..     u'validated'
-..     >>> (feed_provisional_inventory1.lines[0].consumed_qty_animal_day
-..     ...     - Decimal('50.0')) < Decimal('3.0')
-..     True
-..     >>> feed_provisional_inventory1.inventory.state
-..     u'done'
-.. 
-.. Create second privisional feed inventory for silo S1 and silo's locations to
-.. fed with 1100.00 Kg at 2 days before::
-.. 
-..     >>> feed_provisional_inventory2 = FeedProvisionalInventory(
-..     ...     location=silo1,
-..     ...     timestamp=(now - datetime.timedelta(days=2)),
-..     ...     quantity=Decimal('1100.00'),
-..     ...     uom=kg,
-..     ...     )
-..     >>> feed_provisional_inventory2.save()
-..     >>> feed_provisional_inventory2.state
-..     u'draft'
-.. 
-.. Confirm second provisional feed inventory and check it has an stock inventory
-.. state 'Done' and the median of Consumed Quantity per Animal/Day is
-.. approximately 50 Kg::
-.. 
-..     >>> FeedProvisionalInventory.confirm([feed_provisional_inventory2.id],
-..     ...     config.context)
-..     >>> feed_provisional_inventory2.reload()
-..     >>> feed_provisional_inventory2.state
-..     u'validated'
-..     >>> (feed_provisional_inventory2.lines[0].consumed_qty_animal_day
-..     ...     - Decimal('50.0')) < Decimal('3.0')
-..     True
-..     >>> feed_provisional_inventory2.inventory.state
-..     u'done'
+Create first privisional feed inventory for silo S1 and silo's locations to fed
+with 1000.00 Kg at 5 days before::
+
+    >>> FeedProvisionalInventory = Model.get('farm.feed.provisional_inventory')
+    >>> feed_provisional_inventory1 = FeedProvisionalInventory(
+    ...     location=silo1,
+    ...     timestamp=(now - datetime.timedelta(days=5)),
+    ...     quantity=Decimal('1000.00'),
+    ...     uom=kg,
+    ...     )
+    >>> feed_provisional_inventory1.save()
+    >>> feed_provisional_inventory1.state
+    u'draft'
+
+Confirm first provisional feed inventory and check it has an stock inventory in
+state 'Done' and the median of Consumed Quantity per Animal/Day is
+approximately 50 Kg::
+
+    >>> FeedProvisionalInventory.confirm([feed_provisional_inventory1.id],
+    ...     config.context)
+    >>> feed_provisional_inventory1.reload()
+    >>> feed_provisional_inventory1.state
+    u'validated'
+    >>> (feed_provisional_inventory1.lines[0].consumed_qty_animal_day
+    ...     - Decimal('50.0')) < Decimal('3.0')
+    True
+    >>> feed_provisional_inventory1.inventory.state
+    u'done'
+
+Create second privisional feed inventory for silo S1 and silo's locations to
+fed with 1100.00 Kg at 2 days before::
+
+    >>> feed_provisional_inventory2 = FeedProvisionalInventory(
+    ...     location=silo1,
+    ...     timestamp=(now - datetime.timedelta(days=2)),
+    ...     quantity=Decimal('1100.00'),
+    ...     uom=kg,
+    ...     )
+    >>> feed_provisional_inventory2.save()
+    >>> feed_provisional_inventory2.state
+    u'draft'
+
+Confirm second provisional feed inventory and check it has an stock inventory
+state 'Done' and the median of Consumed Quantity per Animal/Day is
+approximately 50 Kg::
+
+    >>> FeedProvisionalInventory.confirm([feed_provisional_inventory2.id],
+    ...     config.context)
+    >>> feed_provisional_inventory2.reload()
+    >>> feed_provisional_inventory2.state
+    u'validated'
+    >>> (feed_provisional_inventory2.lines[0].consumed_qty_animal_day
+    ...     - Decimal('50.0')) < Decimal('3.0')
+    True
+    >>> feed_provisional_inventory2.inventory.state
+    u'done'
 
 Create (real) feed inventory for silo S1 and silo's locations to fed with
 200.00 Kg at today::
@@ -446,3 +446,9 @@ current lot is the second Feed Lot::
     ...     - Decimal('200.00')) < Decimal('0.01')
     True
 
+Check provisional inventories doesn't have stock inventory related (it has been
+removed)::
+
+    >>> feed_provisional_inventory2.reload()
+    >>> feed_provisional_inventory2.inventory == None
+    True

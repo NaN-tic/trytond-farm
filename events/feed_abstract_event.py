@@ -1,7 +1,7 @@
 #The COPYRIGHT file at the top level of this repository contains the full
 #copyright notices and license terms.
 from trytond.model import fields, ModelView, Workflow
-from trytond.pyson import Bool, Equal, Eval, Id, If, Not, Or
+from trytond.pyson import Bool, Equal, Eval, Id, Not, Or
 from trytond.pool import Pool
 from trytond.transaction import Transaction
 
@@ -138,8 +138,9 @@ class FeedAbstractEvent(AbstractEvent):
         """
         Create an stock move
         """
-        Move = Pool().get('stock.move')
-        Uom = Pool().get('product.uom')
+        pool = Pool()
+        Move = pool.get('stock.move')
+        Uom = pool.get('product.uom')
         todo_moves = []
         for feed_event in events:
             assert not feed_event.move, ('%s "%s" already has a related stock '
