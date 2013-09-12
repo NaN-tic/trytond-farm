@@ -50,7 +50,7 @@ class InseminationEvent(AbstractEvent):
             ('type', '=', 'female'),
             If(Equal(Eval('state'), 'draft'),
                 ['OR', [
-                        ('current_cycle', '=', False),
+                        ('current_cycle', '=', None),
                     ], [
                         ('current_cycle.state', 'in', ('mated', 'unmated')),
                     ], ],

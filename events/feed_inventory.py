@@ -959,8 +959,10 @@ class FeedProvisionalInventoryLocation(ModelSQL):
     __name__ = 'farm.feed.provisional_inventory-stock.location'
 
     inventory = fields.Many2One('farm.feed.provisional_inventory',
-        'Feed Provisional Inventory', required=True)
-    location = fields.Many2One('stock.location', 'Location', required=True)
+        'Feed Provisional Inventory', ondelete='CASCADE', required=True,
+        select=True)
+    location = fields.Many2One('stock.location', 'Location', required=True,
+        select=True)
 
 
 class FeedInventoryLine(ModelSQL, ModelView):

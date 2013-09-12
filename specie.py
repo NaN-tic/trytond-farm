@@ -641,8 +641,9 @@ class SpecieModel(ModelSQL):
     'Specie - Model'
     __name__ = 'farm.specie-ir.model'
     _table = 'farm_specie_ir_model'
-    specie = fields.Many2One('farm.specie', 'Specie', required=True)
-    model = fields.Many2One('ir.model', 'Model', required=True)
+    specie = fields.Many2One('farm.specie', 'Specie', ondelete='CASCADE',
+        required=True, select=True)
+    model = fields.Many2One('ir.model', 'Model', required=True, select=True)
 
 
 class Menu(ModelSQL, ModelView):

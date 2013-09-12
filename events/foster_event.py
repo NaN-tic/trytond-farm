@@ -28,7 +28,7 @@ class FosterEvent(AbstractEvent):
             ('type', '=', 'female'),
             ('farm', '=', Eval('farm')),
             ('id', '!=', Eval('animal')),
-            ('current_cycle', '!=', False),
+            ('current_cycle', '!=', None),
             If(Equal(Eval('state'), 'draft'),
                 ('current_cycle.state', '=', 'lactating'),
                 ()),
@@ -57,7 +57,7 @@ class FosterEvent(AbstractEvent):
         cls.animal.domain += [
             ('farm', '=', Eval('farm')),
             ('type', '=', 'female'),
-            ('current_cycle', '!=', False),
+            ('current_cycle', '!=', None),
             If(Equal(Eval('state'), 'draft'),
                 ('current_cycle.state', '=', 'lactating'),
                 ()),
@@ -115,7 +115,8 @@ class FosterEvent(AbstractEvent):
             (exchanging animal_id != pair_animal_id and
                 fostered_in != fostered_out)
         '''
-        Move = Pool().get('stock.move')
+        pool = Pool()
+        Move = pool.get('stock.move')
         todo_moves = []
         for foster_event in events:
             assert (not foster_event.move and not foster_event.pair_event), (

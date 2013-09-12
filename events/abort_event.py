@@ -25,7 +25,7 @@ class AbortEvent(AbstractEvent):
         super(AbortEvent, cls).__setup__()
         cls.animal.domain += [
             ('type', '=', 'female'),
-            ('current_cycle', '!=', False),
+            ('current_cycle', '!=', None),
             If(Equal(Eval('state'), 'draft'),
                 ('current_cycle.state', '=', 'pregnant'),
                 ()),

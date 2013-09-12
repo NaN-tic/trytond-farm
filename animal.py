@@ -402,8 +402,10 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
 class AnimalTag(ModelSQL):
     'Animal - Tag'
     __name__ = 'farm.animal-farm.tag'
-    animal = fields.Many2One('farm.animal', 'Animal', required=True)
-    tag = fields.Many2One('farm.tag', 'Tag', required=True)
+    animal = fields.Many2One('farm.animal', 'Animal', ondelete='CASCADE',
+        required=True, select=True)
+    tag = fields.Many2One('farm.tag', 'Tag', ondelete='CASCADE', required=True,
+        select=True)
 
 
 class AnimalWeight(ModelSQL, ModelView):
@@ -612,13 +614,13 @@ class Female:
         last_farrowing_events = FarrowingEvent.search([
                 ('animal', '=', self),
                 ('state', '=', 'validated'),
-                ('produced_group', '!=', False),
+                ('produced_group', '!=', None),
                 ],
             order=[
                 ('timestamp', 'DESC'),
                 ], limit=1)
         if last_farrowing_events:
-            return last_farrowing_events[0].produced_group
+            return last_farrowing_events[0].produced_group.id
         return None
 
     def get_days_from_farrowing(self, name):

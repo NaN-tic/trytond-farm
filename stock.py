@@ -85,9 +85,9 @@ class LotAnimal(ModelSQL):
     __name__ = 'stock.lot-farm.animal'
 
     lot = fields.Many2One('stock.lot', 'Lot', required=True,
-        ondelete='RESTRICT')
+        ondelete='RESTRICT', select=True)
     animal = fields.Many2One('farm.animal', 'Animal', required=True,
-        ondelete='RESTRICT')
+        ondelete='RESTRICT', select=True)
 
     @classmethod
     def __setup__(cls):
@@ -103,9 +103,9 @@ class LotAnimalGroup(ModelSQL):
     __name__ = 'stock.lot-farm.animal.group'
 
     lot = fields.Many2One('stock.lot', 'Lot', required=True,
-        ondelete='RESTRICT')
+        ondelete='RESTRICT', select=True)
     animal_group = fields.Many2One('farm.animal.group', 'Animal Group',
-        required=True, ondelete='RESTRICT')
+        required=True, ondelete='RESTRICT', select=True)
 
     @classmethod
     def __setup__(cls):
@@ -184,7 +184,7 @@ class Location:
 
     @classmethod
     def search(cls, args, offset=0, limit=None, order=None, count=False,
-            query_string=False):
+            query=False):
         FarmLine = Pool().get('farm.specie.farm_line')
 
         args = args[:]
@@ -209,7 +209,7 @@ class Location:
                     ],
                 ]]
         res = super(Location, cls).search(args, offset=offset, limit=limit,
-            order=order, count=count, query_string=query_string)
+            order=order, count=count, query=query)
         return res
 
     def get_lot_fifo(self, stock_date=None, to_uom=None):
@@ -310,8 +310,10 @@ class Location:
 class LocationSiloLocation(ModelSQL):
     'Silo - Location'
     __name__ = 'stock.location.silo-stock.location'
-    silo = fields.Many2One('stock.location', 'Silo', required=True)
-    location = fields.Many2One('stock.location', 'Location', required=True)
+    silo = fields.Many2One('stock.location', 'Silo', ondelete='CASCADE',
+        required=True, select=True)
+    location = fields.Many2One('stock.location', 'Location',
+        ondelete='CASCADE', required=True, select=True)
 
 
 class Move:

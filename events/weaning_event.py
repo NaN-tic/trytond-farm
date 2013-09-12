@@ -99,7 +99,7 @@ class WeaningEvent(AbstractEvent):
             ('farm', '=', Eval('farm')),
             ('location.type', '=', 'storage'),
             ('type', '=', 'female'),
-            ('current_cycle', '!=', False),
+            ('current_cycle', '!=', None),
             If(Equal(Eval('state'), 'draft'),
                 ('current_cycle.state', '=', 'lactating'),
                 ()),

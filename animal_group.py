@@ -182,12 +182,12 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
             warehouses = Location.search([
                 ('id', 'in', specie_warehouse_ids),
                 ('type', '=', 'warehouse'),
-                ('warehouse',) + domain[1:],
+                ('warehouse',) + tuple(domain[1:]),
                 ])
         else:
             warehouses = Location.search([
                 ('type', '=', 'warehouse'),
-                ('warehouse',) + domain[1:],
+                ('warehouse',) + tuple(domain[1:]),
                 ])
         if not warehouses:
             return []
@@ -321,8 +321,10 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
 class AnimalGroupTag(ModelSQL):
     'Animal Group - Tag'
     __name__ = 'farm.animal.group-farm.tag'
-    group = fields.Many2One('farm.animal.group', 'Group', required=True)
-    tag = fields.Many2One('farm.tag', 'Tag', required=True)
+    group = fields.Many2One('farm.animal.group', 'Group', ondelete='CASCADE',
+        required=True, select=True)
+    tag = fields.Many2One('farm.tag', 'Tag', ondelete='CASCADE', required=True,
+        select=True)
 
 
 class AnimalGroupWeight(ModelSQL, ModelView):
