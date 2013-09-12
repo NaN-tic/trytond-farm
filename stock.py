@@ -128,7 +128,11 @@ class Location:
                 }, depends=['silo']),
         'get_current_lot')
     locations_to_fed = fields.Many2Many('stock.location.silo-stock.location',
-        'silo', 'location', 'Locations to fed', states={
+        'silo', 'location', 'Locations to fed', domain=[
+            ('type', '=', 'storage'),
+            ('silo', '=', False),
+            ],
+        states={
             'invisible': Not(Eval('silo', False)),
             }, depends=['silo'],
         help='Indicates the locations the silo feeds. Note that this will '
