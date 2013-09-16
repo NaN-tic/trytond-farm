@@ -14,7 +14,7 @@ import unittest
 import warnings
 
 import trytond.tests.test_tryton
-from trytond.tests.test_tryton import POOL, test_view, test_depends
+from trytond.tests.test_tryton import test_view, test_depends
 from trytond.backend.sqlite.database import Database as SQLiteDatabase
 
 SCENARIOS = [
@@ -41,16 +41,6 @@ class FarmTestCase(unittest.TestCase):
 
     def setUp(self):
         trytond.tests.test_tryton.install_module('farm')
-        self.template = POOL.get('product.template')
-        self.product = POOL.get('product.product')
-        self.uom = POOL.get('product.uom')
-        self.lot = POOL.get('stock.lot')
-        self.location = POOL.get('stock.location')
-        self.move = POOL.get('stock.move')
-        self.company = POOL.get('company.company')
-        self.user = POOL.get('res.user')
-        self.period = POOL.get('stock.period')
-        self.cache = POOL.get('stock.period.cache')
 
     def test0005views(self):
         '''
