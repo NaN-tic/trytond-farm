@@ -15,6 +15,9 @@
             <page name="feed_inventory_lines">
                 <field name="feed_inventory_lines" colspan="4"/>
             </page>
+            <page name="feed_date_inputs">
+                <field name="feed_date_inputs" colspan="4"/>
+            </page>
         </notebook>
     </xpath>
 </data>

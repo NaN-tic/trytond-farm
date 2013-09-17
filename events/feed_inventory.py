@@ -3,6 +3,10 @@
 import logging
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
+from sql import Literal
+from sql.aggregate import Avg, Count, Max, Sum
+from sql.conditionals import Coalesce
+from sql.functions import Extract, Now
 
 from trytond.model import fields, ModelSQL, ModelView, Workflow
 from trytond.pyson import Bool, Eval, Id, Not
@@ -11,10 +15,11 @@ from trytond.transaction import Transaction
 
 from .abstract_event import _STATES_WRITE_DRAFT, \
     _DEPENDS_WRITE_DRAFT, _STATES_VALIDATED_ADMIN, _DEPENDS_VALIDATED_ADMIN
+from ..postgresql import GenerateSeries
 
 __all__ = ['AnimalLocationStock', 'FeedInventory', 'FeedInventoryLocation',
     'FeedProvisionalInventory', 'FeedProvisionalInventoryLocation',
-    'FeedInventoryLine']  # FeedLocationDate
+    'FeedInventoryLine', 'FeedLocationDate']
 
 _INVENTORY_STATES = [
     ('draft', 'Draft'),
@@ -594,6 +599,7 @@ class FeedInventory(ModelSQL, ModelView, Workflow):
                     'consumed_qty_animal_day': qty_animal_day,
                     'consumed_qty': animals_day * qty_animal_day,
                     'uom': self.uom.id,
+                    'state': 'validated',
                     })
         return lines_vals
 
@@ -1064,13 +1070,13 @@ class FeedInventoryLine(ModelSQL, ModelView):
         return self.uom and self.uom.digits or 2
 
 
-class FeedLocationDate(ModelSQL, ModelView):  # TODO: acabar
-    'Feed Movements to Location per Date'
+class FeedLocationDate(ModelSQL, ModelView):
+    'Feed Consumption per Location and Date'
     __name__ = 'farm.feed.location_date'
-    _order = [
-        ('location', 'ASC'),
-        ('date', 'DESC'),
-        ]
+    #_order = [
+    #    ('location', 'ASC'),
+    #    ('date', 'DESC'),
+    #    ]
 
     location = fields.Many2One('stock.location', 'Location fed', select=True)
     date = fields.Date('Date', select=True)
@@ -1079,64 +1085,155 @@ class FeedLocationDate(ModelSQL, ModelView):  # TODO: acabar
     provisional_inventory_qty = fields.Integer('Provisional Inventories',
         select=True,
         help='Number of Provisional Inventories which include this date.')
-    uom = fields.Many2One('product.uom', "UOM", readonly=True)
-    unit_digits = fields.Function(fields.Integer('Unit Digits'),
-        'get_unit_digits')
-    consumed_qty_animal_day = fields.Numeric('Consumed Qty. per Animal-Day',
-        digits=(16, Eval('unit_digits', 2)), select=True,
-        depends=['unit_digits'])
-    animals_qty = fields.Integer('Num. Animals', select=True,
-        help='Number of Animals (Males, Females, Individuals or members of '
-        'Groups) in this location in this date.')
-    consumed_qty = fields.Numeric('Consumed Qty.', digits=(16, 2), select=True,
-        help='Total consumed quantity calculated by average.')
-    reported_consumed_qty = fields.Numeric('Reported Consumed Qty.',
+    #uom = fields.Many2One('product.uom', "UOM", readonly=True)
+    #unit_digits = fields.Function(fields.Integer('Unit Digits'),
+    #    'get_unit_digits')
+    consumed_qty_animal_day = fields.Float('Consumed Qty. per Animal-Day',
+        digits=(16, 2), select=True)
+        #depends=['unit_digits'])
+    animals_qty = fields.Function(fields.Integer('Num. Animals',
+            help='Number of Animals (Males, Females, Individuals or members '
+            'of Groups) in this location in this date.'),
+        'get_computed_quantities')
+    consumed_qty = fields.Function(fields.Float('Consumed Qty.',
+            digits=(16, 2),
+            help='Total consumed quantity calculated by average.'),
+        'get_computed_quantities')
+    median_consumed_qty = fields.Float('Median Consumed Qty.',
         digits=(16, 2), select=True,
-        help='Total consumed quantity reported in Inventory Lines.')
+        help='The median of daily consumed quantity computed from Inventory Lines.')
+
+    #@classmethod
+    #def __setup__(cls):
+    #    super(ProductCostHistory, cls).__setup__()
+    #    cls._order.insert(0, ('date', 'DESC'))
 
     @classmethod
     def table_query(cls):
+        pool = Pool()
+        InventoryLine = pool.get('farm.feed.inventory.line')
+
         n_days = cls._days_to_compute()
-        return ('SELECT (l.location *  10^3 + '
-                'EXTRACT(DOY FROM c_date::DATE))::integer AS id, '
-                'l.location AS location, c_date::DATE AS date, '
-                'COUNT(fil.inventory)::integer AS inventory_qty, '
-                'COUNT(fil.provisional_inventory)::integer '
-                    'AS provisional_inventory_qty, '
-                'COALESCE(AVG(fil.consumed_qty_animal_day), 0.0) '
-                    'AS consumed_qty_animal_day, '
-                'COALESCE(rpc_grouped.qty, 0)::integer AS animals_qty, '
-                'COALESCE(rpc_grouped.qty, 0) * '
-                    'COALESCE(AVG(fil.consumed_qty_animal_day), 0.0) '
-                    'AS consumed_qty, '
-                'COALESCE(SUM(fil.consumed_qty), 0.0) AS inv_consumed_qty '
-                'FROM ('
-                    'SELECT distinct(dest_location_dest) AS location '
-                    'FROM farm_feed_inventory_line) AS l '
-                    'LEFT JOIN generate_series(NOW()::DATE - %s, NOW()::DATE, '
-                        'INTERVAL \'1 day\') AS c_date on (true) '
-                    'LEFT JOIN farm_feed_inventory_line AS fil ON ('
-                        'fil.dest_location_dest = l.location AND '
-                        'fil.state = \'valid\' AND '
-                        'fil.start_date::DATE <= c_date::DATE AND '
-                        'fil.end_date::DATE >= c_date::DATE) '
-                    'LEFT JOIN (SELECT rpc.location, '
-                        'generate_series::DATE AS date, SUM(rpc.qty) AS qty '
-                        'FROM stock_report_prodlots_calendar rpc, '
-                            'generate_series('
-                                '(SELECT MIN(date) FROM stock_move)::DATE, '
-                                'NOW()::DATE, INTERVAL \'1 day\') '
-                        'WHERE rpc.date <= generate_series::DATE '
-                        'GROUP BY rpc.location, generate_series::DATE '
-                        ') rpc_grouped ON (rpc_grouped.location = l.location '
-                            'AND rpc_grouped.date = c_date::DATE) '
-                'GROUP BY l.location, c_date::DATE, rpc_grouped.qty '
-                'AS ' + cls._table, [n_days])
+
+        inv_line = InventoryLine.__table__()
+        inv_line_tmp = InventoryLine.__table__()
+        inv_line2 = inv_line_tmp.select(
+            inv_line_tmp.inventory,
+            inv_line_tmp.provisional_inventory,
+            inv_line_tmp.dest_location,
+            inv_line_tmp.start_date,
+            inv_line_tmp.end_date,
+            inv_line_tmp.consumed_qty_animal_day,
+            (inv_line_tmp.consumed_qty /
+                (inv_line_tmp.end_date - inv_line_tmp.start_date + 1)).as_(
+                'daily_consumed_qty'))
+
+        # TODO: replace by SELECT DISTINCT when it was supported by python-sql
+        locations = inv_line.select(inv_line.dest_location,
+            Max(inv_line.create_uid).as_('create_uid'),
+            Max(inv_line.create_date).as_('create_date'),
+            Max(inv_line.write_uid).as_('write_uid'),
+            Max(inv_line.write_date).as_('write_date'),
+            group_by=inv_line.dest_location)
+
+        generate_series = GenerateSeries(Now().cast('DATE') - Literal(n_days),
+            Now(), "INTERVAL '1 day'")
+
+        return locations.join(generate_series, condition=Literal(True)).join(
+            inv_line2,
+            condition=((inv_line2.dest_location == locations.dest_location)
+                & (inv_line2.start_date <= generate_series.date)
+                & (inv_line2.end_date >= generate_series.date))
+            ).select(
+                (locations.dest_location * 10000 +
+                    Extract('DOY', generate_series.date)).as_('id'),
+                Max(locations.create_uid).as_('create_uid'),
+                Max(locations.create_date).as_('create_date'),
+                Max(locations.write_uid).as_('write_uid'),
+                Max(locations.write_date).as_('write_date'),
+                locations.dest_location.as_('location'),
+                generate_series.date,
+                Count(inv_line2.inventory).as_('inventory_qty'),
+                Count(inv_line2.provisional_inventory).as_(
+                    'provisional_inventory_qty'),
+                Coalesce(Sum(inv_line2.consumed_qty_animal_day), 0.0).cast(
+                    cls.consumed_qty_animal_day.sql_type().base
+                    ).as_('consumed_qty_animal_day'),
+                Coalesce(Sum(inv_line2.daily_consumed_qty), 0.0).cast(
+                    cls.median_consumed_qty.sql_type().base
+                    ).as_('median_consumed_qty'),
+                group_by=(locations.dest_location, generate_series.date))
 
     @staticmethod
     def _days_to_compute():
         'Number of days that will be computed and show in the report'
         return 29
 
-    def get_unit_digits(self, name):
-        return self.uom and self.uom.digits or 2
+    #def get_unit_digits(self, name):
+    #    return self.uom and self.uom.digits or 2
+
+    @classmethod
+    def get_computed_quantities(cls, instances, names):
+        pool = Pool()
+        InventoryLine = pool.get('farm.feed.inventory.line')
+        Product = pool.get('product.product')
+        Specie = pool.get('farm.specie')
+
+        def get_specie_animals_products(specie):
+            animals_products = []
+            for animal_type in ('male', 'female', 'individual', 'group'):
+                if getattr(specie, '%s_enabled' % animal_type):
+                    animals_products.append(getattr(specie,
+                            '%s_product' % animal_type))
+            return animals_products
+
+        instances_by_date = {}
+        for instance in instances:
+            instances_by_date.setdefault(instance.date, []).append(instance)
+
+        context = Transaction().context
+        if context.get('specie'):
+            specie = Specie(context['specie'])
+            animals_products = get_specie_animals_products(specie)
+        else:
+            all_dates = sorted(instances_by_date.keys())
+            inventory_lines = InventoryLine.search([
+                    ('dest_location', 'in',
+                        [i.location.id for i in instances]),
+                    ('start_date', '<=', all_dates[-1]),
+                    ('end_date', '>=', all_dates[0]),
+                    ])
+
+            animals_products = []
+            for inv_line in inventory_lines:
+                specie = (inv_line.inventory and inv_line.inventory.specie or
+                    inv_line.provisional_inventory.specie)
+                animals_products += get_specie_animals_products(specie)
+            animals_products = list(set(animals_products))
+
+        res = {
+            'animals_qty': {},
+            'consumed_qty': {},
+            }
+        for date, date_instances in instances_by_date.items():
+            location_ids = [i.location.id for i in date_instances]
+            with Transaction().set_context(stock_date_end=date):
+                pbl = Product.products_by_location(location_ids=location_ids,
+                    product_ids=[p.id for p in animals_products],
+                    with_childs=False)
+            qty_by_location = {}.fromkeys(location_ids, 0)
+            for key, qty in pbl.items():
+                location_id = key[0]
+                qty_by_location[location_id] += int(qty)
+
+            for instance in date_instances:
+                animals_qty = qty_by_location[instance.location.id]
+                res['animals_qty'][instance.id] = animals_qty
+                res['consumed_qty'][instance.id] = (
+                    float(animals_qty) * instance.consumed_qty_animal_day)
+
+        if 'animals_qty' not in names:
+            del res['animals_qty']
+        if 'consumed_qty' not in names:
+            del res['consumed_qty']
+        return res

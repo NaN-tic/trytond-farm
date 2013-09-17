@@ -48,7 +48,7 @@ def register():
         FeedProvisionalInventory,
         FeedProvisionalInventoryLocation,
         FeedInventoryLine,
-        # FeedLocationDate
+        FeedLocationDate,
         FeedEvent,
         MedicationEvent,
         TransformationEvent,

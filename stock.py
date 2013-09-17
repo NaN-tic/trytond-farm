@@ -142,6 +142,11 @@ class Location:
             'invisible': Or(Not(Equal(Eval('type'), 'storage')),
                     Eval('silo', False)),
             }, depends=['type', 'silo'])
+    feed_date_inputs = fields.One2Many('farm.feed.location_date', 'location',
+        'Input Feed per Date', readonly=True, states={
+            'invisible': Or(Not(Equal(Eval('type'), 'storage')),
+                    Eval('silo', False)),
+            }, depends=['type', 'silo'])
 
     @staticmethod
     def default_silo():
