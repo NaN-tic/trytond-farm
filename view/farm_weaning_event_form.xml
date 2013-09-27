@@ -13,7 +13,7 @@
             <label name="quantity"/>
             <field name="quantity"/>
             <label name="weaned_group"/>
-            <label name="weaned_group"/>
+            <field name="weaned_group"/>
             <separator id="validated_fields" colspan="4"/>
             <label name="female_cycle"/>
             <field name="female_cycle"/>

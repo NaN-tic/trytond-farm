@@ -127,7 +127,7 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
 
     @classmethod
     def search_rec_name(cls, name, clause):
-        return [('lot.number',) + clause[1:]]
+        return [('lot.number',) + tuple(clause[1:])]
 
     def get_number(self, name):
         return self.lot.number

@@ -242,7 +242,7 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
 
     @classmethod
     def search_rec_name(cls, name, clause):
-        return [('lot.number',) + clause[1:]]
+        return [('lot.number',) + tuple(clause[1:])]
 
     def get_number(self, name):
         return self.lot.number
@@ -827,10 +827,11 @@ class FemaleCycle(ModelSQL, ModelView):
         return 'unmated'
 
     def get_rec_name(self, name):
-        logging.getLogger(self.__name__).debug("FemaleCycle.get_rec_name()")
-        state_labels = FemaleCycle.state.selection
-        logging.getLogger(self.__name__).debug("state_labels: ", state_labels)
-        return "%s (%s)" % (self.sequence, state_labels[self.state])
+        state_labels = [label for (n, label) in FemaleCycle.state.selection
+            if n == self.state]
+        if state_labels:
+            return "%s (%s)" % (self.sequence, state_labels[0])
+        return "%s" % self.sequence
 
     # TODO: call in weaning, farrowing, abort, pregnancy_diagnosis and
     # insemination event (in 'valid()' and 'cancel()')
@@ -916,7 +917,7 @@ class FemaleCycle(ModelSQL, ModelView):
     def get_removed(self, name):
         return self.live + self.fostered + self.weaned
 
-    def get_days_between_farrowing_weaning(self, name):
+    def get_lactating_days(self, name):
         if not self.farrowing_event or not self.weaning_event:
             return None
         return (self.weaning_event.timestamp.date() -
