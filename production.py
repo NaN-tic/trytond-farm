@@ -31,7 +31,8 @@ class BOM:
             field.depends.append('semen_dose')
         cls.outputs.size = If(Bool(Eval('semen_dose', 0)), 1,
                 cls.outputs.size or -1)
-        cls.outputs.domain.append(('uom', '=', Id('product', 'uom_unit')))
+        cls.outputs.domain.append(If(Bool(Eval('semen_dose', 0)),
+                ('uom', '=', Id('product', 'uom_unit')), ()))
         cls._error_messages.update({
                 'missing_semen_input': 'The Semen Dose BOM "%s" doesn\'t have '
                     'any input for the Specie\'s Semen Product.',
