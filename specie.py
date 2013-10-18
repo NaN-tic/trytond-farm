@@ -159,11 +159,6 @@ class Specie(ModelSQL, ModelView):
         menu_farm = Menu(ModelData.get_id(MODULE_NAME, 'menu_farm'))
         act_window_event_order = ActWindow(ModelData.get_id(MODULE_NAME,
                 'act_farm_event_order'))
-        act_window_feed_inventory = ActWindow(ModelData.get_id(MODULE_NAME,
-                'act_farm_feed_inventory'))
-        act_window_feed_prov_inventory = ActWindow(
-            ModelData.get_id(MODULE_NAME,
-                'act_farm_feed_provisional_inventory'))
 
         with Transaction().set_context(language='en_US'):
             event_configuration_data = (
@@ -279,27 +274,9 @@ class Specie(ModelSQL, ModelView):
                     orders_submenu_seq += 1
                 specie_submenu_seq += 1
 
-            # Feed Inventories submenu
             with Transaction().set_context(lang_codes=lang_codes):
-                feed_inventories_menu = cls._create_submenu(specie,
-                    'Silo Inventories', specie_menu, specie_submenu_seq,
-                    current_menus)
-                cls._create_menu_w_action(specie, [
-                        ('specie', '=', specie.id),
-                        ], {
-                        'specie': specie.id,
-                        },
-                    'Inventory', feed_inventories_menu, 1, 'tryton-list',
-                    None, act_window_feed_inventory, False, current_menus,
-                    current_actions)
-                cls._create_menu_w_action(specie, [
-                        ('specie', '=', specie.id),
-                        ], {
-                        'specie': specie.id,
-                        },
-                    'Provisional Inventory', feed_inventories_menu, 2,
-                    'tryton-list', None, act_window_feed_prov_inventory, False,
-                    current_menus, current_actions)
+                cls._create_additional_menus(specie, specie_menu,
+                    specie_submenu_seq, current_menus, current_actions)
 
             logging.getLogger('farm.specie').debug(
                 "Current_actions (to be deleted): %s" % current_actions)
@@ -317,6 +294,41 @@ class Specie(ModelSQL, ModelView):
                 ('translatable', '=', True),
                 ])
         return [x.code for x in langs]
+
+    @classmethod
+    def _create_additional_menus(cls, specie, specie_menu, specie_submenu_seq,
+            current_menus, current_actions):
+        pool = Pool()
+        ModelData = pool.get('ir.model.data')
+        ActWindow = pool.get('ir.action.act_window')
+
+        act_window_feed_inventory = ActWindow(ModelData.get_id(MODULE_NAME,
+                'act_farm_feed_inventory'))
+        act_window_feed_prov_inventory = ActWindow(
+            ModelData.get_id(MODULE_NAME,
+                'act_farm_feed_provisional_inventory'))
+
+        # Feed Inventories submenu
+        feed_inventories_menu = cls._create_submenu(specie,
+            'Silo Inventories', specie_menu, specie_submenu_seq,
+            current_menus)
+        specie_submenu_seq += 1
+        cls._create_menu_w_action(specie, [
+                ('specie', '=', specie.id),
+                ], {
+                    'specie': specie.id,
+                },
+            'Inventory', feed_inventories_menu, 1, 'tryton-list',
+            None, act_window_feed_inventory, False, current_menus,
+            current_actions)
+        cls._create_menu_w_action(specie, [
+                ('specie', '=', specie.id),
+                ], {
+                    'specie': specie.id,
+                },
+            'Provisional Inventory', feed_inventories_menu, 2,
+            'tryton-list', None, act_window_feed_prov_inventory, False,
+            current_menus, current_actions)
 
     @staticmethod
     def _get_animal_types_data():
