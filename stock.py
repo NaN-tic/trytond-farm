@@ -199,12 +199,14 @@ class Location:
         args = args[:]
         context = Transaction().context
         if context.get('restrict_by_specie_animal_type'):
-            specie_id = context.get('specie')
+            domain = []
+            specie = context.get('specie')
+            if specie:
+                domain += ('specie', '=', specie),
             animal_type = context.get('animal_type')
-            farm_lines = FarmLine.search([
-                    ('specie', '=', specie_id),
-                    ('has_' + animal_type, '=', True),
-                    ])
+            if animal_type:
+                domain += ('has_' + animal_type, '=', True),
+            farm_lines = FarmLine.search(domain)
             if not farm_lines:
                 return []
             storage_locations = [fl.farm.storage_location.id
