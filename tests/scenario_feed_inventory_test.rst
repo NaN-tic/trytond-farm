@@ -1,6 +1,6 @@
-====================
-Feed Events Scenario
-====================
+=======================
+Feed Inventory Scenario
+=======================
 
 =============
 General Setup
