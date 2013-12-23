@@ -16,7 +16,7 @@ class User:
             ('type', '=', 'warehouse'),
             ],
         states={
-            'readonly': Not(Eval('groups', []).contains(
+            'readonly': Not(Eval('context', {}).get('groups', []).contains(
                 Id('farm', 'group_farm_admin'))),
             },
         help="Farms to which this user is assigned. Determine animals that "
