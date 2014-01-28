@@ -27,6 +27,11 @@
                 <field name="initial_location"/>
                 <label name="initial_quantity"/>
                 <field name="initial_quantity"/>
+                <label name="quantity"/>
+                <field name="quantity"/>
+                <newline/>
+                <label name="locations"/>
+                <field name="locations" colspan="3"/>
                 <!--
                 <label name="lot"/>
                 <field name="lot"/>
@@ -37,7 +42,7 @@
         </page>
         <page string="Weights" id="weights">
             <label name="current_weight"/>
-            <field name="current_weight" colspan="3"/>
+            <field name="current_weight"/>
             <field name="weights" colspan="4"/>
         </page>
         <page string="Notes" id="notes">

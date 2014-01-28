@@ -26,13 +26,22 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
         domain=[('animal_type', '=', 'group')])
     number = fields.Function(fields.Char('Number'),
         'get_number', 'set_number')
+    locations = fields.Function(fields.Many2Many('stock.location', None, None,
+            'Current Locations', readonly=True, domain=[
+                ('type', '=', 'warehouse'),
+                ],
+            help='Farms where this group can be found. It is used for access '
+            'management.'),
+        'get_locations', searcher='search_locations')
     farms = fields.Function(fields.Many2Many('stock.location', None, None,
             'Current Farms', readonly=True, domain=[
                 ('type', '=', 'warehouse'),
                 ],
             help='Farms where this group can be found. It is used for access '
             'management.'),
-        'get_farms', searcher='search_farms')
+        'get_locations', searcher='search_locations')
+    quantity = fields.Function(fields.Float('Quantity'), 'get_quantity',
+        searcher='search_quantity')
     origin = fields.Selection([
             ('purchased', 'Purchased'),
             ('raised', 'Raised'),
@@ -62,7 +71,7 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
         "initial move.")
     removal_date = fields.Date('Removal Date', readonly=True)
     weights = fields.One2Many('farm.animal.group.weight', 'group',
-        'Weight Records', readonly=True)
+        'Weight Records', readonly=False, order=[('timestamp', 'DESC')])
     current_weight = fields.Function(fields.Many2One(
             'farm.animal.group.weight', 'Current Weight',
             on_change_with=['weights']),
@@ -142,7 +151,7 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
                     })
 
     @classmethod
-    def get_farms(cls, animal_groups, name):
+    def get_locations(cls, animal_groups, name):
         pool = Pool()
         Location = pool.get('stock.location')
         Lot = pool.get('stock.lot')
@@ -150,8 +159,21 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
         warehouses = Location.search([
             ('type', '=', 'warehouse'),
             ])
-        qbl = Lot.quantity_by_location([ag.lot for ag in animal_groups],
-            location_ids=[w.id for w in warehouses], with_childs=True)
+        if name == 'farms':
+            with Transaction().set_context(stock_skip_warehouse=True):
+                qbl = Lot.quantity_by_location(
+                    [ag.lot for ag in animal_groups],
+                    [w.id for w in warehouses],
+                    quantity_domain=('quantity', '>', 0.0), with_childs=True)
+        else:
+            warehouse_locations = Location.search([
+                    ('parent', 'child_of',
+                        [wh.storage_location.id for wh in warehouses]),
+                    ])
+            qbl = Lot.quantity_by_location([ag.lot for ag in animal_groups],
+                [l.id for l in warehouse_locations],
+                quantity_domain=('quantity', '>', 0.0))
+
         res = {}
         for animal_group in animal_groups:
             ag_lot_id = animal_group.lot.id
@@ -160,48 +182,101 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
         return res
 
     @classmethod
-    def search_farms(cls, name, domain=None):
+    def search_locations(cls, name, domain=None):
         pool = Pool()
         Location = pool.get('stock.location')
-        Product = pool.get('product.product')
+        Lot = pool.get('stock.lot')
         Specie = pool.get('farm.specie')
 
         if not domain:
             return []
 
         specie_id = cls.default_specie()
-        product_ids = None
+        specie_warehouse_ids = None
         if specie_id:
             specie = Specie(specie_id)
             if not specie.group_product:
                 return []
-            product_ids = [specie.group_product.id]
 
             specie_warehouse_ids = [l.farm.id for l in specie.farm_lines
                 if l.has_group]
-            warehouses = Location.search([
-                ('id', 'in', specie_warehouse_ids),
-                ('type', '=', 'warehouse'),
-                ('warehouse',) + tuple(domain[1:]),
-                ])
+
+        if name == 'farms':
+            if specie_warehouse_ids:
+                warehouses = Location.search([
+                    ('id', 'in', specie_warehouse_ids),
+                    ('type', '=', 'warehouse'),
+                    ('warehouse',) + tuple(domain[1:]),
+                    ])
+            else:
+                warehouses = Location.search([
+                    ('type', '=', 'warehouse'),
+                    ('warehouse',) + tuple(domain[1:]),
+                    ])
+            if not warehouses:
+                return []
+
+            with Transaction().set_context(stock_skip_warehouse=True):
+                qbl = Lot.quantity_by_location(None,
+                    [w.id for w in warehouses],
+                    quantity_domain=('quantity', '>', 0.0), with_childs=True)
         else:
-            warehouses = Location.search([
-                ('type', '=', 'warehouse'),
-                ('warehouse',) + tuple(domain[1:]),
-                ])
-        if not warehouses:
-            return []
+            location_domain = Location.search_rec_name(Location._rec_name,
+                domain)
+            if specie_warehouse_ids:
+                location_domain.append(
+                    ('warehouse', 'in', specie_warehouse_ids))
+            warehouse_locations = Location.search(location_domain)
+            qbl = Lot.quantity_by_location(None,
+                [l.id for l in warehouse_locations],
+                quantity_domain=('quantity', '>', 0.0), with_childs=True)
 
-        pbl = Product.products_by_location([w.id for w in warehouses],
-            product_ids=product_ids, with_childs=True,
-            grouping=('product', 'lot'))
-
-        lot_ids = set()
-        for (location_id, product_id, lot_id), quantity in pbl.iteritems():
-            if quantity > 0.0:
-                lot_ids.add(lot_id)
-
+        # Lots that have any unit in any location
+        lot_ids = set(l for l in qbl
+            if qbl[l] and any(q > 0.0 for q in qbl[l].values()))
         return [('lot', 'in', list(lot_ids))]
+
+    @classmethod
+    def get_quantity(cls, animal_groups, name):
+        pool = Pool()
+        Lot = pool.get('stock.lot')
+        Specie = pool.get('farm.specie')
+
+        specie_id = cls.default_specie()
+        location_ids = Transaction().context.get('locations')
+        lots = [ag.lot for ag in animal_groups]
+        products = []
+        if specie_id:
+            specie = Specie(specie_id)
+            if specie.group_product:
+                products.append(specie.group_product)
+                if not location_ids:
+                    location_ids = [l.farm.storage_location.id
+                        for l in specie.farm_lines if l.has_group]
+        else:
+            products = list(set(l.product for l in lots))
+
+        lot_quantities = Lot._get_quantity(lots, name, location_ids,
+                products, grouping=('product', 'lot'))
+        return dict((ag.id, lot_quantities[ag.lot.id]) for ag in animal_groups)
+
+    @classmethod
+    def search_quantity(cls, name, domain=None):
+        pool = Pool()
+        Lot = pool.get('stock.lot')
+        Specie = pool.get('farm.specie')
+
+        specie_id = cls.default_specie()
+        location_ids = Transaction().context.get('locations')
+        if specie_id and not location_ids:
+            specie = Specie(specie_id)
+            location_ids = [l.farm.storage_location.id
+                for l in specie.farm_lines if l.has_group]
+
+        lot_domain = Lot._search_quantity(name, location_ids, domain,
+            grouping=('product', 'lot'))
+        return [('lot', ) + tuple(t[1:]) if t[0] == 'id'
+            else ('lot.' + t[0], ) + tuple(t[1:]) for t in lot_domain]
 
     def on_change_with_current_weight(self, name=None):
         if self.weights:

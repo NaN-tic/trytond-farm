@@ -63,21 +63,77 @@ class Lot:
         return rec_name
 
     @classmethod
-    def quantity_by_location(cls, lots, location_ids, with_childs=False):
-        Product = Pool().get('product.product')
+    def quantity_by_location(cls, lots, location_ids, quantity_domain=None,
+            with_childs=False):
+        """
+        The context with keys:
+            stock_skip_warehouse: if set, quantities on a warehouse are no more
+                quantities of all child locations but quantities of the storage
+                zone.
+        location_ids is the list of IDs of locations to take account to compute
+            the stock. It can't be empty.
+        """
+        pool = Pool()
+        Location = pool.get('stock.location')
+        Move = pool.get('stock.move')
 
-        pbl = Product.products_by_location(location_ids,
-            product_ids=list(set(l.product.id for l in lots)),
-            with_childs=with_childs,
-            grouping=('product', 'lot'))
+        if not location_ids:
+            return {}
 
-        quantities = {}
-        for (location_id, product_id, lot_id), quantity in pbl.iteritems():
+        # Skip warehouse location in favor of their storage location
+        # to compute quantities. Keep track of which ids to remove
+        # and to add after the query.
+        storage_to_remove = set()
+        wh_by_storage = {}
+        if Transaction().context.get('stock_skip_warehouse'):
+            location_ids = set(location_ids)
+            for location in Location.browse(list(location_ids)):
+                if location.type == 'warehouse':
+                    location_ids.remove(location.id)
+                    if location.storage_location.id not in location_ids:
+                        storage_to_remove.add(location.storage_location.id)
+                    location_ids.add(location.storage_location.id)
+                    wh_by_storage[location.storage_location.id] = location.id
+            location_ids = list(location_ids)
+
+        with Transaction().set_context(cls._quantity_context('quantity')):
+            if lots is None:
+                grouping_filter = (None, None)
+            else:
+                grouping_filter = (None, [l.id for l in lots])
+            query = Move.compute_quantities_query(location_ids,
+                with_childs=with_childs, grouping=('product', 'lot'),
+                grouping_filter=grouping_filter)
+
+            if quantity_domain:
+                having_domain = cls.quantity._field.convert_domain(
+                    quantity_domain, {
+                        None: (query, {}),
+                        }, cls)
+                having_domain.left = query.columns[-1].expression
+                if query.having:
+                    query.having &= having_domain
+                else:
+                    query.having = having_domain
+
+            quantities = Move.compute_quantities(query, location_ids,
+                with_childs=with_childs, grouping=('product', 'lot'),
+                grouping_filter=grouping_filter)
+
+        res = {}
+        for (location_id, unused, lot_id), quantity in quantities.iteritems():
             if lot_id is None:
                 continue
-            lot_quantities = quantities.setdefault(lot_id, {})
-            lot_quantities[location_id] = quantity
-        return quantities
+            lot_quantities = res.setdefault(lot_id, {})
+            if location_id not in storage_to_remove:
+                lot_quantities[location_id] = quantity
+            if location_id in wh_by_storage:
+                warehouse_id = wh_by_storage[location_id]
+                if warehouse_id in lot_quantities:
+                    lot_quantities[warehouse_id] += quantity
+                else:
+                    lot_quantities[warehouse_id] = quantity
+        return res
 
 
 class LotAnimal(ModelSQL):

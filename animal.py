@@ -123,9 +123,10 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
     number = fields.Function(fields.Char('Number'),
         'get_number', 'set_number')
     # location is updated in do() of stock.move
-    location = fields.Many2One('stock.location', 'Location', readonly=True,
-        domain=[('type', '!=', 'warehouse')],
-        help='Indicates where the animal currently resides.')
+    location = fields.Many2One('stock.location', 'Current Location',
+        readonly=True, domain=[
+            ('type', '!=', 'warehouse'),
+            ], help='Indicates where the animal currently resides.')
     farm = fields.Function(fields.Many2One('stock.location', 'Current Farm',
             on_change_with=['location'], depends=['location']),
         'on_change_with_farm', searcher='search_farm')

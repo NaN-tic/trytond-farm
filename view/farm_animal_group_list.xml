@@ -6,6 +6,7 @@
     <field name="breed"/>
     <field name="arrival_date"/>
     <field name="removal_date"/>
-    <field name="initial_quantity"/>
+    <field name="locations"/>
+    <field name="quantity"/>
     <field name="tags" tree_invisible="1"/>
 </tree>
