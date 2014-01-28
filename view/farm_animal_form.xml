@@ -71,7 +71,7 @@
         </page>
         <page string="Weights" id="weights">
             <label name="current_weight"/>
-            <field name="current_weight" colspan="3"/>
+            <field name="current_weight"/>
             <field name="weights" colspan="4"/>
         </page>
         <page string="Notes" id="notes">

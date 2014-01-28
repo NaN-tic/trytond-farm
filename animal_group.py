@@ -40,7 +40,7 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
             help='Farms where this group can be found. It is used for access '
             'management.'),
         'get_locations', searcher='search_locations')
-    quantity = fields.Function(fields.Float('Quantity'), 'get_quantity',
+    quantity = fields.Function(fields.Integer('Quantity'), 'get_quantity',
         searcher='search_quantity')
     origin = fields.Selection([
             ('purchased', 'Purchased'),
@@ -258,7 +258,8 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
 
         lot_quantities = Lot._get_quantity(lots, name, location_ids,
                 products, grouping=('product', 'lot'))
-        return dict((ag.id, lot_quantities[ag.lot.id]) for ag in animal_groups)
+        return dict((ag.id, int(lot_quantities[ag.lot.id]))
+            for ag in animal_groups)
 
     @classmethod
     def search_quantity(cls, name, domain=None):

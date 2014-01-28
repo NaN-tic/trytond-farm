@@ -7,6 +7,8 @@
         <field name="number"/>
         <label name="breed"/>
         <field name="breed"/>
+        <label name="quantity"/>
+        <field name="quantity"/>
     </group>
     <notebook>
         <page string="General" id="general">
@@ -27,8 +29,6 @@
                 <field name="initial_location"/>
                 <label name="initial_quantity"/>
                 <field name="initial_quantity"/>
-                <label name="quantity"/>
-                <field name="quantity"/>
                 <newline/>
                 <label name="locations"/>
                 <field name="locations" colspan="3"/>
