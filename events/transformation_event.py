@@ -296,7 +296,7 @@ class TransformationEvent(AbstractEvent):
             arrival_date=from_animal_or_group.arrival_date,
             initial_location=self.to_location,
             birthdate=(self.animal and self.animal.birthdate),
-            sex=(self.animal and self.animal.sex),
+            sex=(self.animal.sex if self.animal else 'undetermined'),
             purpose=purpose,
             )
 
