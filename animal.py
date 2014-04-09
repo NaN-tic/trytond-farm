@@ -371,7 +371,10 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
         animal_vals: dictionary with values to create farm.animal
         It returns a dictionary with values to create stock.lot
         """
-        Specie = Pool().get('farm.specie')
+        pool = Pool()
+        Lot = pool.get('stock.lot')
+        Specie = pool.get('farm.specie')
+
         if not animal_vals:
             return {}
         specie = Specie(animal_vals['specie'])
@@ -382,10 +385,14 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
                     'product_field': getattr(Specie, product_fieldname).string,
                     'specie': specie.rec_name,
                     })
+
+        lot_tmp = Lot(product=product)
+        cost_lines = lot_tmp._on_change_product_cost_lines()
         return {
             'number': animal_vals['number'],
             'product': product.id,
             'animal_type': animal_vals['type'],
+            'cost_lines': [('create', cost_lines.get('add', []))],
             }
 
     @classmethod
@@ -553,9 +560,7 @@ class Female:
         self.save()
         return current_cycle
 
-    # TODO: call in removal event, when cycle is added (but probably it's
-    # called from cycle)
-    def update_state(self):
+    def get_state(self):
         if self.type != 'female':
             return
         if (self.removal_date and self.removal_date <= date.today()):
@@ -568,9 +573,14 @@ class Female:
             state = 'unmated'
         else:
             state = 'mated'
-        self.state = state
-        self.save()
         return state
+
+    # TODO: call in removal event, when cycle is added (but probably it's
+    # called from cycle)
+    def update_state(self):
+        self.state = self.get_state()
+        self.save()
+        return self.state
 
     def get_first_mating(self, name):
         InseminationEvent = Pool().get('farm.insemination.event')
@@ -709,6 +719,13 @@ class Female:
                 event_filter.insert(0, 'NOT')
             op = 'not in'
         return event_filter, op
+
+    @classmethod
+    def create(cls, vlist):
+        for vals in vlist:
+            if vals.get('type', '') == 'female' and not vals.get('state'):
+                vals['state'] = 'prospective'
+        return super(Female, cls).create(vlist)
 
     @classmethod
     def copy(cls, females, default=None):

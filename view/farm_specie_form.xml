@@ -30,7 +30,7 @@
             <group colspan="2" id="breeds">
                 <field name="breeds" colspan="4"/>
             </group>
-            <group colspan="4" col="6" id="locations">
+            <group colspan="4" col="4" id="locations">
                 <label name="foster_location"/>
                 <field name="foster_location"/>
                 <label name="lost_found_location"/>

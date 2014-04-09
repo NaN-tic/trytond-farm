@@ -371,15 +371,23 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
         group_vals: dictionary with values to create farm.animal.group
         It returns a dictionary with values to create stock.lot
         """
-        Specie = Pool().get('farm.specie')
+        pool = Pool()
+        Lot = pool.get('stock.lot')
+        Specie = pool.get('farm.specie')
+
         if not group_vals:
             return {}
         specie = Specie(group_vals['specie'])
+        assert specie.group_product
+
+        group_product = specie.group_product.id
+        lot_tmp = Lot(product=group_product)
+        cost_lines = lot_tmp._on_change_product_cost_lines()
         return {
             'number': group_vals['number'],
-            'product': (specie.group_product and specie.group_product.id or
-                None),
+            'product': group_product,
             'animal_type': 'group',
+            'cost_lines': [('create', cost_lines.get('add', []))],
             }
 
     @classmethod
