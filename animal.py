@@ -126,6 +126,7 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
     location = fields.Many2One('stock.location', 'Current Location',
         readonly=True, domain=[
             ('type', '!=', 'warehouse'),
+            ('silo', '=', False),
             ], help='Indicates where the animal currently resides.')
     farm = fields.Function(fields.Many2One('stock.location', 'Current Farm',
             on_change_with=['location'], depends=['location']),
@@ -146,7 +147,10 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
         states={'invisible': Not(Equal(Eval('origin'), 'purchased'))},
         depends=['origin'])
     initial_location = fields.Many2One('stock.location', 'Initial Location',
-        required=True, domain=[('type', '=', 'storage')],
+        required=True, domain=[
+            ('type', '=', 'storage'),
+            ('silo', '=', False),
+            ],
         states={'readonly': Greater(Eval('id', 0), 0)}, depends=['id'],
         context={'restrict_by_specie_animal_type': True},
         help="The Location where the animal was reached or where it was "

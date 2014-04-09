@@ -58,7 +58,10 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
         states={'invisible': Not(Equal(Eval('origin'), 'purchased'))},
         depends=['origin'])
     initial_location = fields.Many2One('stock.location', "Initial Location",
-        required=True, domain=[('type', '=', 'storage')],
+        required=True, domain=[
+            ('type', '=', 'storage'),
+            ('silo', '=', False),
+            ],
         states={'readonly': Greater(Eval('id', 0), 0)}, depends=['id'],
         context={'restrict_by_specie_animal_type': True},
         help="The Location where the group was reached or where it was "
