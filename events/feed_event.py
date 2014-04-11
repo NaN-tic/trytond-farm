@@ -22,7 +22,6 @@ class FeedEvent(FeedAbstractEvent, ModelSQL, ModelView, Workflow):
     def __setup__(cls):
         super(FeedEvent, cls).__setup__()
         cls.feed_location.domain += [
-            ('silo', '=', True),
             ('locations_to_fed', 'in', [Eval('location')]),
             ]
         cls.feed_location.depends += ['location']

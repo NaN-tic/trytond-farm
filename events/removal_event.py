@@ -36,6 +36,7 @@ class RemovalEvent(AbstractEvent):
         required=True, domain=[
             ('warehouse', '=', Eval('farm')),
             ('type', '=', 'storage'),
+            ('silo', '=', False),
             ],
         states={
             'readonly': Or(

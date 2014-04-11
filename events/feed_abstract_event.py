@@ -21,6 +21,7 @@ class FeedAbstractEvent(AbstractEvent):
     location = fields.Many2One('stock.location', 'Location', required=True,
         domain=[
             ('type', '=', 'storage'),
+            ('silo', '=', False),
             ('warehouse', '=', Eval('farm')),
             ],
         states={
@@ -33,6 +34,7 @@ class FeedAbstractEvent(AbstractEvent):
     feed_location = fields.Many2One('stock.location', 'Feed Source',
         required=True, domain=[
             ('type', '=', 'storage'),
+            ('silo', '=', True),
             ('warehouse', '=', Eval('farm')),
             ],
         states={

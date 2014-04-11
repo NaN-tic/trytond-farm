@@ -364,6 +364,10 @@ class FeedInventory(ModelSQL, ModelView, Workflow):
         states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
     dest_locations = fields.Many2Many('farm.feed.inventory-stock.location',
         'inventory', 'location', 'Locations to fed', required=True,
+        domain=[
+            ('type', '=', 'storage'),
+            ('silo', '=', False),
+            ],
         states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
     timestamp = fields.DateTime('Date & Time', required=True,
         states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
@@ -666,6 +670,10 @@ class FeedProvisionalInventory(ModelSQL, ModelView, Workflow):
     dest_locations = fields.Many2Many(
         'farm.feed.provisional_inventory-stock.location', 'inventory',
         'location', 'Locations to fed', required=True,
+        domain=[
+            ('type', '=', 'storage'),
+            ('silo', '=', False),
+            ],
         states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
     timestamp = fields.DateTime('Date & Time', required=True,
         states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)

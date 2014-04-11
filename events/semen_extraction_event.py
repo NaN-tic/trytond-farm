@@ -93,6 +93,7 @@ class SemenExtractionEvent(AbstractEvent):
         domain=[
             ('warehouse', '=', Eval('farm')),
             ('type', '=', 'storage'),
+            ('silo', '=', False),
             ], required=True, states=_STATES_WRITE_DRAFT,
         on_change_with=['farm'], depends=_DEPENDS_WRITE_DRAFT + ['farm'],
         help="Destination location of semen doses")
@@ -787,6 +788,7 @@ class SemenExtractionDelivery(ModelSQL, ModelView):
         states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
     to_location = fields.Many2One('stock.location', 'Destination', domain=[
             ('type', '=', 'storage'),
+            ('silo', '=', False),
             ], required=True, states=_STATES_WRITE_DRAFT,
         depends=_DEPENDS_WRITE_DRAFT)
     dose_lot = fields.Function(fields.Many2One('stock.lot', "Doses Lot"),
