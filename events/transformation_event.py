@@ -21,6 +21,7 @@ class TransformationEvent(AbstractEvent):
         required=True, domain=[
             ('warehouse', '=', Eval('farm')),
             ('type', '=', 'storage'),
+            ('silo', '=', False),
             ],
         states={
             'readonly': Or(
@@ -38,6 +39,7 @@ class TransformationEvent(AbstractEvent):
     to_location = fields.Many2One('stock.location', 'Destination',
         required=True, domain=[
             ('type', '=', 'storage'),
+            ('silo', '=', False),
             ],
         states={
             'readonly': Or(
