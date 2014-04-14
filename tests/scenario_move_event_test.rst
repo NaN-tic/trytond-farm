@@ -200,6 +200,38 @@ Validate individual move event::
     >>> individual.current_weight.weight
     Decimal('80.50')
 
+Create individual move event changing cost price::
+
+    >>> individual.lot.cost_price == Decimal('25.0')
+    True
+    >>> move_individual = MoveEvent(
+    ...     animal_type='individual',
+    ...     specie=pigs_specie,
+    ...     farm=warehouse,
+    ...     animal=individual,
+    ...     timestamp=now,
+    ...     from_location=individual.location,
+    ...     to_location=location1_id)
+    >>> move_individual.unit_price = Decimal('30.0')
+    >>> move_individual.save()
+    >>> move_individual.unit_price == Decimal('30.0')
+    True
+    >>> MoveEvent.validate_event([move_individual.id], config.context)
+    >>> move_individual.reload()
+    >>> move_individual.state
+    u'validated'
+    >>> individual.reload()
+    >>> individual.location.id == location1_id
+    True
+    >>> individual.lot.cost_price == Decimal('30.0')
+    True
+    >>> move_cost_line, = [x for x in individual.lot.cost_lines
+    ...     if x.origin == move_individual]
+    >>> move_cost_line.unit_price == Decimal('5.0')
+    True
+
+
+
 Create group::
 
     >>> AnimalGroup = Model.get('farm.animal.group')

@@ -5,6 +5,7 @@ from trytond.pool import Pool
 from .animal import *
 from .animal_group import *
 from .events import *
+from .product import *
 from .production import *
 from .quality import *
 from .specie import *
@@ -38,8 +39,10 @@ def register():
         LotAnimal,
         LotAnimalGroup,
         Lot,
+        LotCostLine,
         User,
         UserLocation,
+        Template,
         EventOrder,
         AbstractEvent,
         MoveEvent,

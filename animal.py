@@ -391,13 +391,15 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
                     })
 
         lot_tmp = Lot(product=product)
-        cost_lines = lot_tmp._on_change_product_cost_lines()
-        return {
+        res = {
             'number': animal_vals['number'],
             'product': product.id,
             'animal_type': animal_vals['type'],
-            'cost_lines': [('create', cost_lines.get('add', []))],
             }
+        if Transaction().context.get('create_cost_lines', True):
+            cost_lines = lot_tmp._on_change_product_cost_lines()
+            res['cost_lines'] = [('create', cost_lines.get('add', []))]
+        return res
 
     @classmethod
     def delete(cls, animals):

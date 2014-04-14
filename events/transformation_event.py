@@ -335,6 +335,7 @@ class TransformationEvent(AbstractEvent):
             lot = self.to_animal_group.lot
         else:
             lot = self.to_animal.lot
+
         production_location = self.farm.production_location
 
         return Move(
@@ -346,7 +347,7 @@ class TransformationEvent(AbstractEvent):
             planned_date=self.timestamp.date(),
             effective_date=self.timestamp.date(),
             company=context.get('company'),
-            lot=lot.id,
+            lot=lot,
             unit_price=lot.product.cost_price,
             origin=self,
             )

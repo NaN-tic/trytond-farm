@@ -228,13 +228,18 @@ class WeaningEvent(AbstractEvent):
                 weaning_event.weaned_move = weaned_move
                 todo_moves.append(weaned_move)
 
+            cost_line = weaning_event._get_weaning_cost_line()
+            if cost_line:
+                cost_line.save()
+
             weaning_event.save()
             current_cycle.update_state(weaning_event)
         if todo_moves:
             Move.assign(todo_moves)
             Move.do(todo_moves)
         if todo_trans_events:
-            TransformationEvent.validate_event(todo_trans_events)
+            with Transaction().set_context(create_cost_lines=False):
+                TransformationEvent.validate_event(todo_trans_events)
 
     def _get_female_move(self):
         pool = Pool()
@@ -274,6 +279,23 @@ class WeaningEvent(AbstractEvent):
             company=context.get('company'),
             lot=self.farrowing_group.lot,
             origin=self)
+
+    def _get_weaning_cost_line(self):
+        pool = Pool()
+        ModelData = pool.get('ir.model.data')
+        LotCostLine = pool.get('stock.lot.cost_line')
+        category_id = ModelData.get_id('farm', 'cost_category_weaning_cost')
+        group = (self.weaned_group if self.weaned_group
+            else self.farrowing_group)
+        if (group.lot and group.lot.product.weaning_price and
+                group.lot.product.weaning_price != group.lot.cost_price):
+            cost_line = LotCostLine()
+            cost_line.lot = group.lot
+            cost_line.category = category_id
+            cost_line.origin = str(self)
+            cost_line.unit_price = (group.lot.product.weaning_price -
+                group.lot.cost_price)
+            return cost_line
 
     def _get_weaned_move(self):
         pool = Pool()

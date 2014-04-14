@@ -124,7 +124,8 @@ class FarrowingEvent(AbstractEvent):
 
             if farrowing_event.live != 0:
                 with Transaction().set_context(
-                        no_create_stock_move=True):
+                        no_create_stock_move=True,
+                        create_cost_lines=False):
                     produced_group = farrowing_event._get_produced_group()
                     produced_group.save()
                 farrowing_event.produced_group = produced_group
@@ -153,7 +154,24 @@ class FarrowingEvent(AbstractEvent):
     def _get_event_move(self):
         pool = Pool()
         Move = pool.get('stock.move')
+        ModelData = pool.get('ir.model.data')
+        LotCostLine = pool.get('stock.lot.cost_line')
+        category_id = ModelData.get_id('farm', 'cost_category_farrowing_cost')
         context = Transaction().context
+
+        lot = self.produced_group.lot
+
+        if lot and lot.product.template.farrowing_price:
+            if lot.cost_lines:
+                cost_line = lot.cost_lines[0]
+            else:
+                cost_line = LotCostLine()
+                cost_line.lot = self.produced_group.lot
+            cost_line.category = category_id
+            cost_line.origin = str(self)
+            cost_line.unit_price = lot.product.template.farrowing_price
+            cost_line.save()
+
         return Move(
             product=self.specie.group_product.id,
             uom=self.specie.group_product.default_uom.id,

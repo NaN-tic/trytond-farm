@@ -10,7 +10,7 @@ from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
 
 __all__ = ['Location', 'LocationSiloLocation', 'Lot', 'LotAnimal',
-    'LotAnimalGroup', 'Move']
+    'LotAnimalGroup', 'Move', 'LotCostLine']
 __metaclass__ = PoolMeta
 
 
@@ -418,3 +418,18 @@ class Move:
             move.lot.animal.location = move.to_location.id
             move.lot.animal.save()
         return res
+
+
+class LotCostLine:
+    __name__ = 'stock.lot.cost_line'
+
+    @classmethod
+    def _get_origin(cls):
+        models = super(LotCostLine, cls)._get_origin()
+        models += [
+            'farm.move.event',
+            'farm.transformation.event',
+            'farm.farrowing.event',
+            'farm.weaning.event',
+            ]
+        return models

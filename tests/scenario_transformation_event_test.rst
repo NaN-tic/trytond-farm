@@ -256,6 +256,10 @@ Validate transformation event::
     1
     >>> to_animal.type
     u'individual'
+    >>> len(to_animal.lot.cost_lines) == 1
+    True
+    >>> to_animal.lot.cost_price == individual_template.cost_price
+    True
     >>> to_animal.location == transform_male_to_individual.to_location
     True
     >>> male_to_individual.reload()

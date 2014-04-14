@@ -81,6 +81,8 @@ Create specie's products::
     ...     default_uom=unit,
     ...     type='goods',
     ...     list_price=Decimal('30'),
+    ...     farrowing_price=Decimal('10'),
+    ...     weaning_price=Decimal('15'),
     ...     cost_price=Decimal('20'))
     >>> group_template.save()
     >>> group_product = Product(template=group_template)
@@ -286,6 +288,9 @@ validate them and check females state and female's live values::
     >>> FarrowingEvent.validate_event(farrow_events, config.context)
     >>> all(FarrowingEvent(i).state == 'validated' for i in farrow_events)
     True
+    >>> all(FarrowingEvent(i).produced_group.lot.cost_price == Decimal('10.0')
+    ...     for i in farrow_events)
+    True
     >>> females = [Animal(i) for i in female_ids]
     >>> not any(f.current_cycle.pregnant for f in females)
     True
@@ -334,6 +339,15 @@ the weaning event doesn't have female, weaned nor lost moves::
     >>> female1.current_cycle.weaning_event.female_move
     >>> female1.current_cycle.weaning_event.weaned_move
     >>> female1.current_cycle.weaning_event.lost_move
+    >>> lot = weaning_event1.farrowing_group.lot
+    >>> len(lot.cost_lines)
+    2
+    >>> lot.cost_price == Decimal('15.0')
+    True
+    >>> weaning_cost_line, = [x for x in lot.cost_lines
+    ...     if x.origin == weaning_event1]
+    >>> weaning_cost_line.unit_price == Decimal('5.0')
+    True
 
 Create a weaning event for second female (7 lives) with 6 as quantity, with
 current female location as destination of weaned group but not for destination
@@ -463,4 +477,13 @@ weaned group moves::
     2.0
     >>> female4.current_cycle.weaning_event.transformation_event.state
     u'validated'
+    >>> lot = weaning_event4.weaned_group.lot
+    >>> len(lot.cost_lines)
+    2
+    >>> lot.cost_price == Decimal('15.0')
+    True
+    >>> weaning_cost_line, = [x for x in lot.cost_lines
+    ...     if x.origin == weaning_event4]
+    >>> weaning_cost_line.unit_price == Decimal('-5.0')
+    True
 

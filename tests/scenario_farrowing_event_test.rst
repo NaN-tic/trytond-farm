@@ -81,6 +81,7 @@ Create specie's products::
     ...     default_uom=unit,
     ...     type='goods',
     ...     list_price=Decimal('30'),
+    ...     farrowing_price=Decimal('10'),
     ...     cost_price=Decimal('20'))
     >>> group_template.save()
     >>> group_product = Product(template=group_template)
@@ -371,3 +372,11 @@ it is 'mated' and check female functional fields values::
     7
     >>> female.current_cycle.dead
     2
+
+Female childs must have the farrowing cost::
+
+    >>> group = farrow_event2.produced_group
+    >>> len(group.lot.cost_lines)
+    1
+    >>> group.lot.cost_price == Decimal('10.0')
+    True
