@@ -57,8 +57,10 @@ class FosterEvent(AbstractEvent):
         cls.animal.domain += [
             ('farm', '=', Eval('farm')),
             ('type', '=', 'female'),
-            ('current_cycle', '!=', None),
-            If(Equal(Eval('state'), 'draft'),
+            If(~Eval('imported', True),
+                ('current_cycle', '!=', None),
+                ()),
+            If(Equal(Eval('state'), 'draft') & ~Eval('imported', True),
                 ('current_cycle.state', '=', 'lactating'),
                 ()),
             ]

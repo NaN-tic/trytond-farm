@@ -80,6 +80,26 @@ msgid ""
 "is required to create the arrival stock move for a new animal."
 msgstr ""
 
+msgctxt "error:farm.create_female:"
+msgid "Birthdate \"%s\" can not be after arrival date \"%s\"."
+msgstr ""
+
+msgctxt "error:farm.create_female:"
+msgid "Farrowing date \"%s\" on line \"%s\" can not be before insemination date \"%s\"."
+msgstr ""
+
+msgctxt "error:farm.create_female:"
+msgid "Insemination date \"%s\" on line \"%s\" can not be before arrival date \"%s\"."
+msgstr ""
+
+msgctxt "error:farm.create_female:"
+msgid "Line \"%s\" misses it weaning event."
+msgstr ""
+
+msgctxt "error:farm.create_female:"
+msgid "Weaning date \"%s\" on line \"%s\" can not be before farrowing date \"%s\"."
+msgstr ""
+
 msgctxt "error:farm.event.order:"
 msgid "The Animal and Event Type of Event Order \"%s\" are incompatibles."
 msgstr ""
@@ -575,6 +595,10 @@ msgctxt "field:farm.abort.event,id:"
 msgid "ID"
 msgstr "Identificador"
 
+msgctxt "field:farm.abort.event,imported:"
+msgid "Imported"
+msgstr "Importat"
+
 msgctxt "field:farm.abort.event,lot:"
 msgid "Lot"
 msgstr "Lot"
@@ -757,7 +781,7 @@ msgstr ""
 
 msgctxt "field:farm.animal,sex:"
 msgid "Sex"
-msgstr ""
+msgstr "Sexe"
 
 msgctxt "field:farm.animal,specie:"
 msgid "Specie"
@@ -1138,6 +1162,102 @@ msgctxt "field:farm.animal.weight,write_uid:"
 msgid "Write User"
 msgstr "Usuari modificació"
 
+msgctxt "field:farm.create_female.line,abort:"
+msgid "Aborted?"
+msgstr "Abortat?"
+
+msgctxt "field:farm.create_female.line,farrowing_date:"
+msgid "Farrowing Date"
+msgstr "Data part"
+
+msgctxt "field:farm.create_female.line,fostered:"
+msgid "Fostered"
+msgstr "Adoptats"
+
+msgctxt "field:farm.create_female.line,id:"
+msgid "ID"
+msgstr "Identificador"
+
+msgctxt "field:farm.create_female.line,insemination_date:"
+msgid "Insemination Date"
+msgstr "Data inseminació"
+
+msgctxt "field:farm.create_female.line,live:"
+msgid "Live"
+msgstr "Vius"
+
+msgctxt "field:farm.create_female.line,mummified:"
+msgid "Mummified"
+msgstr "Momificats"
+
+msgctxt "field:farm.create_female.line,second_insemination_date:"
+msgid "Second Insemination Date"
+msgstr "Data segona inseminació"
+
+msgctxt "field:farm.create_female.line,sequence:"
+msgid "Num. cycle"
+msgstr ""
+
+msgctxt "field:farm.create_female.line,start:"
+msgid "Start"
+msgstr "Inici"
+
+msgctxt "field:farm.create_female.line,stillborn:"
+msgid "Stillborn"
+msgstr ""
+
+msgctxt "field:farm.create_female.line,third_insemination_date:"
+msgid "Third Insemination Date"
+msgstr "Data tercera inseminació"
+
+msgctxt "field:farm.create_female.line,weaned_quantity:"
+msgid "Weaned Quantity"
+msgstr ""
+
+msgctxt "field:farm.create_female.line,weaning_date:"
+msgid "Weaning Date"
+msgstr ""
+
+msgctxt "field:farm.create_female.start,arrival_date:"
+msgid "Arrival Date"
+msgstr "Data arrivada"
+
+msgctxt "field:farm.create_female.start,birthdate:"
+msgid "Birthdate"
+msgstr "Data naixement"
+
+msgctxt "field:farm.create_female.start,breed:"
+msgid "Breed"
+msgstr "Raça"
+
+msgctxt "field:farm.create_female.start,cycles:"
+msgid "Cycles"
+msgstr "Cicles"
+
+msgctxt "field:farm.create_female.start,id:"
+msgid "ID"
+msgstr "Identificador"
+
+msgctxt "field:farm.create_female.start,initial_location:"
+msgid "Current Location"
+msgstr "Ubicació actual"
+
+msgctxt "field:farm.create_female.start,last_cycle_active:"
+msgid "Last cycle active"
+msgstr "Últim cicle actiu"
+
+msgctxt "field:farm.create_female.start,number:"
+msgid "Number"
+msgstr "Número"
+
+msgctxt "field:farm.create_female.start,origin:"
+msgid "Origin"
+msgstr "Origen"
+
+msgctxt "field:farm.create_female.start,specie:"
+msgid "Specie"
+msgstr "Espècie"
+
 msgctxt "field:farm.event,animal:"
 msgid "Animal"
 msgstr "Animal"
@@ -1169,6 +1289,10 @@ msgstr "Granja"
 msgctxt "field:farm.event,id:"
 msgid "ID"
 msgstr "Identificador"
+
+msgctxt "field:farm.event,imported:"
+msgid "Imported"
+msgstr "Importat"
 
 msgctxt "field:farm.event,lot:"
 msgid "Lot"
@@ -1332,6 +1456,10 @@ msgstr "Cicle de femella"
 msgctxt "field:farm.farrowing.event,id:"
 msgid "ID"
 msgstr "Identificador"
+
+msgctxt "field:farm.farrowing.event,imported:"
+msgid "Imported"
+msgstr "Importat"
 
 msgctxt "field:farm.farrowing.event,live:"
 msgid "Live"
@@ -1537,6 +1665,10 @@ msgstr ""
 msgctxt "field:farm.feed.event,id:"
 msgid "ID"
 msgstr "Identificador"
+
+msgctxt "field:farm.feed.event,imported:"
+msgid "Imported"
+msgstr "Importat"
 
 msgctxt "field:farm.feed.event,location:"
 msgid "Location"
@@ -1974,6 +2106,10 @@ msgctxt "field:farm.foster.event,id:"
 msgid "ID"
 msgstr "Identificador"
 
+msgctxt "field:farm.foster.event,imported:"
+msgid "Imported"
+msgstr "Importat"
+
 msgctxt "field:farm.foster.event,lot:"
 msgid "Lot"
 msgstr "Lot"
@@ -2074,6 +2210,10 @@ msgctxt "field:farm.insemination.event,id:"
 msgid "ID"
 msgstr "Identificador"
 
+msgctxt "field:farm.insemination.event,imported:"
+msgid "Imported"
+msgstr "Importat"
+
 msgctxt "field:farm.insemination.event,lot:"
 msgid "Lot"
 msgstr "Lot"
@@ -2161,6 +2301,10 @@ msgstr ""
 msgctxt "field:farm.medication.event,id:"
 msgid "ID"
 msgstr "Identificador"
+
+msgctxt "field:farm.medication.event,imported:"
+msgid "Imported"
+msgstr "Importat"
 
 msgctxt "field:farm.medication.event,location:"
 msgid "Location"
@@ -2257,6 +2401,10 @@ msgstr "Origen"
 msgctxt "field:farm.move.event,id:"
 msgid "ID"
 msgstr "Identificador"
+
+msgctxt "field:farm.move.event,imported:"
+msgid "Imported"
+msgstr "Importat"
 
 msgctxt "field:farm.move.event,lot:"
 msgid "Lot"
@@ -2362,6 +2510,10 @@ msgctxt "field:farm.pregnancy_diagnosis.event,id:"
 msgid "ID"
 msgstr "Identificador"
 
+msgctxt "field:farm.pregnancy_diagnosis.event,imported:"
+msgid "Imported"
+msgstr "Importat"
+
 msgctxt "field:farm.pregnancy_diagnosis.event,lot:"
 msgid "Lot"
 msgstr "Lot"
@@ -2437,6 +2589,10 @@ msgstr "Origen"
 msgctxt "field:farm.removal.event,id:"
 msgid "ID"
 msgstr "Identificador"
+
+msgctxt "field:farm.removal.event,imported:"
+msgid "Imported"
+msgstr "Importat"
 
 msgctxt "field:farm.removal.event,lot:"
 msgid "Lot"
@@ -2741,6 +2897,10 @@ msgstr ""
 msgctxt "field:farm.semen_extraction.event,id:"
 msgid "ID"
 msgstr "Identificador"
+
+msgctxt "field:farm.semen_extraction.event,imported:"
+msgid "Imported"
+msgstr "Importat"
 
 msgctxt "field:farm.semen_extraction.event,lot:"
 msgid "Lot"
@@ -3059,7 +3219,6 @@ msgctxt "field:farm.specie.farm_line,has_individual:"
 msgid "Individuals"
 msgstr "Individuals"
 
-#, fuzzy
 msgctxt "field:farm.specie.farm_line,has_male:"
 msgid "Males"
 msgstr "Mascles"
@@ -3167,6 +3326,10 @@ msgstr "Origen"
 msgctxt "field:farm.transformation.event,id:"
 msgid "ID"
 msgstr "Identificador"
+
+msgctxt "field:farm.transformation.event,imported:"
+msgid "Imported"
+msgstr "Importat"
 
 msgctxt "field:farm.transformation.event,in_move:"
 msgid "Input Stock Move"
@@ -3280,6 +3443,10 @@ msgctxt "field:farm.weaning.event,id:"
 msgid "ID"
 msgstr "Identificador"
 
+msgctxt "field:farm.weaning.event,imported:"
+msgid "Imported"
+msgstr "Importat"
+
 msgctxt "field:farm.weaning.event,lost_move:"
 msgid "Lost Stock Move"
 msgstr ""
@@ -3373,6 +3540,10 @@ msgid "Write User"
 msgstr "Usuari modificació"
 
 msgctxt "field:ir.action.act_window,specie:"
+msgid "Specie"
+msgstr "Espècie"
+
+msgctxt "field:ir.action.wizard,specie:"
 msgid "Specie"
 msgstr "Espècie"
 
@@ -3672,6 +3843,10 @@ msgid ""
 "Raised means that this group was born in the farm. Otherwise, it was "
 "purchased."
 msgstr ""
+
+msgctxt "help:farm.create_female.start,last_cycle_active:"
+msgid "If marked the moves for the last cycle will be created."
+msgstr "Si es marca es crearan els movimiments de l'ultim cicle."
 
 msgctxt "help:farm.event,employee:"
 msgid "Employee that did the job."
@@ -4010,6 +4185,14 @@ msgctxt "model:farm.animal.weight,name:"
 msgid "Farm Animal Weight Record"
 msgstr ""
 
+msgctxt "model:farm.create_female.line,name:"
+msgid "Create Female Line"
+msgstr ""
+
+msgctxt "model:farm.create_female.start,name:"
+msgid "Create Female Start"
+msgstr "Inici crea femella"
+
 msgctxt "model:farm.event,name:"
 msgid "Event"
 msgstr ""
@@ -4325,6 +4508,10 @@ msgctxt "model:ir.action,name:act_farm_weaning_event"
 msgid "Weaning Events"
 msgstr "Weaning Events"
 
+msgctxt "model:ir.action,name:farm_create_female"
+msgid "Create Female"
+msgstr "Crea femella"
+
 msgctxt "model:ir.sequence.type,name:sequence_type_animal"
 msgid "Farm Animal"
 msgstr ""
@@ -4380,6 +4567,10 @@ msgstr "Granja"
 msgctxt "model:res.group,name:group_farm_admin"
 msgid "Farm Administration"
 msgstr ""
+
+msgctxt "model:res.group,name:group_farm_create_females"
+msgid "Farm / Create Females"
+msgstr "Granja / Crea femelles"
 
 msgctxt "model:res.group,name:group_farm_females"
 msgid "Farm / Females"
@@ -4536,6 +4727,14 @@ msgid "Purchased"
 msgstr "Comprat"
 
 msgctxt "selection:farm.animal.group,origin:"
+msgid "Raised"
+msgstr ""
+
+msgctxt "selection:farm.create_female.start,origin:"
+msgid "Purchased"
+msgstr "Comprat"
+
+msgctxt "selection:farm.create_female.start,origin:"
 msgid "Raised"
 msgstr ""
 
@@ -5049,6 +5248,14 @@ msgctxt "view:farm.animal:"
 msgid "Weights"
 msgstr "Pesos"
 
+msgctxt "view:farm.create_female.line:"
+msgid "Female Cycle"
+msgstr "Cicle de femella"
+
+msgctxt "view:farm.create_female.start:"
+msgid "Create Female"
+msgstr "Crea femella"
+
 msgctxt "view:farm.event.order:"
 msgid "Confirm"
 msgstr "Confirma"
@@ -5229,3 +5436,11 @@ msgstr "Configuració silo"
 msgctxt "view:stock.lot:"
 msgid "Farm"
 msgstr "Granja"
+
+msgctxt "wizard_button:farm.create_female,start,end:"
+msgid "Cancel"
+msgstr "Cancel·la"
+
+msgctxt "wizard_button:farm.create_female,start,result:"
+msgid "Create"
+msgstr "Crea"

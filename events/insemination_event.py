@@ -139,7 +139,8 @@ class InseminationEvent(AbstractEvent):
                         })
             current_cycle = insemination_event.animal.current_cycle
             # It creates a new cycle if a diagnosis event has been done
-            if not current_cycle or current_cycle.diagnosis_events:
+            if (not current_cycle or current_cycle.farrowing_event or
+                    current_cycle.abort_event):
                 current_cycle = FemaleCycle(animal=insemination_event.animal)
                 current_cycle.save()
                 insemination_event.animal.current_cycle = current_cycle

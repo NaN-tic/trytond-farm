@@ -31,6 +31,8 @@ def register():
         Male,
         FemaleCycle,
         Female,
+        CreateFemaleStart,
+        CreateFemaleLine,
         AnimalGroup,
         AnimalGroupTag,
         AnimalGroupWeight,
@@ -74,3 +76,6 @@ def register():
         BOM,
         QualityTest,
         module='farm', type_='model')
+    Pool.register(
+        CreateFemale,
+        module='farm', type_='wizard')

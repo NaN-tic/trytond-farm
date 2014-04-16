@@ -22,11 +22,12 @@ _STATES_VALIDATED = {
     }
 _DEPENDS_VALIDATED = ['state']
 _STATES_VALIDATED_ADMIN = {
-    'required': Equal(Eval('state'), 'validated'),
+    'required': (Equal(Eval('state'), 'validated') &
+        Not(Eval('imported', False))),
     'invisible': Not(Eval('groups', []).contains(
         Id('farm', 'group_farm_admin'))),
     }
-_DEPENDS_VALIDATED_ADMIN = ['state']
+_DEPENDS_VALIDATED_ADMIN = ['state', 'imported']
 
 
 class AbstractEvent(ModelSQL, ModelView, Workflow):
@@ -94,6 +95,7 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
     notes = fields.Text('Notes')
     state = fields.Selection(_EVENT_STATES, 'State', required=True,
         readonly=True, select=True)
+    imported = fields.Boolean('Imported', readonly=True)
 
     @classmethod
     def __setup__(cls):
@@ -139,6 +141,10 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
     @staticmethod
     def default_state():
         return 'draft'
+
+    @staticmethod
+    def default_imported():
+        return False
 
     def get_rec_name(self, name):
         if self.animal_type == 'group':

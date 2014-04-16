@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<form string="Female Cycle">
+    <label name="insemination_date"/>
+    <field name="insemination_date"/>
+    <label name="second_insemination_date"/>
+    <field name="second_insemination_date"/>
+    <label name="third_insemination_date"/>
+    <field name="third_insemination_date"/>
+    <label name="abort"/>
+    <field name="abort"/>
+    <label name="farrowing_date"/>
+    <field name="farrowing_date"/>
+    <label name="live"/>
+    <field name="live"/>
+    <label name="stillborn"/>
+    <field name="stillborn"/>
+    <label name="mummified"/>
+    <field name="mummified"/>
+    <label name="fostered"/>
+    <field name="fostered"/>
+    <label name="weaning_date"/>
+    <field name="weaning_date"/>
+    <label name="weaned_quantity"/>
+    <field name="weaned_quantity"/>
+</form>

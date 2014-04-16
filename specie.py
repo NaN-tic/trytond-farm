@@ -150,6 +150,7 @@ class Specie(ModelSQL, ModelView):
         Model = pool.get('ir.model')
         ModelData = pool.get('ir.model.data')
         ActWindow = pool.get('ir.action.act_window')
+        ActWizard = pool.get('ir.action.wizard')
         EventOrder = pool.get('farm.event.order')
 
         lang_codes = cls._get_lang_codes()
@@ -240,6 +241,34 @@ class Specie(ModelSQL, ModelView):
                             event_context, event_act_window.name, animal_menu,
                             seq, icon, None, event_act_window, False,
                             current_menus, current_actions)
+                    animal_submenu_seq += 1
+                #Females have an special menu for creating with full history
+                if animal_type == 'female':
+                    wizard = ActWizard(ModelData.get_id(MODULE_NAME,
+                            'farm_create_female'))
+
+                    action = ('ir.action.wizard', wizard.id)
+                    menu_vals = {
+                        'name': wizard.name,
+                        'parent': animal_menu.id,
+                        'icon': 'tryton-executable',
+                        'sequence': animal_submenu_seq,
+                        'groups': [('set', [x.id for x in wizard.groups])],
+                        'action': action,
+                        'specie': specie.id,
+                        }
+                    with Transaction().set_context(lang='en_US'):
+                        menus = Menu.search([
+                                ('name', '=', wizard.name),
+                                ('parent', '=', animal_menu.id),
+                                ('specie', '=', specie.id),
+                                ])
+                        if menus:
+                            Menu.write(menus, menu_vals)
+                        else:
+                            menus = Menu.create([menu_vals])
+                        menu, = menus
+                    cls._write_field_in_langs(Menu, menu, 'name', menu.name)
                     animal_submenu_seq += 1
                 specie_submenu_seq += 1
 

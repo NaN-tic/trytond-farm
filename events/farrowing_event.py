@@ -47,16 +47,16 @@ class FarrowingEvent(AbstractEvent):
             ('initial_quantity', '=', Eval('live')),
             ], readonly=True,
         states={
-            'required': And(Equal(Eval('state'), 'validated'),
-                    Bool(Eval('live', 0))),
+            'required': And(And(Equal(Eval('state'), 'validated'),
+                    Bool(Eval('live', 0))), Not(Eval('imported', False))),
             },
         depends=['specie', 'live', 'state'])
     move = fields.Many2One('stock.move', 'Stock Move', readonly=True, domain=[
             ('lot.animal_group', '=', Eval('produced_group')),
             ],
         states={
-            'required': And(Equal(Eval('state'), 'validated'),
-                    Bool(Eval('live', 0))),
+            'required': And(And(Equal(Eval('state'), 'validated'),
+                    Bool(Eval('live', 0))), Not(Eval('imported', False))),
             'invisible': Not(Eval('groups', []).contains(
                 Id('farm', 'group_farm_admin'))),
             },
@@ -67,8 +67,10 @@ class FarrowingEvent(AbstractEvent):
         super(FarrowingEvent, cls).__setup__()
         cls.animal.domain += [
             ('type', '=', 'female'),
-            ('current_cycle', '!=', None),
-            If(Equal(Eval('state'), 'draft'),
+            If(~Eval('imported', True),
+                ('current_cycle', '!=', None),
+                ()),
+            If(Equal(Eval('state'), 'draft') & ~Eval('imported', True),
                 ('current_cycle.state', '=', 'pregnant'),
                 ()),
             ]

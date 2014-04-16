@@ -270,7 +270,32 @@
             <field name="type">tree</field>
             <field name="name">farm_animal_female_cycle_list</field>
         </record>
+        <!--
+        farm.create_female
+        -->
+        <record model="ir.ui.view" id="farm_create_female_start_view">
+            <field name="model">farm.create_female.start</field>
+            <field name="type">form</field>
+            <field name="name">farm_create_female_start</field>
+        </record>
 
+        <record model="ir.ui.view" id="farm_create_female_line_form_view">
+            <field name="model">farm.create_female.line</field>
+            <field name="type">form</field>
+            <field name="name">farm_create_female_line_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="farm_create_female_line_list_view">
+            <field name="model">farm.create_female.line</field>
+            <field name="type">tree</field>
+            <field name="name">farm_create_female_line_list</field>
+        </record>
+
+        <record model="ir.action-res.group"
+                 id="farm_create_female_group_create_femal">
+            <field name="action" ref="farm_create_female"/>
+            <field name="group" ref="group_farm_females"/>
+        </record>
         <!-- Menus -->
         <menuitem action="act_farm_tag" id="menu_farm_tag"
             parent="menu_configuration" sequence="2"/>

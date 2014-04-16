@@ -5,12 +5,13 @@ from decimal import Decimal
 import logging
 
 from trytond.model import ModelView, ModelSQL, fields
-from trytond.pyson import Equal, Eval, Greater, Id, Not
+from trytond.pyson import Equal, Eval, Greater, Id, Not, Bool
 from trytond.transaction import Transaction
 from trytond.pool import Pool, PoolMeta
+from trytond.wizard import Wizard, StateView, StateAction, Button
 
 __all__ = ['Tag', 'Animal', 'AnimalTag', 'AnimalWeight', 'Male', 'Female',
-    'FemaleCycle']
+    'FemaleCycle', 'CreateFemaleStart', 'CreateFemaleLine', 'CreateFemale']
 __metaclass__ = PoolMeta
 
 _STATES_MALE_FIELD = {
@@ -25,6 +26,11 @@ _STATES_INDIVIDUAL_FIELD = {
     'invisible': Not(Equal(Eval('type'), 'individual')),
     }
 _DEPENDS_INDIVIDUAL_FIELD = ['type']
+
+ANIMAL_ORIGIN = [
+    ('purchased', 'Purchased'),
+    ('raised', 'Raised'),
+    ]
 
 
 class Tag(ModelSQL, ModelView):
@@ -131,10 +137,8 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
     farm = fields.Function(fields.Many2One('stock.location', 'Current Farm',
             on_change_with=['location'], depends=['location']),
         'on_change_with_farm', searcher='search_farm')
-    origin = fields.Selection([
-            ('purchased', 'Purchased'),
-            ('raised', 'Raised'),
-            ], 'Origin', required=True, readonly=True,
+    origin = fields.Selection(ANIMAL_ORIGIN, 'Origin', required=True,
+        readonly=True,
         help='Raised means that this animal was born in the farm. Otherwise, '
         'it was purchased.')
     arrival_date = fields.Date('Arrival Date', states={
@@ -575,7 +579,7 @@ class Female:
                 not self.cycles[0].weaning_event and
                 self.cycles[0].state == 'unmated'):
             state = 'prospective'
-        elif self.current_cycle.state == 'unmated':
+        elif self.current_cycle and self.current_cycle.state == 'unmated':
             state = 'unmated'
         else:
             state = 'mated'
@@ -851,11 +855,8 @@ class FemaleCycle(ModelSQL, ModelView):
         return 'unmated'
 
     def get_rec_name(self, name):
-        state_labels = [label for (n, label) in FemaleCycle.state.selection
-            if n == self.state]
-        if state_labels:
-            return "%s (%s)" % (self.sequence, state_labels[0])
-        return "%s" % self.sequence
+        state_labels = dict(self.fields_get(['state'])['state']['selection'])
+        return "%s (%s)" % (self.sequence, state_labels[self.state])
 
     # TODO: call in weaning, farrowing, abort, pregnancy_diagnosis and
     # insemination event (in 'valid()' and 'cancel()')
@@ -954,3 +955,307 @@ class FemaleCycle(ModelSQL, ModelView):
             if not vals.get('sequence') and vals.get('animal'):
                 vals['sequence'] = cls.default_sequence(vals['animal'])
         return super(FemaleCycle, cls).create(vlist)
+
+
+class CreateFemaleStart(ModelView):
+    'Create Female Start'
+    __name__ = 'farm.create_female.start'
+
+    number = fields.Char('Number')
+    origin = fields.Selection(ANIMAL_ORIGIN, 'Origin', required=True)
+    arrival_date = fields.Date('Arrival Date', required=True)
+    birthdate = fields.Date('Birthdate',
+        states={
+            'readonly': Eval('origin') == 'raised',
+            },
+        depends=['origin'],
+        on_change_with=['origin', 'arrival_date'])
+    initial_location = fields.Many2One('stock.location', 'Current Location',
+        required=True,
+        domain=[
+            ('type', '=', 'storage'),
+            ('silo', '=', False),
+            ],
+        context={
+            'restrict_by_specie_animal_type': True,
+            })
+    specie = fields.Many2One('farm.specie', 'Specie', required=True,
+        readonly=True)
+    breed = fields.Many2One('farm.specie.breed', 'Breed', required=True,
+        domain=[
+            ('specie', '=', Eval('specie')),
+            ],
+        depends=['specie'])
+    cycles = fields.One2Many('farm.create_female.line', 'start', 'Cycles',
+        required=True)
+    last_cycle_active = fields.Boolean('Last cycle active',
+        help='If marked the moves for the last cycle will be created.')
+
+    @staticmethod
+    def default_specie():
+        context = Transaction().context
+        if context.get('active_model') == 'ir.ui.menu':
+            pool = Pool()
+            Menu = pool.get('ir.ui.menu')
+            return Menu(context.get('active_id')).specie.id
+        return context.get('specie')
+
+    @staticmethod
+    def default_origin():
+        return 'raised'
+
+    def on_change_with_birthdate(self):
+        if self.origin == 'raised':
+            return self.arrival_date
+        return None
+
+
+class CreateFemaleLine(ModelView):
+    'Create Female Line'
+    __name__ = 'farm.create_female.line'
+    _rec_name = 'sequence'
+
+    start = fields.Many2One('farm.create_female.start', 'Start', required=True)
+    sequence = fields.Integer('Num. cycle', required=True)
+    insemination_date = fields.Date('Insemination Date', required=True)
+    second_insemination_date = fields.Date('Second Insemination Date')
+    third_insemination_date = fields.Date('Third Insemination Date')
+    abort = fields.Boolean('Aborted?')
+    farrowing_date = fields.DateTime('Farrowing Date',
+        states={
+            'required': Bool(Eval('weaning_date')),
+            'invisible': Bool(Eval('abort')),
+            },
+        depends=['weaning_date', 'abort'])
+    live = fields.Integer('Live',
+        states={
+            'required': Bool(Eval('farrowing_date')),
+            'invisible': Bool(Eval('abort')),
+            },
+        depends=['farrowing_date', 'abort'])
+    stillborn = fields.Integer('Stillborn',
+        states={
+            'invisible': Bool(Eval('abort')),
+            },
+        depends=['abort'])
+    mummified = fields.Integer('Mummified',
+        states={
+            'invisible': Bool(Eval('abort')),
+            },
+        depends=['abort'])
+    fostered = fields.Integer('Fostered',
+        states={
+            'invisible': Bool(Eval('abort')),
+            },
+        depends=['abort'])
+    weaning_date = fields.DateTime('Weaning Date',
+        states={
+            'invisible': (Bool(Eval('abort')) | (Eval('live', 0) == 0)),
+            },
+        depends=['abort', 'live'])
+    weaned_quantity = fields.Integer('Weaned Quantity',
+        states={
+            'required': Bool(Eval('weaning_date')),
+            'invisible': (Bool(Eval('abort')) | (Eval('live', 0) == 0)),
+            },
+        depends=['weaning_date', 'abort', 'live'])
+
+
+class CreateFemale(Wizard):
+    'Create Female'
+    __name__ = 'farm.create_female'
+    start = StateView('farm.create_female.start',
+        'farm.farm_create_female_start_view', [
+            Button('Cancel', 'end', 'tryton-cancel'),
+            Button('Create', 'result', 'tryton-ok', default=True),
+            ])
+    result = StateAction('farm.act_farm_animal_female')
+
+    @classmethod
+    def __setup__(cls):
+        super(CreateFemale, cls).__setup__()
+        cls._error_messages.update({
+                'birthdate_after_arrival': ('Birthdate "%s" can not be '
+                    'after arrival date "%s".'),
+                'insemination_before_arrival': ('Insemination date "%s" on '
+                    'line "%s" can not be before arrival date "%s".'),
+                'farrowing_before_insemination': ('Farrowing date "%s" on line'
+                    ' "%s" can not be before insemination date "%s".'),
+                'weaning_before_farrowing': ('Weaning date "%s" on line "%s"'
+                    ' can not be before farrowing date "%s".'),
+                'missing_weaning': 'Line "%s" misses its weaning event.',
+                'greather_than_zero': ('Live, stillborn, muffied and weaned '
+                    'quantity on line "%s" must be grether than zero.'),
+                'more_fostered_than_live': ('On line "%s" there are more '
+                    'fostered animals than live.'),
+                'more_weaned_than_live': ('On line "%s" there are more '
+                    'weaned animals than live.'),
+                })
+
+    def do_result(self, action):
+        pool = Pool()
+        Abort = pool.get('farm.abort.event')
+        Animal = pool.get('farm.animal')
+        Cycle = pool.get('farm.animal.female_cycle')
+        Farrowing = pool.get('farm.farrowing.event')
+        Foster = pool.get('farm.foster.event')
+        Insemination = pool.get('farm.insemination.event')
+        Weaning = pool.get('farm.weaning.event')
+
+        if (self.start.birthdate and self.start.birthdate >
+                self.start.arrival_date):
+            self.raise_user_error('birthdate_after_arrival',
+                (self.start.birthdate, self.start.arrival_date))
+
+        female = Animal()
+        female.type = 'female'
+        female.specie = self.start.specie
+        female.breed = self.start.breed
+        female.number = self.start.number
+        female.arrival_date = self.start.arrival_date
+        female.birthdate = self.start.birthdate
+        female.initial_location = self.start.initial_location
+        female.save()
+        female.cycles = []
+        farm = female.initial_location.warehouse
+        for line in self.start.cycles:
+            for field in ('live', 'stillborn', 'mummified', 'weaned_quantity'):
+                value = getattr(line, field)
+                if value and value < 0:
+                    self.raise_user_error('greather_than_zero', line.sequence)
+            cycle = Cycle()
+            cycle.animal = female
+
+            insemination_events = []
+            for insemination_date in (line.insemination_date,
+                    line.second_insemination_date,
+                    line.third_insemination_date):
+                if not insemination_date:
+                    continue
+                if insemination_date < self.start.arrival_date:
+                    self.raise_user_error('insemination_before_arrival', (
+                            insemination_date, line.sequence,
+                            self.start.arrival_date))
+                insemination_date = datetime.combine(insemination_date,
+                    datetime.min.time())
+                if (line.farrowing_date and insemination_date >
+                        line.farrowing_date):
+                    self.raise_user_error('farrowing_before_insemination', (
+                            line.farrowing_date, line.sequence,
+                            insemination_date))
+                insemination = Insemination()
+                insemination.imported = True
+                insemination.animal = female
+                insemination.animal_type = 'female'
+                insemination.farm = farm
+                insemination.specie = self.start.specie
+                insemination.timestamp = insemination_date
+                insemination.state = 'validated'
+                insemination_events.append(insemination)
+            cycle.insemination_events = insemination_events
+            if line.abort:
+                abort = Abort()
+                abort.female_cycle = cycle
+                abort.imported = True
+                abort.animal = female
+                abort.animal_type = 'female'
+                abort.farm = farm
+                abort.specie = self.start.specie
+                abort.timestamp = line.insemination_date
+                abort.state = 'validated'
+                abort.save()
+                cycle.abort_event = abort
+            elif line.farrowing_date:
+                cycle.save()
+                farrowing = Farrowing()
+                farrowing.female_cycle = cycle
+                farrowing.imported = True
+                farrowing.animal = female
+                farrowing.animal_type = 'female'
+                farrowing.farm = farm
+                farrowing.specie = self.start.specie
+                farrowing.timestamp = line.farrowing_date
+                farrowing.live = line.live
+                farrowing.stillborn = line.stillborn
+                farrowing.mummified = line.mummified
+                farrowing.state = 'validated'
+                cycle.farrowing_event = farrowing
+
+                if line.fostered:
+                    if line.fostered < 0 and abs(line.fostered) > line.live:
+                        self.raise_user_error('more_fostered_than_live',
+                            line.sequence)
+                    foster = Foster()
+                    foster.imported = True
+                    foster.female_cycle = cycle
+                    foster.animal = female
+                    foster.animal_type = 'female'
+                    foster.farm = farm
+                    foster.specie = self.start.specie
+                    foster.timestamp = line.farrowing_date
+                    foster.quantity = line.fostered
+                    foster.state = 'validated'
+                    cycle.foster_events = [foster]
+
+                if line.weaning_date:
+                    if line.weaning_date < line.farrowing_date:
+                        self.raise_user_error('weaning_before_farrowing', (
+                                line.weaning_date, line.sequence,
+                                line.farrowing_date))
+                    if line.weaned_quantity > (line.live -
+                            line.fostered or 0):
+                        self.raise_user_error('more_weaned_than_live',
+                            line.sequence)
+
+                    weaning = Weaning()
+                    weaning.imported = True
+                    weaning.female_cycle = cycle
+                    weaning.animal = female
+                    weaning.animal_type = 'female'
+                    weaning.farm = farm
+                    weaning.specie = self.start.specie
+                    weaning.timestamp = line.weaning_date
+                    weaning.quantity = line.weaned_quantity
+                    weaning.female_to_location = female.initial_location
+                    weaning.weaned_to_location = female.initial_location
+                    weaning.state = 'validated'
+                    cycle.weaning_event = weaning
+                elif (not self.start.last_cycle_active or
+                        line != self.start.cycles[-1]):
+                    if (line.live + (line.fostered or 0) -
+                            (line.stillborn or 0) -
+                            (line.mummified or 0) > 0):
+                        self.raise_user_error('missing_weaning', line.sequence)
+            cycle.save()
+            cycle.update_state(None)
+        female = Animal(female.id)
+        female.update_current_cycle()
+        if self.start.last_cycle_active:
+            cycle = female.current_cycle
+            if cycle.farrowing_event:
+                Farrowing.write([cycle.farrowing_event], {
+                    'state': 'draft',
+                    })
+                Farrowing.validate_event([cycle.farrowing_event])
+                Farrowing.write([cycle.farrowing_event], {
+                    'imported': False,
+                    })
+            if cycle.foster_events:
+                Foster.write(cycle.foster_events, {
+                    'state': 'draft',
+                    })
+                Foster.validate_event(cycle.foster_events)
+                Foster.write(cycle.foster_events, {
+                    'imported': False,
+                    })
+            if cycle.weaning_event:
+                Weaning.write([cycle.weaning_event], {
+                    'state': 'draft',
+                    })
+                Weaning.validate_event([cycle.weaning_event])
+                Weaning.write([cycle.weaning_event], {
+                    'imported': False,
+                    })
+
+        action['views'].reverse()
+        return action, {'res_id': [female.id]}
