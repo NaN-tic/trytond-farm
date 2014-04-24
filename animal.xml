@@ -270,6 +270,7 @@
             <field name="type">tree</field>
             <field name="name">farm_animal_female_cycle_list</field>
         </record>
+
         <!--
         farm.create_female
         -->
@@ -291,11 +292,16 @@
             <field name="name">farm_create_female_line_list</field>
         </record>
 
+        <record model="ir.action.wizard" id="wizard_farm_create_female">
+            <field name="name">Create female</field>
+            <field name="wiz_name">farm.create_female</field>
+        </record>
         <record model="ir.action-res.group"
                  id="farm_create_female_group_create_femal">
-            <field name="action" ref="farm_create_female"/>
+            <field name="action" ref="wizard_farm_create_female"/>
             <field name="group" ref="group_farm_females"/>
         </record>
+
         <!-- Menus -->
         <menuitem action="act_farm_tag" id="menu_farm_tag"
             parent="menu_configuration" sequence="2"/>
