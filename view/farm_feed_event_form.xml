@@ -3,25 +3,32 @@
      copyright notices and license terms. -->
 <data>
     <xpath expr="//field[@name='employee']" position="after">
+        <label name="location"/>
+        <field name="location"/>
+        <label name="quantity"/>
+        <field name="quantity"/>
         <group id="feed_fields_group" colspan="4" col="4">
             <separator id="feed_fields_separator" colspan="4"/>
-            <label name="location"/>
-            <field name="location"/>
             <label name="feed_location"/>
             <field name="feed_location"/>
+            <newline/>
             <label name="feed_product"/>
             <field name="feed_product"/>
             <label name="feed_lot"/>
             <field name="feed_lot"/>
-            <label name="quantity"/>
-            <field name="quantity"/>
+            <newline/>
+            <label name="feed_quantity"/>
+            <field name="feed_quantity"/>
             <label name="uom"/>
             <field name="uom"/>
+            <newline/>
             <label name="start_date"/>
             <field name="start_date"/>
             <label name="end_date"/>
             <field name="end_date"/>
-            <newline/>
+            <separator id="admin_fields_separator" colspan="4"/>
+            <label name="feed_quantity_animal_day"/>
+            <field name="feed_quantity_animal_day"/>
             <label name="feed_inventory"/>
             <field name="feed_inventory"/>
             <label name="move"/>

@@ -21,8 +21,8 @@ contains the full copyright notices and license terms. -->
         <page name="dest_locations">
             <field name="dest_locations" colspan="4"/>
         </page>
-        <page name="lines">
-            <field name="lines" colspan="4"/>
+        <page name="feed_events">
+            <field name="feed_events" colspan="4"/>
         </page>
     </notebook>
     <group col="4" colspan="4" id="group_buttons">

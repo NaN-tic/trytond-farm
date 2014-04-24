@@ -4,9 +4,10 @@
 <data>
     <xpath expr="//field[@name='timestamp']" position="after">
         <field name="location"/>
+        <field name="quantity"/>
         <field name="feed_location"/>
         <field name="feed_product"/>
         <field name="feed_lot"/>
-        <field name="quantity"/>
+        <field name="feed_quantity"/>
     </xpath>
 </data>

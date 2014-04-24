@@ -241,7 +241,7 @@ Create individual medication event::
     ...     feed_product=medication_product,
     ...     feed_lot=medication_lot,
     ...     uom=g,
-    ...     quantity=Decimal('154.0'))
+    ...     feed_quantity=Decimal('154.0'))
     >>> medication_individual.save()
 
 Validate individual medication event::
@@ -271,13 +271,13 @@ Create animal_group medication event::
     ...     animal_group=animal_group,
     ...     timestamp=now,
     ...     location=location2_id,
+    ...     quantity=4,
     ...     feed_location=lab1,
     ...     feed_product=medication_product,
     ...     feed_lot=medication_lot,
     ...     uom=g,
-    ...     quantity=Decimal('320.0'),
-    ...     start_date=(now.date() - datetime.timedelta(days=1)),
-    ...     end_date=now)
+    ...     feed_quantity=Decimal('320.0'),
+    ...     start_date=(now.date() - datetime.timedelta(days=1)))
     >>> medication_animal_group.save()
 
 Validate animal_group medication event::

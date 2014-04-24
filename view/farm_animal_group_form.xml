@@ -30,8 +30,7 @@
                 <label name="initial_quantity"/>
                 <field name="initial_quantity"/>
                 <newline/>
-                <label name="locations"/>
-                <field name="locations" colspan="3"/>
+                <field name="locations" colspan="4"/>
                 <!--
                 <label name="lot"/>
                 <field name="lot"/>

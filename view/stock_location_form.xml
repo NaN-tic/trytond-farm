@@ -7,17 +7,8 @@
         <field name="silo"/>
         <label name="current_lot"/>
         <field name="current_lot"/>
-        <newline/>
-        <notebook colspan="4">
-            <page name="locations_to_fed" string="Silo Configuration">
-                <field name="locations_to_fed" colspan="4"/>
-            </page>
-            <page name="feed_inventory_lines">
-                <field name="feed_inventory_lines" colspan="4"/>
-            </page>
-            <page name="feed_date_inputs">
-                <field name="feed_date_inputs" colspan="4"/>
-            </page>
-        </notebook>
+        <group name="locations_to_fed" string="" colspan="4" col="1">
+            <field name="locations_to_fed"/>
+        </group>
     </xpath>
 </data>

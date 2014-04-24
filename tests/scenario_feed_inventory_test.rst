@@ -356,8 +356,6 @@ nor feed event::
     >>> feed_inventory0.reload()
     >>> feed_inventory0.state
     u'validated'
-    >>> feed_inventory0.lines
-    []
     >>> feed_inventory0.feed_events
     []
 
@@ -384,7 +382,7 @@ approximately 50 Kg::
     >>> feed_provisional_inventory1.reload()
     >>> feed_provisional_inventory1.state
     u'validated'
-    >>> (feed_provisional_inventory1.lines[0].consumed_qty_animal_day
+    >>> (feed_provisional_inventory1.feed_events[0].feed_quantity_animal_day
     ...     - Decimal('50.0')) < Decimal('3.0')
     True
     >>> feed_provisional_inventory1.inventory.state
@@ -412,7 +410,7 @@ approximately 50 Kg::
     >>> feed_provisional_inventory2.reload()
     >>> feed_provisional_inventory2.state
     u'validated'
-    >>> (feed_provisional_inventory2.lines[0].consumed_qty_animal_day
+    >>> (feed_provisional_inventory2.feed_events[0].feed_quantity_animal_day
     ...     - Decimal('50.0')) < Decimal('3.0')
     True
     >>> feed_provisional_inventory2.inventory.state

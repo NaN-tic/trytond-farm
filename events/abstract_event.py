@@ -1,5 +1,5 @@
-#The COPYRIGHT file at the top level of this repository contains the full
-#copyright notices and license terms.
+# The COPYRIGHT file at the top level of this repository contains the full
+# copyright notices and license terms.
 from datetime import datetime
 
 from trytond.model import fields, ModelSQL, ModelView, Workflow
@@ -11,7 +11,7 @@ __all__ = ['AbstractEvent']
 _EVENT_STATES = [
     ('draft', 'Draft'),
     ('validated', 'Validated'),
-    #('cancel', 'Cancelled'),
+    # ('cancel', 'Cancelled'),
     ]
 _STATES_WRITE_DRAFT = {
     'readonly': Not(Equal(Eval('state'), 'draft')),
@@ -21,6 +21,11 @@ _STATES_VALIDATED = {
     'required': Equal(Eval('state'), 'validated'),
     }
 _DEPENDS_VALIDATED = ['state']
+_STATES_WRITE_DRAFT_VALIDATED = {
+    'readonly': Not(Equal(Eval('state'), 'draft')),
+    'required': Equal(Eval('state'), 'validated'),
+    }
+_DEPENDS_WRITE_DRAFT_VALIDATED = ['state']
 _STATES_VALIDATED_ADMIN = {
     'required': (Equal(Eval('state'), 'validated') &
         Not(Eval('imported', False))),
@@ -84,7 +89,7 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
         'get_lot')
     # TODO: Used for permission management and filtering. If dot notation
     # doesn't work implement it
-    #current_farms = fields.Function(fields.Many2Many('stock.warehouse',
+    # current_farms = fields.Function(fields.Many2Many('stock.warehouse',
     #            None, None, 'Current Farms', help='The farms (warehouses) '
     #            'where the animal or group is now.'), 'get_current_warehouse')
     timestamp = fields.DateTime('Date & Time', required=True,
@@ -105,21 +110,21 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
                     "because is not in 'Draft' state."),
                 })
         cls._buttons.update({
-                #'cancel': {
-                #    'invisible': Eval('state') == 'cancel',
-                #    },
-                #'draft': {
-                #    'invisible': Eval('state') == 'draft',
-                #    },
+                # 'cancel': {
+                #     'invisible': Eval('state') == 'cancel',
+                #     },
+                # 'draft': {
+                #     'invisible': Eval('state') == 'draft',
+                #     },
                 'validate_event': {
                     'invisible': Eval('state') != 'draft',
                     },
                 })
         cls._transitions = set((
-                #('draft', 'cancel'),
+                # ('draft', 'cancel'),
                 ('draft', 'validated'),
-                #('validated', 'cancel'),
-                #('cancel', 'draft'),
+                # ('validated', 'cancel'),
+                # ('cancel', 'draft'),
                 ))
 
     @staticmethod
@@ -207,8 +212,8 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
         """
         raise NotImplementedError("Please Implement validate_event() method")
 
-    #@classmethod
-    #@ModelView.button
-    #@Workflow.transition('cancel')
-    #def cancel(cls, events):
-    #    raise NotImplementedError("Please Implement cancel() method")
+    # @classmethod
+    # @ModelView.button
+    # @Workflow.transition('cancel')
+    # def cancel(cls, events):
+    #     raise NotImplementedError("Please Implement cancel() method")

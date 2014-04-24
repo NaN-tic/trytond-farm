@@ -1,11 +1,11 @@
-#The COPYRIGHT file at the top level of this repository contains the full
-#copyright notices and license terms.
-from .feed_abstract_event import FeedAbstractEvent
+# The COPYRIGHT file at the top level of this repository contains the full
+# copyright notices and license terms.
+from .feed_abstract_event import FeedEventMixin
 
 __all__ = ['MedicationEvent']
 
 
-class MedicationEvent(FeedAbstractEvent):
+class MedicationEvent(FeedEventMixin):
     'Medication Event'
     __name__ = 'farm.medication.event'
     _table = 'farm_medication_event'
@@ -32,7 +32,14 @@ class MedicationEvent(FeedAbstractEvent):
                     'enought quantity there at "%(timestamp)s".'),
                 })
         cls._sql_constraints += [
-            ('quantity_positive', 'check ( quantity != 0.0 )',
+            ('quantity_positive', 'check ( quantity != 0 )',
+                'In Medication Events, the quantity can\'t be zero'),
+            ('quantity_1_for_animals',
+                ("check ( animal_type = 'group' or "
+                    "(quantity = 1 or quantity = -1))"),
+                'In Medication Events, the quantity must be 1 for Animals '
+                '(not Groups).'),
+            ('feed_quantity_positive', 'check ( feed_quantity != 0.0 )',
                 'In Medication Events, the quantity must be positive (greater '
                 'or equal to 1)'),
             ]

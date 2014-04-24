@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<form string="Feed Consumption per Animal, Location and Date">
+    <group id="animal_or_group" colspan="2" col="2">
+        <label name="animal"/>
+        <field name="animal"/>
+        <label name="animal_group"/>
+        <field name="animal_group"/>
+    </group>
+    <label name="animals_qty"/>
+    <field name="animals_qty"/>
+    <newline/>
+    <label name="location"/>
+    <field name="location"/>
+    <label name="date"/>
+    <field name="date"/>
+    <newline/>
+    <group id="statistics" colspan="4" col="6">
+        <label name="consumed_qty_animal"/>
+        <field name="consumed_qty_animal"/>
+        <label name="consumed_qty"/>
+        <field name="consumed_qty"/>
+        <label name="inventory_qty"/>
+        <field name="inventory_qty"/>
+    </group>
+</form>

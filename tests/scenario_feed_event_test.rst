@@ -244,7 +244,7 @@ Create individual feed event::
     ...     feed_product=feed_product,
     ...     feed_lot=feed_lot,
     ...     uom=gr,
-    ...     quantity=Decimal('2100.0'))
+    ...     feed_quantity=Decimal('2100.0'))
     >>> feed_individual.save()
 
 Validate individual feed event::
@@ -253,6 +253,8 @@ Validate individual feed event::
     >>> feed_individual.reload()
     >>> feed_individual.state
     u'validated'
+    >>> feed_individual.feed_quantity_animal_day
+    Decimal('2100.0000')
     >>> silo1.current_lot.id == feed_lot.id
     True
 
@@ -273,13 +275,14 @@ Create animal_group feed event::
     ...     specie=pigs_specie,
     ...     farm=warehouse,
     ...     animal_group=animal_group,
+    ...     quantity=4,
     ...     timestamp=now,
     ...     location=location2_id,
     ...     feed_location=silo1,
     ...     feed_product=feed_product,
     ...     feed_lot=feed_lot,
     ...     uom=gr,
-    ...     quantity=Decimal('3000.0'),
+    ...     feed_quantity=Decimal('3000.0'),
     ...     start_date=(now.date() - datetime.timedelta(days=7)),
     ...     end_date=now)
     >>> feed_animal_group.save()
@@ -290,6 +293,8 @@ Validate animal_group feed event::
     >>> feed_animal_group.reload()
     >>> feed_animal_group.state
     u'validated'
+    >>> feed_animal_group.feed_quantity_animal_day
+    Decimal('107.1429')
     >>> animal_group.reload()
     >>> unused = config.set_context({'locations': [silo1.id]})
     >>> silo1.current_lot.reload()

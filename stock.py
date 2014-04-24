@@ -193,16 +193,6 @@ class Location:
             }, depends=['silo'],
         help='Indicates the locations the silo feeds. Note that this will '
         'only be a default value.')
-    feed_inventory_lines = fields.One2Many('farm.feed.inventory.line',
-        'dest_location', 'Input Inventory Lines', readonly=True, states={
-            'invisible': Or(Not(Equal(Eval('type'), 'storage')),
-                    Eval('silo', False)),
-            }, depends=['type', 'silo'])
-    feed_date_inputs = fields.One2Many('farm.feed.location_date', 'location',
-        'Input Feed per Date', readonly=True, states={
-            'invisible': Or(Not(Equal(Eval('type'), 'storage')),
-                    Eval('silo', False)),
-            }, depends=['type', 'silo'])
 
     @staticmethod
     def default_silo():
@@ -329,16 +319,19 @@ class Location:
                 ('id', 'ASC'),
                 ])
         for move in moves:
-            if to_uom is None or move.product.default_uom.id == to_uom.id:
-                quantity = lot_quantities[move.lot.id]
-            else:
+            if not lot_quantities.get(move.lot.id):
+                continue
+            quantity = lot_quantities[move.lot.id]
+            del lot_quantities[move.lot.id]
+
+            if to_uom != None:
                 assert (move.product.default_uom.category.id ==
                     to_uom.category.id), ('Invalid to_uom "%s" in '
                     'Location.get_lot_fifo(). Incompatible with default UoM '
                     'of product "%s" in silo "%s"'
                     % (to_uom.rec_name, move.product.rec_name, self.rec_name))
-                quantity = Uom.compute_qty(move.product.default_uom,
-                    lot_quantities[move.lot.id], to_uom, round=True)
+                quantity = Uom.compute_qty(move.product.default_uom, quantity,
+                    to_uom, round=True)
             lot_fifo.append((move.lot, Decimal(str(quantity))))
         return lot_fifo
 
