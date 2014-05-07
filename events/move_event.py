@@ -31,7 +31,7 @@ class MoveEvent(AbstractEvent):
         context={'restrict_by_specie_animal_type': True})
     to_location = fields.Many2One('stock.location', 'Destination',
         required=True, domain=[
-            ('type', '=', 'storage'),
+            ('type', 'in', ['storage', 'customer']),
             ('silo', '=', False),
             ('id', '!=', Eval('from_location')),
             ],
@@ -233,12 +233,13 @@ class MoveEvent(AbstractEvent):
         lot = (self.animal_type != 'group' and self.animal.lot or
             self.animal_group.lot)
 
-        if lot and lot.cost_price != self.unit_price:
+        if lot and self.unit_price and lot.cost_price != self.unit_price:
             cost_line = LotCostLine()
             cost_line.lot = lot
             cost_line.category = category_id
             cost_line.origin = str(self)
-            cost_line.unit_price = self.unit_price - lot.cost_price
+            cost_line.unit_price = (self.unit_price - lot.cost_price
+                if lot.cost_price else self.unit_price)
             cost_line.save()
 
         return Move(
@@ -280,7 +281,7 @@ class MoveEvent(AbstractEvent):
             default = {}
         else:
             default = default.copy()
-        default.updat({
+        default.update({
                 'move': None,
                 'weight_record': None,
                 })

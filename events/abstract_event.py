@@ -6,7 +6,7 @@ from trytond.model import fields, ModelSQL, ModelView, Workflow
 from trytond.pyson import Equal, Eval, If, Id, Not
 from trytond.transaction import Transaction
 
-__all__ = ['AbstractEvent']
+__all__ = ['AbstractEvent', 'ImportedEventMixin']
 
 _EVENT_STATES = [
     ('draft', 'Draft'),
@@ -27,12 +27,11 @@ _STATES_WRITE_DRAFT_VALIDATED = {
     }
 _DEPENDS_WRITE_DRAFT_VALIDATED = ['state']
 _STATES_VALIDATED_ADMIN = {
-    'required': (Equal(Eval('state'), 'validated') &
-        Not(Eval('imported', False))),
+    'required': Equal(Eval('state'), 'validated'),
     'invisible': Not(Eval('groups', []).contains(
         Id('farm', 'group_farm_admin'))),
     }
-_DEPENDS_VALIDATED_ADMIN = ['state', 'imported']
+_DEPENDS_VALIDATED_ADMIN = ['state']
 
 
 class AbstractEvent(ModelSQL, ModelView, Workflow):
@@ -100,7 +99,6 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
     notes = fields.Text('Notes')
     state = fields.Selection(_EVENT_STATES, 'State', required=True,
         readonly=True, select=True)
-    imported = fields.Boolean('Imported', readonly=True)
 
     @classmethod
     def __setup__(cls):
@@ -146,10 +144,6 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
     @staticmethod
     def default_state():
         return 'draft'
-
-    @staticmethod
-    def default_imported():
-        return False
 
     def get_rec_name(self, name):
         if self.animal_type == 'group':
@@ -217,3 +211,17 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
     # @Workflow.transition('cancel')
     # def cancel(cls, events):
     #     raise NotImplementedError("Please Implement cancel() method")
+
+
+_STATES_VALIDATED_ADMIN_BUT_IMPORTED = _STATES_VALIDATED_ADMIN.copy()
+_STATES_VALIDATED_ADMIN_BUT_IMPORTED['required'] &= Not(Eval('imported',
+        False))
+_DEPENDS_VALIDATED_ADMIN_BUT_IMPORTED = ['state', 'imported']
+
+
+class ImportedEventMixin:
+    imported = fields.Boolean('Imported', readonly=True)
+
+    @staticmethod
+    def default_imported():
+        return False

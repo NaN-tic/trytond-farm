@@ -24,6 +24,61 @@
             <field name="inherit" ref="stock.location_view_list"/>
             <field name="name">stock_location_list</field>
         </record>
+
+        <!-- Permissions -->
+        <record model="ir.model.access" id="access_stock_lot_farm">
+            <field name="model" search="[('model', '=', 'stock.lot')]"/>
+            <field name="group" ref="group_farm"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+
+        <record model="ir.model.access" id="access_stock_lot_admin">
+            <field name="model" search="[('model', '=', 'stock.lot')]"/>
+            <field name="group" ref="group_farm_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+
+        <record model="ir.model.access" id="access_stock_lot_males">
+            <field name="model" search="[('model', '=', 'stock.lot')]"/>
+            <field name="group" ref="group_farm_males"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+
+        <record model="ir.model.access" id="access_stock_lot_females">
+            <field name="model" search="[('model', '=', 'stock.lot')]"/>
+            <field name="group" ref="group_farm_females"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+
+        <record model="ir.model.access" id="access_stock_lot_individuals">
+            <field name="model" search="[('model', '=', 'stock.lot')]"/>
+            <field name="group" ref="group_farm_individuals"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+
+        <record model="ir.model.access" id="access_stock_lot_groups">
+            <field name="model" search="[('model', '=', 'stock.lot')]"/>
+            <field name="group" ref="group_farm_groups"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
     </data>
     <data noupdate="1">
         <record model="stock.lot.cost_category"

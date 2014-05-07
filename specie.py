@@ -1,11 +1,10 @@
-#The COPYRIGHT file at the top level of this repository contains the full
-#copyright notices and license terms.
+# The COPYRIGHT file at the top level of this repository contains the full
+# copyright notices and license terms.
 import logging
 from trytond.model import ModelView, ModelSQL, fields
-from trytond.pyson import Bool, Eval, Id, Not, Or
+from trytond.pyson import PYSONDecoder, PYSONEncoder, Bool, Eval, Id, Not, Or
 from trytond.transaction import Transaction
 from trytond.pool import Pool
-from trytond.tools import safe_eval
 
 __all__ = ['Specie', 'SpecieModel', 'SpecieFarmLine', 'Breed', 'Menu',
     'ActWindow']
@@ -58,9 +57,9 @@ class Specie(ModelSQL, ModelView):
         "because it is required.")
     semen_product = fields.Many2One('product.product', "Semen's Product",
         # TODO: it doesn't work but it should
-        #domain=[
-        #    ('default_uom.category', '=', Id('product', 'uom_cat_volume')),
-        #    ],
+        # domain=[
+        #     ('default_uom.category', '=', Id('product', 'uom_cat_volume')),
+        #     ],
         states={
             'readonly': Not(Or(Bool(Eval('male_enabled')),
                     Bool(Eval('female_enabled')))),
@@ -242,10 +241,10 @@ class Specie(ModelSQL, ModelView):
                             seq, icon, None, event_act_window, False,
                             current_menus, current_actions)
                     animal_submenu_seq += 1
-                #Females have an special menu for creating with full history
+                # Females have an special menu for creating with full history
                 if animal_type == 'female':
                     wizard = ActWizard(ModelData.get_id(MODULE_NAME,
-                            'farm_create_female'))
+                            'wizard_farm_create_female'))
 
                     action = ('ir.action.wizard', wizard.id)
                     menu_vals = {
@@ -457,7 +456,7 @@ class Specie(ModelSQL, ModelView):
                 # is_generic_event if its valid_animal_types are all
                 #     animal types => difference is empty
                 'is_generic_event':
-                        not animal_types_set.difference(valid_animal_types)
+                    not animal_types_set.difference(valid_animal_types)
                 }
         return event_configuration
 
@@ -512,20 +511,20 @@ class Specie(ModelSQL, ModelView):
 
         if not new_domain:
             new_domain = []
-        original_domain = (original_action.domain and
-                safe_eval(original_action.domain))
-        if original_domain and isinstance(original_domain, list):
+        original_domain = (PYSONDecoder().decode(original_action.pyson_domain)
+            if original_action.pyson_domain else [])
+        if original_domain:
             new_domain.extend(original_domain)
 
-        original_context = (original_action.context
-            and safe_eval(original_action.context))
-        if original_context and isinstance(original_context, dict):
+        original_context = (PYSONDecoder().decode(original_action.pyson_context)
+            if original_action.pyson_context else [])
+        if original_context:
             new_context.update(original_context)
 
         action_vals = {
             'specie': specie.id,
-            'domain': str(new_domain),
-            'context': str(new_context),
+            'domain': PYSONEncoder().encode(new_domain),
+            'context': PYSONEncoder().encode(new_context),
             }
 
         if act_window:
@@ -545,7 +544,6 @@ class Specie(ModelSQL, ModelView):
         if translate_action:
             cls._write_field_in_langs(ActWindow, act_window, 'name',
                 untranslated_title)
-            pass
 
         group_ids = group and [group.id] or []
         if group_ids:

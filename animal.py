@@ -1,5 +1,5 @@
-#The COPYRIGHT file at the top level of this repository contains the full
-#copyright notices and license terms.
+# The COPYRIGHT file at the top level of this repository contains the full
+# copyright notices and license terms.
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 import logging
@@ -53,6 +53,16 @@ class Tag(ModelSQL, ModelView):
 
 
 class AnimalMixin:
+    feed_unit_digits = fields.Function(fields.Integer('Feed Unit Digits'),
+        'get_feed_unit_digits')
+
+    def get_feed_unit_digits(self, name):
+        Uom = Pool().get('product.uom')
+        weight_base_uom, = Uom.search([
+                ('symbol', '=', 'kg'),
+                ])
+        return weight_base_uom.id
+
     @classmethod
     def _create_and_done_first_stock_move(cls, records):
         """
@@ -117,7 +127,7 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
             ('male', 'Male'),
             ('female', 'Female'),
             ('individual', 'Individual'),
-        ], 'Type', required=True, readonly=True, select=True)
+            ], 'Type', required=True, readonly=True, select=True)
     specie = fields.Many2One('farm.specie', 'Specie', required=True,
         readonly=True, select=True)
     breed = fields.Many2One('farm.specie.breed', 'Breed', required=True,
@@ -173,6 +183,10 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
     tags = fields.Many2Many('farm.animal-farm.tag', 'animal', 'tag', 'Tags')
     notes = fields.Text('Notes')
     active = fields.Boolean('Active')
+    consumed_feed = fields.Function(fields.Numeric('Consumed Feed (Kg)',
+            digits=(16, Eval('feed_unit_digits', 2)),
+            depends=['feed_unit_digits']),
+        'get_consumed_feed')
     # Individual Fields
     sex = fields.Selection([
             ('male', "Male"),
@@ -277,6 +291,40 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
         if self.weights:
             return self.weights[0].id
 
+    def get_consumed_feed(self, name):
+        pool = Pool()
+        FeedEvent = pool.get('farm.feed.event')
+        Uom = pool.get('product.uom')
+
+        now = datetime.now()
+        feed_events = FeedEvent.search([
+                ('animal_type', '=', self.type),
+                ('animal', '=', self.id),
+                ('state', 'in', ['provisional', 'validated']),
+                ['OR', [
+                    ('start_date', '=', None),
+                    ('timestamp', '<=', now),
+                    ], [
+                    ('start_date', '<=', now.date()),
+                    ]],
+                ])
+
+        kg, = Uom.search([
+                ('symbol', '=', 'kg'),
+                ])
+        consumed_feed = Decimal('0.0')
+        for event in feed_events:
+            # TODO: it uses compute_price() because quantity is a Decimal
+            # quantity in feed_product default uom. The method is not for
+            # this purpose but it works
+            event_feed_quantity = Uom.compute_price(kg, event.feed_quantity,
+                event.uom)
+            if event.timestamp > now:
+                event_feed_quantity /= (event.end_date - event.start_date).days
+                event_feed_quantity *= (now.date() - event.start_date).days
+            consumed_feed += event_feed_quantity
+        return consumed_feed
+
     def check_in_location(self, location, timestamp):
         with Transaction().set_context(
                 locations=[location.id],
@@ -284,6 +332,8 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
             return self.lot.quantity == 1
 
     def check_allowed_location(self, location, event_rec_name):
+        if not location.warehouse:
+            return
         for farm_line in self.specie.farm_lines:
             if farm_line.farm.id == location.warehouse.id:
                 if getattr(farm_line, 'has_%s' % self.type):
@@ -573,7 +623,7 @@ class Female:
     def get_state(self):
         if self.type != 'female':
             return
-        if (self.removal_date and self.removal_date <= date.today()):
+        if self.removal_date and self.removal_date <= date.today():
             state = 'removed'
         elif (not self.cycles or len(self.cycles) == 1 and
                 not self.cycles[0].weaning_event and
@@ -906,17 +956,21 @@ class FemaleCycle(ModelSQL, ModelView):
         previous_cycles = self.search([
                 ('animal', '=', self.animal.id),
                 ('sequence', '<=', self.sequence),
-                ('ordination_date', '<', self.ordination_date)
+                ('id', '!=', self.id)
                 ],
             order=[
                 ('sequence', 'DESC'),
                 ('ordination_date', 'DESC'),
                 ], limit=1)
-        if not previous_cycles or not previous_cycles[0].weaning_event:
+        print "pc:", previous_cycles, " sq:", self.sequence
+        if not previous_cycles or (not previous_cycles[0].weaning_event and
+                not previous_cycles[0].abort_event):
             return None
-        weaning_date = previous_cycles[0].weaning_event.timestamp.date()
+        previous_date = (previous_cycles[0].weaning_event.timestamp.date()
+            if previous_cycles[0].weaning_event
+            else previous_cycles[0].abort_event.timestamp.date())
         insemination_date = self.insemination_events[0].timestamp.date()
-        return (insemination_date - weaning_date).days
+        return (insemination_date - previous_date).days
 
     def on_change_with_pregnant(self, name=None):
         if self.abort_event:
@@ -940,7 +994,7 @@ class FemaleCycle(ModelSQL, ModelView):
         return self.weaning_event and self.weaning_event.quantity or 0
 
     def get_removed(self, name):
-        return self.live + self.fostered + self.weaned
+        return self.live + self.fostered - self.weaned
 
     def get_lactating_days(self, name):
         if not self.farrowing_event or not self.weaning_event:
@@ -986,8 +1040,7 @@ class CreateFemaleStart(ModelView):
             ('specie', '=', Eval('specie')),
             ],
         depends=['specie'])
-    cycles = fields.One2Many('farm.create_female.line', 'start', 'Cycles',
-        required=True)
+    cycles = fields.One2Many('farm.create_female.line', 'start', 'Cycles')
     last_cycle_active = fields.Boolean('Last cycle active',
         help='If marked the moves for the last cycle will be created.')
 
@@ -1021,44 +1074,41 @@ class CreateFemaleLine(ModelView):
     second_insemination_date = fields.Date('Second Insemination Date')
     third_insemination_date = fields.Date('Third Insemination Date')
     abort = fields.Boolean('Aborted?')
-    farrowing_date = fields.DateTime('Farrowing Date',
-        states={
+    abort_date = fields.Date('Abort Date', states={
+            'invisible': ~Eval('abort', False),
+            }, depends=['abort'])
+    farrowing_date = fields.Date('Farrowing Date', states={
             'required': Bool(Eval('weaning_date')),
             'invisible': Bool(Eval('abort')),
-            },
-        depends=['weaning_date', 'abort'])
-    live = fields.Integer('Live',
-        states={
+            }, depends=['weaning_date', 'abort'])
+    live = fields.Integer('Live', states={
             'required': Bool(Eval('farrowing_date')),
             'invisible': Bool(Eval('abort')),
-            },
-        depends=['farrowing_date', 'abort'])
-    stillborn = fields.Integer('Stillborn',
-        states={
+            }, depends=['farrowing_date', 'abort'])
+    stillborn = fields.Integer('Stillborn', states={
             'invisible': Bool(Eval('abort')),
-            },
-        depends=['abort'])
-    mummified = fields.Integer('Mummified',
-        states={
+            }, depends=['abort'])
+    mummified = fields.Integer('Mummified', states={
             'invisible': Bool(Eval('abort')),
-            },
-        depends=['abort'])
-    fostered = fields.Integer('Fostered',
-        states={
+            }, depends=['abort'])
+    fostered = fields.Integer('Fostered', states={
             'invisible': Bool(Eval('abort')),
-            },
-        depends=['abort'])
-    weaning_date = fields.DateTime('Weaning Date',
-        states={
-            'invisible': (Bool(Eval('abort')) | (Eval('live', 0) == 0)),
-            },
-        depends=['abort', 'live'])
-    weaned_quantity = fields.Integer('Weaned Quantity',
-        states={
+            }, depends=['abort'])
+    to_weaning_quantity = fields.Function(fields.Integer('To Weaning Quantity',
+            on_change_with=['live', 'fostered']),
+        'on_change_with_to_weaning_quantity')
+    weaning_date = fields.Date('Weaning Date', states={
+            'invisible': (Eval('abort', False) |
+                (Eval('to_weaning_quantity', 0) == 0)),
+            }, depends=['abort', 'to_weaning_quantity'])
+    weaned_quantity = fields.Integer('Weaned Quantity', states={
             'required': Bool(Eval('weaning_date')),
-            'invisible': (Bool(Eval('abort')) | (Eval('live', 0) == 0)),
-            },
-        depends=['weaning_date', 'abort', 'live'])
+            'invisible': (Eval('abort', False) |
+                (Eval('to_weaning_quantity', 0) == 0)),
+            }, depends=['weaning_date', 'abort', 'to_weaning_quantity'])
+
+    def on_change_with_to_weaning_quantity(self, name=None):
+        return (self.live or 0) + (self.fostered or 0)
 
 
 class CreateFemale(Wizard):
@@ -1079,6 +1129,8 @@ class CreateFemale(Wizard):
                     'after arrival date "%s".'),
                 'insemination_before_arrival': ('Insemination date "%s" on '
                     'line "%s" can not be before arrival date "%s".'),
+                'abort_before_insemination': ('Abort date "%s" on line'
+                    ' "%s" can not be before insemination date "%s".'),
                 'farrowing_before_insemination': ('Farrowing date "%s" on line'
                     ' "%s" can not be before insemination date "%s".'),
                 'weaning_before_farrowing': ('Weaning date "%s" on line "%s"'
@@ -1101,6 +1153,8 @@ class CreateFemale(Wizard):
         Foster = pool.get('farm.foster.event')
         Insemination = pool.get('farm.insemination.event')
         Weaning = pool.get('farm.weaning.event')
+
+        events_time = datetime.now().time()
 
         if (self.start.birthdate and self.start.birthdate >
                 self.start.arrival_date):
@@ -1125,23 +1179,30 @@ class CreateFemale(Wizard):
                     self.raise_user_error('greather_than_zero', line.sequence)
             cycle = Cycle()
             cycle.animal = female
+            cycle.ordination_date = line.insemination_date
 
             insemination_events = []
+            last_insemination_date = None
             for insemination_date in (line.insemination_date,
                     line.second_insemination_date,
                     line.third_insemination_date):
                 if not insemination_date:
                     continue
+                if (not last_insemination_date or
+                        last_insemination_date < insemination_date):
+                    last_insemination_date = insemination_date
                 if insemination_date < self.start.arrival_date:
                     self.raise_user_error('insemination_before_arrival', (
                             insemination_date, line.sequence,
                             self.start.arrival_date))
-                insemination_date = datetime.combine(insemination_date,
-                    datetime.min.time())
                 if (line.farrowing_date and insemination_date >
                         line.farrowing_date):
                     self.raise_user_error('farrowing_before_insemination', (
                             line.farrowing_date, line.sequence,
+                            insemination_date))
+                if line.abort_date and insemination_date > line.abort_date:
+                    self.raise_user_error('abort_before_insemination', (
+                            line.abort_date, line.sequence,
                             insemination_date))
                 insemination = Insemination()
                 insemination.imported = True
@@ -1149,10 +1210,12 @@ class CreateFemale(Wizard):
                 insemination.animal_type = 'female'
                 insemination.farm = farm
                 insemination.specie = self.start.specie
-                insemination.timestamp = insemination_date
+                insemination.timestamp = datetime.combine(insemination_date,
+                    events_time)
                 insemination.state = 'validated'
                 insemination_events.append(insemination)
             cycle.insemination_events = insemination_events
+
             if line.abort:
                 abort = Abort()
                 abort.female_cycle = cycle
@@ -1161,7 +1224,9 @@ class CreateFemale(Wizard):
                 abort.animal_type = 'female'
                 abort.farm = farm
                 abort.specie = self.start.specie
-                abort.timestamp = line.insemination_date
+                abort.timestamp = datetime.combine(self.abort_date
+                        if line.abort_date else last_insemination_date,
+                    events_time)
                 abort.state = 'validated'
                 abort.save()
                 cycle.abort_event = abort
@@ -1174,7 +1239,8 @@ class CreateFemale(Wizard):
                 farrowing.animal_type = 'female'
                 farrowing.farm = farm
                 farrowing.specie = self.start.specie
-                farrowing.timestamp = line.farrowing_date
+                farrowing.timestamp = datetime.combine(line.farrowing_date,
+                    events_time)
                 farrowing.live = line.live
                 farrowing.stillborn = line.stillborn
                 farrowing.mummified = line.mummified
@@ -1192,7 +1258,8 @@ class CreateFemale(Wizard):
                     foster.animal_type = 'female'
                     foster.farm = farm
                     foster.specie = self.start.specie
-                    foster.timestamp = line.farrowing_date
+                    foster.timestamp = datetime.combine(line.farrowing_date,
+                        events_time)
                     foster.quantity = line.fostered
                     foster.state = 'validated'
                     cycle.foster_events = [foster]
@@ -1202,8 +1269,7 @@ class CreateFemale(Wizard):
                         self.raise_user_error('weaning_before_farrowing', (
                                 line.weaning_date, line.sequence,
                                 line.farrowing_date))
-                    if line.weaned_quantity > (line.live -
-                            line.fostered or 0):
+                    if line.weaned_quantity > line.to_weaning_quantity:
                         self.raise_user_error('more_weaned_than_live',
                             line.sequence)
 
@@ -1214,7 +1280,8 @@ class CreateFemale(Wizard):
                     weaning.animal_type = 'female'
                     weaning.farm = farm
                     weaning.specie = self.start.specie
-                    weaning.timestamp = line.weaning_date
+                    weaning.timestamp = datetime.combine(line.weaning_date,
+                        events_time)
                     weaning.quantity = line.weaned_quantity
                     weaning.female_to_location = female.initial_location
                     weaning.weaned_to_location = female.initial_location
@@ -1228,6 +1295,7 @@ class CreateFemale(Wizard):
                         self.raise_user_error('missing_weaning', line.sequence)
             cycle.save()
             cycle.update_state(None)
+
         female = Animal(female.id)
         female.update_current_cycle()
         if self.start.last_cycle_active:

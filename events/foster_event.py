@@ -5,14 +5,15 @@ from trytond.pyson import And, Bool, Equal, Eval, If
 from trytond.pool import Pool
 from trytond.transaction import Transaction
 
-from .abstract_event import AbstractEvent, _STATES_WRITE_DRAFT, \
-    _DEPENDS_WRITE_DRAFT, _STATES_VALIDATED, _DEPENDS_VALIDATED, \
-    _STATES_VALIDATED_ADMIN, _DEPENDS_VALIDATED_ADMIN
+from .abstract_event import AbstractEvent, ImportedEventMixin, \
+    _STATES_WRITE_DRAFT, _DEPENDS_WRITE_DRAFT, \
+    _STATES_VALIDATED, _DEPENDS_VALIDATED, \
+    _STATES_VALIDATED_ADMIN_BUT_IMPORTED, _DEPENDS_VALIDATED_ADMIN_BUT_IMPORTED
 
 __all__ = ['FosterEvent']
 
 
-class FosterEvent(AbstractEvent):
+class FosterEvent(AbstractEvent, ImportedEventMixin):
     '''Farm Foster Event'''
     __name__ = 'farm.foster.event'
     _table = 'farm_foster_event'
@@ -49,7 +50,8 @@ class FosterEvent(AbstractEvent):
             ],
         states=_STATES_VALIDATED, depends=_DEPENDS_VALIDATED + ['animal'])
     move = fields.Many2One('stock.move', 'Stock Move', readonly=True,
-        states=_STATES_VALIDATED_ADMIN, depends=_DEPENDS_VALIDATED_ADMIN)
+        states=_STATES_VALIDATED_ADMIN_BUT_IMPORTED,
+        depends=_DEPENDS_VALIDATED_ADMIN_BUT_IMPORTED)
 
     @classmethod
     def __setup__(cls):
@@ -66,6 +68,8 @@ class FosterEvent(AbstractEvent):
             ]
         if 'farm' not in cls.animal.depends:
             cls.animal.depends.append('farm')
+        if 'imported' not in cls.animal.depends:
+            cls.animal.depends.append('imported')
         cls._error_messages.update({
                 'farrowing_group_not_in_location': ('The farrowing group of '
                     'foster event "%(event)s" doesn\'t have %(quantity)s '

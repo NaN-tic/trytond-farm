@@ -1,12 +1,13 @@
-#The COPYRIGHT file at the top level of this repository contains the full
-#copyright notices and license terms.
+# The COPYRIGHT file at the top level of this repository contains the full
+# copyright notices and license terms.
 from trytond.model import fields, ModelView, ModelSQL, Workflow
 from trytond.pyson import And, Bool, Equal, Eval, Id, If, Not
 from trytond.pool import Pool
 from trytond.transaction import Transaction
 
-from .abstract_event import AbstractEvent, _STATES_WRITE_DRAFT, \
-    _DEPENDS_WRITE_DRAFT, _STATES_VALIDATED, _DEPENDS_VALIDATED
+from .abstract_event import AbstractEvent, ImportedEventMixin, \
+    _STATES_WRITE_DRAFT, _DEPENDS_WRITE_DRAFT, \
+    _STATES_VALIDATED, _DEPENDS_VALIDATED
 
 __all__ = ['FarrowingProblem', 'FarrowingEvent', 'FarrowingEventFemaleCycle',
     'FarrowingEventAnimalGroup']
@@ -20,7 +21,7 @@ class FarrowingProblem(ModelSQL, ModelView):
     name = fields.Char('Name', required=True, translate=True)
 
 
-class FarrowingEvent(AbstractEvent):
+class FarrowingEvent(AbstractEvent, ImportedEventMixin):
     '''Farm Farrowing Event'''
     __name__ = 'farm.farrowing.event'
     _table = 'farm_farrowing_event'
@@ -50,7 +51,7 @@ class FarrowingEvent(AbstractEvent):
             'required': And(And(Equal(Eval('state'), 'validated'),
                     Bool(Eval('live', 0))), Not(Eval('imported', False))),
             },
-        depends=['specie', 'live', 'state'])
+        depends=['specie', 'live', 'state', 'imported'])
     move = fields.Many2One('stock.move', 'Stock Move', readonly=True, domain=[
             ('lot.animal_group', '=', Eval('produced_group')),
             ],
@@ -60,7 +61,7 @@ class FarrowingEvent(AbstractEvent):
             'invisible': Not(Eval('groups', []).contains(
                 Id('farm', 'group_farm_admin'))),
             },
-        depends=['produced_group', 'live', 'state'])
+        depends=['produced_group', 'live', 'state', 'imported'])
 
     @classmethod
     def __setup__(cls):
@@ -74,6 +75,8 @@ class FarrowingEvent(AbstractEvent):
                 ('current_cycle.state', '=', 'pregnant'),
                 ()),
             ]
+        if 'imported' not in cls.animal.depends:
+            cls.animal.depends.append('imported')
         cls._error_messages.update({
                 'event_without_dead_nor_live': ('The farrowing event "%s" has '
                     '0 in Dead and Live. It has to have some unit in some of '

@@ -1,5 +1,5 @@
-#The COPYRIGHT file at the top level of this repository contains the full
-#copyright notices and license terms.
+# The COPYRIGHT file at the top level of this repository contains the full
+# copyright notices and license terms.
 """
 By now, the Weaning Event will only allow weaning the group of animals
     associated with the female.
@@ -14,13 +14,14 @@ from trytond.pyson import Equal, Eval, Id, If, Not
 from trytond.pool import Pool
 from trytond.transaction import Transaction
 
-from .abstract_event import AbstractEvent, _STATES_WRITE_DRAFT, \
-    _DEPENDS_WRITE_DRAFT, _STATES_VALIDATED, _DEPENDS_VALIDATED
+from .abstract_event import AbstractEvent, ImportedEventMixin, \
+    _STATES_WRITE_DRAFT, _DEPENDS_WRITE_DRAFT, \
+    _STATES_VALIDATED, _DEPENDS_VALIDATED
 
 __all__ = ['WeaningEvent', 'WeaningEventFemaleCycle']
 
 
-class WeaningEvent(AbstractEvent):
+class WeaningEvent(AbstractEvent, ImportedEventMixin):
     '''Farm Weaning Event'''
     __name__ = 'farm.weaning.event'
     _table = 'farm_weaning_event'
@@ -108,6 +109,8 @@ class WeaningEvent(AbstractEvent):
             ]
         if 'farm' not in cls.animal.depends:
             cls.animal.depends.append('farm')
+        if 'imported' not in cls.animal.depends:
+            cls.animal.depends.append('imported')
         # TODO: not added constraint for non negative quantity but negative
         # quantities are not suported
 

@@ -22,7 +22,6 @@
             <field name="weight"/>
             <label name="uom"/>
             <field name="uom"/>
-            <label name="weight_record" colspan="4"/>
             <field name="weight_record" colspan="4"/>
         </group>
     </xpath>

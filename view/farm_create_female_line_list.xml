@@ -8,6 +8,7 @@
     <field name="second_insemination_date"/>
     <field name="third_insemination_date"/>
     <field name="abort"/>
+    <field name="abort_date"/>
     <field name="farrowing_date"/>
     <field name="live"/>
     <field name="stillborn"/>

@@ -1,15 +1,15 @@
-#The COPYRIGHT file at the top level of this repository contains the full
-#copyright notices and license terms.
+# The COPYRIGHT file at the top level of this repository contains the full
+# copyright notices and license terms.
 from trytond.model import fields, ModelView, ModelSQL, Workflow
 from trytond.pyson import Equal, Eval, If
 
-from .abstract_event import AbstractEvent, _STATES_VALIDATED, \
-    _DEPENDS_VALIDATED
+from .abstract_event import AbstractEvent, ImportedEventMixin, \
+    _STATES_VALIDATED, _DEPENDS_VALIDATED
 
 __all__ = ['AbortEvent', 'AbortEventFemaleCycle']
 
 
-class AbortEvent(AbstractEvent):
+class AbortEvent(AbstractEvent, ImportedEventMixin):
     '''Farm Abort Event'''
     __name__ = 'farm.abort.event'
     _table = 'farm_abort_event'
@@ -32,6 +32,8 @@ class AbortEvent(AbstractEvent):
                 ('current_cycle.state', '=', 'pregnant'),
                 ()),
             ]
+        if 'imported' not in cls.animal.depends:
+            cls.animal.depends.append('imported')
 
     @staticmethod
     def default_animal_type():

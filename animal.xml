@@ -177,15 +177,6 @@
             <field name="perm_delete" eval="True"/>
         </record>
 
-        <record model="ir.model.access" id="access_farm_animal_groups">
-            <field name="model" search="[('model', '=', 'farm.animal')]"/>
-            <field name="group" ref="group_farm_groups"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_delete" eval="True"/>
-        </record>
-
         <!-- Sequences -->
         <record model="ir.sequence.type" id="sequence_type_animal">
             <field name="name">Farm Animal</field>
@@ -297,7 +288,12 @@
             <field name="wiz_name">farm.create_female</field>
         </record>
         <record model="ir.action-res.group"
-                 id="farm_create_female_group_create_femal">
+                 id="farm_create_female_group_admin">
+            <field name="action" ref="wizard_farm_create_female"/>
+            <field name="group" ref="group_farm_admin"/>
+        </record>
+        <record model="ir.action-res.group"
+                 id="farm_create_female_group_female">
             <field name="action" ref="wizard_farm_create_female"/>
             <field name="group" ref="group_farm_females"/>
         </record>

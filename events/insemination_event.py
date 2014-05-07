@@ -1,18 +1,19 @@
-#The COPYRIGHT file at the top level of this repository contains the full
-#copyright notices and license terms.
+# The COPYRIGHT file at the top level of this repository contains the full
+# copyright notices and license terms.
 from trytond.model import fields, ModelView, Workflow
 from trytond.pyson import Bool, Equal, Eval, If
 from trytond.pool import Pool
 from trytond.transaction import Transaction
 
-from .abstract_event import AbstractEvent, _STATES_WRITE_DRAFT, \
-    _DEPENDS_WRITE_DRAFT, _STATES_VALIDATED, _DEPENDS_VALIDATED, \
-    _STATES_VALIDATED_ADMIN, _DEPENDS_VALIDATED_ADMIN
+from .abstract_event import AbstractEvent, ImportedEventMixin, \
+    _STATES_WRITE_DRAFT, _DEPENDS_WRITE_DRAFT, \
+    _STATES_VALIDATED, _DEPENDS_VALIDATED, \
+    _STATES_VALIDATED_ADMIN_BUT_IMPORTED, _DEPENDS_VALIDATED_ADMIN_BUT_IMPORTED
 
 __all__ = ['InseminationEvent']
 
 
-class InseminationEvent(AbstractEvent):
+class InseminationEvent(AbstractEvent, ImportedEventMixin):
     '''Farm Insemination Event'''
     __name__ = 'farm.insemination.event'
     _table = 'farm_insemination_event'
@@ -40,8 +41,8 @@ class InseminationEvent(AbstractEvent):
             ],
         states=_STATES_VALIDATED, depends=_DEPENDS_VALIDATED + ['animal'])
     move = fields.Many2One('stock.move', 'Stock Move', readonly=True,
-        states=_STATES_VALIDATED_ADMIN,
-        depends=_DEPENDS_VALIDATED_ADMIN + ['dose_lot'])
+        states=_STATES_VALIDATED_ADMIN_BUT_IMPORTED,
+        depends=_DEPENDS_VALIDATED_ADMIN_BUT_IMPORTED + ['dose_lot'])
 
     @classmethod
     def __setup__(cls):
@@ -138,9 +139,12 @@ class InseminationEvent(AbstractEvent):
                         'timestamp': insemination_event.timestamp,
                         })
             current_cycle = insemination_event.animal.current_cycle
+            # Si no es necessari crear un segon cicle quan hi ha
+            # diagnosis_event sense abort/farrowing (que tindra el mateix num)
+            # if (not current_cycle or current_cycle.farrowing_event or
+            #         current_cycle.abort_event):
             # It creates a new cycle if a diagnosis event has been done
-            if (not current_cycle or current_cycle.farrowing_event or
-                    current_cycle.abort_event):
+            if not current_cycle or current_cycle.diagnosis_events:
                 current_cycle = FemaleCycle(animal=insemination_event.animal)
                 current_cycle.save()
                 insemination_event.animal.current_cycle = current_cycle

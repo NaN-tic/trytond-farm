@@ -1,5 +1,5 @@
-#The COPYRIGHT file at the top level of this repository contains the full
-#copyright notices and license terms.
+# The COPYRIGHT file at the top level of this repository contains the full
+# copyright notices and license terms.
 from datetime import date, datetime
 from decimal import Decimal
 
@@ -45,7 +45,7 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
     origin = fields.Selection([
             ('purchased', 'Purchased'),
             ('raised', 'Raised'),
-        ], 'Origin', required=True, readonly=True,
+            ], 'Origin', required=True, readonly=True,
         help='Raised means that this group was born in the farm. Otherwise, '
         'it was purchased.')
     arrival_date = fields.Date('Arrival Date', states={
@@ -83,6 +83,13 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
         'Tags')
     notes = fields.Text('Notes')
     active = fields.Boolean('Active')
+    feed_unit_digits = fields.Function(fields.Integer('Feed Unit Digits'),
+        'get_unit_digits')
+    consumed_feed = fields.Function(
+        fields.Numeric('Consumed Feed per Animal (Kg)',
+            digits=(16, Eval('feed_unit_digits', 2)),
+            depends=['feed_unit_digits']),
+        'get_consumed_feed')
 
 #    # TODO: Extra
 #    'type': fields.selection([('static','Static'),('dynamic','Dynamic')],
@@ -180,7 +187,7 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
         res = {}
         for animal_group in animal_groups:
             ag_lot_id = animal_group.lot.id
-            res[animal_group.id] = [l for l in qbl[ag_lot_id]
+            res[animal_group.id] = [l for l in qbl.get(ag_lot_id, [])
                     if qbl[ag_lot_id][l] > 0.0]
         return res
 
@@ -286,6 +293,41 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
         if self.weights:
             return self.weights[0].id
 
+    def get_consumed_feed(self, name):
+        pool = Pool()
+        FeedEvent = pool.get('farm.feed.event')
+        Uom = pool.get('product.uom')
+
+        now = datetime.now()
+        feed_events = FeedEvent.search([
+                ('animal_type', '=', 'group'),
+                ('animal_group', '=', self.id),
+                ('state', 'in', ['provisional', 'validated']),
+                ['OR', [
+                    ('start_date', '=', None),
+                    ('timestamp', '<=', now),
+                    ], [
+                    ('start_date', '<=', now.date()),
+                    ]],
+                ])
+
+        kg, = Uom.search([
+                ('symbol', '=', 'kg'),
+                ])
+        consumed_feed = Decimal('0.0')
+        for event in feed_events:
+            if event.start_date and event.timestamp > now:
+                event_feed_quantity = (event.feed_quantity_animal_day *
+                    (now.date() - event.start_date).days)
+            else:
+                event_feed_quantity = event.feed_quantity / event.quantity
+            # TODO: it uses compute_price() because quantity is a Decimal
+            # quantity in feed_product default uom. The method is not for
+            # this purpose but it works
+            consumed_feed = Uom.compute_price(kg, event_feed_quantity,
+                event.uom)
+        return consumed_feed
+
     def check_in_location(self, location, timestamp, quantity=1):
         with Transaction().set_context(
                 locations=[location.id],
@@ -293,6 +335,8 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
             return self.lot.quantity >= quantity
 
     def check_allowed_location(self, location, event_rec_name):
+        if not location.warehouse:
+            return
         for farm_line in self.specie.farm_lines:
             if farm_line.farm.id == location.warehouse.id:
                 if farm_line.has_group:
