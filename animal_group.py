@@ -378,7 +378,7 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
             if not vals.get('number'):
                 location = Location(vals['initial_location'])
                 vals['number'] = cls._calc_number(vals['specie'],
-                        location.warehouse.id)
+                        location.warehouse.id, vals)
             if vals.get('lot'):
                 lot = Lot(vals['lot'])
                 Lot.write([lot], cls._get_lot_values(vals, False))
@@ -391,7 +391,7 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
         return new_groups
 
     @classmethod
-    def _calc_number(cls, specie_id, farm_id):
+    def _calc_number(cls, specie_id, farm_id, vals):
         pool = Pool()
         FarmLine = pool.get('farm.specie.farm_line')
         Location = pool.get('stock.location')
