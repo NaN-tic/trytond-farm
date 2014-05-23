@@ -43,9 +43,10 @@
             <field name="farm_lines" colspan="4"/>
         </page>
         <page string="Menus &amp; Actions" id="actions">
-            <field name="events" colspan="4"/>
-            <field name="actions" colspan="2"/>
+            <field name="events" colspan="2"/>
             <field name="menus" colspan="2"/>
+            <field name="actions" colspan="2"/>
+            <field name="wizards" colspan="2"/>
             <button name="create_menu_entries" colspan="4"
                 string="_Create Menu Entries" icon="tryton-ok"/>
         </page>

@@ -4,10 +4,11 @@ import logging
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pyson import PYSONDecoder, PYSONEncoder, Bool, Eval, Id, Not, Or
 from trytond.transaction import Transaction
-from trytond.pool import Pool
+from trytond.pool import Pool, PoolMeta
 
-__all__ = ['Specie', 'SpecieModel', 'SpecieFarmLine', 'Breed', 'Menu',
-    'ActWindow']
+__all__ = ['Specie', 'SpecieModel', 'SpecieFarmLine', 'Breed',
+    'UIMenu', 'ActionActWindow', 'ActionWizard']
+__metaclass__ = PoolMeta
 
 MODULE_NAME = 'farm'
 
@@ -89,8 +90,9 @@ class Specie(ModelSQL, ModelView):
     events = fields.Many2Many('farm.specie-ir.model', 'specie', 'model',
         'Events', domain=[('model', 'like', 'farm.%.event')],
         help='Type of events available for this specie')
-    actions = fields.One2Many('ir.action.act_window', 'specie', 'Actions')
     menus = fields.One2Many('ir.ui.menu', 'specie', 'Menus')
+    actions = fields.One2Many('ir.action.act_window', 'specie', 'Actions')
+    wizards = fields.One2Many('ir.action.wizard', 'specie', 'Wizards')
 
     @classmethod
     def __setup__(cls):
@@ -149,7 +151,7 @@ class Specie(ModelSQL, ModelView):
         Model = pool.get('ir.model')
         ModelData = pool.get('ir.model.data')
         ActWindow = pool.get('ir.action.act_window')
-        ActWizard = pool.get('ir.action.wizard')
+        Wizard = pool.get('ir.action.wizard')
         EventOrder = pool.get('farm.event.order')
 
         lang_codes = cls._get_lang_codes()
@@ -179,20 +181,21 @@ class Specie(ModelSQL, ModelView):
 
             current_menus = list(specie.menus)[:]
             current_actions = list(specie.actions)[:]
+            current_wizards = list(specie.wizards)[:]
             logging.getLogger('farm.specie').debug(
-                "current_menus=%s\ncurrent_actions=%s"
-                % (current_menus, current_actions))
+                "current_menus=%s\ncurrent_actions=%s\ncurrent_wizards=%s"
+                % (current_menus, current_actions, current_wizards))
 
             with Transaction().set_context(lang_codes=lang_codes):
-                specie_menu = cls._create_submenu(specie, specie.name,
-                    menu_farm, specie_seq, current_menus)
+                specie_menu = specie._create_submenu(specie.name, menu_farm,
+                    specie_seq, current_menus)
             specie_seq += 1
 
             specie_submenu_seq = 1
             ####    Animal Types and Events menu generation    ####
             for animal_type in enabled_animal_types:
                 with Transaction().set_context(lang_codes=lang_codes):
-                    animal_menu = cls._create_menu_w_action(specie, [
+                    animal_menu = specie._create_action_menu([
                             ('specie', '=', specie.id),
                             ], {
                             'specie': specie.id,
@@ -236,45 +239,27 @@ class Specie(ModelSQL, ModelView):
                     icon = (generic_event and 'tryton-list' or
                             'tryton-preferences-system')
                     with Transaction().set_context(lang_codes=lang_codes):
-                        cls._create_menu_w_action(specie, event_domain,
+                        specie._create_action_menu(event_domain,
                             event_context, event_act_window.name, animal_menu,
                             seq, icon, None, event_act_window, False,
                             current_menus, current_actions)
                     animal_submenu_seq += 1
                 # Females have an special menu for creating with full history
                 if animal_type == 'female':
-                    wizard = ActWizard(ModelData.get_id(MODULE_NAME,
-                            'wizard_farm_create_female'))
-
-                    action = ('ir.action.wizard', wizard.id)
-                    menu_vals = {
-                        'name': wizard.name,
-                        'parent': animal_menu.id,
-                        'icon': 'tryton-executable',
-                        'sequence': animal_submenu_seq,
-                        'groups': [('set', [x.id for x in wizard.groups])],
-                        'action': action,
-                        'specie': specie.id,
-                        }
-                    with Transaction().set_context(lang='en_US'):
-                        menus = Menu.search([
-                                ('name', '=', wizard.name),
-                                ('parent', '=', animal_menu.id),
-                                ('specie', '=', specie.id),
-                                ])
-                        if menus:
-                            Menu.write(menus, menu_vals)
-                        else:
-                            menus = Menu.create([menu_vals])
-                        menu, = menus
-                    cls._write_field_in_langs(Menu, menu, 'name', menu.name)
+                    create_female_wizard = Wizard(ModelData.get_id(MODULE_NAME,
+                        'wizard_farm_create_female'))
+                    with Transaction().set_context(lang_codes=lang_codes):
+                        specie._create_wizard_menu(create_female_wizard.name,
+                            animal_menu, animal_submenu_seq,
+                            'tryton-executable', None, create_female_wizard,
+                            False, current_menus, current_wizards)
                     animal_submenu_seq += 1
                 specie_submenu_seq += 1
 
             # Orders submenus
             for animal_type in enabled_animal_types:
                 with Transaction().set_context(lang_codes=lang_codes):
-                    animal_orders_menu = cls._create_submenu(specie,
+                    animal_orders_menu = specie._create_submenu(
                         animal_types_data[animal_type]['orders_title'],
                         specie_menu, specie_submenu_seq, current_menus)
 
@@ -292,7 +277,7 @@ class Specie(ModelSQL, ModelView):
                         'event_type': order_type,
                         }
                     with Transaction().set_context(lang_codes=lang_codes):
-                        cls._create_menu_w_action(specie, order_domain,
+                        specie._create_action_menu(order_domain,
                             order_context, order_type_labels[order_type],
                             animal_orders_menu, orders_submenu_seq,
                             'tryton-spreadsheet',
@@ -303,15 +288,20 @@ class Specie(ModelSQL, ModelView):
                 specie_submenu_seq += 1
 
             with Transaction().set_context(lang_codes=lang_codes):
-                cls._create_additional_menus(specie, specie_menu,
-                    specie_submenu_seq, current_menus, current_actions)
+                specie._create_additional_menus(specie_menu,
+                    specie_submenu_seq, current_menus, current_actions,
+                    current_wizards)
 
             logging.getLogger('farm.specie').debug(
-                "Current_actions (to be deleted): %s" % current_actions)
+                "Current actions (to be deleted): %s" % current_actions)
             if current_actions:
                 ActWindow.delete(current_actions)
             logging.getLogger('farm.specie').debug(
-                "Current_menus (to be deleted): %s" % current_menus)
+                "Current wizards (to be deleted): %s" % current_wizards)
+            if current_wizards:
+                ActWindow.delete(current_wizards)
+            logging.getLogger('farm.specie').debug(
+                "Current menus (to be deleted): %s" % current_menus)
             if current_menus:
                 Menu.delete(current_menus)
 
@@ -323,9 +313,8 @@ class Specie(ModelSQL, ModelView):
                 ])
         return [x.code for x in langs]
 
-    @classmethod
-    def _create_additional_menus(cls, specie, specie_menu, specie_submenu_seq,
-            current_menus, current_actions):
+    def _create_additional_menus(self, specie_menu, specie_submenu_seq,
+            current_menus, current_actions, current_wizards):
         pool = Pool()
         ModelData = pool.get('ir.model.data')
         ActWindow = pool.get('ir.action.act_window')
@@ -337,26 +326,26 @@ class Specie(ModelSQL, ModelView):
                 'act_farm_feed_provisional_inventory'))
 
         # Feed Inventories submenu
-        feed_inventories_menu = cls._create_submenu(specie,
-            'Silo Inventories', specie_menu, specie_submenu_seq,
-            current_menus)
+        feed_inventories_menu = self._create_submenu('Silo Inventories',
+            specie_menu, specie_submenu_seq, current_menus)
         specie_submenu_seq += 1
-        cls._create_menu_w_action(specie, [
-                ('specie', '=', specie.id),
+        self._create_action_menu([
+                ('specie', '=', self.id),
                 ], {
-                    'specie': specie.id,
+                    'specie': self.id,
                 },
             'Inventory', feed_inventories_menu, 1, 'tryton-list',
             None, act_window_feed_inventory, False, current_menus,
             current_actions)
-        cls._create_menu_w_action(specie, [
-                ('specie', '=', specie.id),
+        self._create_action_menu([
+                ('specie', '=', self.id),
                 ], {
-                    'specie': specie.id,
+                    'specie': self.id,
                 },
             'Provisional Inventory', feed_inventories_menu, 2,
             'tryton-list', None, act_window_feed_prov_inventory, False,
             current_menus, current_actions)
+        return specie_submenu_seq
 
     @staticmethod
     def _get_animal_types_data():
@@ -460,8 +449,7 @@ class Specie(ModelSQL, ModelView):
                 }
         return event_configuration
 
-    @classmethod
-    def _create_submenu(cls, specie, untranslated_title, parent_menu, sequence,
+    def _create_submenu(self, untranslated_title, parent_menu, sequence,
             current_menus):
         Menu = Pool().get('ir.ui.menu')
 
@@ -474,7 +462,7 @@ class Specie(ModelSQL, ModelView):
             'name': untranslated_title,
             'parent': parent_menu.id,
             'sequence': sequence,
-            'specie': specie.id,
+            'specie': self.id,
             }
         if menus:
             Menu.write(menus, values)
@@ -486,13 +474,12 @@ class Specie(ModelSQL, ModelView):
             menu, = Menu.create([values])
             logging.getLogger('farm.specie').debug("Created new menu %s"
                 % menu)
-        cls._write_field_in_langs(Menu, menu, 'name', untranslated_title)
+        self._write_field_in_langs(Menu, menu, 'name', untranslated_title)
         return menu
 
-    @classmethod
-    def _create_menu_w_action(cls, specie, new_domain, new_context,
-            untranslated_title, parent_menu, sequence, menu_icon, group,
-            original_action, translate_action, current_menus, current_actions):
+    def _create_action_menu(self, new_domain, new_context, untranslated_title,
+            parent_menu, sequence, menu_icon, group, original_action,
+            translate_action, current_menus, current_actions):
         pool = Pool()
         ActWindow = pool.get('ir.action.act_window')
         Menu = pool.get('ir.ui.menu')
@@ -516,13 +503,14 @@ class Specie(ModelSQL, ModelView):
         if original_domain:
             new_domain.extend(original_domain)
 
-        original_context = (PYSONDecoder().decode(original_action.pyson_context)
+        original_context = (
+            PYSONDecoder().decode(original_action.pyson_context)
             if original_action.pyson_context else [])
         if original_context:
             new_context.update(original_context)
 
         action_vals = {
-            'specie': specie.id,
+            'specie': self.id,
             'domain': PYSONEncoder().encode(new_domain),
             'context': PYSONEncoder().encode(new_context),
             }
@@ -542,7 +530,7 @@ class Specie(ModelSQL, ModelView):
                 % original_action)
             act_window, = ActWindow.copy([original_action], action_vals)
         if translate_action:
-            cls._write_field_in_langs(ActWindow, act_window, 'name',
+            self._write_field_in_langs(ActWindow, act_window, 'name',
                 untranslated_title)
 
         group_ids = group and [group.id] or []
@@ -558,7 +546,7 @@ class Specie(ModelSQL, ModelView):
             'groups': [('set', group_ids)],
             'icon': 'tryton-list',
             'action': ('ir.action.act_window', act_window.id),
-            'specie': specie.id,
+            'specie': self.id,
             #'keyword': 'tree_open',
             }
 
@@ -572,7 +560,78 @@ class Specie(ModelSQL, ModelView):
             menu, = Menu.create([menu_vals])
             logging.getLogger('farm.specie').debug("Created new menu %s with "
                 "action %s" % (menu, act_window.id))
-        cls._write_field_in_langs(Menu, menu, 'name', untranslated_title)
+        self._write_field_in_langs(Menu, menu, 'name', untranslated_title)
+        return menu
+
+    def _create_wizard_menu(self, untranslated_title, parent_menu,
+            sequence, menu_icon, group, original_wizard, translate_wizard,
+            current_menus, current_wizards):
+        pool = Pool()
+        Wizard = pool.get('ir.action.wizard')
+        Menu = pool.get('ir.ui.menu')
+        ModelData = pool.get('ir.model.data')
+
+        menus = Menu.search([
+                ('id', 'in', [x.id for x in current_menus]),
+                ('parent', '=', parent_menu.id),
+                ('name', '=', untranslated_title),
+                ])
+        wizard = None
+        menu = None
+        if menus:
+            menu = menus[0]
+            wizard = menu.action
+
+        wizard_vals = {
+            'specie': self.id,
+            }
+
+        if wizard:
+            Wizard.write([wizard], wizard_vals)
+            logging.getLogger('farm.specie').debug("Writting wizard %s to be "
+                "placed in a menu" % wizard)
+            if wizard in current_wizards:
+                logging.getLogger('farm.specie').debug(
+                    "Removing from current_wizards")
+                current_wizards.remove(wizard)
+        else:
+            logging.getLogger('farm.specie').debug(
+                "Creating new wizard to be placed in menu copying from "
+                "original wizard %s"
+                % original_wizard)
+            wizard, = Wizard.copy([original_wizard], wizard_vals)
+        if translate_wizard:
+            self._write_field_in_langs(Wizard, wizard, 'name',
+                untranslated_title)
+
+        group_ids = group and [group.id] or []
+        if group_ids:
+            group_manager_id = ModelData.get_id(MODULE_NAME,
+                'group_farm_admin')
+            group_ids.append(group_manager_id)
+
+        menu_vals = {
+            'name': untranslated_title,
+            'parent': parent_menu.id,
+            'sequence': sequence,
+            'groups': [('set', group_ids)],
+            'icon': 'tryton-list',
+            'action': ('ir.action.wizard', wizard.id),
+            'specie': self.id,
+            #'keyword': 'tree_open',
+            }
+
+        if menu:
+            Menu.write([menu], menu_vals)
+            logging.getLogger('farm.specie').debug("Writing menu %s with "
+                "wizard %s and removing from current_menus"
+                % (menu, wizard.id))
+            current_menus.remove(menu)
+        else:
+            menu, = Menu.create([menu_vals])
+            logging.getLogger('farm.specie').debug("Created new menu %s with "
+                "wizard %s" % (menu, wizard.id))
+        self._write_field_in_langs(Menu, menu, 'name', untranslated_title)
         return menu
 
     @classmethod
@@ -601,6 +660,7 @@ class Specie(ModelSQL, ModelView):
         else:
             default = default.copy()
         default['actions'] = False
+        default['wizards'] = False
         default['menus'] = False
         return super(Specie, cls).copy(records, default=default)
 
@@ -685,11 +745,16 @@ class SpecieModel(ModelSQL):
     model = fields.Many2One('ir.model', 'Model', required=True, select=True)
 
 
-class Menu(ModelSQL, ModelView):
+class UIMenu:
     __name__ = 'ir.ui.menu'
     specie = fields.Many2One('farm.specie', 'Specie', ondelete='CASCADE')
 
 
-class ActWindow(ModelSQL, ModelView):
+class ActionActWindow:
     __name__ = 'ir.action.act_window'
+    specie = fields.Many2One('farm.specie', 'Specie', ondelete='CASCADE')
+
+
+class ActionWizard:
+    __name__ = 'ir.action.wizard'
     specie = fields.Many2One('farm.specie', 'Specie', ondelete='CASCADE')
