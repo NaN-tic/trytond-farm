@@ -36,7 +36,7 @@
         </record>
 
         <record model="ir.action.act_window" id="act_farm_insemination_event">
-            <field name="name">Insemination Events</field>
+            <field name="name">Inseminations</field>
             <field name="res_model">farm.insemination.event</field>
             <field name="search_value"></field>
             <field name="domain"></field>

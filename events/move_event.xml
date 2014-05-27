@@ -49,7 +49,7 @@
         </record>
 
         <record model="ir.action.act_window" id="act_farm_move_event">
-            <field name="name">Move Events</field>
+            <field name="name">Moves</field>
             <field name="res_model">farm.move.event</field>
             <field name="search_value"></field>
             <field name="domain"></field>

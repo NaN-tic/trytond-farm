@@ -92,7 +92,7 @@
         </record>
 
         <record model="ir.action.act_window" id="act_farm_farrowing_event">
-            <field name="name">Farrowing Events</field>
+            <field name="name">Farrowings</field>
             <field name="res_model">farm.farrowing.event</field>
             <field name="search_value"></field>
             <field name="domain"></field>

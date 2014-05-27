@@ -50,7 +50,7 @@
         </record>
 
         <record model="ir.action.act_window" id="act_farm_medication_event">
-            <field name="name">Medication Events</field>
+            <field name="name">Medications</field>
             <field name="res_model">farm.medication.event</field>
             <field name="search_value"></field>
             <field name="domain"></field>

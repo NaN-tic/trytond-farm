@@ -87,27 +87,27 @@ class EventOrder(ModelSQL, ModelView, Workflow):
         help='Employee that did the job.')
     # Generic Events
     medication_events = fields.One2Many('farm.medication.event', 'order',
-        'Medication Events', domain=_DOMAIN_LINES,
+        'Medications', domain=_DOMAIN_LINES,
         states=_STATES_LINES('medication'), depends=_DEPENDS_LINES)
     # Female Events
     insemination_events = fields.One2Many('farm.insemination.event', 'order',
-        'Insemination Events', domain=_DOMAIN_LINES,
+        'Inseminations', domain=_DOMAIN_LINES,
         states=_STATES_LINES('insemination'), depends=_DEPENDS_LINES)
     pregnancy_diagnosis_events = fields.One2Many(
         'farm.pregnancy_diagnosis.event', 'order',
-        'Pregnancy Diagnosis Events', domain=_DOMAIN_LINES,
+        'Pregnancy Diagnosis', domain=_DOMAIN_LINES,
         states=_STATES_LINES('pregnancy_diagnosis'), depends=_DEPENDS_LINES)
     abort_events = fields.One2Many('farm.abort.event', 'order', 'Abort Events',
         domain=_DOMAIN_LINES, states=_STATES_LINES('abort'),
         depends=_DEPENDS_LINES)
     farrowing_events = fields.One2Many('farm.farrowing.event', 'order',
-        'Farrowing Events', domain=_DOMAIN_LINES,
+        'Farrowings', domain=_DOMAIN_LINES,
         states=_STATES_LINES('farrowing'), depends=_DEPENDS_LINES)
     foster_events = fields.One2Many('farm.foster.event', 'order',
-        'Foster Events', domain=_DOMAIN_LINES,
+        'Fosters', domain=_DOMAIN_LINES,
         states=_STATES_LINES('foster'), depends=_DEPENDS_LINES)
     weaning_events = fields.One2Many('farm.weaning.event', 'order',
-        'Weaning Events', domain=_DOMAIN_LINES,
+        'Weanings', domain=_DOMAIN_LINES,
         states=_STATES_LINES('weaning'), depends=_DEPENDS_LINES)
 
     @classmethod

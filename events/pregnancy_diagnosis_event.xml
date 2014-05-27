@@ -41,7 +41,7 @@
 
         <record model="ir.action.act_window"
             id="act_farm_pregnancy_diagnosis_event">
-            <field name="name">Pregnancy Diagnosis Events</field>
+            <field name="name">Pregnancy Diagnosis</field>
             <field name="res_model">farm.pregnancy_diagnosis.event</field>
             <field name="search_value"></field>
             <field name="domain"></field>

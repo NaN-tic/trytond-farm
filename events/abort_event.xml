@@ -37,7 +37,7 @@
         </record>
 
         <record model="ir.action.act_window" id="act_farm_abort_event">
-            <field name="name">Abort Events</field>
+            <field name="name">Aborts</field>
             <field name="res_model">farm.abort.event</field>
             <field name="search_value"></field>
             <field name="domain"></field>

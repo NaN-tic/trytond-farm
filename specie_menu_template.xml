@@ -1,0 +1,170 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tryton>
+    <data>
+        <menuitem id="menu_specie_menu_template" name="Specie Menu Template"
+            parent="menu_farm" sequence="10" active="0"/>
+
+        <!-- Generic Events -->
+        <menuitem id="menu_farm_generic_events" name="Generic Events"
+            parent="menu_specie_menu_template" sequence="0"/>
+
+        <menuitem id="menu_farm_move_event" action="act_farm_move_event"
+            parent="menu_farm_generic_events" sequence="10"/>
+        <menuitem id="menu_farm_feed_event" action="act_farm_feed_event"
+            parent="menu_farm_generic_events" sequence="11"/>
+        <menuitem id="menu_farm_medication_event"
+            action="act_farm_medication_event"
+            parent="menu_farm_generic_events" sequence="12"/>
+        <menuitem id="menu_farm_transformation_event"
+            action="act_farm_transformation_event"
+            parent="menu_farm_generic_events" sequence="13"/>
+        <menuitem id="menu_farm_removal_event" action="act_farm_removal_event"
+            parent="menu_farm_generic_events" sequence="14"/>
+
+        <!-- Males -->
+        <menuitem id="menu_farm_animal_males" action="act_farm_animal_male"
+            parent="menu_specie_menu_template" sequence="10"/>
+        <record model="ir.ui.menu-res.group" id="menu_males_group_admin">
+            <field name="menu" ref="menu_farm_animal_males"/>
+            <field name="group" ref="group_farm_admin"/>
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu_males_group_males">
+            <field name="menu" ref="menu_farm_animal_males"/>
+            <field name="group" ref="group_farm_males"/>
+        </record>
+
+        <menuitem id="menu_farm_semen_extraction_event"
+            action="act_farm_semen_extraction_event"
+            parent="menu_farm_animal_males" sequence="20"/>
+
+        <!-- Females -->
+        <menuitem id="menu_farm_animal_females" action="act_farm_animal_female"
+            parent="menu_specie_menu_template" sequence="11"/>
+        <record model="ir.ui.menu-res.group" id="menu_females_group_admin">
+            <field name="menu" ref="menu_farm_animal_females"/>
+            <field name="group" ref="group_farm_admin"/>
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu_females_group_females">
+            <field name="menu" ref="menu_farm_animal_females"/>
+            <field name="group" ref="group_farm_females"/>
+        </record>
+
+        <menuitem id="menu_farm_create_female"
+            action="wizard_farm_create_female"
+            parent="menu_farm_animal_females" sequence="1"/>
+
+        <menuitem id="menu_farm_insemination_event"
+            action="act_farm_insemination_event"
+            parent="menu_farm_animal_females" sequence="20"/>
+        <menuitem id="menu_farm_pregnancy_diagnosis_event"
+            action="act_farm_pregnancy_diagnosis_event"
+            parent="menu_farm_animal_females" sequence="21"/>
+        <menuitem id="menu_farm_abort_event"
+            action="act_farm_abort_event"
+            parent="menu_farm_animal_females" sequence="22"/>
+        <menuitem id="menu_farm_farrowing_event"
+            action="act_farm_farrowing_event"
+            parent="menu_farm_animal_females" sequence="23"/>
+        <menuitem id="menu_farm_foster_event"
+            action="act_farm_foster_event"
+            parent="menu_farm_animal_females" sequence="24"/>
+        <menuitem id="menu_farm_weaning_event"
+            action="act_farm_weaning_event"
+            parent="menu_farm_animal_females" sequence="25"/>
+
+        <!-- Individuals -->
+        <menuitem id="menu_farm_animal_individuals"
+            action="act_farm_animal_individual"
+            parent="menu_specie_menu_template" sequence="12"/>
+        <record model="ir.ui.menu-res.group" id="menu_individuals_group_admin">
+            <field name="menu" ref="menu_farm_animal_individuals"/>
+            <field name="group" ref="group_farm_admin"/>
+        </record>
+        <record model="ir.ui.menu-res.group"
+                id="menu_individuals_group_individuals">
+            <field name="menu" ref="menu_farm_animal_individuals"/>
+            <field name="group" ref="group_farm_individuals"/>
+        </record>
+
+        <!-- Groups -->
+        <menuitem id="menu_farm_animal_groups"
+            action="act_farm_animal_group"
+            parent="menu_specie_menu_template" sequence="13"/>
+        <record model="ir.ui.menu-res.group" id="menu_groups_group_admin">
+            <field name="menu" ref="menu_farm_animal_groups"/>
+            <field name="group" ref="group_farm_admin"/>
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu_groups_group_females">
+            <field name="menu" ref="menu_farm_animal_groups"/>
+            <field name="group" ref="group_farm_groups"/>
+        </record>
+
+        <!-- Orders -->
+        <menuitem id="menu_farm_order_males" name="Male Orders"
+            parent="menu_specie_menu_template" sequence="20"/>
+        <record model="ir.ui.menu-res.group" id="menu_order_males_group_admin">
+            <field name="menu" ref="menu_farm_order_males"/>
+            <field name="group" ref="group_farm_admin"/>
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu_order_males_group_males">
+            <field name="menu" ref="menu_farm_order_males"/>
+            <field name="group" ref="group_farm_males"/>
+        </record>
+
+        <menuitem id="menu_farm_order_females" name="Female Orders"
+            parent="menu_specie_menu_template" sequence="21"/>
+        <record model="ir.ui.menu-res.group"
+                id="menu_order_females_group_admin">
+            <field name="menu" ref="menu_farm_order_females"/>
+            <field name="group" ref="group_farm_admin"/>
+        </record>
+        <record model="ir.ui.menu-res.group"
+                id="menu_order_males_group_females">
+            <field name="menu" ref="menu_farm_order_females"/>
+            <field name="group" ref="group_farm_females"/>
+        </record>
+
+        <menuitem id="menu_farm_order_individuals" name="Individuals Orders"
+            parent="menu_specie_menu_template" sequence="22"/>
+        <record model="ir.ui.menu-res.group"
+                id="menu_order_individuals_group_admin">
+            <field name="menu" ref="menu_farm_order_individuals"/>
+            <field name="group" ref="group_farm_admin"/>
+        </record>
+        <record model="ir.ui.menu-res.group"
+                id="menu_order_males_group_individuals">
+            <field name="menu" ref="menu_farm_order_individuals"/>
+            <field name="group" ref="group_farm_individuals"/>
+        </record>
+
+        <menuitem id="menu_farm_order_groups" name="Groups Orders"
+            parent="menu_specie_menu_template" sequence="23"/>
+        <record model="ir.ui.menu-res.group"
+                id="menu_order_groups_group_admin">
+            <field name="menu" ref="menu_farm_order_groups"/>
+            <field name="group" ref="group_farm_admin"/>
+        </record>
+        <record model="ir.ui.menu-res.group"
+                id="menu_order_males_group_groups">
+            <field name="menu" ref="menu_farm_order_groups"/>
+            <field name="group" ref="group_farm_groups"/>
+        </record>
+
+        <menuitem id="menu_farm_event_order"
+            action="act_farm_event_order"
+            parent="menu_farm_order_males" sequence="1"/>
+
+        <!-- Silo Inventories -->
+        <menuitem id="menu_farm_silo_inventories" name="Silo Inventories"
+            parent="menu_specie_menu_template" sequence="30"/>
+
+        <menuitem id="menu_farm_feed_inventory"
+            action="act_farm_feed_inventory"
+            parent="menu_farm_silo_inventories" sequence="1"/>
+        <menuitem id="menu_farm_feed_provisional_inventory"
+            action="act_farm_feed_provisional_inventory"
+            parent="menu_farm_silo_inventories" sequence="2"/>
+    </data>
+</tryton>

@@ -586,8 +586,8 @@ class Female:
             'sow to "mated"'),
         'get_first_mating')
     days_from_insemination = fields.Function(fields.Integer('Inseminated Days',
-            help='Number of days from last Insemination Event. -1 if there '
-            'isn\'t any Insemination Event.'),
+            help='Number of days from last insemination. -1 if there isn\'t '
+            'any insemination.'),
         'get_days_from_insemination', searcher='search_days_from_insemination')
     last_produced_group = fields.Function(fields.Many2One('farm.animal.group',
             'Last Produced Group', domain=[
@@ -595,8 +595,8 @@ class Female:
                 ], depends=['specie']),
         'get_last_produced_group')
     days_from_farrowing = fields.Function(fields.Integer('Unpregnant Days',
-            help='Number of days from last Farrowing Event. -1 if there '
-            'isn\'t any Farrowing Event.'),
+            help='Number of days from last farrowing. -1 if there '
+            'isn\'t any farrowing.'),
         'get_days_from_farrowing', searcher='search_days_from_farrowing')
 
     @staticmethod
@@ -822,13 +822,13 @@ class FemaleCycle(ModelSQL, ModelView):
             ], 'State', readonly=True, required=True)
     # Female events fields
     insemination_events = fields.One2Many('farm.insemination.event',
-            'female_cycle', 'Insemination Events')
+        'female_cycle', 'Inseminations')
     days_between_weaning_and_insemination = fields.Function(
         fields.Integer('Unmated Days', help='Number of days between previous '
-            'Weaning Event and first Insemination Event.'),
+            'weaning and first insemination.'),
         'get_days_between_weaning_and_insemination')
     diagnosis_events = fields.One2Many('farm.pregnancy_diagnosis.event',
-            'female_cycle', 'Diagnosis Events')
+        'female_cycle', 'Diagnosis')
     pregnant = fields.Function(fields.Boolean('Pregnant',
             on_change_with=['diagnosis_events', 'abort_event'],
             depends=['diagnosis_events', 'abort_event'],
@@ -836,12 +836,12 @@ class FemaleCycle(ModelSQL, ModelView):
             ' one diagnosis and the last one has a positive result.'),
         'on_change_with_pregnant')
     abort_event = fields.One2One('farm.abort.event-farm.animal.female_cycle',
-        'cycle', 'event', string='Abort Event', readonly=True, domain=[
+        'cycle', 'event', string='Abort', readonly=True, domain=[
             ('animal', '=', Eval('animal')),
             ], depends=['animal'])
     farrowing_event = fields.One2One(
         'farm.farrowing.event-farm.animal.female_cycle', 'cycle', 'event',
-        string='Farrowing Event', readonly=True, domain=[
+        string='Farrowing', readonly=True, domain=[
             ('animal', '=', Eval('animal')),
             ], depends=['animal'])
     live = fields.Function(fields.Integer('Live'),
@@ -849,7 +849,7 @@ class FemaleCycle(ModelSQL, ModelView):
     dead = fields.Function(fields.Integer('Dead'),
         'get_farrowing_event_field')
     foster_events = fields.One2Many('farm.foster.event', 'female_cycle',
-        'Foster Events')
+        'Fosters')
     fostered = fields.Function(fields.Integer('Fostered',
             on_change_with=['foster_events'], depends=['foster_events'],
             help='Diference between Fostered Input and Output. A negative '
@@ -857,7 +857,7 @@ class FemaleCycle(ModelSQL, ModelView):
         'on_change_with_fostered')
     weaning_event = fields.One2One(
         'farm.weaning.event-farm.animal.female_cycle', 'cycle', 'event',
-        string='Weaning Event', readonly=True, domain=[
+        string='Weaning', readonly=True, domain=[
             ('animal', '=', Eval('animal')),
             ], depends=['animal'])
     weaned = fields.Function(fields.Integer('Weaned Quantity'),
@@ -962,7 +962,6 @@ class FemaleCycle(ModelSQL, ModelView):
                 ('sequence', 'DESC'),
                 ('ordination_date', 'DESC'),
                 ], limit=1)
-        print "pc:", previous_cycles, " sq:", self.sequence
         if not previous_cycles or (not previous_cycles[0].weaning_event and
                 not previous_cycles[0].abort_event):
             return None

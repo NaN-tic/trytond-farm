@@ -1,10 +1,12 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
 import logging
+from operator import attrgetter
+
 from trytond.model import ModelView, ModelSQL, fields
+from trytond.pool import Pool, PoolMeta
 from trytond.pyson import PYSONDecoder, PYSONEncoder, Bool, Eval, Id, Not, Or
 from trytond.transaction import Transaction
-from trytond.pool import Pool, PoolMeta
 
 __all__ = ['Specie', 'SpecieModel', 'SpecieFarmLine', 'Breed',
     'UIMenu', 'ActionActWindow', 'ActionWizard']
@@ -17,7 +19,7 @@ def _enabled_STATES(depending_fieldname):
     return {
         'readonly': Not(Bool(Eval(depending_fieldname))),
         'required': Bool(Eval(depending_fieldname)),
-    }
+        }
 
 
 class Specie(ModelSQL, ModelView):
@@ -148,27 +150,23 @@ class Specie(ModelSQL, ModelView):
         """
         pool = Pool()
         Menu = pool.get('ir.ui.menu')
-        Model = pool.get('ir.model')
         ModelData = pool.get('ir.model.data')
         ActWindow = pool.get('ir.action.act_window')
-        Wizard = pool.get('ir.action.wizard')
         EventOrder = pool.get('farm.event.order')
 
-        lang_codes = cls._get_lang_codes()
-        animal_types_data = cls._get_animal_types_data()
-        animal_types_set = set(animal_types_data.keys())
+        menus_by_animal_type = cls._get_menus_by_animal_type()
+        animal_types_set = set(menus_by_animal_type.keys())
+        menus_by_event_type = cls._get_menus_by_event_type()
+        event_name_by_model = {}
 
-        menu_farm = Menu(ModelData.get_id(MODULE_NAME, 'menu_farm'))
-        act_window_event_order = ActWindow(ModelData.get_id(MODULE_NAME,
-                'act_farm_event_order'))
+        farm_menu = Menu(ModelData.get_id(MODULE_NAME, 'menu_farm'))
+        specie_menu_template = Menu(ModelData.get_id(MODULE_NAME,
+                'menu_specie_menu_template'))
+        event_order_menu = Menu(ModelData.get_id(MODULE_NAME,
+                'menu_farm_event_order'))
 
-        with Transaction().set_context(language='en_US'):
-            event_configuration_data = (
-                cls._get_act_window_and_animal_types_per_event_model(
-                    animal_types_set))
-
-        order_type_labels = dict(EventOrder.fields_get(
-                ['event_type'])['event_type']['selection'])
+        # order_type_labels = dict(EventOrder.fields_get(
+        #         ['event_type'])['event_type']['selection'])
 
         specie_seq = 1
         for specie in species:
@@ -186,86 +184,71 @@ class Specie(ModelSQL, ModelView):
                 "current_menus=%s\ncurrent_actions=%s\ncurrent_wizards=%s"
                 % (current_menus, current_actions, current_wizards))
 
-            with Transaction().set_context(lang_codes=lang_codes):
-                specie_menu = specie._create_submenu(specie.name, menu_farm,
-                    specie_seq, current_menus)
+            specie_menu = specie._duplicate_menu(specie_menu_template,
+                farm_menu, specie_seq, current_menus, current_actions,
+                current_wizards, new_name=specie.name)
             specie_seq += 1
 
             specie_submenu_seq = 1
-            ####    Animal Types and Events menu generation    ####
             for animal_type in enabled_animal_types:
-                with Transaction().set_context(lang_codes=lang_codes):
-                    animal_menu = specie._create_action_menu([
-                            ('specie', '=', specie.id),
-                            ], {
-                            'specie': specie.id,
-                            'animal_type': animal_type,
-                            },
-                        animal_types_data[animal_type]['title'], specie_menu,
-                        specie_submenu_seq, 'STOCK_JUSTIFY_FILL',
-                        animal_types_data[animal_type]['group'],
-                        animal_types_data[animal_type]['action'], True,
-                        current_menus, current_actions)
+                new_domain = [
+                    ('specie', '=', specie.id),
+                    ]
+                new_context = {
+                    'specie': specie.id,
+                    'animal_type': animal_type,
+                    }
+                animals_menu = specie._duplicate_menu(
+                    menus_by_animal_type[animal_type]['animals'],
+                    specie_menu, specie_submenu_seq, current_menus,
+                    current_actions, current_wizards, new_domain=new_domain,
+                    new_context=new_context)
+                specie_submenu_seq += 1
 
                 # The event's models are created in the system in a logic order
                 #     to improve useability
-                event_ids = [x.id for x in specie.events]
-                event_ids = sorted(event_ids)
+                enabled_events = sorted(specie.events[:], key=attrgetter('id'))
 
                 animal_submenu_seq = 1
-                for event in Model.browse(event_ids):
-                    event_model = event.model
-                    if (animal_type not in event_configuration_data[
-                            event_model]['valid_animal_types']):
+                for event in enabled_events:
+                    model_name = event.model
+                    event_menu = None
+                    if model_name in menus_by_event_type['generic']:
+                        event_menu = menus_by_event_type['generic'][model_name]
+                    elif (animal_type in menus_by_event_type and
+                            model_name in menus_by_event_type[animal_type]):
+                        event_menu = (
+                            menus_by_event_type[animal_type][model_name])
+                    else:
                         continue
+                    event_name_by_model[model_name] = event_menu.name
 
-                    event_domain = [
-                        ('specie', '=', specie.id),
-                        ]
-                    event_context = {
-                        'specie': specie.id,
-                        }
-                    if (len(event_configuration_data[event_model][
-                            'valid_animal_types']) > 1):
-                        event_domain.append(('animal_type', '=', animal_type))
-                        event_context['animal_type'] = animal_type
+                    specie._duplicate_menu(event_menu, animals_menu,
+                        animal_submenu_seq, current_menus, current_actions,
+                        current_wizards, new_domain=new_domain,
+                        new_context=new_context)
+                    animal_submenu_seq += 1
 
-                    generic_event = event_configuration_data[event_model][
-                            'is_generic_event']
-                    event_act_window = (
-                        event_configuration_data[event_model]['act_window'])
-                    seq = (generic_event and animal_submenu_seq or
-                        20 + animal_submenu_seq)
-                    icon = (generic_event and 'tryton-list' or
-                            'tryton-preferences-system')
-                    with Transaction().set_context(lang_codes=lang_codes):
-                        specie._create_action_menu(event_domain,
-                            event_context, event_act_window.name, animal_menu,
-                            seq, icon, None, event_act_window, False,
-                            current_menus, current_actions)
+                for extra_menu in menus_by_animal_type[animal_type]['extra']:
+                    specie._duplicate_menu(extra_menu, animals_menu,
+                        animal_submenu_seq, current_menus, current_actions,
+                        current_wizards, new_domain=new_domain,
+                        new_context=new_context)
                     animal_submenu_seq += 1
-                # Females have an special menu for creating with full history
-                if animal_type == 'female':
-                    create_female_wizard = Wizard(ModelData.get_id(MODULE_NAME,
-                        'wizard_farm_create_female'))
-                    with Transaction().set_context(lang_codes=lang_codes):
-                        specie._create_wizard_menu(create_female_wizard.name,
-                            animal_menu, animal_submenu_seq,
-                            'tryton-executable', None, create_female_wizard,
-                            False, current_menus, current_wizards)
-                    animal_submenu_seq += 1
-                specie_submenu_seq += 1
 
             # Orders submenus
             for animal_type in enabled_animal_types:
-                with Transaction().set_context(lang_codes=lang_codes):
-                    animal_orders_menu = specie._create_submenu(
-                        animal_types_data[animal_type]['orders_title'],
-                        specie_menu, specie_submenu_seq, current_menus)
+                orders_menu = specie._duplicate_menu(
+                    menus_by_animal_type[animal_type]['orders'],
+                    specie_menu, specie_submenu_seq, current_menus,
+                    current_actions, current_wizards)
+                specie_submenu_seq += 1
 
                 orders_submenu_seq = 1
                 for order_type in EventOrder.event_types_by_animal_type(
                         animal_type, True):
+                    event_name = event_name_by_model.get('farm.%s.event'
+                        % order_type)
                     order_domain = [
                         ('specie', '=', specie.id),
                         ('animal_type', '=', animal_type),
@@ -276,21 +259,17 @@ class Specie(ModelSQL, ModelView):
                         'animal_type': animal_type,
                         'event_type': order_type,
                         }
-                    with Transaction().set_context(lang_codes=lang_codes):
-                        specie._create_action_menu(order_domain,
-                            order_context, order_type_labels[order_type],
-                            animal_orders_menu, orders_submenu_seq,
-                            'tryton-spreadsheet',
-                            animal_types_data[animal_type]['group'],
-                            act_window_event_order, True, current_menus,
-                            current_actions)
+                    specie._duplicate_menu(event_order_menu,
+                        orders_menu, orders_submenu_seq, current_menus,
+                        current_actions, current_wizards,
+                        new_name=event_name, new_icon='tryton-spreadsheet',
+                        new_domain=order_domain, new_context=order_context)
                     orders_submenu_seq += 1
                 specie_submenu_seq += 1
 
-            with Transaction().set_context(lang_codes=lang_codes):
-                specie._create_additional_menus(specie_menu,
-                    specie_submenu_seq, current_menus, current_actions,
-                    current_wizards)
+            specie._create_additional_menus(specie_menu,
+                specie_submenu_seq, current_menus, current_actions,
+                current_wizards)
 
             logging.getLogger('farm.specie').debug(
                 "Current actions (to be deleted): %s" % current_actions)
@@ -305,340 +284,223 @@ class Specie(ModelSQL, ModelView):
             if current_menus:
                 Menu.delete(current_menus)
 
-    @classmethod
-    def _get_lang_codes(cls):
-        Lang = Pool().get('ir.lang')
-        langs = Lang.search([
-                ('translatable', '=', True),
-                ])
-        return [x.code for x in langs]
-
     def _create_additional_menus(self, specie_menu, specie_submenu_seq,
             current_menus, current_actions, current_wizards):
         pool = Pool()
+        Menu = pool.get('ir.ui.menu')
         ModelData = pool.get('ir.model.data')
-        ActWindow = pool.get('ir.action.act_window')
 
-        act_window_feed_inventory = ActWindow(ModelData.get_id(MODULE_NAME,
-                'act_farm_feed_inventory'))
-        act_window_feed_prov_inventory = ActWindow(
-            ModelData.get_id(MODULE_NAME,
-                'act_farm_feed_provisional_inventory'))
+        silo_inventories_menu = Menu(ModelData.get_id(MODULE_NAME,
+                'menu_farm_silo_inventories'))
+        feed_inventory_menu = Menu(ModelData.get_id(MODULE_NAME,
+                'menu_farm_feed_inventory'))
+        feed_provisional_inventory_menu = Menu(ModelData.get_id(MODULE_NAME,
+                'menu_farm_feed_provisional_inventory'))
 
         # Feed Inventories submenu
-        feed_inventories_menu = self._create_submenu('Silo Inventories',
-            specie_menu, specie_submenu_seq, current_menus)
+        feed_inventories_menu = self._duplicate_menu(silo_inventories_menu,
+            specie_menu, specie_submenu_seq, current_menus,
+            current_actions, current_wizards)
         specie_submenu_seq += 1
-        self._create_action_menu([
-                ('specie', '=', self.id),
-                ], {
-                    'specie': self.id,
-                },
-            'Inventory', feed_inventories_menu, 1, 'tryton-list',
-            None, act_window_feed_inventory, False, current_menus,
-            current_actions)
-        self._create_action_menu([
-                ('specie', '=', self.id),
-                ], {
-                    'specie': self.id,
-                },
-            'Provisional Inventory', feed_inventories_menu, 2,
-            'tryton-list', None, act_window_feed_prov_inventory, False,
-            current_menus, current_actions)
+
+        new_domain = [
+            ('specie', '=', self.id),
+            ]
+        new_context = {
+            'specie': self.id,
+            }
+        self._duplicate_menu(feed_inventory_menu, feed_inventories_menu, 1,
+            current_menus, current_actions, current_wizards,
+            new_domain=new_domain, new_context=new_context)
+        self._duplicate_menu(feed_provisional_inventory_menu,
+            feed_inventories_menu, 2, current_menus, current_actions,
+            current_wizards, new_domain=new_domain, new_context=new_context)
+
         return specie_submenu_seq
 
     @staticmethod
-    def _get_animal_types_data():
-        '''
-        Returns a static and hardcoded dictionary of all animal types and
-        their titles with translations. It is implemented as a function to
-        allow to extend animal types.
-
-        Put translations is, basically, to force system to generate titles
-        translations.
-
-        Returns a dictionary of tuples. the keys are animal types identifiers
-        and values are tuples of animal type title and translated title.
-        '''
+    def _get_menus_by_animal_type():
         pool = Pool()
-        ActWindow = pool.get('ir.action.act_window')
-        Group = pool.get('res.group')
+        Menu = pool.get('ir.ui.menu')
         ModelData = pool.get('ir.model.data')
-
-        act_window_male_id = ModelData.get_id(MODULE_NAME,
-            'act_farm_animal_male')
-        act_window_female_id = ModelData.get_id(MODULE_NAME,
-            'act_farm_animal_female')
-        act_window_group_id = ModelData.get_id(MODULE_NAME,
-            'act_farm_animal_group')
-        act_window_individual_id = ModelData.get_id(MODULE_NAME,
-            'act_farm_animal_individual')
-
-        group_males_id = ModelData.get_id(MODULE_NAME, 'group_farm_males')
-        group_females_id = ModelData.get_id(MODULE_NAME, 'group_farm_females')
-        group_individuals_id = ModelData.get_id(MODULE_NAME,
-            'group_farm_individuals')
-        group_groups_id = ModelData.get_id(MODULE_NAME,
-            'group_farm_groups')
-
         return {
             'male': {
-                'title': 'Males',
-                'orders_title': 'Males Orders',
-                'action': ActWindow(act_window_male_id),
-                'group': Group(group_males_id),
+                'animals': Menu(ModelData.get_id(MODULE_NAME,
+                        'menu_farm_animal_males')),
+                'orders': Menu(ModelData.get_id(MODULE_NAME,
+                        'menu_farm_order_males')),
+                'extra': [],
                 },
             'female': {
-                'title': 'Females',
-                'orders_title': 'Females Orders',
-                'action': ActWindow(act_window_female_id),
-                'group': Group(group_females_id),
+                'animals': Menu(ModelData.get_id(MODULE_NAME,
+                        'menu_farm_animal_females')),
+                'orders': Menu(ModelData.get_id(MODULE_NAME,
+                        'menu_farm_order_females')),
+                'extra': [
+                    Menu(ModelData.get_id(MODULE_NAME,
+                        'menu_farm_create_female')),
+                    ],
                 },
             'individual': {
-                'title': 'Individuals',
-                'orders_title': 'Individuals Orders',
-                'action': ActWindow(act_window_individual_id),
-                'group': Group(group_individuals_id),
+                'animals': Menu(ModelData.get_id(MODULE_NAME,
+                        'menu_farm_animal_individuals')),
+                'orders': Menu(ModelData.get_id(MODULE_NAME,
+                        'menu_farm_order_individuals')),
+                'extra': [],
                 },
             'group': {
-                'title': 'Groups',
-                'orders_title': 'Groups Orders',
-                'action': ActWindow(act_window_group_id),
-                'group': Group(group_groups_id),
+                'animals': Menu(ModelData.get_id(MODULE_NAME,
+                        'menu_farm_animal_groups')),
+                'orders': Menu(ModelData.get_id(MODULE_NAME,
+                        'menu_farm_order_groups')),
+                'extra': [],
                 },
             }
 
     @staticmethod
-    def _get_act_window_and_animal_types_per_event_model(animal_types_set):
-        '''
-        Returns a dictionary of Events with 'model name' as keys and
-        'act_window', 'act_window_name' and 'valid_animal_types' as values
-        '''
+    def _get_menus_by_event_type():
         pool = Pool()
-        ModelData = pool.get('ir.model.data')
-        ActWindow = pool.get('ir.action.act_window')
-
-        # It find all 'act_window's with 'res_model' to some farm event
-        event_act_windows = ActWindow.search([
-                ('res_model', 'like', 'farm.%.event'),
-                ])
-
-        # It find 'ir.model.data' of found 'act_window's which name
-        #     (XML identified) is not empty (they has been defined in module,
-        #     not created on previos function execution)
-        event_act_window_models = ModelData.search([
-                ('model', '=', 'ir.action.act_window'),
-                ('db_id', 'in', [x.id for x in event_act_windows]),
-                ('fs_id', '!=', None),
-                ])
-        event_act_windows_ids = [md.db_id for md in event_act_window_models]
-
-        event_configuration = {}
-        for act_window in ActWindow.browse(event_act_windows_ids):
-            valid_animal_types = set(
-                Pool().get(act_window.res_model).valid_animal_types())
-
-            event_configuration[act_window.res_model] = {
-                'act_window': act_window,
-                'act_window_name': act_window.name,
-                'valid_animal_types': valid_animal_types,
-                # is_generic_event if its valid_animal_types are all
-                #     animal types => difference is empty
-                'is_generic_event':
-                    not animal_types_set.difference(valid_animal_types)
-                }
-        return event_configuration
-
-    def _create_submenu(self, untranslated_title, parent_menu, sequence,
-            current_menus):
-        Menu = Pool().get('ir.ui.menu')
-
-        menus = Menu.search([
-                ('id', 'in', [x.id for x in current_menus]),
-                ('parent', '=', parent_menu.id),
-                ('name', '=', untranslated_title),
-                ])
-        values = {
-            'name': untranslated_title,
-            'parent': parent_menu.id,
-            'sequence': sequence,
-            'specie': self.id,
-            }
-        if menus:
-            Menu.write(menus, values)
-            menu = menus[0]
-            logging.getLogger('farm.specie').debug("Writting menus %s and "
-                "removing from current_menus" % menus)
-            current_menus.remove(menu)
-        else:
-            menu, = Menu.create([values])
-            logging.getLogger('farm.specie').debug("Created new menu %s"
-                % menu)
-        self._write_field_in_langs(Menu, menu, 'name', untranslated_title)
-        return menu
-
-    def _create_action_menu(self, new_domain, new_context, untranslated_title,
-            parent_menu, sequence, menu_icon, group, original_action,
-            translate_action, current_menus, current_actions):
-        pool = Pool()
-        ActWindow = pool.get('ir.action.act_window')
         Menu = pool.get('ir.ui.menu')
         ModelData = pool.get('ir.model.data')
+        return {
+            'generic': {
+                'farm.move.event': Menu(ModelData.get_id(MODULE_NAME,
+                        'menu_farm_move_event')),
+                'farm.feed.event': Menu(ModelData.get_id(MODULE_NAME,
+                        'menu_farm_feed_event')),
+                'farm.medication.event': Menu(ModelData.get_id(MODULE_NAME,
+                        'menu_farm_medication_event')),
+                'farm.transformation.event': Menu(ModelData.get_id(MODULE_NAME,
+                        'menu_farm_transformation_event')),
+                'farm.removal.event': Menu(ModelData.get_id(MODULE_NAME,
+                        'menu_farm_removal_event')),
+                },
+            'male': {
+                'farm.semen_extraction.event': Menu(
+                    ModelData.get_id(MODULE_NAME,
+                        'menu_farm_semen_extraction_event')),
+                },
+            'female': {
+                'farm.insemination.event': Menu(ModelData.get_id(MODULE_NAME,
+                        'menu_farm_insemination_event')),
+                'farm.pregnancy_diagnosis.event': Menu(
+                    ModelData.get_id(MODULE_NAME,
+                        'menu_farm_pregnancy_diagnosis_event')),
+                'farm.abort.event': Menu(ModelData.get_id(MODULE_NAME,
+                        'menu_farm_abort_event')),
+                'farm.farrowing.event': Menu(ModelData.get_id(MODULE_NAME,
+                        'menu_farm_farrowing_event')),
+                'farm.foster.event': Menu(ModelData.get_id(MODULE_NAME,
+                        'menu_farm_foster_event')),
+                'farm.weaning.event': Menu(ModelData.get_id(MODULE_NAME,
+                        'menu_farm_weaning_event')),
+                },
+        }
+
+    def _duplicate_menu(self, original_menu, parent_menu, sequence,
+            current_menus, current_actions, current_wizards, new_name=None,
+            new_icon=None, new_domain=None, new_context=None):
+        pool = Pool()
+        Menu = pool.get('ir.ui.menu')
 
         menus = Menu.search([
                 ('id', 'in', [x.id for x in current_menus]),
                 ('parent', '=', parent_menu.id),
-                ('name', '=', untranslated_title),
+                ('name', '=', new_name if new_name else original_menu.name),
                 ])
-        act_window = None
         menu = None
         if menus:
             menu = menus[0]
-            act_window = menu.action
 
-        if not new_domain:
-            new_domain = []
-        original_domain = (PYSONDecoder().decode(original_action.pyson_domain)
-            if original_action.pyson_domain else [])
-        if original_domain:
-            new_domain.extend(original_domain)
+        menu_action = self._duplicate_menu_action(menu, original_menu,
+            current_actions, current_wizards, new_domain, new_context)
 
-        original_context = (
-            PYSONDecoder().decode(original_action.pyson_context)
-            if original_action.pyson_context else [])
-        if original_context:
-            new_context.update(original_context)
+        menu_vals = {
+            'parent': parent_menu.id,
+            'sequence': sequence,
+            'action': str(menu_action) if menu_action else None,
+            'specie': self.id,
+            'active': True,
+            }
+        if new_name:
+            menu_vals['name'] = new_name
+        if new_icon:
+            menu_vals['icon'] = new_icon
+
+        if menu:
+            logging.getLogger('farm.specie').debug("Writting menu %s" % menu)
+            Menu.write([menu], menu_vals)
+            if menu in current_menus:
+                current_menus.remove(menu)
+        else:
+            logging.getLogger('farm.specie').debug("Creating new menu copying "
+                "from original menu %s" % original_menu)
+            menu, = Menu.copy([original_menu])
+            Menu.write([menu], menu_vals)
+        if new_name:
+            self._write_field_in_langs(Menu, menu, 'name', new_name)
+        return menu
+
+    def _duplicate_menu_action(self, menu, original_menu, current_actions,
+            current_wizards, new_domain=None, new_context=None):
+        pool = Pool()
+        Keyword = pool.get('ir.action.keyword')
+
+        if not original_menu.action:
+            return None
+
+        original_action = original_menu.action
+        Action = original_action.__class__
 
         action_vals = {
             'specie': self.id,
-            'domain': PYSONEncoder().encode(new_domain),
-            'context': PYSONEncoder().encode(new_context),
             }
 
-        if act_window:
-            ActWindow.write([act_window], action_vals)
-            logging.getLogger('farm.specie').debug("Writting action %s to be "
-                "placed in a menu" % act_window)
-            if act_window in current_actions:
+        if hasattr(original_action, 'domain'):
+            if not new_domain:
+                new_domain = []
+            original_domain = (
+                PYSONDecoder().decode(original_action.pyson_domain)
+                if original_action.pyson_domain else [])
+            if original_domain:
+                new_domain.extend(original_domain)
+
+            action_vals['domain'] = PYSONEncoder().encode(new_domain)
+
+        if hasattr(original_action, 'context'):
+            original_context = (
+                PYSONDecoder().decode(original_action.pyson_context)
+                if original_action.pyson_context else [])
+            if original_context:
+                new_context.update(original_context)
+
+            action_vals['context'] = PYSONEncoder().encode(new_context)
+
+        menu_action = menu.action if menu else None
+        if menu_action:
+            Action.write([menu_action], action_vals)
+            logging.getLogger('farm.specie').debug("Writting action %s to "
+                "be placed in menu %s" % (menu_action, menu))
+            if menu_action in current_actions:
                 logging.getLogger('farm.specie').debug(
                     "Removing from current_actions")
-                current_actions.remove(act_window)
-        else:
-            logging.getLogger('farm.specie').debug(
-                "Creating new action to be placed in menu copying from "
-                "original action %s"
-                % original_action)
-            act_window, = ActWindow.copy([original_action], action_vals)
-        if translate_action:
-            self._write_field_in_langs(ActWindow, act_window, 'name',
-                untranslated_title)
-
-        group_ids = group and [group.id] or []
-        if group_ids:
-            group_manager_id = ModelData.get_id(MODULE_NAME,
-                'group_farm_admin')
-            group_ids.append(group_manager_id)
-
-        menu_vals = {
-            'name': untranslated_title,
-            'parent': parent_menu.id,
-            'sequence': sequence,
-            'groups': [('set', group_ids)],
-            'icon': 'tryton-list',
-            'action': ('ir.action.act_window', act_window.id),
-            'specie': self.id,
-            #'keyword': 'tree_open',
-            }
-
-        if menu:
-            Menu.write([menu], menu_vals)
-            logging.getLogger('farm.specie').debug("Writing menu %s with "
-                "action %s and removing from current_menus"
-                % (menu, act_window.id))
-            current_menus.remove(menu)
-        else:
-            menu, = Menu.create([menu_vals])
-            logging.getLogger('farm.specie').debug("Created new menu %s with "
-                "action %s" % (menu, act_window.id))
-        self._write_field_in_langs(Menu, menu, 'name', untranslated_title)
-        return menu
-
-    def _create_wizard_menu(self, untranslated_title, parent_menu,
-            sequence, menu_icon, group, original_wizard, translate_wizard,
-            current_menus, current_wizards):
-        pool = Pool()
-        Wizard = pool.get('ir.action.wizard')
-        Menu = pool.get('ir.ui.menu')
-        ModelData = pool.get('ir.model.data')
-
-        menus = Menu.search([
-                ('id', 'in', [x.id for x in current_menus]),
-                ('parent', '=', parent_menu.id),
-                ('name', '=', untranslated_title),
-                ])
-        wizard = None
-        menu = None
-        if menus:
-            menu = menus[0]
-            wizard = menu.action
-
-        wizard_vals = {
-            'specie': self.id,
-            }
-
-        if wizard:
-            Wizard.write([wizard], wizard_vals)
-            logging.getLogger('farm.specie').debug("Writting wizard %s to be "
-                "placed in a menu" % wizard)
-            if wizard in current_wizards:
+                current_actions.remove(menu_action)
+            elif menu_action in current_wizards:
                 logging.getLogger('farm.specie').debug(
                     "Removing from current_wizards")
-                current_wizards.remove(wizard)
+                current_wizards.remove(menu_action)
         else:
-            logging.getLogger('farm.specie').debug(
-                "Creating new wizard to be placed in menu copying from "
-                "original wizard %s"
-                % original_wizard)
-            wizard, = Wizard.copy([original_wizard], wizard_vals)
-        if translate_wizard:
-            self._write_field_in_langs(Wizard, wizard, 'name',
-                untranslated_title)
-
-        group_ids = group and [group.id] or []
-        if group_ids:
-            group_manager_id = ModelData.get_id(MODULE_NAME,
-                'group_farm_admin')
-            group_ids.append(group_manager_id)
-
-        menu_vals = {
-            'name': untranslated_title,
-            'parent': parent_menu.id,
-            'sequence': sequence,
-            'groups': [('set', group_ids)],
-            'icon': 'tryton-list',
-            'action': ('ir.action.wizard', wizard.id),
-            'specie': self.id,
-            #'keyword': 'tree_open',
-            }
-
-        if menu:
-            Menu.write([menu], menu_vals)
-            logging.getLogger('farm.specie').debug("Writing menu %s with "
-                "wizard %s and removing from current_menus"
-                % (menu, wizard.id))
-            current_menus.remove(menu)
-        else:
-            menu, = Menu.create([menu_vals])
-            logging.getLogger('farm.specie').debug("Created new menu %s with "
-                "wizard %s" % (menu, wizard.id))
-        self._write_field_in_langs(Menu, menu, 'name', untranslated_title)
-        return menu
+            logging.getLogger('farm.specie').info(
+                "Creating new action as copy of %s to be placed in menu %s"
+                % (original_action, menu if menu else original_menu))
+            menu_action, = Action.copy([original_action], action_vals)
+            Keyword.delete([a for a in menu_action.keywords])
+        return menu_action
 
     @classmethod
     def _write_field_in_langs(cls, Proxy, obj, fieldname, untranslated_value):
         Translation = Pool().get('ir.translation')
-        context = Transaction().context
-        lang_codes = context.get('lang_codes') or cls._get_lang_codes()
+        lang_codes = cls._get_lang_codes()
 
         for lang in lang_codes:
             translated_value = Translation.get_source('farm.specie', 'view',
@@ -652,6 +514,14 @@ class Specie(ModelSQL, ModelView):
                     Proxy.write([obj], {
                             fieldname: translated_value,
                             })
+
+    @staticmethod
+    def _get_lang_codes():
+        Lang = Pool().get('ir.lang')
+        langs = Lang.search([
+                ('translatable', '=', True),
+                ])
+        return [x.code for x in langs]
 
     @classmethod
     def copy(cls, records, default=None):

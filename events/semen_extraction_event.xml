@@ -38,7 +38,7 @@
 
         <record model="ir.action.act_window"
             id="act_farm_semen_extraction_event">
-            <field name="name">Semen Extraction Events</field>
+            <field name="name">Semen Extractions</field>
             <field name="res_model">farm.semen_extraction.event</field>
             <field name="search_value"></field>
             <field name="domain"></field>
