@@ -4469,6 +4469,11 @@ msgid "Males"
 msgstr "Mascles"
 
 #, fuzzy
+msgctxt "model:ir.ui.menu,name:menu_farm_create_female"
+msgid "Create female"
+msgstr "Crea una femella"
+
+#, fuzzy
 msgctxt "model:ir.ui.menu,name:menu_farm_event_order"
 msgid "Work Orders"
 msgstr "Work Orders"
