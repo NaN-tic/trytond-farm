@@ -279,7 +279,6 @@
                 id="act_farm_feed_animal_location_date_by_animal">
             <field name="name">Feed consumption by Animal</field>
             <field name="res_model">farm.feed.animal_location_date</field>
-            <field name="context">{'animal_type': Eval('animal_type')}</field>
             <field name="domain">[('animal', '=', Eval('active_id'))]</field>
         </record>
         <record model="ir.action.keyword"
@@ -294,7 +293,6 @@
                 id="act_farm_feed_animal_location_date_by_group">
             <field name="name">Feed consumption by Group</field>
             <field name="res_model">farm.feed.animal_location_date</field>
-            <field name="context">{'animal_type': 'group'}</field>
             <field name="domain">[('animal_group', '=', Eval('active_id'))]</field>
         </record>
         <record model="ir.action.keyword"
@@ -309,7 +307,6 @@
                 id="act_farm_feed_animal_location_date_by_location">
             <field name="name">Feed consumption by Location</field>
             <field name="res_model">farm.feed.animal_location_date</field>
-            <field name="context">{}</field>
             <field name="domain">[('location', '=', Eval('active_id'))]</field>
         </record>
         <record model="ir.action.keyword"
