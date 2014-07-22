@@ -55,5 +55,24 @@
             <field name="view" ref="farm_abort_event_form_view"/>
             <field name="act_window" ref="act_farm_abort_event"/>
         </record>
+
+        <!-- Permissions -->
+        <record model="ir.model.access" id="access_farm_abort_event_farm">
+            <field name="model" search="[('model', '=', 'farm.abort.event')]"/>
+            <field name="group" ref="group_farm"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+
+        <record model="ir.model.access" id="access_farm_abort_event_females">
+            <field name="model" search="[('model', '=', 'farm.abort.event')]"/>
+            <field name="group" ref="group_farm_females"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
     </data>
 </tryton>

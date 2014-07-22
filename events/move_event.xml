@@ -55,19 +55,27 @@
             <field name="domain"></field>
             <field name="context"></field>
         </record>
-
         <record model="ir.action.act_window.view"
             id="act_farm_move_event_view1">
             <field name="sequence" eval="10"/>
             <field name="view" ref="farm_move_event_list_view"/>
             <field name="act_window" ref="act_farm_move_event"/>
         </record>
-
         <record model="ir.action.act_window.view"
             id="act_farm_move_event_view2">
             <field name="sequence" eval="20"/>
             <field name="view" ref="farm_move_event_form_view"/>
             <field name="act_window" ref="act_farm_move_event"/>
+        </record>
+
+        <!-- Permissions -->
+        <record model="ir.model.access" id="access_farm_move_event_farm">
+            <field name="model" search="[('model', '=', 'farm.move.event')]"/>
+            <field name="group" ref="group_farm"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
         </record>
     </data>
 </tryton>

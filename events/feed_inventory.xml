@@ -64,18 +64,10 @@
             <field name="act_window" ref="act_farm_feed_inventory"/>
         </record>
 
-        <record model="ir.model.access" id="access_farm_feed_inventory">
+        <record model="ir.model.access" id="access_farm_feed_inventory_farm">
             <field name="model"
                 search="[('model', '=', 'farm.feed.inventory')]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="False"/>
-            <field name="perm_create" eval="False"/>
-            <field name="perm_delete" eval="False"/>
-        </record>
-        <record model="ir.model.access" id="access_farm_feed_inventory_admin">
-            <field name="model"
-                search="[('model', '=', 'farm.feed.inventory')]"/>
-            <field name="group" ref="group_farm_admin"/>
+            <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
@@ -231,19 +223,10 @@
         </record>
 
         <record model="ir.model.access"
-            id="access_farm_feed_provisional_inventory">
+            id="access_farm_feed_provisional_inventory_farm">
             <field name="model"
                 search="[('model', '=', 'farm.feed.provisional_inventory')]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="False"/>
-            <field name="perm_create" eval="False"/>
-            <field name="perm_delete" eval="False"/>
-        </record>
-        <record model="ir.model.access"
-            id="access_farm_feed_provisional_inventory_admin">
-            <field name="model"
-                search="[('model', '=', 'farm.feed.provisional_inventory')]"/>
-            <field name="group" ref="group_farm_admin"/>
+            <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
@@ -266,9 +249,10 @@
         </record>
 
         <record model="ir.model.access"
-                id="access_farm_feed_animal_location_date">
+                id="access_farm_feed_animal_location_date_farm">
             <field name="model"
                 search="[('model', '=', 'farm.feed.animal_location_date')]"/>
+            <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
