@@ -42,19 +42,39 @@
             <field name="domain"></field>
             <field name="context">{'animal_type': 'female'}</field>
         </record>
-
         <record model="ir.action.act_window.view"
             id="act_farm_insemination_event_view1">
             <field name="sequence" eval="10"/>
             <field name="view" ref="farm_insemination_event_list_view"/>
             <field name="act_window" ref="act_farm_insemination_event"/>
         </record>
-
         <record model="ir.action.act_window.view"
             id="act_farm_insemination_event_view2">
             <field name="sequence" eval="20"/>
             <field name="view" ref="farm_insemination_event_form_view"/>
             <field name="act_window" ref="act_farm_insemination_event"/>
+        </record>
+
+        <!-- Permissions -->
+        <record model="ir.model.access" id="access_farm_insemination_event">
+            <field name="model"
+                search="[('model', '=', 'farm.insemination.event')]"/>
+            <field name="group" ref="group_farm"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+
+        <record model="ir.model.access"
+                id="access_farm_insemination_event_females">
+            <field name="model"
+                search="[('model', '=', 'farm.insemination.event')]"/>
+            <field name="group" ref="group_farm_females"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
         </record>
     </data>
 </tryton>

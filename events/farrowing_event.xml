@@ -42,19 +42,38 @@
             <field name="res_model">farm.farrowing.problem</field>
             <field name="search_value"></field>
         </record>
-
         <record model="ir.action.act_window.view"
             id="act_farm_farrowing_problem_view1">
             <field name="sequence" eval="10"/>
             <field name="view" ref="farm_farrowing_problem_list_view"/>
             <field name="act_window" ref="act_farm_farrowing_problem"/>
         </record>
-
         <record model="ir.action.act_window.view"
             id="act_farm_farrowing_problem_view2">
             <field name="sequence" eval="20"/>
             <field name="view" ref="farm_farrowing_problem_form_view"/>
             <field name="act_window" ref="act_farm_farrowing_problem"/>
+        </record>
+
+        <record model="ir.model.access" id="access_farm_farrowing_problem_farm">
+            <field name="model"
+                search="[('model', '=', 'farm.farrowing.problem')]"/>
+            <field name="group" ref="group_farm"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+
+        <record model="ir.model.access"
+                id="access_farm_farrowing_problem_admin">
+            <field name="model"
+                search="[('model', '=', 'farm.farrowing.problem')]"/>
+            <field name="group" ref="group_farm_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
         </record>
 
         <!-- farm.farrowing.event -->
@@ -98,19 +117,38 @@
             <field name="domain"></field>
             <field name="context">{'animal_type': 'female'}</field>
         </record>
-
         <record model="ir.action.act_window.view"
             id="act_farm_farrowing_event_view1">
             <field name="sequence" eval="10"/>
             <field name="view" ref="farm_farrowing_event_list_view"/>
             <field name="act_window" ref="act_farm_farrowing_event"/>
         </record>
-
         <record model="ir.action.act_window.view"
             id="act_farm_farrowing_event_view2">
             <field name="sequence" eval="20"/>
             <field name="view" ref="farm_farrowing_event_form_view"/>
             <field name="act_window" ref="act_farm_farrowing_event"/>
+        </record>
+
+        <!-- Permissions -->
+        <record model="ir.model.access" id="access_farm_farrowing_event_farm">
+            <field name="model" search="[('model', '=', 'farm.farrowing.event')]"/>
+            <field name="group" ref="group_farm"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+
+        <record model="ir.model.access"
+                id="access_farm_farrowing_event_females">
+            <field name="model"
+                search="[('model', '=', 'farm.farrowing.event')]"/>
+            <field name="group" ref="group_farm_females"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
         </record>
 
         <!-- Menus -->
