@@ -50,8 +50,9 @@
         </record>
 
         <!-- Permissions -->
-        <record model="ir.model.access" id="access_farm_specie">
+        <record model="ir.model.access" id="access_farm_specie_farm">
             <field name="model" search="[('model', '=', 'farm.specie')]"/>
+            <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
@@ -103,8 +104,9 @@
         </record>
 
         <!-- Permissions -->
-        <record model="ir.model.access" id="access_farm_specie_breed">
+        <record model="ir.model.access" id="access_farm_specie_breed_farm">
             <field name="model" search="[('model', '=', 'farm.specie.breed')]"/>
+            <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
@@ -137,9 +139,10 @@
         </record>
 
         <!-- Permissions -->
-        <record model="ir.model.access" id="access_farm_specie_farm_line">
+        <record model="ir.model.access" id="access_farm_specie_farm_line_farm">
             <field name="model"
                 search="[('model', '=', 'farm.specie.farm_line')]"/>
+            <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
