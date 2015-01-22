@@ -30,9 +30,7 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
             'Farrowing Group'),
         'get_farrowing_group')
     quantity = fields.Integer('Quantity', required=True,
-        states=_STATES_WRITE_DRAFT,
-        on_change_with=['farrowing_group', 'animal', 'timestamp'],
-        depends=_DEPENDS_WRITE_DRAFT)
+        states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
     female_to_location = fields.Many2One('stock.location',
         'Female Destination', required=True, domain=[
             ('type', '=', 'storage'),
@@ -144,6 +142,7 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
             return farrowing_event.produced_group.id
         return None
 
+    @fields.depends('animal', 'farrowing_group', 'timestamp')
     def on_change_with_quantity(self):
         if not self.animal or not self.farrowing_group:
             return None

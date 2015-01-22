@@ -76,8 +76,7 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
     weights = fields.One2Many('farm.animal.group.weight', 'group',
         'Weight Records', readonly=False, order=[('timestamp', 'DESC')])
     current_weight = fields.Function(fields.Many2One(
-            'farm.animal.group.weight', 'Current Weight',
-            on_change_with=['weights']),
+            'farm.animal.group.weight', 'Current Weight'),
         'on_change_with_current_weight')
     tags = fields.Many2Many('farm.animal.group-farm.tag', 'group', 'tag',
         'Tags')
@@ -101,9 +100,10 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
     def __setup__(cls):
         super(AnimalGroup, cls).__setup__()
         cls._sql_constraints += [
-            ('initial_quantity_positive', 'check (initial_quantity > 0)',
-                'In Groups, the initial quantity must be positive (greater or '
-                'equals 1)'),
+            # Comented because of breeding groups are initialized to 0
+            #('initial_quantity_positive', 'check (initial_quantity > 0)',
+            #    'In Groups, the initial quantity must be positive (greater or '
+            #    'equals 1)'),
             ]
         cls._error_messages.update({
                 'missing_supplier_location': ('Supplier Location of '
@@ -289,6 +289,7 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
         return [('lot', ) + tuple(t[1:]) if t[0] == 'id'
             else ('lot.' + t[0], ) + tuple(t[1:]) for t in lot_domain]
 
+    @fields.depends('weights')
     def on_change_with_current_weight(self, name=None):
         if self.weights:
             return self.weights[0].id
@@ -429,12 +430,13 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
 
         group_product = specie.group_product.id
         lot_tmp = Lot(product=group_product)
-        cost_lines = lot_tmp._on_change_product_cost_lines()
+        cost_lines = lot_tmp._on_change_product_cost_lines().get('add')
         return {
             'number': group_vals['number'],
             'product': group_product,
             'animal_type': 'group',
-            'cost_lines': [('create', cost_lines.get('add', []))],
+            'cost_lines': ([('create', [cl[1] for cl in cost_lines])]
+                if cost_lines else []),
             }
 
     @classmethod
@@ -469,8 +471,7 @@ class AnimalGroupWeight(ModelSQL, ModelView):
     quantity = fields.Integer('Number of individuals', required=True)
     uom = fields.Many2One('product.uom', "UoM", required=True,
         domain=[('category', '=', Id('product', 'uom_cat_weight'))])
-    unit_digits = fields.Function(fields.Integer('Unit Digits',
-            on_change_with=['uom']),
+    unit_digits = fields.Function(fields.Integer('Unit Digits'),
         'on_change_with_unit_digits')
     weight = fields.Numeric('Weight',
         digits=(16, Eval('unit_digits', 2)),
@@ -504,6 +505,7 @@ class AnimalGroupWeight(ModelSQL, ModelView):
         operator = operator.replace('ilike', '=').replace('like', '=')
         return [('weight', operator, operand)]
 
+    @fields.depends('uom')
     def on_change_with_unit_digits(self, name=None):
         if self.uom:
             return self.uom.digits

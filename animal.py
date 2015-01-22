@@ -144,8 +144,7 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
             ('type', '!=', 'warehouse'),
             ('silo', '=', False),
             ], help='Indicates where the animal currently resides.')
-    farm = fields.Function(fields.Many2One('stock.location', 'Current Farm',
-            on_change_with=['location'], depends=['location']),
+    farm = fields.Function(fields.Many2One('stock.location', 'Current Farm'),
         'on_change_with_farm', searcher='search_farm')
     origin = fields.Selection(ANIMAL_ORIGIN, 'Origin', required=True,
         readonly=True,
@@ -178,7 +177,7 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
     weights = fields.One2Many('farm.animal.weight', 'animal',
         'Weight Records', readonly=False, order=[('timestamp', 'DESC')])
     current_weight = fields.Function(fields.Many2One('farm.animal.weight',
-            'Current Weight', on_change_with=['weights']),
+            'Current Weight'),
         'on_change_with_current_weight')
     tags = fields.Many2Many('farm.animal-farm.tag', 'animal', 'tag', 'Tags')
     notes = fields.Text('Notes')
@@ -279,6 +278,7 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
                     'number': value,
                     })
 
+    @fields.depends('location')
     def on_change_with_farm(self, name=None):
         return (self.location and self.location.warehouse and
             self.location.warehouse.id or None)
@@ -287,6 +287,7 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
     def search_farm(cls, name, clause):
         return [('location.warehouse',) + tuple(clause[1:])]
 
+    @fields.depends('weights')
     def on_change_with_current_weight(self, name=None):
         if self.weights:
             return self.weights[0].id
@@ -451,8 +452,9 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
             'animal_type': animal_vals['type'],
             }
         if Transaction().context.get('create_cost_lines', True):
-            cost_lines = lot_tmp._on_change_product_cost_lines()
-            res['cost_lines'] = [('create', cost_lines.get('add', []))]
+            cost_lines = lot_tmp._on_change_product_cost_lines().get('add')
+            if cost_lines:
+                res['cost_lines'] = [('create', [cl[1] for cl in cost_lines])]
         return res
 
     @classmethod
@@ -488,8 +490,7 @@ class AnimalWeight(ModelSQL, ModelView):
     uom = fields.Many2One('product.uom', "UoM",
         required=True,
         domain=[('category', '=', Id('product', 'uom_cat_weight'))])
-    unit_digits = fields.Function(fields.Integer('Unit Digits',
-            on_change_with=['uom']),
+    unit_digits = fields.Function(fields.Integer('Unit Digits'),
         'on_change_with_unit_digits')
     weight = fields.Numeric('Weight',
         digits=(16, Eval('unit_digits', 2)),
@@ -523,6 +524,7 @@ class AnimalWeight(ModelSQL, ModelView):
         operator = operator.replace('ilike', '=').replace('like', '=')
         return [('weight', operator, operand)]
 
+    @fields.depends('uom')
     def on_change_with_unit_digits(self, name=None):
         if self.uom:
             return self.uom.digits
@@ -830,8 +832,6 @@ class FemaleCycle(ModelSQL, ModelView):
     diagnosis_events = fields.One2Many('farm.pregnancy_diagnosis.event',
         'female_cycle', 'Diagnosis')
     pregnant = fields.Function(fields.Boolean('Pregnant',
-            on_change_with=['diagnosis_events', 'abort_event'],
-            depends=['diagnosis_events', 'abort_event'],
             help='A female will be considered pregnant if there are more than'
             ' one diagnosis and the last one has a positive result.'),
         'on_change_with_pregnant')
@@ -851,7 +851,6 @@ class FemaleCycle(ModelSQL, ModelView):
     foster_events = fields.One2Many('farm.foster.event', 'female_cycle',
         'Fosters')
     fostered = fields.Function(fields.Integer('Fostered',
-            on_change_with=['foster_events'], depends=['foster_events'],
             help='Diference between Fostered Input and Output. A negative '
             'number means that he has given more than taken.'),
         'on_change_with_fostered')
@@ -971,6 +970,7 @@ class FemaleCycle(ModelSQL, ModelView):
         insemination_date = self.insemination_events[0].timestamp.date()
         return (insemination_date - previous_date).days
 
+    @fields.depends('abort_event', 'diagnosis_events', 'farrowing_event')
     def on_change_with_pregnant(self, name=None):
         if self.abort_event:
             return False
@@ -986,6 +986,7 @@ class FemaleCycle(ModelSQL, ModelView):
         return (self.farrowing_event and getattr(self.farrowing_event, name)
             or 0)
 
+    @fields.depends('foster_events')
     def on_change_with_fostered(self, name=None):
         return sum(e.quantity for e in self.foster_events)
 
@@ -1021,8 +1022,7 @@ class CreateFemaleStart(ModelView):
         states={
             'readonly': Eval('origin') == 'raised',
             },
-        depends=['origin'],
-        on_change_with=['origin', 'arrival_date'])
+        depends=['origin'])
     initial_location = fields.Many2One('stock.location', 'Current Location',
         required=True,
         domain=[
@@ -1056,6 +1056,7 @@ class CreateFemaleStart(ModelView):
     def default_origin():
         return 'raised'
 
+    @fields.depends('origin', 'arrival_date')
     def on_change_with_birthdate(self):
         if self.origin == 'raised':
             return self.arrival_date
@@ -1093,8 +1094,8 @@ class CreateFemaleLine(ModelView):
     fostered = fields.Integer('Fostered', states={
             'invisible': Bool(Eval('abort')),
             }, depends=['abort'])
-    to_weaning_quantity = fields.Function(fields.Integer('To Weaning Quantity',
-            on_change_with=['live', 'fostered']),
+    to_weaning_quantity = fields.Function(
+        fields.Integer('To Weaning Quantity'),
         'on_change_with_to_weaning_quantity')
     weaning_date = fields.Date('Weaning Date', states={
             'invisible': (Eval('abort', False) |
@@ -1106,6 +1107,7 @@ class CreateFemaleLine(ModelView):
                 (Eval('to_weaning_quantity', 0) == 0)),
             }, depends=['weaning_date', 'abort', 'to_weaning_quantity'])
 
+    @fields.depends('live', 'fostered')
     def on_change_with_to_weaning_quantity(self, name=None):
         return (self.live or 0) + (self.fostered or 0)
 

@@ -50,8 +50,6 @@ class RemovalEvent(AbstractEvent):
             'invisible': Not(Equal(Eval('animal_type'), 'group')),
             'readonly': Not(Equal(Eval('state'), 'draft')),
             },
-        on_change_with=['animal_type', 'animal_group', 'timestamp',
-            'from_location'],
         depends=['animal_type', 'animal_group', 'timestamp', 'from_location',
             'state'])
     removal_type = fields.Many2One('farm.removal.type', 'Type',
@@ -87,8 +85,6 @@ class RemovalEvent(AbstractEvent):
             cls.animal.depends.append('from_location')
         if 'farm' not in cls.animal.depends:
             cls.animal.depends.append('farm')
-        if 'from_location' not in cls.animal.on_change:
-            cls.animal.on_change.append('from_location')
         cls._error_messages.update({
                 'female_is_lactating': ('The female of removal event '
                     '"%s" is lactating. To remove it you have to create a '
@@ -123,12 +119,15 @@ class RemovalEvent(AbstractEvent):
     def valid_animal_types():
         return ['male', 'female', 'individual', 'group']
 
+    @fields.depends('animal')
     def on_change_animal(self):
         res = super(RemovalEvent, self).on_change_animal()
         res['from_location'] = (self.animal and self.animal.location.id or
             None)
         return res
 
+    @fields.depends('animal_type', 'animal_group', 'from_location',
+        'timestamp')
     def on_change_with_quantity(self):
         if self.animal_type != 'group':
             return 1

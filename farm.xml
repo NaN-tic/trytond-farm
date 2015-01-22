@@ -11,10 +11,6 @@
             <field name="user" ref="res.user_admin"/>
             <field name="group" ref="group_farm_admin"/>
         </record>
-        <record model="res.user-res.group" id="user_trigger_group_farm_admin">
-            <field name="user" ref="res.user_trigger"/>
-            <field name="group" ref="group_farm_admin"/>
-        </record>
 
         <record model="res.group" id="group_farm">
             <field name="name">Farm</field>
@@ -23,25 +19,37 @@
             <field name="user" ref="res.user_admin"/>
             <field name="group" ref="group_farm"/>
         </record>
-        <record model="res.user-res.group" id="user_trigger_group_farm">
-            <field name="user" ref="res.user_trigger"/>
-            <field name="group" ref="group_farm"/>
-        </record>
 
         <record model="res.group" id="group_farm_males">
             <field name="name">Farm / Males</field>
+        </record>
+        <record model="res.user-res.group" id="user_admin_group_males">
+            <field name="user" ref="res.user_admin"/>
+            <field name="group" ref="group_farm_males"/>
         </record>
 
         <record model="res.group" id="group_farm_females">
             <field name="name">Farm / Females</field>
         </record>
+        <record model="res.user-res.group" id="user_admin_group_females">
+            <field name="user" ref="res.user_admin"/>
+            <field name="group" ref="group_farm_females"/>
+        </record>
 
         <record model="res.group" id="group_farm_individuals">
             <field name="name">Farm / Individuals</field>
         </record>
+        <record model="res.user-res.group" id="user_admin_group_individuals">
+            <field name="user" ref="res.user_admin"/>
+            <field name="group" ref="group_farm_individuals"/>
+        </record>
 
         <record model="res.group" id="group_farm_groups">
             <field name="name">Farm / Groups</field>
+        </record>
+        <record model="res.user-res.group" id="user_admin_group_groups">
+            <field name="user" ref="res.user_admin"/>
+            <field name="group" ref="group_farm_groups"/>
         </record>
 
         <!-- Sequences Lot TODO: moure a stock_lot -->

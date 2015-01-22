@@ -24,7 +24,7 @@ class InseminationEvent(AbstractEvent, ImportedEventMixin):
             ], states=_STATES_WRITE_DRAFT,
         depends=_DEPENDS_WRITE_DRAFT + ['specie'])
     dose_product = fields.Function(fields.Many2One('product.product',
-            'Dose Product', on_change_with=['dose_bom'], depends=['dose_bom']),
+            'Dose Product', depends=['dose_bom']),
         'on_change_with_dose_product')
     # TODO: (no fer) add flag in context to restrict lots with stock in 'farm'
     # locations
@@ -33,7 +33,6 @@ class InseminationEvent(AbstractEvent, ImportedEventMixin):
                 ('product', '=', Eval('dose_product', 0)),
                 ()),
             ], states=_STATES_WRITE_DRAFT,
-        on_change_with=['farm', 'timestamp', 'dose_product'],
         depends=_DEPENDS_WRITE_DRAFT + ['dose_product'])
     female_cycle = fields.Many2One('farm.animal.female_cycle', 'Female Cycle',
         readonly=True, domain=[
@@ -80,10 +79,12 @@ class InseminationEvent(AbstractEvent, ImportedEventMixin):
                 self.timestamp)
         return super(InseminationEvent, self).get_rec_name(name)
 
+    @fields.depends('dose_bom')
     def on_change_with_dose_product(self, name=None):
         return (self.dose_bom and self.dose_bom.output_products and
             self.dose_bom.output_products[0].id or None)
 
+    @fields.depends('dose_product', 'farm', 'timestamp')
     def on_change_with_dose_lot(self, name=None):
         Lot = Pool().get('stock.lot')
 

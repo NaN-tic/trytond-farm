@@ -35,8 +35,6 @@ class FeedEvent(FeedEventMixin, ModelSQL, ModelView, Workflow):
             ('locations_to_fed', 'in', [Eval('location')]),
             ]
         cls.feed_location.depends += ['location']
-        cls.feed_location.on_change = ['feed_location', 'feed_product',
-            'feed_lot', 'uom']
 
         cls._sql_constraints += [
             ('quantity_positive', 'check ( quantity != 0 )',
@@ -63,6 +61,7 @@ class FeedEvent(FeedEventMixin, ModelSQL, ModelView, Workflow):
                 ])
         return [('', '')] + [(m.model, m.name) for m in models]
 
+    @fields.depends('feed_location')
     def on_change_feed_location(self):
         if not self.feed_location or not self.feed_location.current_lot:
             return {

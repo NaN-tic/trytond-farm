@@ -380,7 +380,7 @@ class FeedInventoryMixin(object):
     location = fields.Many2One('stock.location', 'Silo', required=True,
         domain=[
             ('silo', '=', True),
-            ], on_change=['location', 'dest_locations'],
+            ],
         states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
     dest_locations = fields.Many2Many('farm.feed.inventory-stock.location',
         'inventory', 'location', 'Locations to fed', required=True,
@@ -395,8 +395,7 @@ class FeedInventoryMixin(object):
     uom = fields.Many2One('product.uom', "UOM", domain=[
             ('category', '=', Id('product', 'uom_cat_weight')),
             ], states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
-    unit_digits = fields.Function(fields.Integer('Unit Digits',
-            on_change_with=['uom']),
+    unit_digits = fields.Function(fields.Integer('Unit Digits'),
         'on_change_with_unit_digits')
     quantity = fields.Numeric('Quantity', digits=(16, Eval('unit_digits', 2)),
         required=True, states=_STATES_WRITE_DRAFT,
@@ -462,6 +461,7 @@ class FeedInventoryMixin(object):
     def get_rec_name(self, name):
         return "%s (%s)" % (self.location.rec_name, self.timestamp)
 
+    @fields.depends('location')
     def on_change_location(self, name=None):
         if not self.location:
             return {
@@ -471,6 +471,7 @@ class FeedInventoryMixin(object):
             'dest_locations': [l.id for l in self.location.locations_to_fed],
             }
 
+    @fields.depends('uom')
     def on_change_with_unit_digits(self, name=None):
         if self.uom:
             return self.uom.digits
@@ -888,8 +889,8 @@ class FeedProvisionalInventory(FeedInventoryMixin, ModelSQL, ModelView,
                 'Feed Provisional Inventory "%s" is not in Validated state or '
                 'it doesn\'t have stock inventory.' % inventory.rec_name)
             todo_stock_inventories.append(inventory.inventory)
-            todo_stock_moves += [l.move for l in inventory.inventory.lines
-                if l.move]
+            todo_stock_moves += [m for l in inventory.inventory.lines
+                for m in l.moves]
             inventory_events += inventory.feed_events
 
         deny_modify_done_cancel_bak = StockMove._deny_modify_done_cancel.copy()
@@ -930,19 +931,21 @@ class FeedProvisionalInventory(FeedInventoryMixin, ModelSQL, ModelView,
         return super(FeedProvisionalInventory, cls).copy(inventories, default)
 
     @classmethod
-    def write(cls, inventories, vals):
+    def write(cls, *args):
         pool = Pool()
         StockInventory = pool.get('stock.inventory')
         StockMove = pool.get('stock.move')
 
-        super(FeedProvisionalInventory, cls).write(inventories, vals)
+        super(FeedProvisionalInventory, cls).write(*args)
 
-        if vals.get('state', '') == 'cancel':
-            stock_inventories = [i.inventory for i in inventories]
-            stock_moves = [l.move for i in stock_inventories
-                for l in i.lines if l.move]
-            StockMove.delete(stock_moves)
-            StockInventory.delete(stock_inventories)
+        actions = iter(args)
+        for inventories, values in zip(actions, actions):
+            if values.get('state', '') == 'cancel':
+                stock_inventories = [i.inventory for i in inventories]
+                stock_moves = [m for i in stock_inventories
+                    for l in i.lines for m in l.moves]
+                StockMove.delete(stock_moves)
+                StockInventory.delete(stock_inventories)
 
 
 class FeedAnimalLocationDate(ModelSQL, ModelView):

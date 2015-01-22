@@ -1,5 +1,5 @@
-#The COPYRIGHT file at the top level of this repository contains the full
-#copyright notices and license terms.
+# The COPYRIGHT file at the top level of this repository contains the full
+# copyright notices and license terms.
 from trytond.model import fields, ModelView, Workflow
 from trytond.pyson import Bool, Equal, Eval, Id, If, Not, Or
 from trytond.pool import Pool
@@ -47,14 +47,11 @@ class MoveEvent(AbstractEvent):
             'invisible': Not(Equal(Eval('animal_type'), 'group')),
             'readonly': Not(Equal(Eval('state'), 'draft')),
             },
-        on_change_with=['animal_type', 'animal_group', 'timestamp',
-            'from_location'],
         depends=['animal_type', 'animal_group', 'from_location', 'state'])
     unit_price = fields.Numeric('Unit Price', required=True, digits=(16, 4),
         states={
             'readonly': Not(Equal(Eval('state'), 'draft')),
-            }, on_change_with=['animal_type', 'animal', 'animal_group'],
-        depends=['state'],
+            }, depends=['state'],
         help='Unitary cost of Animal or Group for analytical accounting.')
     uom = fields.Many2One('product.uom', "UOM",
         domain=[('category', '=', Id('product', 'uom_cat_weight'))],
@@ -62,8 +59,7 @@ class MoveEvent(AbstractEvent):
             'readonly': Not(Equal(Eval('state'), 'draft')),
             'required': Bool(Eval('weight')),
             }, depends=['state', 'weight'])
-    unit_digits = fields.Function(fields.Integer('Unit Digits',
-            on_change_with=['uom']),
+    unit_digits = fields.Function(fields.Integer('Unit Digits'),
         'on_change_with_unit_digits')
     weight = fields.Numeric('Weight', digits=(16, Eval('unit_digits', 2)),
         states=_STATES_WRITE_DRAFT,
@@ -99,8 +95,6 @@ class MoveEvent(AbstractEvent):
             cls.animal.depends.append('from_location')
         if 'to_location' not in cls.animal.depends:
             cls.animal.depends.append('to_location')
-        if 'from_location' not in cls.animal.on_change:
-            cls.animal.on_change.append('from_location')
         cls._error_messages.update({
                 'animal_not_in_location': ('The move event of animal '
                     '"%(animal)s" is trying to move it from location '
@@ -145,6 +139,8 @@ class MoveEvent(AbstractEvent):
             None)
         return res
 
+    @fields.depends('animal_type', 'animal_group', 'from_location',
+        'timestamp')
     def on_change_with_quantity(self):
         if self.animal_type != 'group':
             return 1
@@ -155,12 +151,14 @@ class MoveEvent(AbstractEvent):
                 stock_date_end=self.timestamp.date()):
             return self.animal_group.lot.quantity or None
 
+    @fields.depends('animal_type', 'animal', 'animal_group')
     def on_change_with_unit_price(self):
         if self.animal_type != 'group' and self.animal:
             return self.animal.lot.product.cost_price
         elif self.animal_type == 'group' and self.animal_group:
             return self.animal_group.lot.product.cost_price
 
+    @fields.depends('uom')
     def on_change_with_unit_digits(self, name=None):
         if self.uom:
             return self.uom.digits

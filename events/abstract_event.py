@@ -71,7 +71,6 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
             'required': Not(Equal(Eval('animal_type'), 'group')),
             'readonly': Not(Equal(Eval('state'), 'draft')),
             },
-        on_change=['animal_type', 'animal'],
         depends=['specie', 'animal_type', 'farm', 'state'])
     animal_group = fields.Many2One('farm.animal.group', 'Group', domain=[
             ('specie', '=', Eval('specie')),
@@ -82,7 +81,6 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
             'required': Equal(Eval('animal_type'), 'group'),
             'readonly': Not(Equal(Eval('state'), 'draft')),
             },
-        on_change=['animal_type', 'animal_group'],
         depends=['specie', 'animal_type', 'farm', 'state'])
     lot = fields.Function(fields.Many2One('stock.lot', 'Lot'),
         'get_lot')
@@ -161,6 +159,7 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
         raise NotImplementedError(
             "Please Implement valid_animal_types() method")
 
+    @fields.depends('animal_type', 'animal')
     def on_change_animal(self):
         if (self.animal_type == 'group' or not self.animal or
                 not self.animal.farm):
@@ -169,6 +168,7 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
             'farm': self.animal.farm.id
             }
 
+    @fields.depends('animal_type', 'animal_group')
     def on_change_animal_group(self):
         if (self.animal_type != 'group' or not self.animal_group or
                 not self.animal_group.farms):

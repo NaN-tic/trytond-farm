@@ -38,8 +38,6 @@ class FeedEventMixin(AbstractEvent):
             'invisible': Not(Equal(Eval('animal_type'), 'group')),
             'readonly': Not(Equal(Eval('state'), 'draft')),
             },
-        on_change_with=['animal_type', 'animal_group', 'timestamp',
-            'location'],
         depends=['animal_type', 'animal_group', 'location', 'state'])
     feed_location = fields.Many2One('stock.location', 'Feed Source',
         required=True, domain=[
@@ -61,10 +59,9 @@ class FeedEventMixin(AbstractEvent):
         depends=_DEPENDS_WRITE_DRAFT + ['feed_product'])
     uom = fields.Many2One('product.uom', "UOM", required=True,
         domain=[('category', '=', Id('product', 'uom_cat_weight'))],
-        on_change_with=['feed_product'], states=_STATES_WRITE_DRAFT,
+        states=_STATES_WRITE_DRAFT,
         depends=_DEPENDS_WRITE_DRAFT + ['feed_product'])
-    unit_digits = fields.Function(fields.Integer('Unit Digits',
-            on_change_with=['uom']),
+    unit_digits = fields.Function(fields.Integer('Unit Digits'),
         'on_change_with_unit_digits')
     feed_quantity = fields.Numeric('Consumed Quantity', required=True,
         digits=(16, Eval('unit_digits', 2)), states=_STATES_WRITE_DRAFT,
@@ -74,7 +71,6 @@ class FeedEventMixin(AbstractEvent):
         help='Start date of the period in which the given quantity of product '
         'was consumed.')
     end_date = fields.Function(fields.Date('End Date',
-            on_change_with=['timestamp'],
             help='End date of the period in which the given quantity of '
             'product was consumed. It is the date of event\'s timestamp.'),
         'on_change_with_end_date')
@@ -148,6 +144,7 @@ class FeedEventMixin(AbstractEvent):
             res['location'] = self.animal_group.locations[0].id
         return res
 
+    @fields.depends('animal_type', 'animal_group', 'location', 'timestamp')
     def on_change_with_quantity(self):
         if self.animal_type != 'group':
             return 1
@@ -158,15 +155,18 @@ class FeedEventMixin(AbstractEvent):
                 stock_date_end=self.timestamp.date()):
             return self.animal_group.lot.quantity or None
 
+    @fields.depends('feed_product')
     def on_change_with_uom(self, name=None):
         if self.feed_product:
             return self.feed_product.default_uom.id
 
+    @fields.depends('uom')
     def on_change_with_unit_digits(self, name=None):
         if self.uom:
             return self.uom.digits
         return 2
 
+    @fields.depends('timestamp')
     def on_change_with_end_date(self, name=None):
         timestamp = self.timestamp or self.default_timestamp()
         return timestamp.date()

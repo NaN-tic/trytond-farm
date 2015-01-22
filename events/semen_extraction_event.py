@@ -23,15 +23,14 @@ class SemenExtractionEvent(AbstractEvent):
     _table = 'farm_semen_extraction_event'
 
     semen_product = fields.Function(fields.Many2One('product.product',
-            "Semen's Product", on_change_with=['specie']),
+            "Semen's Product"),
         'on_change_with_semen_product')
     untreated_semen_uom = fields.Many2One('product.uom', 'Semen Extracted UOM',
         domain=[('category', '=', Id('product', 'uom_cat_volume'))],
         required=True,
         states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
     untreated_semen_unit_digits = fields.Function(
-        fields.Integer('Semen Extracted Unit Digits',
-            on_change_with=['untreated_semen_uom']),
+        fields.Integer('Semen Extracted Unit Digits'),
         'on_change_with_untreated_semen_unit_digits')
     untreated_semen_qty = fields.Float('Semen Extracted Qty.',
         digits=(16, Eval('untreated_semen_unit_digits', 3)), required=True,
@@ -95,7 +94,7 @@ class SemenExtractionEvent(AbstractEvent):
             ('type', '=', 'storage'),
             ('silo', '=', False),
             ], required=True, states=_STATES_WRITE_DRAFT,
-        on_change_with=['farm'], depends=_DEPENDS_WRITE_DRAFT + ['farm'],
+        depends=_DEPENDS_WRITE_DRAFT + ['farm'],
         help="Destination location of semen doses")
     dose_bom = fields.Many2One('production.bom', 'Dose Container', domain=[
             ('semen_dose', '=', True),
@@ -103,8 +102,7 @@ class SemenExtractionEvent(AbstractEvent):
             ], states=_STATES_WRITE_DRAFT,
         depends=_DEPENDS_WRITE_DRAFT + ['specie'])
     dose_calculated_units = fields.Function(fields.Float('Calculated Doses',
-            digits=(16, 2), on_change_with=['specie', 'formula_uom',
-                'semen_qty', 'dose_bom'],
+            digits=(16, 2),
             help='Calculates the number of doses based on Container (BoM) and '
             'Semen Produced Qty. The quantity is expressed in the UoM of the '
             'Container.\n'
@@ -113,18 +111,14 @@ class SemenExtractionEvent(AbstractEvent):
     doses = fields.One2Many('farm.semen_extraction.dose', 'event', 'Doses',
         states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
     doses_semen_qty = fields.Function(fields.Float('Dose Semen Qty.',
-            digits=(16, Eval('formula_unit_digits', 2)),
-            on_change_with=['semen_qty', 'doses'],
-            states={
+            digits=(16, Eval('formula_unit_digits', 2)), states={
                 'invisible': Equal(Eval('state'), 'validated'),
                 }, depends=['formula_unit_digits', 'state'],
             help='Total quantity of semen in the doses of list (expressed in '
             'the UoM of the formula).'),
         'on_change_with_doses_semen_qty')
     semen_remaining_qty = fields.Function(fields.Float('Remaining Semen',
-            digits=(16, Eval('formula_unit_digits', 2)),
-            on_change_with=['semen_qty', 'doses'],
-            states={
+            digits=(16, Eval('formula_unit_digits', 2)), states={
                 'invisible': Equal(Eval('state'), 'validated'),
                 }, depends=['formula_unit_digits', 'state'],
             help='The remaining quantity of semen of the specified doses '
@@ -134,7 +128,7 @@ class SemenExtractionEvent(AbstractEvent):
         'event', 'Deliveries', states=_STATES_WRITE_DRAFT,
         depends=_DEPENDS_WRITE_DRAFT)
     dose_remaining_units = fields.Function(fields.Integer('Remaining Doses',
-            on_change_with=['doses', 'deliveries'], states={
+            states={
                 'invisible': Equal(Eval('state'), 'validated'),
                 }, depends=['state'],
             help='The remaining quantity of Doses not assigned to any '
@@ -188,9 +182,11 @@ class SemenExtractionEvent(AbstractEvent):
     def valid_animal_types():
         return ['male']
 
+    @fields.depends('specie')
     def on_change_with_semen_product(self, name=None):
         return self.specie and self.specie.semen_product.id
 
+    @fields.depends('untreated_semen_uom')
     def on_change_with_untreated_semen_unit_digits(self, name=None):
         return (self.untreated_semen_uom and self.untreated_semen_uom.digits
             or 3)
@@ -230,6 +226,7 @@ class SemenExtractionEvent(AbstractEvent):
             del res['solvent_calculated_qty']
         return res
 
+    @fields.depends('specie', 'dose_bom', 'formula_uom', 'semen_qty')
     def on_change_with_dose_calculated_units(self, name=None):
         Uom = Pool().get('product.uom')
         if not self.dose_bom or not self.semen_qty:
@@ -251,9 +248,11 @@ class SemenExtractionEvent(AbstractEvent):
         n_doses = float(self.semen_qty) / consumed_semen_qty
         return n_doses
 
+    @fields.depends('semen_qty', 'doses')
     def on_change_with_doses_semen_qty(self, name=None):
         return self._doses_semen_quantities()['doses_semen_qty']
 
+    @fields.depends('semen_qty', 'doses')
     def on_change_with_semen_remaining_qty(self, name=None):
         return self._doses_semen_quantities()['semen_remaining_qty']
 
@@ -269,9 +268,11 @@ class SemenExtractionEvent(AbstractEvent):
         res['semen_remaining_qty'] = self.semen_qty - res['doses_semen_qty']
         return res
 
+    @fields.depends('farm')
     def on_change_with_dose_location(self, name=None):
         return self.farm and self.farm.storage_location.id or None
 
+    @fields.depends('doses', 'deliveries')
     def on_change_with_dose_remaining_units(self, name=None):
         if not self.doses:
             return 0
@@ -590,12 +591,11 @@ class SemenExtractionDose(ModelSQL, ModelView):
     event = fields.Many2One('farm.semen_extraction.event', 'Event',
         required=True, ondelete='CASCADE')
     specie = fields.Function(fields.Many2One('farm.specie',
-            "Specie", on_change_with=['event']),
+            "Specie"),
         'on_change_with_specie')
     semen_unit_digits = fields.Function(fields.Integer('Semen Unit Digits'),
         'get_semen_unit_digits')
-    state = fields.Function(fields.Selection(_EVENT_STATES, 'Event State',
-            on_change_with=['event']),
+    state = fields.Function(fields.Selection(_EVENT_STATES, 'Event State'),
         'on_change_with_state')
     sequence = fields.Integer('Line Num.', required=True)
     bom = fields.Many2One('production.bom', 'Container', required=True,
@@ -607,15 +607,14 @@ class SemenExtractionDose(ModelSQL, ModelView):
     quantity = fields.Integer('Quantity (Units)', required=True,
         states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
     semen_qty = fields.Function(fields.Float('Semen Qty.',
-            digits=(16, Eval('semen_unit_digits', 2)),
-            on_change_with=['event', 'bom', 'quantity'], states={
+            digits=(16, Eval('semen_unit_digits', 2)), states={
                 'invisible': Equal(Eval('state'), 'validated'),
                 }, depends=['semen_unit_digits', 'state'],
             help='Total quantity of semen in the dose (expressed in Formula '
             'UoM).'),
         'on_change_with_semen_qty')
     dose_product = fields.Function(fields.Many2One('product.product',
-            "dose_product", on_change_with=['bom']),
+            "dose_product"),
         'on_change_with_dose_product')
     production = fields.Many2One('production', 'Dose Production',
         readonly=True, states=_STATES_VALIDATED_ADMIN,
@@ -661,15 +660,18 @@ class SemenExtractionDose(ModelSQL, ModelView):
         return "#%d (%s)" % (self.sequence,
             self.lot and self.lot.rec_name or self.bom.rec_name)
 
+    @fields.depends('event')
     def on_change_with_specie(self, name=None):
         return self.event and self.event.specie.id or None
 
     def get_semen_unit_digits(self, name):
         return self.event and self.event.formula_unit_digits
 
+    @fields.depends('event')
     def on_change_with_state(self, name=None):
         return self.event and self.event.state or 'draft'
 
+    @fields.depends('event', 'bom', 'quantity')
     def on_change_with_semen_qty(self, name=None):
         Uom = Pool().get('product.uom')
         if not self.event or not self.bom or not self.quantity:
@@ -687,6 +689,7 @@ class SemenExtractionDose(ModelSQL, ModelView):
                 break
         return semen_qty
 
+    @fields.depends('bom')
     def on_change_with_dose_product(self, name=None):
         return self.bom and self.bom.output_products[0].id
 
@@ -774,10 +777,10 @@ class SemenExtractionDelivery(ModelSQL, ModelView):
     event = fields.Many2One('farm.semen_extraction.event', 'Event',
         required=True, ondelete='CASCADE', readonly=True)
     dose_location = fields.Function(fields.Many2One('stock.location',
-            "Doses Location", on_change_with=['event']),
+            "Doses Location"),
         'on_change_with_dose_location')
     state = fields.Function(fields.Selection(_EVENT_STATES, 'Event State',
-            readonly=True, on_change_with=['event']),
+            readonly=True),
         'on_change_with_state')
     dose = fields.Many2One('farm.semen_extraction.dose', 'Dose',
         required=True, domain=[
@@ -829,9 +832,11 @@ class SemenExtractionDelivery(ModelSQL, ModelView):
     def get_name_rec(self, name):
         return "%s -> %s" % (self.dose.rec_name, self.to_location.rec_name)
 
+    @fields.depends('event')
     def on_change_with_dose_location(self, name=None):
         return self.event and self.event.dose_location.id or None
 
+    @fields.depends('event')
     def on_change_with_state(self, name=None):
         return self.event and self.event.state or 'draft'
 

@@ -31,8 +31,7 @@ class TransformationEvent(AbstractEvent):
             }, depends=['farm', 'state'],
         context={'restrict_by_specie_animal_type': True})
     to_animal_type = fields.Selection('get_to_animal_types',
-        "Animal Type to Transform", selection_change_with=['animal_type'],
-        required=True, states={
+        "Animal Type to Transform", required=True, states={
             'readonly': Or(Not(Equal(Eval('state'), 'draft')),
                 Bool(Eval('to_location'))),
             }, depends=['animal_type', 'state'])
@@ -59,8 +58,6 @@ class TransformationEvent(AbstractEvent):
                 Not(Equal(Eval('to_animal_type'), 'group'))),
             'readonly': Not(Equal(Eval('state'), 'draft')),
             },
-        on_change_with=['animal_type', 'to_animal_type', 'animal_group',
-            'from_location', 'timestamp'],
         depends=['animal_type', 'to_animal_type', 'state'])
     to_animal = fields.Many2One('farm.animal', 'Destination Animal',
         select=True, readonly=True, states={
@@ -131,12 +128,15 @@ class TransformationEvent(AbstractEvent):
     def valid_animal_types():
         return ['male', 'female', 'individual', 'group']
 
+    @fields.depends('animal')
     def on_change_animal(self):
         res = super(TransformationEvent, self).on_change_animal()
         res['from_location'] = (self.animal and self.animal.location.id or
             None)
         return res
 
+    @fields.depends('animal_type', 'to_animal_type', 'animal_group',
+        'from_location', 'timestamp')
     def on_change_with_quantity(self):
         if self.animal_type != 'group' or self.to_animal_type != 'group':
             return 1
@@ -147,6 +147,7 @@ class TransformationEvent(AbstractEvent):
                 stock_date_end=self.timestamp.date()):
             return self.animal_group.lot.quantity
 
+    @fields.depends('animal_type')
     def get_to_animal_types(self):
         """
         Returns the list of allowed destination types for the suplied 'type'
