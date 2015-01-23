@@ -1039,7 +1039,8 @@ class CreateFemaleStart(ModelView):
             ('specie', '=', Eval('specie')),
             ],
         depends=['specie'])
-    cycles = fields.One2Many('farm.create_female.line', 'start', 'Cycles')
+    cycles = fields.One2Many('farm.create_female.line', 'start', 'Cycles',
+        order=[('insemination_date', 'ASC')])
     last_cycle_active = fields.Boolean('Last cycle active',
         help='If marked the moves for the last cycle will be created.')
 
@@ -1066,10 +1067,9 @@ class CreateFemaleStart(ModelView):
 class CreateFemaleLine(ModelView):
     'Create Female Line'
     __name__ = 'farm.create_female.line'
-    _rec_name = 'sequence'
+    _rec_name = 'insemination_date'
 
     start = fields.Many2One('farm.create_female.start', 'Start', required=True)
-    sequence = fields.Integer('Num. cycle', required=True)
     insemination_date = fields.Date('Insemination Date', required=True)
     second_insemination_date = fields.Date('Second Insemination Date')
     third_insemination_date = fields.Date('Third Insemination Date')
@@ -1173,14 +1173,16 @@ class CreateFemale(Wizard):
         female.save()
         female.cycles = []
         farm = female.initial_location.warehouse
-        for line in self.start.cycles:
+        for sequence, line in enumerate(self.start.cycles):
             for field in ('live', 'stillborn', 'mummified', 'weaned_quantity'):
                 value = getattr(line, field)
                 if value and value < 0:
-                    self.raise_user_error('greather_than_zero', line.sequence)
+                    self.raise_user_error('greather_than_zero', line.rec_name)
             cycle = Cycle()
+            cycle.sequence = sequence + 1
             cycle.animal = female
-            cycle.ordination_date = line.insemination_date
+            cycle.ordination_date = datetime.combine(line.insemination_date,
+                events_time)
 
             insemination_events = []
             last_insemination_date = None
@@ -1194,16 +1196,16 @@ class CreateFemale(Wizard):
                     last_insemination_date = insemination_date
                 if insemination_date < self.start.arrival_date:
                     self.raise_user_error('insemination_before_arrival', (
-                            insemination_date, line.sequence,
+                            insemination_date, line.rec_name,
                             self.start.arrival_date))
                 if (line.farrowing_date and insemination_date >
                         line.farrowing_date):
                     self.raise_user_error('farrowing_before_insemination', (
-                            line.farrowing_date, line.sequence,
+                            line.farrowing_date, line.rec_name,
                             insemination_date))
                 if line.abort_date and insemination_date > line.abort_date:
                     self.raise_user_error('abort_before_insemination', (
-                            line.abort_date, line.sequence,
+                            line.abort_date, line.rec_name,
                             insemination_date))
                 insemination = Insemination()
                 insemination.imported = True
@@ -1225,7 +1227,7 @@ class CreateFemale(Wizard):
                 abort.animal_type = 'female'
                 abort.farm = farm
                 abort.specie = self.start.specie
-                abort.timestamp = datetime.combine(self.abort_date
+                abort.timestamp = datetime.combine(line.abort_date
                         if line.abort_date else last_insemination_date,
                     events_time)
                 abort.state = 'validated'
@@ -1251,7 +1253,7 @@ class CreateFemale(Wizard):
                 if line.fostered:
                     if line.fostered < 0 and abs(line.fostered) > line.live:
                         self.raise_user_error('more_fostered_than_live',
-                            line.sequence)
+                            line.rec_name)
                     foster = Foster()
                     foster.imported = True
                     foster.female_cycle = cycle
@@ -1268,11 +1270,11 @@ class CreateFemale(Wizard):
                 if line.weaning_date:
                     if line.weaning_date < line.farrowing_date:
                         self.raise_user_error('weaning_before_farrowing', (
-                                line.weaning_date, line.sequence,
+                                line.weaning_date, line.rec_name,
                                 line.farrowing_date))
                     if line.weaned_quantity > line.to_weaning_quantity:
                         self.raise_user_error('more_weaned_than_live',
-                            line.sequence)
+                            line.rec_name)
 
                     weaning = Weaning()
                     weaning.imported = True
@@ -1293,7 +1295,7 @@ class CreateFemale(Wizard):
                     if (line.live + (line.fostered or 0) -
                             (line.stillborn or 0) -
                             (line.mummified or 0) > 0):
-                        self.raise_user_error('missing_weaning', line.sequence)
+                        self.raise_user_error('missing_weaning', line.rec_name)
             cycle.save()
             cycle.update_state(None)
 

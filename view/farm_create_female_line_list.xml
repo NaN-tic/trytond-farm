@@ -1,9 +1,8 @@
 <?xml version="1.0"?>
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
-<tree string="Female Cycle" sequence="sequence" editable="bottom">
+<tree string="Female Cycle" editable="bottom">
     <field name="start"/>
-    <field name="sequence" tree_invisible="1"/>
     <field name="insemination_date"/>
     <field name="second_insemination_date"/>
     <field name="third_insemination_date"/>
