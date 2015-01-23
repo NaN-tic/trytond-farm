@@ -3,8 +3,7 @@
      copyright notices and license terms. -->
 <data>
     <xpath expr="//notebook" position="inside">
-        <!-- TODO: only show the tab if you are farm admin -->
-        <page id="farm" string="Farm">
+        <page name="farms">
             <field name="farms" colspan="4"/>
         </page>
     </xpath>
