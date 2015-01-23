@@ -457,15 +457,13 @@ class Specie(ModelSQL, ModelView):
             }
 
         if hasattr(original_action, 'domain'):
-            if not new_domain:
-                new_domain = []
-            original_domain = (
+            domain = (
                 PYSONDecoder().decode(original_action.pyson_domain)
                 if original_action.pyson_domain else [])
-            if original_domain:
-                new_domain.extend(original_domain)
+            if new_domain:
+                domain.extend(new_domain)
 
-            action_vals['domain'] = PYSONEncoder().encode(new_domain)
+            action_vals['domain'] = PYSONEncoder().encode(domain)
 
         if hasattr(original_action, 'context'):
             original_context = (
