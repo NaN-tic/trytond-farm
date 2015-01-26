@@ -4,7 +4,7 @@ from decimal import Decimal
 
 from trytond.model import fields, ModelSQL, ModelView, Workflow
 from trytond.pool import Pool
-from trytond.pyson import Eval
+from trytond.pyson import Eval, Id
 
 from .feed_abstract_event import FeedEventMixin
 
@@ -28,6 +28,19 @@ class FeedEvent(FeedEventMixin, ModelSQL, ModelView, Workflow):
     @classmethod
     def __setup__(cls):
         super(FeedEvent, cls).__setup__()
+
+        uom_weight_clause = ('category', '=', Id('product', 'uom_cat_weight'))
+        for clause in cls.feed_product.domain:
+            if isinstance(clause, tuple) and clause == uom_weight_clause:
+                break
+        else:
+            cls.feed_product.domain.append(uom_weight_clause)
+        for clause in cls.uom.domain:
+            if isinstance(clause, tuple) and clause == uom_weight_clause:
+                break
+        else:
+            cls.uom.domain.append(uom_weight_clause)
+
         cls.state.selection.append(('provisional', 'Provisional'))
 
         cls.feed_location.domain += [

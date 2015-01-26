@@ -86,11 +86,19 @@
         </record>
 
         <record model="ir.ui.view"
-            id="farm_farrowing_event_list_view">
+                id="farm_farrowing_event_list_view">
             <field name="model">farm.farrowing.event</field>
             <field name="type">tree</field>
             <field name="inherit" ref="farm.farm_abstract_event_list_view"/>
             <field name="name">farm_farrowing_event_list</field>
+        </record>
+
+        <record model="ir.ui.view"
+                id="farm_farrowing_event_list_editable_view">
+            <field name="model">farm.farrowing.event</field>
+            <field name="type">tree</field>
+            <field name="inherit" ref="farm.farm_abstract_event_list_editable_view"/>
+            <field name="name">farm_farrowing_event_list_editable</field>
         </record>
 
         <record model="ir.model.button"

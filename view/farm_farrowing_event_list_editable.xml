@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<data>
+    <xpath expr="//field[@name='animal_group']" position="after">
+        <field name="female_cycle"/>
+        <field name="problem"/>
+        <field name="live"/>
+        <field name="dead"/>
+        <field name="produced_group"/>
+    </xpath>
+</data>

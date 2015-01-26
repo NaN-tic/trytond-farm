@@ -28,7 +28,6 @@ _DOMAIN_LINES = [
     ('animal_type', '=', Eval('animal_type')),
     ('specie', '=', Eval('specie')),
     ('farm', '=', Eval('farm')),
-    ('timestamp', '=', Eval('timestamp')),
     ('employee', '=', Eval('employee')),
     ]
 _DEPENDS_LINES = ['animal_type', 'specie', 'event_type', 'farm', 'timestamp',
@@ -88,27 +87,40 @@ class EventOrder(ModelSQL, ModelView, Workflow):
     # Generic Events
     medication_events = fields.One2Many('farm.medication.event', 'order',
         'Medications', domain=_DOMAIN_LINES,
-        states=_STATES_LINES('medication'), depends=_DEPENDS_LINES)
+        states=_STATES_LINES('medication'), context={
+            'timestamp': Eval('timestamp'),
+            }, depends=_DEPENDS_LINES)
     # Female Events
     insemination_events = fields.One2Many('farm.insemination.event', 'order',
         'Inseminations', domain=_DOMAIN_LINES,
-        states=_STATES_LINES('insemination'), depends=_DEPENDS_LINES)
+        states=_STATES_LINES('insemination'), context={
+            'timestamp': Eval('timestamp'),
+            }, depends=_DEPENDS_LINES)
     pregnancy_diagnosis_events = fields.One2Many(
         'farm.pregnancy_diagnosis.event', 'order',
         'Pregnancy Diagnosis', domain=_DOMAIN_LINES,
-        states=_STATES_LINES('pregnancy_diagnosis'), depends=_DEPENDS_LINES)
+        states=_STATES_LINES('pregnancy_diagnosis'), context={
+            'timestamp': Eval('timestamp'),
+            }, depends=_DEPENDS_LINES)
     abort_events = fields.One2Many('farm.abort.event', 'order', 'Abort Events',
-        domain=_DOMAIN_LINES, states=_STATES_LINES('abort'),
-        depends=_DEPENDS_LINES)
+        domain=_DOMAIN_LINES, states=_STATES_LINES('abort'), context={
+            'timestamp': Eval('timestamp'),
+            }, depends=_DEPENDS_LINES)
     farrowing_events = fields.One2Many('farm.farrowing.event', 'order',
         'Farrowings', domain=_DOMAIN_LINES,
-        states=_STATES_LINES('farrowing'), depends=_DEPENDS_LINES)
+        states=_STATES_LINES('farrowing'), context={
+            'timestamp': Eval('timestamp'),
+            }, depends=_DEPENDS_LINES)
     foster_events = fields.One2Many('farm.foster.event', 'order',
         'Fosters', domain=_DOMAIN_LINES,
-        states=_STATES_LINES('foster'), depends=_DEPENDS_LINES)
+        states=_STATES_LINES('foster'), context={
+            'timestamp': Eval('timestamp'),
+            }, depends=_DEPENDS_LINES)
     weaning_events = fields.One2Many('farm.weaning.event', 'order',
         'Weanings', domain=_DOMAIN_LINES,
-        states=_STATES_LINES('weaning'), depends=_DEPENDS_LINES)
+        states=_STATES_LINES('weaning'), context={
+            'timestamp': Eval('timestamp'),
+            }, depends=_DEPENDS_LINES)
 
     @classmethod
     def __setup__(cls):

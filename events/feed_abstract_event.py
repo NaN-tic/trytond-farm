@@ -3,7 +3,7 @@
 from datetime import datetime
 
 from trytond.model import fields, ModelView, Workflow
-from trytond.pyson import Bool, Equal, Eval, Id, Not, Or
+from trytond.pyson import Bool, Equal, Eval, Not, Or
 from trytond.pool import Pool
 from trytond.transaction import Transaction
 
@@ -58,7 +58,6 @@ class FeedEventMixin(AbstractEvent):
             ], states=_STATES_WRITE_DRAFT,
         depends=_DEPENDS_WRITE_DRAFT + ['feed_product'])
     uom = fields.Many2One('product.uom', "UOM", required=True,
-        domain=[('category', '=', Id('product', 'uom_cat_weight'))],
         states=_STATES_WRITE_DRAFT,
         depends=_DEPENDS_WRITE_DRAFT + ['feed_product'])
     unit_digits = fields.Function(fields.Integer('Unit Digits'),
