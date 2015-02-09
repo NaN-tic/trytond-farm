@@ -212,7 +212,7 @@ class EventOrder(ModelSQL, ModelView, Workflow):
             default = {}
 
         default.update({
-                'timestamp': datetime.datetime.now(),
+                'timestamp': datetime.now(),
                 'medication_events': None,
                 'insemination_events': None,
                 'pregnancy_diagnosis_events': None,
