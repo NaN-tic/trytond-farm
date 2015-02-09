@@ -232,6 +232,9 @@ class FeedEventMixin(AbstractEvent):
         pool = Pool()
         Uom = pool.get('product.uom')
 
+        if not self.feed_product:
+            return
+
         feed_quantity = self.feed_quantity
         if self.uom.id != self.feed_product.default_uom.id:
             # TODO: it uses compute_price() because quantity is a Decimal
