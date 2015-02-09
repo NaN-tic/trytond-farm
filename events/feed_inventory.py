@@ -539,6 +539,16 @@ class FeedInventory(FeedInventoryMixin, ModelSQL, ModelView, Workflow):
         'Previous Inventory', readonly=True)
 
     @classmethod
+    def __setup__(cls):
+        super(FeedInventory, cls).__setup__()
+        cls._error_messages.update({
+                'invalid_inventory_date': (
+                    'The date of feed inventory "%s" is too soon. This should '
+                    'be at least two days after the previous inventory to '
+                    'have enough data.'),
+                })
+
+    @classmethod
     def copy(cls, inventories, default=None):
         if default is None:
             default = {}
@@ -608,6 +618,10 @@ class FeedInventory(FeedInventoryMixin, ModelSQL, ModelView, Workflow):
             # Prepare data to compute and create Feed Events
             # (using AnimalLocationStock class)
             start_date = prev_inventory.timestamp.date() + timedelta(days=1)
+            if start_date >= inventory.timestamp.date():
+                cls.raise_user_error('invalid_inventory_date',
+                    (inventory.rec_name, ))
+
             warehouse_by_location = {}
             for location in inventory.dest_locations:
                 warehouse_by_location[location.id] = location.warehouse.id
