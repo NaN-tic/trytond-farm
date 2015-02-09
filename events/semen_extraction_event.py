@@ -841,7 +841,7 @@ class SemenExtractionDelivery(ModelSQL, ModelView):
         return self.event and self.event.state or 'draft'
 
     def get_dose_lot(self, name):
-        return self.dose.lot.id
+        return self.dose.lot.id if (self.dose and self.dose.lot) else None
 
     @classmethod
     def validate(cls, extraction_deliveries):
