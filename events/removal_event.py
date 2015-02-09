@@ -173,6 +173,7 @@ class RemovalEvent(AbstractEvent):
                         removal_event.animal.is_lactating()):
                     cls.raise_user_error('female_is_lactating',
                         removal_event.rec_name)
+                removal_event._check_existing_validated_removal_events()
             else:
                 if not removal_event.animal_group.check_in_location(
                         removal_event.from_location,
@@ -185,7 +186,6 @@ class RemovalEvent(AbstractEvent):
                             'quantity': removal_event.quantity,
                             'timestamp': removal_event.timestamp,
                             })
-            removal_event._check_existing_validated_removal_events()
 
             new_move = removal_event._get_event_move()
             new_move.save()
