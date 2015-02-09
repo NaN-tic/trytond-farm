@@ -88,7 +88,7 @@ class InseminationEvent(AbstractEvent, ImportedEventMixin):
     def on_change_with_dose_lot(self, name=None):
         Lot = Pool().get('stock.lot')
 
-        if not self.dose_product:
+        if not self.dose_product or not self.farm or not self.timestamp:
             return
         with Transaction().set_context(
                 locations=[self.farm.storage_location.id],
