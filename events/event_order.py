@@ -242,6 +242,9 @@ class EventOrder(ModelSQL, ModelView, Workflow):
         Sequence = pool.get('ir.sequence')
         Specie = pool.get('farm.specie')
 
+        if not specie_id or not farm_id or not animal_type:
+            return
+
         farm_lines = FarmLine.search([
                 ('specie', '=', specie_id),
                 ('farm', '=', farm_id),
