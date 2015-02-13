@@ -173,7 +173,7 @@ class FeedEventMixin(AbstractEvent):
     @classmethod
     @ModelView.button
     @Workflow.transition('validated')
-    def validate_event(cls, events):
+    def validate_event(cls, events, check_feed_available=True):
         """
         Create an stock move
         """
@@ -186,7 +186,8 @@ class FeedEventMixin(AbstractEvent):
                     feed_event.move.id))
 
             feed_event.check_animals_available()
-            feed_event.check_feed_available()
+            if check_feed_available:
+                feed_event.check_feed_available()
 
             new_move = feed_event._get_event_move()
             new_move.save()

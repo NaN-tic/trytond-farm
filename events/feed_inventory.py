@@ -650,7 +650,10 @@ class FeedInventory(FeedInventoryMixin, ModelSQL, ModelView, Workflow):
         inventories_events = FeedEvent.search([
                 ('feed_inventory', 'in', [str(i) for i in inventories]),
                 ])
-        FeedEvent.validate_event(inventories_events)
+        # The specific lot consumption is an aproximation. It could calculate
+        # that a lot is consumed a bit before it is available in silo
+        FeedEvent.validate_event(inventories_events,
+            check_feed_available=False)
 
     def _get_previous_inventory(self):
         prev_inventories = self.search([
