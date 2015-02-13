@@ -29,12 +29,14 @@ class FeedEvent(FeedEventMixin, ModelSQL, ModelView, Workflow):
     def __setup__(cls):
         super(FeedEvent, cls).__setup__()
 
-        uom_weight_clause = ('category', '=', Id('product', 'uom_cat_weight'))
+        product_uom_clause = ('default_uom.category', '=',
+            Id('product', 'uom_cat_weight'))
         for clause in cls.feed_product.domain:
-            if isinstance(clause, tuple) and clause == uom_weight_clause:
+            if isinstance(clause, tuple) and clause == product_uom_clause:
                 break
         else:
-            cls.feed_product.domain.append(uom_weight_clause)
+            cls.feed_product.domain.append(product_uom_clause)
+        uom_weight_clause = ('category', '=', Id('product', 'uom_cat_weight'))
         for clause in cls.uom.domain:
             if isinstance(clause, tuple) and clause == uom_weight_clause:
                 break
