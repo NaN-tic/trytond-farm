@@ -62,9 +62,11 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
     animal = fields.Many2One('farm.animal', 'Animal', domain=[
             ('specie', '=', Eval('specie')),
             ('type', '=', Eval('animal_type')),
-            If(Equal(Eval('state'), 'draft'),
-                ('farm', '=', Eval('farm')),
-                ()),
+            # It fails when it is introducing event in past. For example in
+            # feed inventories
+            # If(Equal(Eval('state', ''), 'draft'),
+            #     ('farm', '=', Eval('farm')),
+            #     ()),
             ],
         select=True, states={
             'invisible': Equal(Eval('animal_type'), 'group'),
