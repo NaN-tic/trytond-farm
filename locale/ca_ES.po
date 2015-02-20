@@ -253,6 +253,12 @@ msgid ""
 "The current stock of this silo is %(curr_qty)s. The quantity in the inventory must to be less than the current stock."
 msgstr ""
 
+msgctxt "error:farm.feed.inventory:"
+msgid ""
+"There hasn't been any animal in destination locations of Feed Inventory "
+"\"%(inventory)s\" since %(start_date)s to inventory's date."
+msgstr ""
+
 msgctxt "error:farm.feed.provisional_inventory:"
 msgid ""
 "The inventory \"%s\" can't be deleted because is not in \"Draft\" or "

@@ -546,6 +546,10 @@ class FeedInventory(FeedInventoryMixin, ModelSQL, ModelView, Workflow):
                     'The date of feed inventory "%s" is too soon. This should '
                     'be at least two days after the previous inventory to '
                     'have enough data.'),
+                'no_animals_in_inventory_destinations': (
+                    'There hasn\'t been any animal in destination locations '
+                    'of Feed Inventory "%(inventory)s" since %(start_date)s '
+                    'to inventory\'s date.'),
                 })
 
     @classmethod
@@ -632,9 +636,15 @@ class FeedInventory(FeedInventoryMixin, ModelSQL, ModelView, Workflow):
             animal_loc_stock.fill_animals_data(inventory.specie,
                 inventory.timestamp.time())
 
+            animal_days = Decimal(str(animal_loc_stock.total_animal_days))
+            if animal_days == Decimal('0'):
+                cls.raise_user_error('no_animals_in_inventory_destinations', {
+                        'inventory': inventory.rec_name,
+                        'start_date': start_date.strftime('%d/%m/%Y'),
+                        })
+
             consumed_qty = qty_in_silo - inv_qty
-            consumed_per_animal_day = (consumed_qty /
-                    Decimal(str(animal_loc_stock.total_animal_days)))
+            consumed_per_animal_day = (consumed_qty / animal_days)
 
             lot_qty_fifo = inventory.location.get_lot_fifo(
                 inventory.timestamp.date(), inventory.uom)
