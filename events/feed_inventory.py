@@ -3,7 +3,7 @@
 import logging
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
-from sql import Literal, Cast
+from sql import Cast, Literal, Values, With
 from sql.aggregate import Avg, Count, Max, Sum
 from sql.conditionals import Coalesce
 from sql.functions import Extract, Now
@@ -15,7 +15,6 @@ from trytond.transaction import Transaction
 
 from .abstract_event import _STATES_WRITE_DRAFT, \
     _DEPENDS_WRITE_DRAFT, _STATES_VALIDATED_ADMIN, _DEPENDS_VALIDATED_ADMIN
-from ..postgresql import GenerateSeries
 
 __all__ = ['AnimalLocationStock',
     'FeedInventoryMixin', 'FeedInventoryLocation',
@@ -1030,8 +1029,13 @@ class FeedAnimalLocationDate(ModelSQL, ModelView):
             group_by=(feed_event_tmp.animal_type, feed_event_tmp.animal,
                 feed_event_tmp.animal_group))
 
-        generate_series = GenerateSeries(Now().cast('DATE') - Literal(n_days),
-            Now(), "INTERVAL '1 day'")
+        days = With('date', recursive=True)
+        days.query = Values([(Cast(Now(), Date) - n_days, )])
+        days.query |= days.select(Cast(days.date + Cast('1 day', 'Interval'),
+                Date),
+            where=days.date <= Now())
+        days.query.all_ = True
+        days_q = days.select(with_=[days])
 
         feed_event = FeedEvent.__table__()
         feed_event = feed_event.select(feed_event.animal_type,
@@ -1047,18 +1051,18 @@ class FeedAnimalLocationDate(ModelSQL, ModelView):
                 feed_event.quantity).as_('daily_consumed_qty'),
             feed_event.feed_inventory)
 
-        return animals.join(generate_series, condition=Literal(True)).join(
+        return animals.join(days_q, condition=Literal(True)).join(
             feed_event,
             condition=((feed_event.animal_type == animals.animal_type)
                 & ((feed_event.animal == animals.animal)
                     | (feed_event.animal_group == animals.animal_group))
-                & (feed_event.start_date <= generate_series.date)
-                & (feed_event.end_date >= generate_series.date))
+                & (feed_event.start_date <= days_q.date)
+                & (feed_event.end_date >= days_q.date))
             ).select(
                 (Coalesce(animals.animal, 0) * 10000000000 +
                     Coalesce(animals.animal_group, 0) * 1000000 +
                     feed_event.location * 1000 +
-                    Extract('DOY', generate_series.date)).as_('id'),
+                    Extract('DOY', days_q.date)).as_('id'),
                 Max(animals.create_uid).as_('create_uid'),
                 Max(animals.create_date).as_('create_date'),
                 Max(animals.write_uid).as_('write_uid'),
@@ -1068,7 +1072,7 @@ class FeedAnimalLocationDate(ModelSQL, ModelView):
                 animals.animal_group,
                 feed_event.location,
                 Avg(feed_event.quantity).as_('animals_qty'),
-                generate_series.date,
+                days_q.date,
                 Coalesce(Sum(feed_event.feed_quantity_animal_day), 0.0).cast(
                     cls.consumed_qty_animal.sql_type().base
                     ).as_('consumed_qty_animal'),
@@ -1078,7 +1082,7 @@ class FeedAnimalLocationDate(ModelSQL, ModelView):
                 Count(feed_event.feed_inventory).as_('inventory_qty'),
                 group_by=(animals.animal_type, animals.animal,
                     animals.animal_group, feed_event.location,
-                    generate_series.date))
+                    days_q.date))
 
     @staticmethod
     def _days_to_compute():
