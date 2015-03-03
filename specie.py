@@ -209,6 +209,8 @@ class Specie(ModelSQL, ModelView):
                 #     to improve useability
                 enabled_events = sorted(specie.events[:], key=attrgetter('id'))
 
+                new_domain.append(('animal_type', '=', animal_type))
+
                 animal_submenu_seq = 1
                 for event in enabled_events:
                     model_name = event.model
