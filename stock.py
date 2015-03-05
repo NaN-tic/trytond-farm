@@ -234,7 +234,7 @@ class Location:
                     ('to_location', '=', location.id),
                     ], offset=0, limit=1,
                 order=[('effective_date', 'ASC'), ('id', 'ASC')])
-            current_lots[location.id] = first_moves and first_moves[0].lot.id
+            current_lots[location.id] = first_moves[0].lot.id if first_moves else None
         return current_lots
 
     @classmethod
