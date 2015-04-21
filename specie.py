@@ -285,6 +285,7 @@ class Specie(ModelSQL, ModelView):
                 "Current menus (to be deleted): %s" % current_menus)
             if current_menus:
                 Menu.delete(current_menus)
+        return 'reload menu'
 
     def _create_additional_menus(self, specie_menu, specie_submenu_seq,
             current_menus, current_actions, current_wizards):
