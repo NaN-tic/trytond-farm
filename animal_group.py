@@ -127,6 +127,16 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
         return Transaction().context.get('specie')
 
     @staticmethod
+    def default_breed():
+        pool = Pool()
+        Specie = pool.get('farm.specie')
+        context = Transaction().context
+        if 'specie' in context:
+            specie = Specie(context['specie'])
+            if len(specie.breeds) == 1:
+                return specie.breeds[0].id
+
+    @staticmethod
     def default_origin():
         return 'purchased'
 
