@@ -1004,6 +1004,8 @@ class FemaleCycle(ModelSQL, ModelView):
         return self.weaning_event and self.weaning_event.quantity or 0
 
     def get_removed(self, name):
+        if not self.weaning_event:
+            return None
         return self.live + self.fostered - self.weaned
 
     def get_lactating_days(self, name):

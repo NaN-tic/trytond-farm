@@ -25,23 +25,17 @@ SCENARIOS = [
 
 
 class FarmTestCase(unittest.TestCase):
-    '''
-    Test Farm module.
-    '''
+    'Test Farm module'
 
     def setUp(self):
         trytond.tests.test_tryton.install_module('farm')
 
     def test0005views(self):
-        '''
-        Test views.
-        '''
+        'Test views'
         test_view('farm')
 
     def test0006depends(self):
-        '''
-        Test depends.
-        '''
+        'Test depends'
         test_depends()
 
 

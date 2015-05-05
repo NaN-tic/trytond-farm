@@ -300,6 +300,7 @@ validate them and check females state and female's live values::
     True
     >>> females[0].current_cycle.live
     6
+    >>> females[0].current_cycle.removed
     >>> females[-1].current_cycle.live == (6 + len(females) - 1)
     True
 
@@ -336,6 +337,8 @@ the weaning event doesn't have female, weaned nor lost moves::
     u'unmated'
     >>> female1.current_cycle.weaned
     6
+    >>> female1.current_cycle.removed
+    0
     >>> female1.current_cycle.weaning_event.female_move
     >>> female1.current_cycle.weaning_event.weaned_move
     >>> female1.current_cycle.weaning_event.lost_move
@@ -382,6 +385,8 @@ the weaning event has female and lost moves but not weaned group move::
     u'unmated'
     >>> female2.current_cycle.weaned
     6
+    >>> female2.current_cycle.removed
+    1
     >>> female2.current_cycle.weaning_event.female_move.state
     u'done'
     >>> female2.current_cycle.weaning_event.weaned_move
