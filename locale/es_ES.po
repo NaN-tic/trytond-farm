@@ -1340,7 +1340,7 @@ msgstr "Dígitos unidad"
 
 msgctxt "field:farm.animal.group.weight,uom:"
 msgid "UoM"
-msgstr "LdM"
+msgstr "UdM"
 
 msgctxt "field:farm.animal.group.weight,weight:"
 msgid "Weight"
@@ -1384,7 +1384,7 @@ msgstr "Dígitos unidad"
 
 msgctxt "field:farm.animal.weight,uom:"
 msgid "UoM"
-msgstr "LdM"
+msgstr "UdM"
 
 msgctxt "field:farm.animal.weight,weight:"
 msgid "Weight"
@@ -5608,7 +5608,7 @@ msgstr "Test"
 
 msgctxt "view:farm.semen_extraction.event:"
 msgid "UoM"
-msgstr "LdM"
+msgstr "UdM"
 
 msgctxt "view:farm.specie.breed:"
 msgid "Breed"
