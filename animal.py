@@ -610,6 +610,9 @@ class Female:
             help='Number of days from last farrowing. -1 if there '
             'isn\'t any farrowing.'),
         'get_days_from_farrowing', searcher='search_days_from_farrowing')
+    farrowing_group = fields.Function(fields.Many2One('farm.animal.group',
+            'Farrowing Group'),
+        'get_farrowing_group')
 
     @staticmethod
     def default_state():
@@ -791,6 +794,14 @@ class Female:
                 event_filter.insert(0, 'NOT')
             op = 'not in'
         return event_filter, op
+
+    def get_farrowing_group(self, name):
+        '''
+        Return the farm.animal.group produced for current cycle
+        '''
+        if not self.current_cycle or self.current_cycle.state != 'lactating':
+            return None
+        return self.current_cycle.farrowing_event.produced_group.id
 
     @classmethod
     def create(cls, vlist):

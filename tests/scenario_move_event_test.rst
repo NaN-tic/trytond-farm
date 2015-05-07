@@ -64,6 +64,7 @@ Create products::
 
     >>> ProductUom = Model.get('product.uom')
     >>> unit, = ProductUom.find([('name', '=', 'Unit')])
+    >>> cm3, = ProductUom.find([('name', '=', 'Cubic centimeter')])
     >>> ProductTemplate = Model.get('product.template')
     >>> Product = Model.get('product.product')
     >>> individual_template = ProductTemplate(
@@ -84,6 +85,25 @@ Create products::
     >>> group_template.save()
     >>> group_product = Product(template=group_template)
     >>> group_product.save()
+    >>> female_template = ProductTemplate(
+    ...     name='Female Pig',
+    ...     default_uom=unit,
+    ...     type='goods',
+    ...     list_price=Decimal('40'),
+    ...     cost_price=Decimal('25'))
+    >>> female_template.save()
+    >>> female_product = Product(template=female_template)
+    >>> female_product.save()
+    >>> semen_template = ProductTemplate(
+    ...     name='Pig Semen',
+    ...     default_uom=cm3,
+    ...     type='goods',
+    ...     consumable=True,
+    ...     list_price=Decimal('400'),
+    ...     cost_price=Decimal('250'))
+    >>> semen_template.save()
+    >>> semen_product = Product(template=semen_template)
+    >>> semen_product.save()
 
 Create sequence::
 
@@ -98,6 +118,11 @@ Create sequence::
     ...     code='farm.animal',
     ...     padding=4)
     >>> individual_sequence.save()
+    >>> female_sequence = Sequence(
+    ...     name='Female Pig Warehouse 1',
+    ...     code='farm.animal',
+    ...     padding=4)
+    >>> female_sequence.save()
     >>> group_sequence = Sequence(
     ...     name='Groups Pig Warehouse 1',
     ...     code='farm.animal.group',
@@ -115,7 +140,9 @@ Create specie::
     >>> pigs_specie = Specie(
     ...     name='Pigs',
     ...     male_enabled=False,
-    ...     female_enabled=False,
+    ...     female_enabled=True,
+    ...     female_product=female_product,
+    ...     semen_product=semen_product,
     ...     individual_enabled=True,
     ...     individual_product=individual_product,
     ...     group_enabled=True,
@@ -135,12 +162,27 @@ Create specie::
     ...     event_order_sequence=event_order_sequence,
     ...     has_individual=True,
     ...     individual_sequence=individual_sequence,
+    ...     has_female=True,
+    ...     female_sequence=female_sequence,
     ...     has_group=True,
     ...     group_sequence=group_sequence)
     >>> pigs_farm_line.save()
 
 Create farm locations::
 
+    >>> Location = Model.get('stock.location')
+    >>> lost_found_location, = Location.find([('type', '=', 'lost_found')])
+    >>> warehouse, = Location.find([('type', '=', 'warehouse')])
+    >>> production_location = Location(
+    ...     name='Production Location',
+    ...     code='PROD',
+    ...     type='production',
+    ...     parent=warehouse)
+    >>> production_location.save()
+    >>> warehouse.production_location=production_location
+    >>> warehouse.save()
+    >>> warehouse.reload()
+    >>> production_location.reload()
     >>> location1_id, location2_id = Location.create([{
     ...         'name': 'Location 1',
     ...         'code': 'L1',
@@ -190,8 +232,7 @@ Animal doesn't chage its values::
 
 Validate individual move event::
 
-    >>> MoveEvent.validate_event([move_individual.id], config.context)
-    >>> move_individual.reload()
+    >>> move_individual.click('validate_event')
     >>> move_individual.state
     u'validated'
     >>> individual.reload()
@@ -216,8 +257,7 @@ Create individual move event changing cost price::
     >>> move_individual.save()
     >>> move_individual.unit_price == Decimal('30.0')
     True
-    >>> MoveEvent.validate_event([move_individual.id], config.context)
-    >>> move_individual.reload()
+    >>> move_individual.click('validate_event')
     >>> move_individual.state
     u'validated'
     >>> individual.reload()
@@ -241,10 +281,9 @@ Create group::
     ...     initial_location=location2_id,
     ...     initial_quantity=4)
     >>> animal_group.save()
-    >>> unused = config.set_context({
-    ...         'locations': [location2_id]})
-    >>> animal_group.reload()
-    >>> animal_group.lot.quantity
+    >>> with config.set_context({'locations': [location2_id]}):
+    ...     animal_group.reload()
+    ...     animal_group.lot.quantity
     4.0
 
 Create animal_group move event::
@@ -266,22 +305,81 @@ Group doesn't chage its values::
 
     >>> animal_group.reload()
     >>> animal_group.current_weight
-    >>> animal_group.lot.quantity
+    >>> with config.set_context({'locations': [location2_id]}):
+    ...     animal_group.reload()
+    ...     animal_group.lot.quantity
     4.0
 
 Validate animal_group move event::
 
-    >>> MoveEvent.validate_event([move_animal_group.id], config.context)
-    >>> move_animal_group.reload()
+    >>> move_animal_group.click('validate_event')
     >>> move_animal_group.state
     u'validated'
     >>> animal_group.reload()
     >>> animal_group.current_weight.weight
     Decimal('80.50')
-    >>> animal_group.lot.quantity
+    >>> with config.set_context({'locations': [location2_id]}):
+    ...     animal_group.lot.quantity
     1.0
-    >>> unused = config.set_context({'locations': [location1_id]})
-    >>> animal_group.reload()
-    >>> animal_group.lot.quantity
+    >>> with config.set_context({'locations': [location1_id]}):
+    ...     animal_group.reload()
+    ...     animal_group.lot.quantity
     3.0
-    >>> unused = config.set_context({'locations': None})
+
+
+When moving a non weaned female its group should be also moved::
+
+    >>> config._context['specie'] = pigs_specie.id
+    >>> config._context['animal_type'] = 'female'
+    >>> Animal = Model.get('farm.animal')
+    >>> InseminationEvent = Model.get('farm.insemination.event')
+    >>> PregnancyDiagnosisEvent = Model.get('farm.pregnancy_diagnosis.event')
+    >>> FarrowingEvent = Model.get('farm.farrowing.event')
+    >>> female = Animal(initial_location=location1_id)
+    >>> female.save()
+    >>> now = datetime.datetime.now()
+    >>> inseminate_event = InseminationEvent()
+    >>> inseminate_event.farm = warehouse
+    >>> inseminate_event.animal = female
+    >>> inseminate_event.timestamp = datetime.datetime.now()
+    >>> inseminate_event.click('validate_event')
+    >>> now = datetime.datetime.now()
+    >>> diagnosis_event = PregnancyDiagnosisEvent()
+    >>> diagnosis_event.farm = warehouse
+    >>> diagnosis_event.animal = female
+    >>> diagnosis_event.timestamp = datetime.datetime.now()
+    >>> diagnosis_event.result = 'positive'
+    >>> diagnosis_event.click('validate_event')
+    >>> farrow_event = FarrowingEvent()
+    >>> farrow_event.farm = warehouse
+    >>> farrow_event.animal = female
+    >>> farrow_event.timestamp = datetime.datetime.now()
+    >>> farrow_event.live = 6
+    >>> farrow_event.click('validate_event')
+    >>> female.reload()
+    >>> farrowing_group = female.farrowing_group
+    >>> move_female = MoveEvent(
+    ...     farm=warehouse,
+    ...     animal=female,
+    ...     timestamp=now,
+    ...     from_location=female.location.id,
+    ...     to_location=location2_id,
+    ...     weight=Decimal('80.50'))
+    >>> move_female.click('validate_event')
+    >>> female.reload()
+    >>> female.location.id == location2_id
+    True
+    >>> farrowing_event, = MoveEvent.find([
+    ...     ('animal_group', '=', farrowing_group.id),
+    ...     ], limit=1)
+    >>> farrowing_event.state
+    u'validated'
+    >>> farrowing_event.weight
+    >>> farrowing_event.from_location.id == location1_id
+    True
+    >>> farrowing_event.to_location.id == location2_id
+    True
+    >>> with config.set_context({'locations': [location2_id]}):
+    ...     farrowing_group.reload()
+    ...     farrowing_group.lot.quantity
+    6.0

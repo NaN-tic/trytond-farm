@@ -172,7 +172,7 @@ class MoveEvent(AbstractEvent):
         Create an stock move and, if weight > 0.0, a farm.animal[.group].weight
         """
         Move = Pool().get('stock.move')
-        todo_moves = []
+        todo_moves, to_validate = [], []
         for move_event in events:
             assert not move_event.move, ('Move Event "%s" already has a '
                 'related stock move: "%s"' % (move_event.id,
@@ -216,8 +216,24 @@ class MoveEvent(AbstractEvent):
                 new_weight_record.save()
                 move_event.weight_record = new_weight_record
             move_event.save()
+            # We also move the farrowing group if any
+            if (move_event.animal_type == 'female' and
+                    move_event.animal.farrowing_group):
+                farrowing_group = move_event.animal.farrowing_group
+                farrowing_group.check_allowed_location(
+                    move_event.to_location, move_event.rec_name)
+                child_event, = cls.copy([move_event], {
+                        'animal_type': 'group',
+                        'animal': None,
+                        'weight': None,
+                        'animal_group': farrowing_group.id,
+                        'quantity': farrowing_group.quantity,
+                        })
+                to_validate.append(child_event)
         Move.assign(todo_moves)
         Move.do(todo_moves)
+        if to_validate:
+            cls.validate_event(to_validate)
 
     def _get_event_move(self):
         pool = Pool()
