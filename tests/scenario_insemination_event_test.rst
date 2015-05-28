@@ -239,6 +239,18 @@ Put two units of dose and one of semen in farm storage location::
     >>> Move.assign(provisioning_moves, config.context)
     >>> Move.do(provisioning_moves, config.context)
 
+Create farm user::
+
+    >>> Group = Model.get('res.group')
+    >>> farm_user = User()
+    >>> farm_user.name = 'Farm'
+    >>> farm_user.login = 'farm'
+    >>> farm_user.main_company = company
+    >>> farm_group, = Group.find([('name', '=', 'Farm / Females')])
+    >>> farm_user.groups.append(farm_group)
+    >>> farm_user.save()
+    >>> config.user = farm_user.id
+
 Set animal_type and specie in context to work as in the menus::
 
     >>> config._context['specie'] = pigs_specie.id
@@ -282,8 +294,6 @@ Validate insemination event::
     >>> inseminate_female1.reload()
     >>> inseminate_female1.state
     u'validated'
-    >>> inseminate_female1.move.state
-    u'done'
 
 Check female is mated::
 
@@ -312,8 +322,6 @@ Validate insemination event::
     >>> inseminate_female12.reload()
     >>> inseminate_female12.state
     u'validated'
-    >>> inseminate_female12.move.state
-    u'done'
 
 Check female is mated and has two insemination events::
 

@@ -69,16 +69,17 @@ class AnimalMixin:
         It creates the first stock.move for animal's lot, and then confirms,
         assigns and set done it to get stock in initial location (Farm).
         """
-        Move = Pool().get('stock.move')
+        pool = Pool()
+        Move = pool.get('stock.move')
 
-        new_moves = []
-        for record in records:
-            move = record._get_first_move()
-            move.save()
-            new_moves.append(move)
-
-        Move.assign(new_moves)
-        Move.do(new_moves)
+        with Transaction().set_context(_check_access=False):
+            new_moves = []
+            for record in records:
+                move = record._get_first_move()
+                new_moves.append(move._save_values)
+            new_moves = Move.create(new_moves)
+            Move.assign(new_moves)
+            Move.do(new_moves)
         return new_moves
 
     def _get_first_move(self):

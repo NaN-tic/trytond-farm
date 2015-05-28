@@ -167,6 +167,18 @@ Create specie::
     ...     group_sequence=group_sequence)
     >>> pigs_farm_line.save()
 
+Create farm user::
+
+    >>> Group = Model.get('res.group')
+    >>> farm_user = User()
+    >>> farm_user.name = 'Farm'
+    >>> farm_user.login = 'farm'
+    >>> farm_user.main_company = company
+    >>> farm_group, = Group.find([('name', '=', 'Farm / Females')])
+    >>> farm_user.groups.append(farm_group)
+    >>> farm_user.save()
+    >>> config.user = farm_user.id
+
 Set animal_type and specie in context to work as in the menus::
 
     >>> config._context['specie'] = pigs_specie.id
