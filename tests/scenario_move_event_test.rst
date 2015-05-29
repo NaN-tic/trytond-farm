@@ -195,7 +195,7 @@ Create farm locations::
     ...         'parent': warehouse.storage_location.id,
     ...         }], config.context)
 
-Create stock users::
+Create stock user::
 
     >>> Group = Model.get('res.group')
     >>> stock_user = User()
@@ -233,7 +233,6 @@ Create farm users::
 Create individual::
 
     >>> config.user = individual_user.id
-
     >>> Animal = Model.get('farm.animal')
     >>> individual = Animal(
     ...     type='individual',

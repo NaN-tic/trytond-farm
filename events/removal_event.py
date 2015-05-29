@@ -202,8 +202,7 @@ class RemovalEvent(AbstractEvent):
                 animal.removal_date = removal_event.timestamp.date()
                 if removal_event.reason:
                     animal.removal_reason = removal_event.reason
-                # TODO: dactivated animal fails
-                #animal.active = False
+                animal.active = False
                 animal.save()
             else:
                 animal_group = removal_event.animal_group
@@ -220,8 +219,7 @@ class RemovalEvent(AbstractEvent):
 
                 if to_remove:
                     animal_group.removal_date = removal_event.timestamp.date()
-                    # TODO: if it deactivates the group the domain fails
-                    #animal_group.active = False
+                    animal_group.active = False
                     animal_group.save()
 
     def _check_existing_validated_removal_events(self):

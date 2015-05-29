@@ -145,8 +145,30 @@ Create specie::
     ...     dose_lot_sequence=semen_dose_lot_sequence)
     >>> pigs_farm_line.save()
 
+Create stock user::
+
+    >>> Group = Model.get('res.group')
+    >>> stock_user = User()
+    >>> stock_user.name = 'Stock'
+    >>> stock_user.login = 'stock'
+    >>> stock_user.main_company = company
+    >>> stock_group, = Group.find([('name', '=', 'Stock')])
+    >>> stock_user.groups.append(stock_group)
+    >>> stock_user.save()
+
+Create farm users::
+
+    >>> male_user = User()
+    >>> male_user.name = 'Males'
+    >>> male_user.login = 'males'
+    >>> male_user.main_company = company
+    >>> male_group, = Group.find([('name', '=', 'Farm / Males')])
+    >>> male_user.groups.append(male_group)
+    >>> male_user.save()
+
 Create male::
 
+    >>> config.user = male_user.id
     >>> Animal = Model.get('farm.animal')
     >>> male = Animal(
     ...     type='male',
@@ -182,12 +204,12 @@ Animal doesn't chage its values::
     >>> male.reload()
     >>> male.removal_date
     >>> male.removal_reason
-    >>> male.active
-    1
+    >>> bool(male.active)
+    True
 
 Validate removal event::
 
-    >>> RemovalEvent.validate_event([remove_male.id], config.context)
+    >>> remove_male.click('validate_event')
     >>> remove_male.reload()
     >>> remove_male.state
     u'validated'
@@ -198,6 +220,5 @@ Validate removal event::
     True
     >>> male.location == male.specie.removed_location
     True
-
-..  >>> male.active
-..  0
+    >>> bool(male.active)
+    False
