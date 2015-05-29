@@ -195,7 +195,44 @@ Create farm locations::
     ...         'parent': warehouse.storage_location.id,
     ...         }], config.context)
 
+Create stock users::
+
+    >>> Group = Model.get('res.group')
+    >>> stock_user = User()
+    >>> stock_user.name = 'Stock'
+    >>> stock_user.login = 'stock'
+    >>> stock_user.main_company = company
+    >>> stock_group, = Group.find([('name', '=', 'Stock')])
+    >>> stock_user.groups.append(stock_group)
+    >>> stock_user.save()
+
+Create farm users::
+
+    >>> individual_user = User()
+    >>> individual_user.name = 'Individuals'
+    >>> individual_user.login = 'individuals'
+    >>> individual_user.main_company = company
+    >>> individual_group, = Group.find([('name', '=', 'Farm / Individuals')])
+    >>> individual_user.groups.append(individual_group)
+    >>> individual_user.save()
+    >>> group_user = User()
+    >>> group_user.name = 'Groups'
+    >>> group_user.login = 'groups'
+    >>> group_user.main_company = company
+    >>> group_group, = Group.find([('name', '=', 'Farm / Groups')])
+    >>> group_user.groups.append(group_group)
+    >>> group_user.save()
+    >>> female_user = User()
+    >>> female_user.name = 'Females'
+    >>> female_user.login = 'females'
+    >>> female_user.main_company = company
+    >>> female_group, = Group.find([('name', '=', 'Farm / Females')])
+    >>> female_user.groups.append(female_group)
+    >>> female_user.save()
+
 Create individual::
+
+    >>> config.user = individual_user.id
 
     >>> Animal = Model.get('farm.animal')
     >>> individual = Animal(
@@ -243,8 +280,10 @@ Validate individual move event::
 
 Create individual move event changing cost price::
 
-    >>> individual.lot.cost_price == Decimal('25.0')
-    True
+    >>> config.user = stock_user.id
+    >>> individual.lot.cost_price
+    Decimal('25')
+    >>> config.user = individual_user.id
     >>> move_individual = MoveEvent(
     ...     animal_type='individual',
     ...     specie=pigs_specie,
@@ -255,25 +294,25 @@ Create individual move event changing cost price::
     ...     to_location=location1_id)
     >>> move_individual.unit_price = Decimal('30.0')
     >>> move_individual.save()
-    >>> move_individual.unit_price == Decimal('30.0')
-    True
+    >>> move_individual.unit_price
+    Decimal('30.0')
     >>> move_individual.click('validate_event')
     >>> move_individual.state
     u'validated'
     >>> individual.reload()
     >>> individual.location.id == location1_id
     True
-    >>> individual.lot.cost_price == Decimal('30.0')
-    True
+    >>> config.user = stock_user.id
+    >>> individual.lot.cost_price
+    Decimal('30.0')
     >>> move_cost_line, = [x for x in individual.lot.cost_lines
     ...     if x.origin == move_individual]
-    >>> move_cost_line.unit_price == Decimal('5.0')
-    True
-
-
+    >>> move_cost_line.unit_price
+    Decimal('5.0')
 
 Create group::
 
+    >>> config.user = group_user.id
     >>> AnimalGroup = Model.get('farm.animal.group')
     >>> animal_group = AnimalGroup(
     ...     specie=pigs_specie,
@@ -281,6 +320,7 @@ Create group::
     ...     initial_location=location2_id,
     ...     initial_quantity=4)
     >>> animal_group.save()
+    >>> config.user = stock_user.id
     >>> with config.set_context({'locations': [location2_id]}):
     ...     animal_group.reload()
     ...     animal_group.lot.quantity
@@ -288,6 +328,7 @@ Create group::
 
 Create animal_group move event::
 
+    >>> config.user = group_user.id
     >>> MoveEvent = Model.get('farm.move.event')
     >>> move_animal_group = MoveEvent(
     ...     animal_type='group',
@@ -303,6 +344,7 @@ Create animal_group move event::
 
 Group doesn't chage its values::
 
+    >>> config.user = stock_user.id
     >>> animal_group.reload()
     >>> animal_group.current_weight
     >>> with config.set_context({'locations': [location2_id]}):
@@ -312,12 +354,14 @@ Group doesn't chage its values::
 
 Validate animal_group move event::
 
+    >>> config.user = group_user.id
     >>> move_animal_group.click('validate_event')
     >>> move_animal_group.state
     u'validated'
     >>> animal_group.reload()
     >>> animal_group.current_weight.weight
     Decimal('80.50')
+    >>> config.user = stock_user.id
     >>> with config.set_context({'locations': [location2_id]}):
     ...     animal_group.lot.quantity
     1.0
@@ -329,6 +373,7 @@ Validate animal_group move event::
 
 When moving a non weaned female its group should be also moved::
 
+    >>> config.user = female_user.id
     >>> config._context['specie'] = pigs_specie.id
     >>> config._context['animal_type'] = 'female'
     >>> Animal = Model.get('farm.animal')
@@ -375,6 +420,7 @@ When moving a non weaned female its group should be also moved::
     >>> farrowing_event.state
     u'validated'
     >>> farrowing_event.weight
+    >>> config.user = stock_user.id
     >>> farrowing_event.from_location.id == location1_id
     True
     >>> farrowing_event.to_location.id == location2_id
