@@ -455,6 +455,8 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
         Lot = pool.get('stock.lot')
 
         lots = [g.lot for g in groups]
+        if lots:
+            Lot.write(lots, {'animal_group': None})
         result = super(AnimalGroup, cls).delete(groups)
         if lots:
             Lot.delete(lots)
