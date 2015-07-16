@@ -1192,6 +1192,7 @@ class CreateFemale(Wizard):
         female.number = self.start.number
         female.arrival_date = self.start.arrival_date
         female.birthdate = self.start.birthdate
+        female.origin = self.start.origin
         female.initial_location = self.start.initial_location
         female.save()
         female.cycles = []
