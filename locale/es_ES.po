@@ -945,6 +945,10 @@ msgctxt "field:farm.animal,farm:"
 msgid "Current Farm"
 msgstr "Granja actual"
 
+msgctxt "field:farm.animal,farrowing_group:"
+msgid "Farrowing Group"
+msgstr "Grupo parido"
+
 msgctxt "field:farm.animal,feed_unit_digits:"
 msgid "Feed Unit Digits"
 msgstr "Dígitos unidad pienso"

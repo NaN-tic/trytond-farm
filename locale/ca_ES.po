@@ -775,6 +775,10 @@ msgctxt "field:farm.animal,farm:"
 msgid "Current Farm"
 msgstr "Granja actual"
 
+msgctxt "field:farm.animal,farrowing_group:"
+msgid "Farrowing Group"
+msgstr ""
+
 msgctxt "field:farm.animal,feed_unit_digits:"
 msgid "Feed Unit Digits"
 msgstr ""
@@ -1787,9 +1791,10 @@ msgctxt "field:farm.feed.event,feed_lot:"
 msgid "Feed Lot"
 msgstr ""
 
+#, fuzzy
 msgctxt "field:farm.feed.event,feed_product:"
 msgid "Feed"
-msgstr ""
+msgstr "Pienso"
 
 msgctxt "field:farm.feed.event,feed_quantity:"
 msgid "Consumed Quantity"
@@ -2262,9 +2267,10 @@ msgctxt "field:farm.medication.event,feed_lot:"
 msgid "Feed Lot"
 msgstr ""
 
+#, fuzzy
 msgctxt "field:farm.medication.event,feed_product:"
 msgid "Feed"
-msgstr ""
+msgstr "Pienso"
 
 msgctxt "field:farm.medication.event,feed_product_uom_category:"
 msgid "Feed Uom Category"
