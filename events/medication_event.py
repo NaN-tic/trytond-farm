@@ -16,9 +16,19 @@ class MedicationEvent(FeedEventMixin):
     feed_product_uom_category = fields.Function(
         fields.Many2One('product.uom.category', 'Feed Uom Category'),
         'on_change_with_feed_product_uom_category')
+    medication_start_date = fields.Function(fields.Date('Start Date'),
+        'on_change_with_end_date')
+    medication_end_date = fields.Date('End Date',
+        domain=[
+            ('medication_end_date', '>=', Eval('medication_start_date')),
+            ],
+        depends=['medication_end_date'])
 
     @classmethod
     def __setup__(cls):
+        cls.feed_location.string = 'Feed/Medication Source'
+        cls.feed_product.string = 'Feed/Medication Product'
+        cls.feed_lot.string = 'Feed/Medication Lot'
         super(MedicationEvent, cls).__setup__()
 
         uom_clause = ('category', '=', Eval('feed_product_uom_category'))

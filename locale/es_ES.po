@@ -2415,16 +2415,16 @@ msgid "Farm"
 msgstr "Granja"
 
 msgctxt "field:farm.medication.event,feed_location:"
-msgid "Feed Source"
-msgstr "Origen pienso"
+msgid "Feed/Medication Source"
+msgstr "Origen pienso/medicamento"
 
 msgctxt "field:farm.medication.event,feed_lot:"
-msgid "Feed Lot"
-msgstr "Lote pienso"
+msgid "Feed/Medication Lot"
+msgstr "Lote pienso/medicamento"
 
 msgctxt "field:farm.medication.event,feed_product:"
-msgid "Feed"
-msgstr "Pienso"
+msgid "Feed/Medication Product"
+msgstr "Pienso/medicamento"
 
 msgctxt "field:farm.medication.event,feed_product_uom_category:"
 msgid "Feed Uom Category"

@@ -22,10 +22,10 @@
             <label name="uom"/>
             <field name="uom"/>
             <newline/>
-            <label name="start_date"/>
-            <field name="start_date"/>
-            <label name="end_date"/>
-            <field name="end_date"/>
+            <label name="medication_start_date"/>
+            <field name="medication_start_date"/>
+            <label name="medication_end_date"/>
+            <field name="medication_end_date"/>
             <separator id="admin_fields_separator" colspan="4"/>
             <label name="move"/>
             <field name="move"/>

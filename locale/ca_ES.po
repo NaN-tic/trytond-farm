@@ -2260,17 +2260,16 @@ msgid "Farm"
 msgstr "Granja"
 
 msgctxt "field:farm.medication.event,feed_location:"
-msgid "Feed Source"
-msgstr ""
+msgid "Feed/Medication Source"
+msgstr "Origen Pinso/Medicament"
 
 msgctxt "field:farm.medication.event,feed_lot:"
-msgid "Feed Lot"
-msgstr ""
+msgid "Feed/Medication Lot"
+msgstr "Lot Pinso/Medicament"
 
-#, fuzzy
 msgctxt "field:farm.medication.event,feed_product:"
-msgid "Feed"
-msgstr "Pienso"
+msgid "Feed/Medication Product"
+msgstr "Pinso/Medicament"
 
 msgctxt "field:farm.medication.event,feed_product_uom_category:"
 msgid "Feed Uom Category"
