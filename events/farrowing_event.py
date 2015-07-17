@@ -33,7 +33,7 @@ class FarrowingEvent(AbstractEvent, ImportedEventMixin):
     mummified = fields.Integer('Mummified', states=_STATES_WRITE_DRAFT,
         depends=_DEPENDS_WRITE_DRAFT)
     dead = fields.Function(fields.Integer('Dead'),
-        'get_dead')
+        'on_change_with_dead')
     problem = fields.Many2One('farm.farrowing.problem', 'Problem',
         states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
     female_cycle = fields.One2One(
@@ -111,7 +111,8 @@ class FarrowingEvent(AbstractEvent, ImportedEventMixin):
                 self.timestamp)
         return super(FarrowingEvent, self).get_rec_name(name)
 
-    def get_dead(self, name):
+    @fields.depends('stillborn', 'mummified')
+    def on_change_with_dead(self, name=None):
         return (self.stillborn or 0) + (self.mummified or 0)
 
     @classmethod
