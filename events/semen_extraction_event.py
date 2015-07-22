@@ -14,7 +14,7 @@ from .abstract_event import AbstractEvent, _EVENT_STATES, _STATES_WRITE_DRAFT,\
     _STATES_VALIDATED_ADMIN, _DEPENDS_VALIDATED_ADMIN
 
 __all__ = ['SemenExtractionEvent', 'SemenExtractionEventQualityTest',
-    'SemenExtractionDose', 'SemenExtractionDelivery']
+    'SemenExtractionDose']
 
 
 class SemenExtractionEvent(AbstractEvent):
@@ -124,16 +124,6 @@ class SemenExtractionEvent(AbstractEvent):
             help='The remaining quantity of semen of the specified doses '
             '(expressed in the UoM of the formula).'),
         'on_change_with_semen_remaining_qty')
-    deliveries = fields.One2Many('farm.semen_extraction.delivery',
-        'event', 'Deliveries', states=_STATES_WRITE_DRAFT,
-        depends=_DEPENDS_WRITE_DRAFT)
-    dose_remaining_units = fields.Function(fields.Integer('Remaining Doses',
-            states={
-                'invisible': Equal(Eval('state'), 'validated'),
-                }, depends=['state'],
-            help='The remaining quantity of Doses not assigned to any '
-                'Delivery.'),
-        'on_change_with_dose_remaining_units')
 
     @classmethod
     def __setup__(cls):
@@ -151,17 +141,11 @@ class SemenExtractionEvent(AbstractEvent):
             'more_semen_in_doses_than_produced': ('The sum of semen quantity '
                 'in the doses of semen extraction event "%s" is greater than '
                 'the semen produced quantity'),
-            'more_doses_in_deliveries_than_produced': ('The semen extraction '
-                'event "%(event)s" has defined more deliveries of dose '
-                '"%(dose)s" than produced.'),
             'dose_already_defined': ('The semen extraction event "%s" already '
                 'has defined doses.\nPlease empty the list before click to '
                 'calculate them by the system.'),
             'no_doses_on_validate': ('The semen extraction event "%s" doesn\t '
                 'have any produced dose defined.\n'
-                'It can\'t be validated.'),
-            'no_deliveries_on_validate': ('The semen extraction event "%s" '
-                'doesn\t have any dose delivery defined.\n'
                 'It can\'t be validated.'),
             'quality_test_not_succeeded': ('The Quality Test "%(test)s" of '
                 'semen extraction event "%(event)s" did not succeed.\n'
@@ -272,24 +256,11 @@ class SemenExtractionEvent(AbstractEvent):
     def on_change_with_dose_location(self, name=None):
         return self.farm and self.farm.storage_location.id or None
 
-    @fields.depends('doses', 'deliveries')
-    def on_change_with_dose_remaining_units(self, name=None):
-        if not self.doses:
-            return 0
-        n_generated_doses = 0
-        for dose in self.doses:
-            n_generated_doses += dose.quantity or 0
-        n_delivered_doses = 0
-        for delivery in self.deliveries:
-            n_delivered_doses += delivery.quantity or 0
-        return n_generated_doses - n_delivered_doses
-
     @classmethod
     def validate(cls, extraction_events):
         super(SemenExtractionEvent, cls).validate(extraction_events)
         for extraction_event in extraction_events:
             extraction_event.check_doses_semen_quantity()
-            extraction_event.check_deliveries_dose_quantity()
 
     def check_doses_semen_quantity(self):
         # It doesn't check 'Validated' events because it was checked before
@@ -300,17 +271,6 @@ class SemenExtractionEvent(AbstractEvent):
         if self.semen_remaining_qty < 0.0:
             self.raise_user_error('more_semen_in_doses_than_produced',
                 self.rec_name)
-
-    def check_deliveries_dose_quantity(self):
-        dose_qty = dict((d.id, d.quantity) for d in self.doses)
-        for delivery in self.deliveries:
-            dose_qty[delivery.dose.id] -= delivery.quantity
-            if dose_qty[delivery.dose.id] < 0:
-                self.raise_user_error('more_doses_in_deliveries_than_produced',
-                    {
-                        'event': self.rec_name,
-                        'dose': delivery.dose.rec_name,
-                        })
 
     @classmethod
     @ModelView.button
@@ -342,10 +302,6 @@ class SemenExtractionEvent(AbstractEvent):
         Create and validate Production Move for Doses creation from semen
         extracted, creating a Production Lot for each dose (see __doc__ of
         _create_doses_production function for more details).
-
-        Create an Stock Move associated to Picking for each dose delivery (see
-        __doc of _create_deliveries_moves_and_pickings function for more
-        details)
         """
         pool = Pool()
         Move = pool.get('stock.move')
@@ -361,9 +317,6 @@ class SemenExtractionEvent(AbstractEvent):
                     % extraction_event.id)
             if not extraction_event.doses:
                 cls.raise_user_error('no_doses_on_validate',
-                    extraction_event.rec_name)
-            if not extraction_event.deliveries:
-                cls.raise_user_error('no_deliveries_on_validate',
                     extraction_event.rec_name)
 
             to_aprove = (extraction_event.test.state == 'confirmed')
@@ -399,21 +352,6 @@ class SemenExtractionEvent(AbstractEvent):
 
                 dose.production = dose_production
                 dose.save()
-
-            delivery_moves = {}
-            for delivery in extraction_event.deliveries:
-                assert not delivery.move, ('Stock Move must to be empty for '
-                    'all deliveries to validate the Extracton Event "%s"'
-                    % extraction_event.rec_name)
-                delivery_move = delivery._get_move()
-                delivery_move.save()
-                delivery_moves[delivery] = delivery_move
-            extraction_event._set_delivery_moves_in_shipments(
-                delivery_moves.values())
-
-            for delivery, delivery_move in delivery_moves.items():
-                delivery.move = delivery_move
-                delivery.save()
 
             extraction_event.save()
             extraction_event.animal.update_last_extraction(extraction_event)
@@ -459,36 +397,6 @@ class SemenExtractionEvent(AbstractEvent):
         return Lot(
             number=Sequence.get_id(farm_line.semen_lot_sequence.id),
             product=self.specie.semen_product.id)
-
-    def _set_delivery_moves_in_shipments(self, delivery_moves):
-        Shipment = Pool().get('stock.shipment.internal')
-
-        def keyfunc(move):
-            return move.to_location
-
-        shipments = []
-        delivery_moves = sorted(delivery_moves, key=keyfunc)
-        for to_location, moves in groupby(delivery_moves, key=keyfunc):
-            existing_shipments = Shipment.search([
-                    ('state', '=', 'draft'),
-                    ('from_location', '=', self.dose_location.id),
-                    ('to_location', '=', to_location.id),
-                    ])
-            if existing_shipments:
-                shipment = existing_shipments[0]
-                if shipment.planned_date < self.timestamp.date():
-                    shipment.planned_date = self.timestamp.date()
-                shipment.moves += list(moves)
-            else:
-                shipment = Shipment(
-                    from_location=self.dose_location,
-                    to_location=to_location,
-                    planned_date=self.timestamp.date(),
-                    moves=list(moves),
-                    )
-            shipment.save()
-            shipments.append(shipment)
-        return shipments
 
     @classmethod
     def create(cls, vlist):
@@ -768,123 +676,3 @@ class SemenExtractionDose(ModelSQL, ModelView):
                 cls.raise_user_error('invalid_state_to_delete',
                     dose.rec_name)
         return super(SemenExtractionDose, cls).delete(doses)
-
-
-class SemenExtractionDelivery(ModelSQL, ModelView):
-    'Farm Semen Extraction Delivery'
-    __name__ = 'farm.semen_extraction.delivery'
-
-    event = fields.Many2One('farm.semen_extraction.event', 'Event',
-        required=True, ondelete='CASCADE', readonly=True)
-    dose_location = fields.Function(fields.Many2One('stock.location',
-            "Doses Location"),
-        'on_change_with_dose_location')
-    state = fields.Function(fields.Selection(_EVENT_STATES, 'Event State',
-            readonly=True),
-        'on_change_with_state')
-    dose = fields.Many2One('farm.semen_extraction.dose', 'Dose',
-        required=True, domain=[
-            ('event', '=', Eval('event')),
-            ],
-        states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT + ['event'])
-    quantity = fields.Integer('Quantity (Units)', required=True,
-        states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
-    to_location = fields.Many2One('stock.location', 'Destination', domain=[
-            ('type', '=', 'storage'),
-            ('silo', '=', False),
-            ], required=True, states=_STATES_WRITE_DRAFT,
-        depends=_DEPENDS_WRITE_DRAFT)
-    dose_lot = fields.Function(fields.Many2One('stock.lot', "Doses Lot"),
-        'get_dose_lot')
-    move = fields.Many2One('stock.move', 'Stock Move', readonly=True, domain=[
-            ('from_location', '=', Eval('dose_location')),
-            ('to_location', '=', Eval('to_location')),
-            ('quantity', '=', Eval('quantity')),
-            ('lot', '=', Eval('dose_lot')),
-            ], states=_STATES_VALIDATED_ADMIN,
-        depends=_DEPENDS_VALIDATED_ADMIN + ['dose_location', 'to_location',
-            'quantity', 'dose_lot'])
-
-    @classmethod
-    def __setup__(cls):
-        super(SemenExtractionDelivery, cls).__setup__()
-        cls._error_messages.update({
-                'more_quantity_than_produced': ('The quantity in semen '
-                    'extraction delivery "%s" is greater than produced units '
-                    'of its dose.'),
-                'invalid_state_to_delete': ('The semen extraction delivery '
-                    '"%s" can\'t be deleted because is not in "Draft" state.'),
-                })
-        cls._sql_constraints += [
-            ('dose_to_location_uniq', 'unique (dose, to_location)',
-                'In Semen Extraction Deliveries, the tuple Dose and '
-                'must be unique!'),
-            ('quantity_positive', 'check (quantity > 0)',
-                'In Semen Extraction Deliveries, the Quantity must be '
-                'positive (greater than 0).'),
-            ]
-
-    # TODO: these defaults should not be necessary, but...
-    @staticmethod
-    def default_state():
-        return Pool().get('farm.semen_extraction.event').default_state()
-
-    def get_name_rec(self, name):
-        return "%s -> %s" % (self.dose.rec_name, self.to_location.rec_name)
-
-    @fields.depends('event')
-    def on_change_with_dose_location(self, name=None):
-        return self.event and self.event.dose_location.id or None
-
-    @fields.depends('event')
-    def on_change_with_state(self, name=None):
-        return self.event and self.event.state or 'draft'
-
-    def get_dose_lot(self, name):
-        return self.dose.lot.id if (self.dose and self.dose.lot) else None
-
-    @classmethod
-    def validate(cls, extraction_deliveries):
-        super(SemenExtractionDelivery, cls).validate(extraction_deliveries)
-        for delivery in extraction_deliveries:
-            delivery.check_dose_quantity()
-
-    def check_dose_quantity(self):
-        if self.quantity > self.dose.quantity:
-            self.raise_user_error('more_quantity_than_produced', self.rec_name)
-
-    def _get_move(self):
-        Move = Pool().get('stock.move')
-        context = Transaction().context
-
-        dose_product = self.dose_lot.product
-        return Move(
-            product=dose_product,
-            uom=dose_product.default_uom,
-            quantity=self.quantity,
-            from_location=self.event.dose_location,
-            to_location=self.to_location,
-            planned_date=self.event.timestamp.date(),
-            effective_date=self.event.timestamp.date(),
-            company=context.get('company'),
-            lot=self.dose_lot,
-            origin=self)
-
-    @classmethod
-    def copy(cls, deliveries, default=None):
-        if default is None:
-            default = {}
-        else:
-            default = default.copy()
-        default['move'] = None
-        return super(SemenExtractionDelivery, cls).copy(deliveries,
-            default=default)
-
-    @classmethod
-    def delete(cls, extraction_deliveries):
-        for delivery in extraction_deliveries:
-            if delivery.state != 'draft':
-                cls.raise_user_error('invalid_state_to_delete',
-                    delivery.rec_name)
-        return super(SemenExtractionDelivery, cls).delete(
-            extraction_deliveries)

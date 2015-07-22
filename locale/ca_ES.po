@@ -425,28 +425,6 @@ msgctxt "error:farm.removal.event:"
 msgid "There are other removal validated events for the animal \"%s\"."
 msgstr ""
 
-msgctxt "error:farm.semen_extraction.delivery:"
-msgid ""
-"In Semen Extraction Deliveries, the Quantity must be positive (greater than "
-"0)."
-msgstr ""
-
-msgctxt "error:farm.semen_extraction.delivery:"
-msgid "In Semen Extraction Deliveries, the tuple Dose and must be unique!"
-msgstr ""
-
-msgctxt "error:farm.semen_extraction.delivery:"
-msgid ""
-"The quantity in semen extraction delivery \"%s\" is greater than produced "
-"units of its dose."
-msgstr ""
-
-msgctxt "error:farm.semen_extraction.delivery:"
-msgid ""
-"The semen extraction delivery \"%s\" can't be deleted because is not in "
-"\"Draft\" state."
-msgstr ""
-
 msgctxt "error:farm.semen_extraction.dose:"
 msgid "In Semen Extraction Doses, the Container must be unique in a event."
 msgstr ""
@@ -492,20 +470,8 @@ msgstr ""
 
 msgctxt "error:farm.semen_extraction.event:"
 msgid ""
-"The semen extraction event \"%(event)s\" has defined more deliveries of dose"
-" \"%(dose)s\" than produced."
-msgstr ""
-
-msgctxt "error:farm.semen_extraction.event:"
-msgid ""
 "The semen extraction event \"%s\" already has defined doses.\n"
 "Please empty the list before click to calculate them by the system."
-msgstr ""
-
-msgctxt "error:farm.semen_extraction.event:"
-msgid ""
-"The semen extraction event \"%s\" doesn\t have any dose delivery defined.\n"
-"It can't be validated."
 msgstr ""
 
 msgctxt "error:farm.semen_extraction.event:"
@@ -2259,14 +2225,17 @@ msgctxt "field:farm.medication.event,farm:"
 msgid "Farm"
 msgstr "Granja"
 
+#, fuzzy
 msgctxt "field:farm.medication.event,feed_location:"
 msgid "Feed/Medication Source"
 msgstr "Origen Pinso/Medicament"
 
+#, fuzzy
 msgctxt "field:farm.medication.event,feed_lot:"
 msgid "Feed/Medication Lot"
 msgstr "Lot Pinso/Medicament"
 
+#, fuzzy
 msgctxt "field:farm.medication.event,feed_product:"
 msgid "Feed/Medication Product"
 msgstr "Pinso/Medicament"
@@ -2290,6 +2259,16 @@ msgstr "Ubicació"
 msgctxt "field:farm.medication.event,lot:"
 msgid "Lot"
 msgstr "Lot"
+
+#, fuzzy
+msgctxt "field:farm.medication.event,medication_end_date:"
+msgid "End Date"
+msgstr "Data final"
+
+#, fuzzy
+msgctxt "field:farm.medication.event,medication_start_date:"
+msgid "Start Date"
+msgstr "Data inicial"
 
 msgctxt "field:farm.medication.event,move:"
 msgid "Stock Move"
@@ -2668,62 +2647,6 @@ msgctxt "field:farm.removal.type,write_uid:"
 msgid "Write User"
 msgstr "Usuari modificació"
 
-msgctxt "field:farm.semen_extraction.delivery,create_date:"
-msgid "Create Date"
-msgstr "Data creació"
-
-msgctxt "field:farm.semen_extraction.delivery,create_uid:"
-msgid "Create User"
-msgstr "Usuari creació"
-
-msgctxt "field:farm.semen_extraction.delivery,dose:"
-msgid "Dose"
-msgstr "Dosis"
-
-msgctxt "field:farm.semen_extraction.delivery,dose_location:"
-msgid "Doses Location"
-msgstr ""
-
-msgctxt "field:farm.semen_extraction.delivery,dose_lot:"
-msgid "Doses Lot"
-msgstr ""
-
-msgctxt "field:farm.semen_extraction.delivery,event:"
-msgid "Event"
-msgstr ""
-
-msgctxt "field:farm.semen_extraction.delivery,id:"
-msgid "ID"
-msgstr "Identificador"
-
-msgctxt "field:farm.semen_extraction.delivery,move:"
-msgid "Stock Move"
-msgstr "Moviment d'existències"
-
-msgctxt "field:farm.semen_extraction.delivery,quantity:"
-msgid "Quantity (Units)"
-msgstr ""
-
-msgctxt "field:farm.semen_extraction.delivery,rec_name:"
-msgid "Name"
-msgstr "Nom"
-
-msgctxt "field:farm.semen_extraction.delivery,state:"
-msgid "Event State"
-msgstr ""
-
-msgctxt "field:farm.semen_extraction.delivery,to_location:"
-msgid "Destination"
-msgstr "Destí"
-
-msgctxt "field:farm.semen_extraction.delivery,write_date:"
-msgid "Write Date"
-msgstr "Data modificació"
-
-msgctxt "field:farm.semen_extraction.delivery,write_uid:"
-msgid "Write User"
-msgstr "Usuari modificació"
-
 msgctxt "field:farm.semen_extraction.dose,bom:"
 msgid "Container"
 msgstr ""
@@ -2812,10 +2735,6 @@ msgctxt "field:farm.semen_extraction.event,create_uid:"
 msgid "Create User"
 msgstr "Usuari creació"
 
-msgctxt "field:farm.semen_extraction.event,deliveries:"
-msgid "Deliveries"
-msgstr ""
-
 msgctxt "field:farm.semen_extraction.event,dose_bom:"
 msgid "Dose Container"
 msgstr ""
@@ -2826,10 +2745,6 @@ msgstr "Dosis calculades"
 
 msgctxt "field:farm.semen_extraction.event,dose_location:"
 msgid "Doses Location"
-msgstr ""
-
-msgctxt "field:farm.semen_extraction.event,dose_remaining_units:"
-msgid "Remaining Doses"
 msgstr ""
 
 msgctxt "field:farm.semen_extraction.event,doses:"
@@ -3892,10 +3807,6 @@ msgctxt "help:farm.semen_extraction.event,dose_location:"
 msgid "Destination location of semen doses"
 msgstr ""
 
-msgctxt "help:farm.semen_extraction.event,dose_remaining_units:"
-msgid "The remaining quantity of Doses not assigned to any Delivery."
-msgstr ""
-
 msgctxt "help:farm.semen_extraction.event,doses_semen_qty:"
 msgid ""
 "Total quantity of semen in the doses of list (expressed in the UoM of the "
@@ -4259,10 +4170,6 @@ msgstr ""
 
 msgctxt "model:farm.removal.type,name:removal_type_transferred"
 msgid "Transferred"
-msgstr ""
-
-msgctxt "model:farm.semen_extraction.delivery,name:"
-msgid "Farm Semen Extraction Delivery"
 msgstr ""
 
 msgctxt "model:farm.semen_extraction.dose,name:"
@@ -5119,14 +5026,6 @@ msgctxt "selection:farm.removal.event,state:"
 msgid "Validated"
 msgstr "Validat"
 
-msgctxt "selection:farm.semen_extraction.delivery,state:"
-msgid "Draft"
-msgstr "Esborrany"
-
-msgctxt "selection:farm.semen_extraction.delivery,state:"
-msgid "Validated"
-msgstr "Validat"
-
 msgctxt "selection:farm.semen_extraction.dose,state:"
 msgid "Draft"
 msgstr "Esborrany"
@@ -5374,14 +5273,6 @@ msgstr ""
 
 msgctxt "view:farm.removal.type:"
 msgid "Removal Type"
-msgstr ""
-
-msgctxt "view:farm.semen_extraction.delivery:"
-msgid "Semen Extraction Deliveries"
-msgstr ""
-
-msgctxt "view:farm.semen_extraction.delivery:"
-msgid "Semen Extraction Delivery"
 msgstr ""
 
 msgctxt "view:farm.semen_extraction.dose:"

@@ -113,40 +113,5 @@
             <field name="perm_create" eval="True"/>
             <field name="perm_delete" eval="True"/>
         </record>
-
-        <!-- farm.semen_extraction.delivery -->
-        <record model="ir.ui.view" id="farm_semen_extraction_delivery_form_view">
-            <field name="model">farm.semen_extraction.delivery</field>
-            <field name="type">form</field>
-            <field name="name">farm_semen_extraction_delivery_form</field>
-        </record>
-
-        <record model="ir.ui.view" id="farm_semen_extraction_delivery_list_view">
-            <field name="model">farm.semen_extraction.delivery</field>
-            <field name="type">tree</field>
-            <field name="name">farm_semen_extraction_delivery_list</field>
-        </record>
-
-        <record model="ir.model.access"
-                id="access_farm_semen_extraction_delivery_farm">
-            <field name="model"
-                search="[('model', '=', 'farm.semen_extraction.delivery')]"/>
-            <field name="group" ref="group_farm"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="False"/>
-            <field name="perm_create" eval="False"/>
-            <field name="perm_delete" eval="False"/>
-        </record>
-
-        <record model="ir.model.access"
-                id="access_farm_semen_extraction_delivery_males">
-            <field name="model"
-                search="[('model', '=', 'farm.semen_extraction.delivery')]"/>
-            <field name="group" ref="group_farm_males"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_delete" eval="True"/>
-        </record>
     </data>
 </tryton>

@@ -308,7 +308,7 @@ Set real semen produced quantity and check calculated doses::
     >>> extraction1.dose_calculated_units
     6.1
 
-Add produced doses and deliveries::
+Add produced doses::
 
     >>> Dose = Model.get('farm.semen_extraction.dose')
     >>> dose1 = Dose(
@@ -317,45 +317,14 @@ Add produced doses and deliveries::
     ...     bom=dose_bom,
     ...     quantity=6)
     >>> dose1.save()
-    >>> Delivery = Model.get('farm.semen_extraction.delivery')
-    >>> delivery1 = Delivery(
-    ...     event=extraction1,
-    ...     dose=dose1,
-    ...     quantity=3,
-    ...     to_location=warehouse.storage_location)
-    >>> delivery1.save()
-    >>> delivery2 = Delivery(
-    ...     event=extraction1,
-    ...     dose=dose1,
-    ...     quantity=2,
-    ...     to_location=warehouse.output_location)
-    >>> delivery2.save()
-    >>> extraction1.reload()
 
 Check dose and deliveries functional fields::
 
+    >>> extraction1.reload()
     >>> extraction1.doses_semen_qty
     600.0
     >>> extraction1.semen_remaining_qty
     10.0
-    >>> extraction1.dose_remaining_units
-    1
-
-Create a draft shipment to check it is used in deliveries::
-
-    >>> Move = Model.get('stock.move')
-    >>> Shipment = Model.get('stock.shipment.internal')
-    >>> previous_shipment = Shipment(
-    ...     from_location=lab1,
-    ...     to_location=warehouse.storage_location,
-    ...     planned_date=(now - datetime.timedelta(days=1)),
-    ...     moves=[
-    ...         Move(
-    ...             product=blister_product,
-    ...             quantity=5,
-    ...             unit_price=blister_product.template.cost_price),
-    ...         ])
-    ... previous_shipment.save()
 
 Validate semen extraction event::
 
@@ -369,10 +338,34 @@ Validate semen extraction event::
     u'done'
     >>> extraction1.doses[0].lot is not None
     True
-    >>> extraction1.deliveries[0].move.shipment.id != previous_shipment.id
-    True
-    >>> extraction1.deliveries[1].move.shipment.id != previous_shipment.id
-    True
     >>> extraction1.animal.reload()
     >>> extraction1.animal.last_extraction == now.date()
     True
+
+Create an internal shipment to serve produced doses::
+
+    >>> Move = Model.get('stock.move')
+    >>> Shipment = Model.get('stock.shipment.internal')
+    >>> shipment = Shipment()
+    >>> shipment.from_location=lab1
+    >>> shipment.to_location=location1
+    >>> move = shipment.moves.new()
+    >>> move.from_location = lab1
+    >>> move.to_location = location1
+    >>> move.product = dose_product
+    >>> move.lot = extraction1.doses[0].lot
+    >>> move.quantity = 5
+    >>> move.unit_price=blister_product.template.cost_price
+    >>> shipment.save()
+
+
+Process shipment to check doe lots are in expected location::
+
+    >>> shipment.click('wait')
+    >>> shipment.click('assign_try')
+    True
+    >>> shipment.click('done')
+    >>> shipment.reload()
+    >>> shipment.state
+    u'done'
+

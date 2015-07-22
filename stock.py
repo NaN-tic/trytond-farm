@@ -391,7 +391,6 @@ class Move:
             'farm.feed.event',
             'farm.medication.event',
             'farm.semen_extraction.event',
-            'farm.semen_extraction.delivery',
             'farm.insemination.event',
             'farm.farrowing.event',
             'farm.foster.event',

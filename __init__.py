@@ -60,7 +60,6 @@ def register():
         SemenExtractionEvent,
         SemenExtractionEventQualityTest,
         SemenExtractionDose,
-        SemenExtractionDelivery,
         InseminationEvent,
         PregnancyDiagnosisEvent,
         AbortEvent,
