@@ -56,11 +56,6 @@
                 <label name="semen_remaining_qty"/>
                 <field name="semen_remaining_qty"/>
             </page>
-            <page string="Dose Deliveries" id="deliveries_page">
-                <label name="dose_remaining_units"/>
-                <field name="dose_remaining_units"/>
-                <field name="deliveries" colspan="4"/>
-            </page>
             <page string="Notes" id="notes_page">
                 <field name="notes" colspan="4"/>
             </page>

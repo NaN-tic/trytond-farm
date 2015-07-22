@@ -10,6 +10,5 @@
         <field name="formula_uom"/>
         <field name="doses"/>
         <field name="dose_location"/>
-        <field name="deliveries"/>
     </xpath>
 </data>

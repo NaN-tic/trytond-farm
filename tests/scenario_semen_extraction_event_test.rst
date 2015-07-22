@@ -318,7 +318,7 @@ Add produced doses::
     ...     quantity=6)
     >>> dose1.save()
 
-Check dose and deliveries functional fields::
+Check dose functional fields::
 
     >>> extraction1.reload()
     >>> extraction1.doses_semen_qty
