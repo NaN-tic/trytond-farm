@@ -22,7 +22,7 @@ class MedicationEvent(FeedEventMixin):
         domain=[
             ('medication_end_date', '>=', Eval('medication_start_date')),
             ],
-        depends=['medication_end_date'])
+        depends=['medication_start_date'])
 
     @classmethod
     def __setup__(cls):
