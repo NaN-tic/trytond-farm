@@ -11,6 +11,7 @@
     <field name="last_extraction"/>
     <field name="days_from_insemination"/>
     <field name="days_from_farrowing"/>
+    <field name="current_cycle_state"/>
     <field name="state"/>
     <field name="tags" tree_invisible="1"/>
 </tree>

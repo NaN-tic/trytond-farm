@@ -716,6 +716,10 @@ msgctxt "field:farm.animal,current_cycle:"
 msgid "Current Cycle"
 msgstr "Cicle actual"
 
+msgctxt "field:farm.animal,current_cycle_state:"
+msgid "Current Cycle State"
+msgstr ""
+
 msgctxt "field:farm.animal,current_weight:"
 msgid "Current Weight"
 msgstr ""
@@ -4590,6 +4594,29 @@ msgctxt "selection:farm.abort.event,state:"
 msgid "Validated"
 msgstr "Validat"
 
+#, fuzzy
+msgctxt "selection:farm.animal,current_cycle_state:"
+msgid ""
+msgstr " "
+
+#, fuzzy
+msgctxt "selection:farm.animal,current_cycle_state:"
+msgid "Lactating"
+msgstr "En lactància"
+
+msgctxt "selection:farm.animal,current_cycle_state:"
+msgid "Mated"
+msgstr ""
+
+#, fuzzy
+msgctxt "selection:farm.animal,current_cycle_state:"
+msgid "Pregnant"
+msgstr "Embarasada"
+
+msgctxt "selection:farm.animal,current_cycle_state:"
+msgid "Unmated"
+msgstr ""
+
 msgctxt "selection:farm.animal,origin:"
 msgid "Purchased"
 msgstr "Comprat"
@@ -5286,10 +5313,6 @@ msgstr ""
 msgctxt "view:farm.semen_extraction.event:"
 msgid "Calculate Doses"
 msgstr "Calcula dosis"
-
-msgctxt "view:farm.semen_extraction.event:"
-msgid "Dose Deliveries"
-msgstr "Enviaments de dosis"
 
 msgctxt "view:farm.semen_extraction.event:"
 msgid "Extraction & Quality Test"
