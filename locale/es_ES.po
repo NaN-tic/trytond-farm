@@ -875,6 +875,10 @@ msgctxt "field:farm.animal,current_cycle:"
 msgid "Current Cycle"
 msgstr "Ciclo actual"
 
+msgctxt "field:farm.animal,current_cycle_state:"
+msgid "Current Cycle State"
+msgstr "Estado ciclo actual"
+
 msgctxt "field:farm.animal,current_weight:"
 msgid "Current Weight"
 msgstr "Peso actual"
@@ -4768,6 +4772,22 @@ msgctxt "selection:farm.abort.event,state:"
 msgid "Validated"
 msgstr "Validado"
 
+msgctxt "selection:farm.animal,current_cycle_state:"
+msgid "Lactating"
+msgstr "Lactante"
+
+msgctxt "selection:farm.animal,current_cycle_state:"
+msgid "Mated"
+msgstr "Inseminada"
+
+msgctxt "selection:farm.animal,current_cycle_state:"
+msgid "Pregnant"
+msgstr "Preñada"
+
+msgctxt "selection:farm.animal,current_cycle_state:"
+msgid "Unmated"
+msgstr "Sin inseminar"
+
 msgctxt "selection:farm.animal,origin:"
 msgid "Purchased"
 msgstr "Comprado"
@@ -4775,10 +4795,6 @@ msgstr "Comprado"
 msgctxt "selection:farm.animal,origin:"
 msgid "Raised"
 msgstr "Criado"
-
-msgctxt "selection:farm.animal,purpose:"
-msgid ""
-msgstr ""
 
 msgctxt "selection:farm.animal,purpose:"
 msgid "Replacement"
@@ -4803,10 +4819,6 @@ msgstr "Macho"
 msgctxt "selection:farm.animal,sex:"
 msgid "Undetermined"
 msgstr "No determinado"
-
-msgctxt "selection:farm.animal,state:"
-msgid ""
-msgstr ""
 
 msgctxt "selection:farm.animal,state:"
 msgid "Mated"
@@ -5125,10 +5137,6 @@ msgid "Validated"
 msgstr "Validado"
 
 msgctxt "selection:farm.move.event,weight_record:"
-msgid ""
-msgstr ""
-
-msgctxt "selection:farm.move.event,weight_record:"
 msgid "Animal Weight"
 msgstr "Peso del animal"
 
@@ -5279,10 +5287,6 @@ msgstr "Borrador"
 msgctxt "selection:farm.weaning.event,state:"
 msgid "Validated"
 msgstr "Validado"
-
-msgctxt "selection:stock.lot,animal_type:"
-msgid ""
-msgstr ""
 
 msgctxt "selection:stock.lot,animal_type:"
 msgid "Female"
@@ -5459,10 +5463,6 @@ msgstr "Dosis extracción de semen"
 msgctxt "view:farm.semen_extraction.event:"
 msgid "Calculate Doses"
 msgstr "Calcular dosis"
-
-msgctxt "view:farm.semen_extraction.event:"
-msgid "Dose Deliveries"
-msgstr "Entregas dosis"
 
 msgctxt "view:farm.semen_extraction.event:"
 msgid "Extraction & Quality Test"

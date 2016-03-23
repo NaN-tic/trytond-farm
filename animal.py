@@ -31,6 +31,12 @@ ANIMAL_ORIGIN = [
     ('purchased', 'Purchased'),
     ('raised', 'Raised'),
     ]
+FEMALE_CICLE_STATES = [
+    ('mated', 'Mated'),
+    ('pregnant', 'Pregnant'),
+    ('lactating', 'Lactating'),
+    ('unmated', 'Unmated'),
+    ]
 
 
 class Tag(ModelSQL, ModelView):
@@ -583,6 +589,9 @@ class Female:
     current_cycle = fields.Many2One('farm.animal.female_cycle',
         'Current Cycle', readonly=True, states=_STATES_FEMALE_FIELD,
         depends=_DEPENDS_FEMALE_FIELD)
+    current_cycle_state = fields.Selection([(None, '')] + FEMALE_CICLE_STATES,
+        'Current Cycle State', readonly=True, states=_STATES_FEMALE_FIELD,
+        depends=_DEPENDS_FEMALE_FIELD)
     state = fields.Selection([
             (None, ''),
             ('prospective', 'Prospective'),
@@ -635,6 +644,8 @@ class Female:
     def update_current_cycle(self):
         current_cycle = self.cycles and self.cycles[-1].id or None
         self.current_cycle = current_cycle
+        self.current_cycle_state = (current_cycle.state
+            if current_cycle else None)
         self.save()
         return current_cycle
 
@@ -840,12 +851,8 @@ class FemaleCycle(ModelSQL, ModelView):
     sequence = fields.Integer('Num. cycle', required=True)
     ordination_date = fields.DateTime('Date for ordination', required=True,
         readonly=True)
-    state = fields.Selection([
-            ('mated', 'Mated'),
-            ('pregnant', 'Pregnant'),
-            ('lactating', 'Lactating'),
-            ('unmated', 'Unmated'),
-            ], 'State', readonly=True, required=True)
+    state = fields.Selection(FEMALE_CICLE_STATES, 'State', readonly=True,
+        required=True)
     # Female events fields
     insemination_events = fields.One2Many('farm.insemination.event',
         'female_cycle', 'Inseminations')
