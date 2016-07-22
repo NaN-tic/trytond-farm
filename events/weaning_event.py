@@ -9,7 +9,7 @@ No possibility of creating individuals from here. Maybe in the future we
 - Farrowing creates groups and weaning is for groups (current implementation)
 - Farrowing creates groups and weaning is for individuals
 """
-from trytond.model import fields, ModelView, ModelSQL, Workflow
+from trytond.model import fields, ModelView, ModelSQL, Unique, Workflow
 from trytond.pyson import Equal, Eval, Id, If, Not
 from trytond.pool import Pool
 from trytond.transaction import Transaction
@@ -361,9 +361,10 @@ class WeaningEventFemaleCycle(ModelSQL):
     @classmethod
     def __setup__(cls):
         super(WeaningEventFemaleCycle, cls).__setup__()
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('event_unique', 'UNIQUE(event)',
+            ('event_unique', Unique(t, t.event),
                 'The Weaning Event must be unique.'),
-            ('cycle_unique', 'UNIQUE(cycle)',
+            ('cycle_unique', Unique(t, t.cycle),
                 'The Female Cycle must be unique.'),
             ]

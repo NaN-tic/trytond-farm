@@ -3,10 +3,12 @@
 import logging
 from datetime import datetime
 
-from trytond.model import fields, ModelSQL, ModelView, Workflow
+from trytond.model import fields, ModelSQL, ModelView, Unique, Check, Workflow
 from trytond.pyson import Bool, Equal, Eval, Get, Not
 from trytond.pool import Pool
 from trytond.transaction import Transaction
+from sql import Null
+
 
 __all__ = ['EventOrder']
 
@@ -125,10 +127,11 @@ class EventOrder(ModelSQL, ModelView, Workflow):
     @classmethod
     def __setup__(cls):
         super(EventOrder, cls).__setup__()
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('name_required', 'CHECK (name IS NOT NULL)',
+            ('name_required', Check(t, t.name != Null),
                 'The Reference of the Event Order is required.'),
-            ('name_uniq', 'UNIQUE (name)',
+            ('name_uniq', Unique(t, t.name),
                 'The Reference of the Event Order must be unique.'),
             ]
         cls._error_messages.update({

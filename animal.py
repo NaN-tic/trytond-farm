@@ -4,7 +4,7 @@ from datetime import date, datetime, timedelta
 from decimal import Decimal
 import logging
 
-from trytond.model import ModelView, ModelSQL, fields
+from trytond.model import ModelView, ModelSQL, Unique, fields
 from trytond.pyson import Equal, Eval, Greater, Id, Not, Bool
 from trytond.transaction import Transaction
 from trytond.pool import Pool, PoolMeta
@@ -52,8 +52,9 @@ class Tag(ModelSQL, ModelView):
     @classmethod
     def __setup__(cls):
         super(Tag, cls).__setup__()
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('name_uniq', 'UNIQUE (name)',
+            ('name_uniq', Unique(t, t.name),
                 'The Name of the Tag must be unique.'),
             ]
 

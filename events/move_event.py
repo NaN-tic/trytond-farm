@@ -1,6 +1,6 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
-from trytond.model import fields, ModelView, Workflow
+from trytond.model import fields, ModelView, Workflow, Check
 from trytond.pyson import Bool, Equal, Eval, Id, If, Not, Or
 from trytond.pool import Pool
 from trytond.transaction import Transaction
@@ -105,12 +105,14 @@ class MoveEvent(AbstractEvent):
                     'from location "%(from_location)s" but there isn\'t '
                     'enough there at "%(timestamp)s".'),
                 })
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('quantity_positive', 'check ( quantity != 0 )',
+            ('quantity_positive', Check(t, t.quantity != 0),
                 'In Move Events, the quantity can\'t be zero'),
             ('quantity_1_for_animals',
-                ("check ( animal_type = 'group' or "
-                    "(quantity = 1 or quantity = -1))"),
+                Check(t, (
+                            (t.animal_type == 'group') |
+                            ((t.quantity == 1) | (t.quantity == -1)))),
                 'In Move Events, the quantity must be 1 for Animals (not '
                 'Groups).'),
             ('weight_0_or_positive', "check ( weight >= 0.0 )",

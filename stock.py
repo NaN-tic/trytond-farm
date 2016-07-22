@@ -4,7 +4,7 @@ import datetime
 from collections import defaultdict
 from decimal import Decimal
 
-from trytond.model import ModelView, ModelSQL, fields, Workflow
+from trytond.model import ModelView, ModelSQL, fields, Unique, Workflow
 from trytond.pyson import Equal, Eval, Not, Or
 from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
@@ -148,9 +148,11 @@ class LotAnimal(ModelSQL):
     @classmethod
     def __setup__(cls):
         super(LotAnimal, cls).__setup__()
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('lot_unique', 'UNIQUE(lot)', 'The Lot must be unique.'),
-            ('animal_unique', 'UNIQUE(animal)', 'The Animal must be unique.'),
+            ('lot_unique', Unique(t, t.lot), 'The Lot must be unique.'),
+            ('animal_unique', Unique(t, t.animal),
+                'The Animal must be unique.'),
             ]
 
 
@@ -166,9 +168,10 @@ class LotAnimalGroup(ModelSQL):
     @classmethod
     def __setup__(cls):
         super(LotAnimalGroup, cls).__setup__()
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('lot_unique', 'UNIQUE(lot)', 'The lot must be unique.'),
-            ('animal_group_unique', 'UNIQUE(animal_group)',
+            ('lot_unique', Unique(t, t.lot), 'The lot must be unique.'),
+            ('animal_group_unique', Unique(t, t.animal_group),
                 'The group must be unique.'),
             ]
 

@@ -1,6 +1,6 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
-from trytond.model import fields, ModelView, ModelSQL, Workflow
+from trytond.model import fields, ModelView, ModelSQL, Unique, Check, Workflow
 from trytond.pyson import And, Bool, Equal, Eval, Id, If, Not
 from trytond.pool import Pool
 from trytond.transaction import Transaction
@@ -82,12 +82,13 @@ class FarrowingEvent(AbstractEvent, ImportedEventMixin):
                     '0 in Dead and Live. It has to have some unit in some of '
                     'these fields.'),
                 })
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('live_not_negative', 'CHECK(live >= 0)',
+            ('live_not_negative', Check(t, t.live >= 0),
                 'The value of "Live" must to be positive.'),
-            ('stillborn_not_negative', 'CHECK(stillborn >= 0)',
+            ('stillborn_not_negative', Check(t, t.stillborn >= 0),
                 'The value of "Stillborn" must to be positive.'),
-            ('mummified_not_negative', 'CHECK(mummified >= 0)',
+            ('mummified_not_negative', Check(t, t.mummified >= 0),
                 'The value of "Mummified" must to be positive.'),
             ]
         cls._buttons['validate_event']['readonly'] = And(
@@ -217,10 +218,11 @@ class FarrowingEventFemaleCycle(ModelSQL):
     @classmethod
     def __setup__(cls):
         super(FarrowingEventFemaleCycle, cls).__setup__()
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('event_unique', 'UNIQUE(event)',
+            ('event_unique', Unique(t, t.event),
                 'The Farrowing Event must be unique.'),
-            ('cycle_unique', 'UNIQUE(cycle)',
+            ('cycle_unique', Unique(t, t.cycle),
                 'The Female Cycle must be unique.'),
             ]
 
@@ -237,9 +239,10 @@ class FarrowingEventAnimalGroup(ModelSQL):
     @classmethod
     def __setup__(cls):
         super(FarrowingEventAnimalGroup, cls).__setup__()
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('event_unique', 'UNIQUE(event)',
+            ('event_unique', Unique(t, t.event),
                 'The Farrowing Event must be unique.'),
-            ('animal_group_unique', 'UNIQUE(animal_group)',
+            ('animal_group_unique', Unique(t, t.animal_group),
                 'The Animal Group must be unique.'),
             ]

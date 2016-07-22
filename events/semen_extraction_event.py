@@ -4,7 +4,7 @@ import math
 from datetime import datetime
 from itertools import groupby
 
-from trytond.model import fields, ModelView, ModelSQL, Workflow
+from trytond.model import fields, ModelView, ModelSQL, Unique, Check, Workflow
 from trytond.pyson import Bool, Equal, Eval, Greater, Id
 from trytond.pool import Pool
 from trytond.transaction import Transaction
@@ -128,12 +128,13 @@ class SemenExtractionEvent(AbstractEvent):
     @classmethod
     def __setup__(cls):
         super(SemenExtractionEvent, cls).__setup__()
+        t = cls.__table__()
         cls.animal.domain += [
             ('type', '=', 'male'),
             ]
         cls._sql_constraints += [
             ('untreated_semen_qty_positive',
-                'CHECK(untreated_semen_qty > 0.0)',
+                Check(t, t.untreated_semen_qty > 0.0),
                 'In Semen Extraction Events, the quantity must be positive '
                 '(greater or equals 1)'),
             ]
@@ -480,10 +481,11 @@ class SemenExtractionEventQualityTest(ModelSQL):
     @classmethod
     def __setup__(cls):
         super(SemenExtractionEventQualityTest, cls).__setup__()
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('event_unique', 'UNIQUE(event)',
+            ('event_unique', Unique(t, t.event),
                 'The Semen Extraction Event must be unique.'),
-            ('test_unique', 'UNIQUE(test)',
+            ('test_unique', Unique(t, t.test),
                 'The Quality Test must be unique.'),
             ]
 
@@ -535,18 +537,19 @@ class SemenExtractionDose(ModelSQL, ModelView):
     @classmethod
     def __setup__(cls):
         super(SemenExtractionDose, cls).__setup__()
+        t = cls.__table__()
         cls._error_messages.update({
                 'invalid_state_to_delete': ('The semen extraction dose "%s" '
                     'can\'t be deleted because is not in "Draft" state.'),
                 })
         cls._sql_constraints += [
-            ('event_sequence_uniq', 'unique (event, sequence)',
+            ('event_sequence_uniq', Unique(t, t.event, t.sequence),
                 'In Semen Extraction Doses, the Line Num. must be unique in a '
                 'event.'),
-            ('event_bom_uniq', 'unique (event, bom)',
+            ('event_bom_uniq', Unique(t, t.event, t.bom),
                 'In Semen Extraction Doses, the Container must be unique in a '
                 'event.'),
-            ('quantity_positive', 'check (quantity > 0)',
+            ('quantity_positive', Check(t, t.quantity > 0),
                 'In Semen Extraction Doses, the Quantity must be positive '
                 '(greater than 0).'),
             ]

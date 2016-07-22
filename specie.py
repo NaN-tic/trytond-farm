@@ -3,7 +3,7 @@
 import logging
 from operator import attrgetter
 
-from trytond.model import ModelView, ModelSQL, fields
+from trytond.model import ModelView, ModelSQL, Unique, fields
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import PYSONDecoder, PYSONEncoder, Bool, Eval, Id, Not, Or
 from trytond.transaction import Transaction
@@ -99,8 +99,9 @@ class Specie(ModelSQL, ModelView):
     @classmethod
     def __setup__(cls):
         super(Specie, cls).__setup__()
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('semen_product_uniq', 'UNIQUE (semen_product)',
+            ('semen_product_uniq', Unique(t, t.semen_product),
                 'The Semen\'s Product of the Specie must be unique.'),
             ]
         cls._error_messages.update({
@@ -547,8 +548,9 @@ class Breed(ModelSQL, ModelView):
     @classmethod
     def __setup__(cls):
         super(Breed, cls).__setup__()
+        t = cls.__table__()
         cls._sql_constraints = [
-            ('name_specie_uniq', 'UNIQUE(specie, name)',
+            ('name_specie_uniq', Unique(t, t.specie, t.name),
                 'Breed name must be unique per specie.'),
             ]
 
@@ -601,8 +603,9 @@ class SpecieFarmLine(ModelSQL, ModelView):
     @classmethod
     def __setup__(cls):
         super(SpecieFarmLine, cls).__setup__()
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('specie_farm_uniq', 'UNIQUE (specie, farm)',
+            ('specie_farm_uniq', Unique(t, t.specie, t.farm),
                 'The Farm of Managed Farms of an specie must be unique.'),
             ]
 

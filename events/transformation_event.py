@@ -1,6 +1,6 @@
 #The COPYRIGHT file at the top level of this repository contains the full
 #copyright notices and license terms.
-from trytond.model import fields, ModelView, Workflow
+from trytond.model import fields, ModelView, Check, Workflow
 from trytond.pyson import Bool, Equal, Eval, If, Not, Or
 from trytond.pool import Pool
 from trytond.rpc import RPC
@@ -85,6 +85,7 @@ class TransformationEvent(AbstractEvent):
     @classmethod
     def __setup__(cls):
         super(TransformationEvent, cls).__setup__()
+        t = cls.__table__()
         cls.animal.domain += [
             If(Equal(Eval('state'), 'draft'),
                 If(Bool(Eval('from_location', 0)),
@@ -110,12 +111,15 @@ class TransformationEvent(AbstractEvent):
                     'enough there at "%(timestamp)s".'),
                 })
         cls._sql_constraints += [
-            ('quantity_positive', 'check ( quantity != 0 )',
+            ('quantity_positive', Check(t, t.quantity != 0),
                 'In Transformation Events, the quantity must be positive '
                 '(greater or equal to 1)'),
             ('quantity_1_for_animals',
-                ("check ( animal_type = 'group' and to_animal_type = 'group' "
-                    "or (quantity = 1 or quantity = -1) )"),
+                (Check(t, (
+                            (t.animal_type == 'group') &
+                            (t.to_animal_type == 'group') |
+                            ((t.quantity == 1) | (t.quantity == -1))
+                            ))),
                 'In Transformation Events, the quantity must be 1 for Animals '
                 '(not Groups).'),
             ]
