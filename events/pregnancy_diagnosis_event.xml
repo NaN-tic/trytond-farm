@@ -7,7 +7,7 @@
         <record model="ir.ui.view"
             id="farm_pregnancy_diagnosis_event_form_view">
             <field name="model">farm.pregnancy_diagnosis.event</field>
-            <field name="type">form</field>
+            <field name="type" eval="None"/>
             <field name="inherit" ref="farm.farm_abstract_event_form_view"/>
             <field name="name">farm_pregnancy_diagnosis_event_form</field>
         </record>
@@ -15,7 +15,7 @@
         <record model="ir.ui.view"
             id="farm_pregnancy_diagnosis_event_list_view">
             <field name="model">farm.pregnancy_diagnosis.event</field>
-            <field name="type">tree</field>
+            <field name="type" eval="None"/>
             <field name="inherit" ref="farm.farm_abstract_event_list_view"/>
             <field name="name">farm_pregnancy_diagnosis_event_list</field>
         </record>
@@ -23,7 +23,7 @@
         <record model="ir.ui.view"
             id="farm_pregnancy_diagnosis_event_list_editable_view">
             <field name="model">farm.pregnancy_diagnosis.event</field>
-            <field name="type">tree</field>
+            <field name="type" eval="None"/>
             <field name="inherit" ref="farm.farm_abstract_event_list_editable_view"/>
             <field name="name">farm_pregnancy_diagnosis_event_list_editable</field>
         </record>
