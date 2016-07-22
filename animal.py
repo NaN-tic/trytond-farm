@@ -488,6 +488,16 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
             Lot.delete(lots)
         return result
 
+    @classmethod
+    def view_attributes(cls):
+        res = super(Animal, cls).view_attributes()
+        res += [
+            ('/form/notebook/page[@name="extractions"]', 'states', {
+                    'invisible': Not(Equal(Eval('animal_type'), 'male')),
+                    }),
+            ]
+        return res
+
 
 class AnimalTag(ModelSQL):
     'Animal - Tag'
