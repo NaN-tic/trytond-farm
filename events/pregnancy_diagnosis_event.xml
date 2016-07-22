@@ -53,7 +53,9 @@
             <field name="res_model">farm.pregnancy_diagnosis.event</field>
             <field name="search_value"></field>
             <field name="domain"></field>
-            <field name="context">{'animal_type': 'female'}</field>
+            <field name="context"
+                eval="{'animal_type': 'female'}"
+                pyson="1"/>
         </record>
         <record model="ir.action.act_window.view"
             id="act_farm_pregnancy_diagnosis_event_view1">
