@@ -41,7 +41,6 @@
         <!-- Permissions -->
         <record model="ir.model.access" id="access_farm_tag_farm">
             <field name="model" search="[('model', '=', 'farm.tag')]"/>
-            <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
@@ -141,7 +140,6 @@
         <!-- Permissions -->
         <record model="ir.model.access" id="access_farm_animal_farm">
             <field name="model" search="[('model', '=', 'farm.animal')]"/>
-            <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
@@ -230,7 +228,6 @@
         <!-- Permissions -->
         <record model="ir.model.access" id="access_farm_animal_weight_farm">
             <field name="model" search="[('model', '=', 'farm.animal.weight')]"/>
-            <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
@@ -266,7 +263,6 @@
                 id="access_farm_animal_female_cycle_farm">
             <field name="model"
                 search="[('model', '=', 'farm.animal.female_cycle')]"/>
-            <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>

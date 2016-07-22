@@ -75,7 +75,6 @@
                 id="access_farm_pregnancy_diagnosis_event">
             <field name="model"
                 search="[('model', '=', 'farm.pregnancy_diagnosis.event')]"/>
-            <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>

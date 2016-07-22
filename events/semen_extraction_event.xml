@@ -63,7 +63,6 @@
                 id="access_farm_semen_extraction_event_farm">
             <field name="model"
                 search="[('model', '=', 'farm.semen_extraction.event')]"/>
-            <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
@@ -98,7 +97,6 @@
                 id="access_farm_semen_extraction_dose_farm">
             <field name="model"
                 search="[('model', '=', 'farm.semen_extraction.dose')]"/>
-            <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>

@@ -58,7 +58,6 @@
         <record model="ir.model.access" id="access_farm_farrowing_problem_farm">
             <field name="model"
                 search="[('model', '=', 'farm.farrowing.problem')]"/>
-            <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
@@ -143,7 +142,6 @@
         <!-- Permissions -->
         <record model="ir.model.access" id="access_farm_farrowing_event_farm">
             <field name="model" search="[('model', '=', 'farm.farrowing.event')]"/>
-            <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>

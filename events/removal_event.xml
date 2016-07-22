@@ -82,6 +82,13 @@
             <field name="act_window" ref="act_farm_removal_type"/>
         </record>
 
+        <record model="ir.model.access" id="access_farm_removal_type_farm_default">
+            <field name="model" search="[('model', '=', 'farm.removal.type')]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
         <record model="ir.model.access" id="access_farm_removal_type_farm">
             <field name="model" search="[('model', '=', 'farm.removal.type')]"/>
             <field name="group" ref="group_farm"/>
