@@ -421,16 +421,15 @@ class SemenExtractionEvent(AbstractEvent):
                 if not templates:
                     cls.raise_user_error('missing_quality_template_for_semen',
                         specie.semen_product.rec_name)
-                test = QualityTest(
-                    test_date=values.get('timestamp') or datetime.today(),
-                    template=templates[0],
-                    document=semen_prod_ref,
-                    )
+                test = QualityTest()
+                test.test_date = values.get('timestamp') or datetime.today()
+                test.templates = templates
+                test.document = semen_prod_ref
                 test.save()
                 values['test'] = test.id
                 todo_tests.append(test)
         if todo_tests:
-            QualityTest.set_template(todo_tests)
+            QualityTest.apply_templates(todo_tests)
         return super(SemenExtractionEvent, cls).create(vlist)
 
     @classmethod
