@@ -155,7 +155,8 @@ class FarrowingEvent(AbstractEvent, ImportedEventMixin):
             specie=self.specie,
             breed=self.animal.breed,
             initial_location=self.animal.location,
-            initial_quantity=self.live)
+            initial_quantity=self.live,
+            origin='raised')
 
     def _get_event_move(self):
         pool = Pool()
