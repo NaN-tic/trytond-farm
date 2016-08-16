@@ -136,10 +136,8 @@ class MoveEvent(AbstractEvent):
         return ['male', 'female', 'individual', 'group']
 
     def on_change_animal(self):
-        res = super(MoveEvent, self).on_change_animal()
-        res['from_location'] = (self.animal and self.animal.location.id or
-            None)
-        return res
+        super(MoveEvent, self).on_change_animal()
+        self.from_location = self.animal and self.animal.location or None
 
     @fields.depends('animal_type', 'animal_group', 'from_location',
         'timestamp')

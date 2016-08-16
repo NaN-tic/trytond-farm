@@ -79,16 +79,13 @@ class FeedEvent(FeedEventMixin, ModelSQL, ModelView, Workflow):
     @fields.depends('feed_location')
     def on_change_feed_location(self):
         if not self.feed_location or not self.feed_location.current_lot:
-            return {
-                'feed_product': None,
-                'feed_lot': None,
-                'feed_uom': None,
-                }
-        return {
-            'feed_product': self.feed_location.current_lot.product.id,
-            'feed_lot': self.feed_location.current_lot.id,
-            'uom': self.feed_location.current_lot.product.default_uom.id,
-            }
+            self.feed_product = None
+            self.feed_lot = None
+            self.feed_uom = None
+        else:
+            self.feed_product = self.feed_location.current_lot.product
+            self.feed_lot = self.feed_location.current_lot
+            self.uom = self.feed_location.current_lot.product.default_uom
 
     def _validated_hook(self):
         super(FeedEvent, self)._validated_hook()

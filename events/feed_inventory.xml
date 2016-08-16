@@ -64,6 +64,15 @@
             <field name="act_window" ref="act_farm_feed_inventory"/>
         </record>
 
+        <record model="ir.model.access" id="access_farm_feed_inventory_farm_default">
+            <field name="model"
+                search="[('model', '=', 'farm.feed.inventory')]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+
         <record model="ir.model.access" id="access_farm_feed_inventory_farm">
             <field name="model"
                 search="[('model', '=', 'farm.feed.inventory')]"/>
@@ -223,6 +232,16 @@
         </record>
 
         <record model="ir.model.access"
+            id="access_farm_feed_provisional_inventory_farm_default">
+            <field name="model"
+                search="[('model', '=', 'farm.feed.provisional_inventory')]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+
+        <record model="ir.model.access"
             id="access_farm_feed_provisional_inventory_farm">
             <field name="model"
                 search="[('model', '=', 'farm.feed.provisional_inventory')]"/>
@@ -252,7 +271,6 @@
                 id="access_farm_feed_animal_location_date_farm">
             <field name="model"
                 search="[('model', '=', 'farm.feed.animal_location_date')]"/>
-            <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
@@ -263,7 +281,9 @@
                 id="act_farm_feed_animal_location_date_by_animal">
             <field name="name">Feed consumption by Animal</field>
             <field name="res_model">farm.feed.animal_location_date</field>
-            <field name="domain">[('animal', '=', Eval('active_id'))]</field>
+            <field name="domain"
+                eval="[('animal', '=', Eval('active_id'))]"
+                pyson="1"/>
         </record>
         <record model="ir.action.keyword"
                 id="act_farm_feed_animal_location_date_by_animal_keyword">
@@ -277,7 +297,9 @@
                 id="act_farm_feed_animal_location_date_by_group">
             <field name="name">Feed consumption by Group</field>
             <field name="res_model">farm.feed.animal_location_date</field>
-            <field name="domain">[('animal_group', '=', Eval('active_id'))]</field>
+            <field name="domain"
+                eval="[('animal_group', '=', Eval('active_id'))]"
+                pyson="1"/>
         </record>
         <record model="ir.action.keyword"
                 id="act_farm_feed_animal_location_date_by_group_keyword">
@@ -291,7 +313,9 @@
                 id="act_farm_feed_animal_location_date_by_location">
             <field name="name">Feed consumption by Location</field>
             <field name="res_model">farm.feed.animal_location_date</field>
-            <field name="domain">[('location', '=', Eval('active_id'))]</field>
+            <field name="domain"
+                eval="[('location', '=', Eval('active_id'))]"
+                pyson="1"/>
         </record>
         <record model="ir.action.keyword"
                 id="act_farm_feed_animal_location_date_by_location_keyword">

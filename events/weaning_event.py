@@ -292,13 +292,14 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
         category_id = ModelData.get_id('farm', 'cost_category_weaning_cost')
         group = (self.weaned_group if self.weaned_group
             else self.farrowing_group)
-        if (group.lot and group.lot.product.weaning_price and
-                group.lot.product.weaning_price != group.lot.cost_price):
+        if (group.lot and hasattr(group.lot.product.template, 'weaning_price')
+                and group.lot.product.template.weaning_price !=
+                group.lot.cost_price):
             cost_line = LotCostLine()
             cost_line.lot = group.lot
             cost_line.category = category_id
             cost_line.origin = str(self)
-            cost_line.unit_price = (group.lot.product.weaning_price -
+            cost_line.unit_price = (group.lot.product.template.weaning_price -
                 group.lot.cost_price)
             return cost_line
 

@@ -69,9 +69,8 @@
         </record>
 
         <!-- Permissions -->
-        <record model="ir.model.access" id="access_farm_move_event_farm">
+        <record model="ir.model.access" id="access_farm_move_event_farm_default">
             <field name="model" search="[('model', '=', 'farm.move.event')]"/>
-            <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>

@@ -161,7 +161,6 @@
 
         <record model="ir.model.access" id="access_farm_event_order_farm">
             <field name="model" search="[('model', '=', 'farm.event.order')]"/>
-            <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>

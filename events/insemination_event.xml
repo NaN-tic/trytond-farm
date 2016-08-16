@@ -47,7 +47,9 @@
             <field name="res_model">farm.insemination.event</field>
             <field name="search_value"></field>
             <field name="domain"></field>
-            <field name="context">{'animal_type': 'female'}</field>
+            <field name="context"
+                eval="{'animal_type': 'female'}"
+                pyson="1"/>
         </record>
         <record model="ir.action.act_window.view"
             id="act_farm_insemination_event_view1">
@@ -66,7 +68,6 @@
         <record model="ir.model.access" id="access_farm_insemination_event">
             <field name="model"
                 search="[('model', '=', 'farm.insemination.event')]"/>
-            <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>

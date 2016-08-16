@@ -3,7 +3,7 @@
 import logging
 from datetime import datetime
 
-from trytond.model import fields, ModelSQL, ModelView, Unique, Check, Workflow
+from trytond.model import fields, ModelSQL, ModelView, Unique, Check
 from trytond.pyson import Bool, Equal, Eval, Get, Not
 from trytond.pool import Pool
 from trytond.transaction import Transaction
@@ -42,7 +42,7 @@ def _STATES_LINES(event_type):
         }
 
 
-class EventOrder(ModelSQL, ModelView, Workflow):
+class EventOrder(ModelSQL, ModelView):
     'Farm Events Work Order'
     __name__ = 'farm.event.order'
     _order = [('name', 'ASC')]

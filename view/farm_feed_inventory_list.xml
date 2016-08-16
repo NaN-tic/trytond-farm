@@ -1,6 +1,7 @@
 <tree string="Feed Inventory">
 	 <field name="location"/>
-	 <field name="timestamp"/>
+    <field name="timestamp" widget="date" string="Date"/>
+    <field name="timestamp" widget="time" string="Time"/>
 	 <field name="dest_locations"/>
 	 <field name="prev_inventory"/>
 	 <field name="quantity"/>

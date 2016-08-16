@@ -4,7 +4,8 @@
 <tree string="Events">
     <field name="animal"/>
     <field name="animal_group"/>
-    <field name="timestamp"/>
+    <field name="timestamp" widget="date" string="Date"/>
+    <field name="timestamp" widget="time" string="Time"/>
     <field name="employee"/>
     <field name="farm"/>
     <field name="state"/>
