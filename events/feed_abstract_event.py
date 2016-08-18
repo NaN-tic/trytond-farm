@@ -2,7 +2,7 @@
 # copyright notices and license terms.
 from datetime import datetime
 
-from trytond.model import fields, ModelView, Workflow
+from trytond.model import fields, ModelView, Workflow, Check
 from trytond.pyson import Bool, Equal, Eval, Not, Or
 from trytond.pool import Pool
 from trytond.transaction import Transaction
@@ -92,9 +92,10 @@ class FeedEventMixin(AbstractEvent):
         #     cls.animal.depends.append('state')
         # if 'location' not in cls.animal.depends:
         #     cls.animal.depends.append('location')
+        t = cls.__table__()
         cls._sql_constraints += [
             ('check_start_date_timestamp',
-                'CHECK(timestamp >= start_date)',
+                Check(t, t.timestamp >= t.start_date),
                 'The Timestamp must be after the Start Date'),
             ]
         cls._error_messages.update({
