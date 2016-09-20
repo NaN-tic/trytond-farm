@@ -27,14 +27,10 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
     number = fields.Function(fields.Char('Number'),
         'get_number', 'set_number')
     locations = fields.Function(fields.Many2Many('stock.location', None, None,
-            'Current Locations', readonly=True, domain=[
-                ('type', '=', 'warehouse'),
-                ],
-            help='Farms where this group can be found. It is used for access '
-            'management.'),
+            'Current Locations'),
         'get_locations', searcher='search_locations')
     farms = fields.Function(fields.Many2Many('stock.location', None, None,
-            'Current Farms', readonly=True, domain=[
+            'Current Farms', domain=[
                 ('type', '=', 'warehouse'),
                 ],
             help='Farms where this group can be found. It is used for access '
