@@ -642,7 +642,7 @@ class Female:
     # TODO: call when cycle is created, deleted or its ordination_date or
     # sequence are modifyied
     def update_current_cycle(self):
-        current_cycle = self.cycles and self.cycles[-1].id or None
+        current_cycle = self.cycles and self.cycles[-1] or None
         self.current_cycle = current_cycle
         self.current_cycle_state = (current_cycle.state
             if current_cycle else None)
