@@ -679,6 +679,8 @@ class Female:
     # called from cycle)
     def update_state(self):
         self.state = self.get_state()
+        self.current_cycle_state = (self.current_cycle.state
+            if self.current_cycle else None)
         self.save()
         return self.state
 
