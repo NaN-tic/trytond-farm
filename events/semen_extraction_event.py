@@ -2,7 +2,6 @@
 #copyright notices and license terms.
 import math
 from datetime import datetime
-from itertools import groupby
 
 from trytond.model import fields, ModelView, ModelSQL, Workflow
 from trytond.pyson import Bool, Equal, Eval, Greater, Id

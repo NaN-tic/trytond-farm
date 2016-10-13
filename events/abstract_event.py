@@ -3,7 +3,7 @@
 from datetime import datetime
 
 from trytond.model import fields, ModelSQL, ModelView, Workflow
-from trytond.pyson import Equal, Eval, If, Id, Not
+from trytond.pyson import Equal, Eval, Id, Not
 from trytond.transaction import Transaction
 
 __all__ = ['AbstractEvent', 'ImportedEventMixin']
