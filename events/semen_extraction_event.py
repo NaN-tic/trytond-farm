@@ -176,7 +176,7 @@ class SemenExtractionEvent(AbstractEvent):
             or 3)
 
     def get_formula_uom(self, name):
-        return self.test and self.test.unit.id
+        return self.test and self.test.unit and self.test.unit.id
 
     def get_formula_unit_digits(self, name):
         return self.test and self.test.unit_digits or 2
