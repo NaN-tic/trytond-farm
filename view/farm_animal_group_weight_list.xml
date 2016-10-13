@@ -4,7 +4,8 @@
 <tree string="Weights" editable="bottom">
     <field name="group"/>
     <field name="quantity"/>
-    <field name="timestamp"/>
+    <field name="timestamp" widget="date" string="Date"/>
+    <field name="timestamp" widget="time" string="Time"/>
     <field name="weight"/>
     <field name="uom"/>
 </tree>

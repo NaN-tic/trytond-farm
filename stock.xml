@@ -6,7 +6,7 @@
         <!-- stock.lot -->
         <record model="ir.ui.view" id="lot_view_form">
             <field name="model">stock.lot</field>
-            <field name="type">form</field>
+            <field name="type" eval="None"/>
             <field name="inherit" ref="stock_lot.lot_view_form"/>
             <field name="name">stock_lot_form</field>
         </record>
@@ -14,13 +14,13 @@
         <!-- stock.location -->
         <record model="ir.ui.view" id="location_view_form">
             <field name="model">stock.location</field>
-            <field name="type">form</field>
+            <field name="type" eval="None"/>
             <field name="inherit" ref="stock.location_view_form"/>
             <field name="name">stock_location_form</field>
         </record>
         <record model="ir.ui.view" id="location_view_list">
             <field name="model">stock.location</field>
-            <field name="type">tree</field>
+            <field name="type" eval="None"/>
             <field name="inherit" ref="stock.location_view_list"/>
             <field name="name">stock_location_list</field>
         </record>
@@ -28,7 +28,6 @@
         <!-- Permissions -->
         <record model="ir.model.access" id="access_stock_lot_farm">
             <field name="model" search="[('model', '=', 'stock.lot')]"/>
-            <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>

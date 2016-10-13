@@ -2,7 +2,7 @@
 # copyright notices and license terms.
 from datetime import datetime
 
-from trytond.model import fields, ModelView, Workflow
+from trytond.model import fields, ModelView, Workflow, Check
 from trytond.pyson import Bool, Equal, Eval, Not, Or
 from trytond.pool import Pool
 from trytond.transaction import Transaction
@@ -92,9 +92,10 @@ class FeedEventMixin(AbstractEvent):
         #     cls.animal.depends.append('state')
         # if 'location' not in cls.animal.depends:
         #     cls.animal.depends.append('location')
+        t = cls.__table__()
         cls._sql_constraints += [
             ('check_start_date_timestamp',
-                'CHECK(timestamp >= start_date)',
+                Check(t, t.timestamp >= t.start_date),
                 'The Timestamp must be after the Start Date'),
             ]
         cls._error_messages.update({
@@ -132,16 +133,14 @@ class FeedEventMixin(AbstractEvent):
             self.location.rec_name, self.timestamp)
 
     def on_change_animal(self):
-        res = super(FeedEventMixin, self).on_change_animal()
+        super(FeedEventMixin, self).on_change_animal()
         if self.animal and self.animal.location:
-            res['location'] = self.animal.location.id
-        return res
+            self.location = self.animal.location
 
     def on_change_animal_group(self):
-        res = super(FeedEventMixin, self).on_change_animal_group()
+        super(FeedEventMixin, self).on_change_animal_group()
         if self.animal_group and len(self.animal_group.locations) == 1:
-            res['location'] = self.animal_group.locations[0].id
-        return res
+            self.location = self.animal_group.locations[0]
 
     @fields.depends('animal_type', 'animal_group', 'location', 'timestamp')
     def on_change_with_quantity(self):
@@ -157,7 +156,7 @@ class FeedEventMixin(AbstractEvent):
     @fields.depends('feed_product')
     def on_change_with_uom(self, name=None):
         if self.feed_product:
-            return self.feed_product.default_uom.id
+            return self.feed_product.default_uom
 
     @fields.depends('uom')
     def on_change_with_unit_digits(self, name=None):

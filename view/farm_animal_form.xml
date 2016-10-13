@@ -44,8 +44,7 @@
             </group>
             <field name="tags"/>
         </page>
-        <page name="extractions"
-            states="{'invisible': Not(Equal(Eval('animal_type'), 'male'))}">
+        <page name="extractions">
             <label name="last_extraction"/>
             <field name="last_extraction"/>
             <newline/>

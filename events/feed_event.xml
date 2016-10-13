@@ -6,14 +6,14 @@
         <!-- farm.feed.event -->
         <record model="ir.ui.view" id="farm_feed_event_form_view">
             <field name="model">farm.feed.event</field>
-            <field name="type">form</field>
+            <field name="type" eval="None"/>
             <field name="inherit" ref="farm.farm_abstract_event_form_view"/>
             <field name="name">farm_feed_event_form</field>
         </record>
 
         <record model="ir.ui.view" id="farm_feed_event_list_view">
             <field name="model">farm.feed.event</field>
-            <field name="type">tree</field>
+            <field name="type" eval="None"/>
             <field name="inherit" ref="farm.farm_abstract_event_list_view"/>
             <field name="name">farm_feed_event_list</field>
         </record>
@@ -69,6 +69,13 @@
         </record>
 
         <!-- Permissions -->
+        <record model="ir.model.access" id="access_farm_feed_event_farm_default">
+            <field name="model" search="[('model', '=', 'farm.feed.event')]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
         <record model="ir.model.access" id="access_farm_feed_event_farm">
             <field name="model" search="[('model', '=', 'farm.feed.event')]"/>
             <field name="group" ref="group_farm"/>

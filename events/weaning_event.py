@@ -9,7 +9,7 @@ No possibility of creating individuals from here. Maybe in the future we
 - Farrowing creates groups and weaning is for groups (current implementation)
 - Farrowing creates groups and weaning is for individuals
 """
-from trytond.model import fields, ModelView, ModelSQL, Workflow
+from trytond.model import fields, ModelView, ModelSQL, Unique, Workflow
 from trytond.pyson import Equal, Eval, Id, If, Not
 from trytond.pool import Pool
 from trytond.transaction import Transaction
@@ -292,13 +292,14 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
         category_id = ModelData.get_id('farm', 'cost_category_weaning_cost')
         group = (self.weaned_group if self.weaned_group
             else self.farrowing_group)
-        if (group.lot and group.lot.product.weaning_price and
-                group.lot.product.weaning_price != group.lot.cost_price):
+        if (group.lot and hasattr(group.lot.product.template, 'weaning_price')
+                and group.lot.product.template.weaning_price !=
+                group.lot.cost_price):
             cost_line = LotCostLine()
             cost_line.lot = group.lot
             cost_line.category = category_id
             cost_line.origin = str(self)
-            cost_line.unit_price = (group.lot.product.weaning_price -
+            cost_line.unit_price = (group.lot.product.template.weaning_price -
                 group.lot.cost_price)
             return cost_line
 
@@ -361,9 +362,10 @@ class WeaningEventFemaleCycle(ModelSQL):
     @classmethod
     def __setup__(cls):
         super(WeaningEventFemaleCycle, cls).__setup__()
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('event_unique', 'UNIQUE(event)',
+            ('event_unique', Unique(t, t.event),
                 'The Weaning Event must be unique.'),
-            ('cycle_unique', 'UNIQUE(cycle)',
+            ('cycle_unique', Unique(t, t.cycle),
                 'The Female Cycle must be unique.'),
             ]

@@ -165,19 +165,15 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
     def on_change_animal(self):
         if (self.animal_type == 'group' or not self.animal or
                 not self.animal.farm):
-            return {}
-        return {
-            'farm': self.animal.farm.id
-            }
+            return
+        self.farm = self.animal.farm
 
     @fields.depends('animal_type', 'animal_group')
     def on_change_animal_group(self):
         if (self.animal_type != 'group' or not self.animal_group or
                 not self.animal_group.farms):
-            return {}
-        return {
-            'farm': self.animal_group.farms[0].id
-            }
+            return
+        self.farm = self.animal_group.farms[0]
 
     @classmethod
     def copy(cls, events, default=None):

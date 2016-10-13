@@ -463,12 +463,9 @@ class FeedInventoryMixin(object):
     @fields.depends('location')
     def on_change_location(self, name=None):
         if not self.location:
-            return {
-                'dest_locations': None,
-                }
-        return {
-            'dest_locations': [l.id for l in self.location.locations_to_fed],
-            }
+            self.dest_locations = None
+        else:
+            self.dest_locations = self.location.locations_to_fed
 
     @fields.depends('uom')
     def on_change_with_unit_digits(self, name=None):

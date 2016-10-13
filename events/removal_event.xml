@@ -82,6 +82,13 @@
             <field name="act_window" ref="act_farm_removal_type"/>
         </record>
 
+        <record model="ir.model.access" id="access_farm_removal_type_farm_default">
+            <field name="model" search="[('model', '=', 'farm.removal.type')]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
         <record model="ir.model.access" id="access_farm_removal_type_farm">
             <field name="model" search="[('model', '=', 'farm.removal.type')]"/>
             <field name="group" ref="group_farm"/>
@@ -144,14 +151,14 @@
         <!-- farm.removal.event -->
         <record model="ir.ui.view" id="farm_removal_event_form_view">
             <field name="model">farm.removal.event</field>
-            <field name="type">form</field>
+            <field name="type" eval="None"/>
             <field name="inherit" ref="farm.farm_abstract_event_form_view"/>
             <field name="name">farm_removal_event_form</field>
         </record>
 
         <record model="ir.ui.view" id="farm_removal_event_list_view">
             <field name="model">farm.removal.event</field>
-            <field name="type">tree</field>
+            <field name="type" eval="None"/>
             <field name="inherit" ref="farm.farm_abstract_event_list_view"/>
             <field name="name">farm_removal_event_list</field>
         </record>

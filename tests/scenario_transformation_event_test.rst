@@ -11,7 +11,10 @@ Imports::
     >>> import datetime
     >>> from dateutil.relativedelta import relativedelta
     >>> from decimal import Decimal
+    >>> from operator import attrgetter
     >>> from proteus import config, Model, Wizard
+    >>> from trytond.modules.company.tests.tools import create_company, \
+    ...     get_company
     >>> now = datetime.datetime.now()
     >>> today = datetime.date.today()
 
@@ -22,38 +25,17 @@ Create database::
 
 Install farm::
 
-    >>> Module = Model.get('ir.module.module')
-    >>> modules = Module.find([
+    >>> Module = Model.get('ir.module')
+    >>> module, = Module.find([
     ...         ('name', '=', 'farm'),
     ...         ])
-    >>> Module.install([x.id for x in modules], config.context)
-    >>> Wizard('ir.module.module.install_upgrade').execute('upgrade')
+    >>> module.click('install')
+    >>> Wizard('ir.module.install_upgrade').execute('upgrade')
 
 Create company::
 
-    >>> Currency = Model.get('currency.currency')
-    >>> CurrencyRate = Model.get('currency.currency.rate')
-    >>> Company = Model.get('company.company')
-    >>> Party = Model.get('party.party')
-    >>> company_config = Wizard('company.company.config')
-    >>> company_config.execute('company')
-    >>> company = company_config.form
-    >>> party = Party(name='NaN·tic')
-    >>> party.save()
-    >>> company.party = party
-    >>> currencies = Currency.find([('code', '=', 'EUR')])
-    >>> if not currencies:
-    ...     currency = Currency(name='Euro', symbol=u'€', code='EUR',
-    ...         rounding=Decimal('0.01'), mon_grouping='[3, 3, 0]',
-    ...         mon_decimal_point=',')
-    ...     currency.save()
-    ...     CurrencyRate(date=now.date() + relativedelta(month=1, day=1),
-    ...         rate=Decimal('1.0'), currency=currency).save()
-    ... else:
-    ...     currency, = currencies
-    >>> company.currency = currency
-    >>> company_config.execute('add')
-    >>> company, = Company.find()
+    >>> _ = create_company()
+    >>> company = get_company()
 
 Reload the context::
 
@@ -152,21 +134,12 @@ Create sequence::
     ...     padding=4)
     >>> group_sequence.save()
 
-Prepare locations::
+Get locations::
 
     >>> Location = Model.get('stock.location')
     >>> lost_found_location, = Location.find([('type', '=', 'lost_found')])
-    >>> warehouse, = Location.find([('type', '=', 'warehouse')])
-    >>> production_location = Location(
-    ...     name='Production Location',
-    ...     code='PROD',
-    ...     type='production',
-    ...     parent=warehouse)
-    >>> production_location.save()
-    >>> warehouse.production_location=production_location
-    >>> warehouse.save()
-    >>> warehouse.reload()
-    >>> production_location.reload()
+    >>> warehouse, = Location.find([('code', '=', 'WH')])
+    >>> production_location, = Location.find([('code', '=', 'PROD')])
 
 Create specie::
 

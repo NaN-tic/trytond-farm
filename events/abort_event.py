@@ -1,6 +1,6 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
-from trytond.model import fields, ModelView, ModelSQL, Workflow
+from trytond.model import fields, ModelView, ModelSQL, Unique, Workflow
 from trytond.pyson import Equal, Eval, If
 
 from .abstract_event import AbstractEvent, ImportedEventMixin, \
@@ -88,9 +88,10 @@ class AbortEventFemaleCycle(ModelSQL):
     @classmethod
     def __setup__(cls):
         super(AbortEventFemaleCycle, cls).__setup__()
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('event_unique', 'UNIQUE(event)',
+            ('event_unique', Unique(t, t.event),
                 'The Abort Event must be unique.'),
-            ('cycle_unique', 'UNIQUE(cycle)',
+            ('cycle_unique', Unique(t, t.cycle),
                 'The Female Cycle must be unique.'),
             ]

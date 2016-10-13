@@ -4,7 +4,7 @@ import datetime
 from collections import defaultdict
 from decimal import Decimal
 
-from trytond.model import ModelView, ModelSQL, fields, Workflow
+from trytond.model import ModelView, ModelSQL, fields, Unique, Workflow
 from trytond.pyson import Equal, Eval, Not, Or
 from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
@@ -148,9 +148,11 @@ class LotAnimal(ModelSQL):
     @classmethod
     def __setup__(cls):
         super(LotAnimal, cls).__setup__()
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('lot_unique', 'UNIQUE(lot)', 'The Lot must be unique.'),
-            ('animal_unique', 'UNIQUE(animal)', 'The Animal must be unique.'),
+            ('lot_unique', Unique(t, t.lot), 'The Lot must be unique.'),
+            ('animal_unique', Unique(t, t.animal),
+                'The Animal must be unique.'),
             ]
 
 
@@ -166,9 +168,10 @@ class LotAnimalGroup(ModelSQL):
     @classmethod
     def __setup__(cls):
         super(LotAnimalGroup, cls).__setup__()
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('lot_unique', 'UNIQUE(lot)', 'The lot must be unique.'),
-            ('animal_group_unique', 'UNIQUE(animal_group)',
+            ('lot_unique', Unique(t, t.lot), 'The lot must be unique.'),
+            ('animal_group_unique', Unique(t, t.animal_group),
                 'The group must be unique.'),
             ]
 
@@ -193,6 +196,32 @@ class Location:
             }, depends=['silo'],
         help='Indicates the locations the silo feeds. Note that this will '
         'only be a default value.')
+
+    @classmethod
+    def __setup__(cls):
+        super(Location, cls).__setup__()
+        cls.warehouse.searcher = 'search_warehouse'
+
+    @classmethod
+    def search_warehouse(cls, name, clause):
+        warehouse_child_locations = cls.search([
+            ('parent.type', '=', 'warehouse'),
+            ('type', '=', 'storage'),
+            ('parent', clause[1], clause[2]),
+            ])
+        found_warehouse_ids = []
+        storage_location_ids = []
+        for location in warehouse_child_locations:
+            storage_location_ids.append(location.id)
+            found_warehouse_ids.append(location.parent.id)
+
+        warehouse_location_ids = []
+        for location in cls.search([
+                ('parent', 'child_of', storage_location_ids),
+                ]):
+            if location.warehouse.id in found_warehouse_ids:
+                warehouse_location_ids.append(location.id)
+        return [('id', 'in', warehouse_location_ids)]
 
     @staticmethod
     def default_silo():

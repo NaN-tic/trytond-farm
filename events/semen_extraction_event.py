@@ -3,7 +3,7 @@
 import math
 from datetime import datetime
 
-from trytond.model import fields, ModelView, ModelSQL, Workflow
+from trytond.model import fields, ModelView, ModelSQL, Unique, Check, Workflow
 from trytond.pyson import Bool, Equal, Eval, Greater, Id
 from trytond.pool import Pool
 from trytond.transaction import Transaction
@@ -127,12 +127,13 @@ class SemenExtractionEvent(AbstractEvent):
     @classmethod
     def __setup__(cls):
         super(SemenExtractionEvent, cls).__setup__()
+        t = cls.__table__()
         cls.animal.domain += [
             ('type', '=', 'male'),
             ]
         cls._sql_constraints += [
             ('untreated_semen_qty_positive',
-                'CHECK(untreated_semen_qty > 0.0)',
+                Check(t, t.untreated_semen_qty > 0.0),
                 'In Semen Extraction Events, the quantity must be positive '
                 '(greater or equals 1)'),
             ]
@@ -419,16 +420,15 @@ class SemenExtractionEvent(AbstractEvent):
                 if not templates:
                     cls.raise_user_error('missing_quality_template_for_semen',
                         specie.semen_product.rec_name)
-                test = QualityTest(
-                    test_date=values.get('timestamp') or datetime.today(),
-                    template=templates[0],
-                    document=semen_prod_ref,
-                    )
+                test = QualityTest()
+                test.test_date = values.get('timestamp') or datetime.today()
+                test.templates = templates
+                test.document = semen_prod_ref
                 test.save()
                 values['test'] = test.id
                 todo_tests.append(test)
         if todo_tests:
-            QualityTest.set_template(todo_tests)
+            QualityTest.apply_templates(todo_tests)
         return super(SemenExtractionEvent, cls).create(vlist)
 
     @classmethod
@@ -479,10 +479,11 @@ class SemenExtractionEventQualityTest(ModelSQL):
     @classmethod
     def __setup__(cls):
         super(SemenExtractionEventQualityTest, cls).__setup__()
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('event_unique', 'UNIQUE(event)',
+            ('event_unique', Unique(t, t.event),
                 'The Semen Extraction Event must be unique.'),
-            ('test_unique', 'UNIQUE(test)',
+            ('test_unique', Unique(t, t.test),
                 'The Quality Test must be unique.'),
             ]
 
@@ -534,18 +535,19 @@ class SemenExtractionDose(ModelSQL, ModelView):
     @classmethod
     def __setup__(cls):
         super(SemenExtractionDose, cls).__setup__()
+        t = cls.__table__()
         cls._error_messages.update({
                 'invalid_state_to_delete': ('The semen extraction dose "%s" '
                     'can\'t be deleted because is not in "Draft" state.'),
                 })
         cls._sql_constraints += [
-            ('event_sequence_uniq', 'unique (event, sequence)',
+            ('event_sequence_uniq', Unique(t, t.event, t.sequence),
                 'In Semen Extraction Doses, the Line Num. must be unique in a '
                 'event.'),
-            ('event_bom_uniq', 'unique (event, bom)',
+            ('event_bom_uniq', Unique(t, t.event, t.bom),
                 'In Semen Extraction Doses, the Container must be unique in a '
                 'event.'),
-            ('quantity_positive', 'check (quantity > 0)',
+            ('quantity_positive', Check(t, t.quantity > 0),
                 'In Semen Extraction Doses, the Quantity must be positive '
                 '(greater than 0).'),
             ]
