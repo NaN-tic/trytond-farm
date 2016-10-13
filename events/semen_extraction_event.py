@@ -198,7 +198,7 @@ class SemenExtractionEvent(AbstractEvent):
                 extraction_event.untreated_semen_uom,
                 extraction_event.untreated_semen_qty,
                 extraction_event.formula_uom)
-            semen_calculated_qty = (extraction_event.formula_result *
+            semen_calculated_qty = ((extraction_event.formula_result or 0.0) *
                     untreated_semen_qty)
             res['semen_calculated_qty'][extraction_event.id] = (
                 semen_calculated_qty)
