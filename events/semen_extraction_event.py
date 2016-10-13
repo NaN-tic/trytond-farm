@@ -175,7 +175,7 @@ class SemenExtractionEvent(AbstractEvent):
             or 3)
 
     def get_formula_uom(self, name):
-        return self.test and self.test.unit.id
+        return self.test and self.test.unit and self.test.unit.id
 
     def get_formula_unit_digits(self, name):
         return self.test and self.test.unit_digits or 2
@@ -421,14 +421,14 @@ class SemenExtractionEvent(AbstractEvent):
                         specie.semen_product.rec_name)
                 test = QualityTest(
                     test_date=values.get('timestamp') or datetime.today(),
-                    template=templates[0],
+                    templates=[templates[0]],
                     document=semen_prod_ref,
                     )
                 test.save()
                 values['test'] = test.id
                 todo_tests.append(test)
         if todo_tests:
-            QualityTest.set_template(todo_tests)
+            QualityTest.apply_templates(todo_tests)
         return super(SemenExtractionEvent, cls).create(vlist)
 
     @classmethod
