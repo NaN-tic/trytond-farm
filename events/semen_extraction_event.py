@@ -162,6 +162,11 @@ class SemenExtractionEvent(AbstractEvent):
         return 'male'
 
     @staticmethod
+    def default_untreated_semen_uom():
+        ModelData = Pool().get('ir.model.data')
+        return ModelData.get_id('product', 'uom_cubic_centimeter')
+
+    @staticmethod
     def valid_animal_types():
         return ['male']
 
