@@ -42,6 +42,12 @@ class MoveEvent(AbstractEvent):
                 ),
             }, depends=['from_location', 'state'],
         context={'restrict_by_specie_animal_type': True})
+    to_location_warehouse = fields.Function(fields.Many2One('stock.location',
+        'Destination warehouse',
+            states={
+                'invisible': True,
+            }),
+        'on_change_with_to_location_warehouse')
     quantity = fields.Integer('Quantity', required=True,
         states={
             'invisible': Not(Equal(Eval('animal_type'), 'group')),
@@ -51,7 +57,8 @@ class MoveEvent(AbstractEvent):
     unit_price = fields.Numeric('Unit Price', required=True, digits=(16, 4),
         states={
             'readonly': Not(Equal(Eval('state'), 'draft')),
-            }, depends=['state'],
+            'invisible': Equal(Eval('to_location_warehouse'), Eval('farm')),
+            }, depends=['state', 'to_location'],
         help='Unitary cost of Animal or Group for analytical accounting.')
     uom = fields.Many2One('product.uom', "UOM",
         domain=[('category', '=', Id('product', 'uom_cat_weight'))],
@@ -134,6 +141,7 @@ class MoveEvent(AbstractEvent):
         return ['male', 'female', 'individual', 'group']
 
     def on_change_animal(self):
+        print "asdfasdf"
         res = super(MoveEvent, self).on_change_animal()
         res['from_location'] = (self.animal and self.animal.location.id or
             None)
@@ -151,7 +159,8 @@ class MoveEvent(AbstractEvent):
                 stock_date_end=self.timestamp.date()):
             return self.animal_group.lot.quantity or None
 
-    @fields.depends('animal_type', 'animal', 'animal_group')
+    @fields.depends('animal_type', 'animal', 'animal_group',
+        'to_location', 'farm')
     def on_change_with_unit_price(self):
         if self.animal_type != 'group' and self.animal:
             return self.animal.lot.product.cost_price
@@ -163,6 +172,11 @@ class MoveEvent(AbstractEvent):
         if self.uom:
             return self.uom.digits
         return 2
+
+    @fields.depends('to_location')
+    def on_change_with_to_location_warehouse(self, name=None):
+        if self.to_location:
+            return self.to_location.warehouse.id
 
     @classmethod
     @ModelView.button

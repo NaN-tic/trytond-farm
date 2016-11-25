@@ -15,6 +15,7 @@
             <field name="unit_price"/>
             <label name="move"/>
             <field name="move"/>
+            <field name="to_location_warehouse" tree_invisible="True"/>
         </group>
         <group id="weight_fields_group" colspan="4" col="4">
             <separator id="weight_fields" string="Weight Record" colspan="4"/>
