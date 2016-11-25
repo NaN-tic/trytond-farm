@@ -159,8 +159,7 @@ class MoveEvent(AbstractEvent):
                 stock_date_end=self.timestamp.date()):
             return self.animal_group.lot.quantity or None
 
-    @fields.depends('animal_type', 'animal', 'animal_group',
-        'to_location', 'farm')
+    @fields.depends('animal_type', 'animal', 'animal_group')
     def on_change_with_unit_price(self):
         if self.animal_type != 'group' and self.animal:
             return self.animal.lot.product.cost_price
