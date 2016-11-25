@@ -126,6 +126,25 @@ class RemovalEvent(AbstractEvent):
             None)
         return res
 
+    @fields.depends('animal_group', 'from_location')
+    def on_change_animal_group(self):
+        location_id = None
+        if self.animal_group is None:
+            return {
+                'from_location': location_id,
+            }
+        AnimalGroup = Pool().get('farm.animal.group')
+        locations = AnimalGroup.get_locations([self.animal_group], None)
+
+        if not locations:
+            location_id = self.animal_group.initial_location.id
+        elif len(locations) == 1:
+            location_id, = locations[self.animal_group.id]
+
+        return {
+            'from_location': location_id,
+        }
+
     @fields.depends('animal_type', 'animal_group', 'from_location',
         'timestamp')
     def on_change_with_quantity(self):
