@@ -126,7 +126,7 @@ class RemovalEvent(AbstractEvent):
             None)
         return res
 
-    @fields.depends('animal_group', 'from_location')
+    @fields.depends('animal_group', 'from_location', 'farm')
     def on_change_animal_group(self):
         location_id = None
         if self.animal_group is None:
@@ -134,13 +134,15 @@ class RemovalEvent(AbstractEvent):
                 'from_location': location_id,
             }
         AnimalGroup = Pool().get('farm.animal.group')
+        Location = Pool().get('stock.location')
         locations = AnimalGroup.get_locations([self.animal_group], None)
 
-        if not locations:
-            location_id = self.animal_group.initial_location.id
-        elif len(locations) == 1:
+        if len(locations) == 1:
             location_id, = locations[self.animal_group.id]
-
+            location, = Location.search([('id', '=', location_id)])
+            if self.farm is not None and \
+                    location.warehouse != self.farm:
+                location_id = None
         return {
             'from_location': location_id,
         }
