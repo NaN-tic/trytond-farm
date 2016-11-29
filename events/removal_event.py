@@ -139,7 +139,7 @@ class RemovalEvent(AbstractEvent):
 
         if len(locations) == 1:
             location_id, = locations[self.animal_group.id]
-            location, = Location.search([('id', '=', location_id)])
+            location = Location(location_id)
             if self.farm is not None and \
                     location.warehouse != self.farm:
                 location_id = None
