@@ -141,7 +141,6 @@ class MoveEvent(AbstractEvent):
         return ['male', 'female', 'individual', 'group']
 
     def on_change_animal(self):
-        print "asdfasdf"
         res = super(MoveEvent, self).on_change_animal()
         res['from_location'] = (self.animal and self.animal.location.id or
             None)
