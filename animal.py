@@ -274,17 +274,19 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
         return True
 
     def get_rec_name(self, name):
-        name = self.lot.number
-        if not self.active:
-            name += ' (*)'
-        return name
+        if self.lot:
+            name = self.lot.number
+            if not self.active:
+                name += ' (*)'
+            return name
 
     @classmethod
     def search_rec_name(cls, name, clause):
         return [('lot.number',) + tuple(clause[1:])]
 
     def get_number(self, name):
-        return self.lot.number
+        if self.lot:
+            return self.lot.number
 
     @classmethod
     def set_number(cls, animals, name, value):
