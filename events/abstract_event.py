@@ -111,9 +111,9 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
                 # 'cancel': {
                 #     'invisible': Eval('state') == 'cancel',
                 #     },
-                # 'draft': {
-                #     'invisible': Eval('state') == 'draft',
-                #     },
+                'draft': {
+                    'invisible': Eval('state') == 'draft',
+                    },
                 'validate_event': {
                     'invisible': Eval('state') != 'draft',
                     },
@@ -121,6 +121,7 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
         cls._transitions = set((
                 # ('draft', 'cancel'),
                 ('draft', 'validated'),
+                ('validated', 'draft')
                 # ('validated', 'cancel'),
                 # ('cancel', 'draft'),
                 ))
