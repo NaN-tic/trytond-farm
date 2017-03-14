@@ -1,4 +1,4 @@
-# 
+#
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
@@ -3701,10 +3701,6 @@ msgctxt "help:farm.animal.group,initial_quantity:"
 msgid ""
 "The number of animals in group when it was reached or purchased.\n"
 "It is used as historical information and to create the initial move."
-msgstr ""
-
-msgctxt "help:farm.animal.group,locations:"
-msgid "Farms where this group can be found. It is used for access management."
 msgstr ""
 
 msgctxt "help:farm.animal.group,origin:"

@@ -34,6 +34,11 @@ class Lot:
             'invisible': Not(Equal(Eval('animal_type'), 'group')),
             }, depends=['animal_type'])
 
+    @classmethod
+    def __setup__(cls):
+        cls._sql_constraints.append(('unique_number',
+            'UNIQUE(number, animal_type)', 'The number must be unique by sex'))
+
     #TODO aquestes restriccions les deixem aqui o les passem a 'animal'
     # (i group?). Afegir-ho a la tasca
     # Add constraint that ensures that if the stock lot is of
