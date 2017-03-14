@@ -90,11 +90,16 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
             'invisible': Not(Eval('groups', []).contains(
                 Id('farm', 'group_farm_admin'))),
             })
+
     # TODO: Extra 'weight': fields.float('Weight'),
 
     @classmethod
     def __setup__(cls):
         super(WeaningEvent, cls).__setup__()
+        cls._error_messages.update({
+            'incorrect_quantity': 'The entered quantity is incorrect, '
+            'the maximum allowed quantity is: %s'
+            })
         cls.animal.domain += [
             ('farm', '=', Eval('farm')),
             ('location.type', '=', 'storage'),
@@ -186,6 +191,9 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
 
             current_cycle = weaning_event.animal.current_cycle
             weaning_event.female_cycle = current_cycle
+            if weaning_event.quantity > current_cycle.weaned:
+                cls.raise_user_error('incorrect_quantity',
+                    current_cycle.weaned)
 
             if (weaning_event.female_to_location and
                     weaning_event.female_to_location !=

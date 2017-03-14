@@ -699,6 +699,11 @@ msgid "The Weaning Event must be unique."
 msgstr "El evento de destete debe ser único."
 
 msgctxt "error:farm.weaning.event:"
+msgid "The entered quantity is incorrect, the maximum allowed quantity is: %s"
+msgstr ""
+"La cantidad entrada es incorrecta, la cantidad máxima permitida es: %s"
+
+msgctxt "error:farm.weaning.event:"
 msgid "The event '%s' can't be deleted because is not in 'Draft' state."
 msgstr ""
 "El evento '%s' no puede ser eliminado porqué no está en estado 'Borrador'."
