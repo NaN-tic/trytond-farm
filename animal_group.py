@@ -85,7 +85,8 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
             digits=(16, Eval('feed_unit_digits', 2)),
             depends=['feed_unit_digits']),
         'get_consumed_feed')
-
+    current_location = fields.Function(fields.Many2One('stock.location',
+        'Current Location'), 'get_current_location')
 #    # TODO: Extra
 #    'type': fields.selection([('static','Static'),('dynamic','Dynamic')],
 #        help='Static = all-in, all-out. Dynamic = continuous flow')
@@ -149,6 +150,9 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
         if not self.active:
             name += ' (*)'
         return name
+
+    def get_current_location(self, name):
+        return self.locations[0].id
 
     @classmethod
     def search_rec_name(cls, name, clause):

@@ -1165,6 +1165,11 @@ msgctxt "field:farm.animal.group,create_uid:"
 msgid "Create User"
 msgstr "Usuario creación"
 
+#, fuzzy
+msgctxt "field:farm.animal.group,current_location:"
+msgid "Current Location"
+msgstr "Ubicación actual"
+
 msgctxt "field:farm.animal.group,current_weight:"
 msgid "Current Weight"
 msgstr "Peso actual"

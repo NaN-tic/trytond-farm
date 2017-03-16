@@ -8,5 +8,6 @@
     <field name="removal_date"/>
     <field name="locations" tree_invisible="1"/>
     <field name="quantity"/>
+    <field name="current_location"/>
     <field name="tags" tree_invisible="1"/>
 </tree>
