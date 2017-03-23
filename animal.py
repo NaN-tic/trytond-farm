@@ -1342,30 +1342,31 @@ class CreateFemale(Wizard):
         female.update_current_cycle()
         if self.start.last_cycle_active:
             cycle = female.current_cycle
-            if cycle.farrowing_event:
-                Farrowing.write([cycle.farrowing_event], {
-                    'state': 'draft',
-                    })
-                Farrowing.validate_event([cycle.farrowing_event])
-                Farrowing.write([cycle.farrowing_event], {
-                    'imported': False,
-                    })
-            if cycle.foster_events:
-                Foster.write(cycle.foster_events, {
-                    'state': 'draft',
-                    })
-                Foster.validate_event(cycle.foster_events)
-                Foster.write(cycle.foster_events, {
-                    'imported': False,
-                    })
-            if cycle.weaning_event:
-                Weaning.write([cycle.weaning_event], {
-                    'state': 'draft',
-                    })
-                Weaning.validate_event([cycle.weaning_event])
-                Weaning.write([cycle.weaning_event], {
-                    'imported': False,
-                    })
+            if cycle:
+                if cycle.farrowing_event:
+                    Farrowing.write([cycle.farrowing_event], {
+                        'state': 'draft',
+                        })
+                    Farrowing.validate_event([cycle.farrowing_event])
+                    Farrowing.write([cycle.farrowing_event], {
+                        'imported': False,
+                        })
+                if cycle.foster_events:
+                    Foster.write(cycle.foster_events, {
+                        'state': 'draft',
+                        })
+                    Foster.validate_event(cycle.foster_events)
+                    Foster.write(cycle.foster_events, {
+                        'imported': False,
+                        })
+                if cycle.weaning_event:
+                    Weaning.write([cycle.weaning_event], {
+                        'state': 'draft',
+                        })
+                    Weaning.validate_event([cycle.weaning_event])
+                    Weaning.write([cycle.weaning_event], {
+                        'imported': False,
+                        })
 
         action['views'].reverse()
         return action, {'res_id': [female.id]}
