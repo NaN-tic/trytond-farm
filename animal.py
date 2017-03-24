@@ -482,8 +482,8 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
         Lot = pool.get('stock.lot')
 
         lots = [a.lot for a in animals if a.lot is not None]
-        # if lots:
-        #    Lot.write(lots, {'animal': None})
+        if lots:
+            Lot.write(lots, {'animal': None})
         result = super(Animal, cls).delete(animals)
         if lots:
             Lot.delete(lots)
