@@ -37,7 +37,7 @@ class Lot:
     @classmethod
     def __setup__(cls):
         cls._sql_constraints.append(('unique_number',
-            'UNIQUE(number, animal_type)', 'The number must be unique by sex'))
+            'UNIQUE(number, product)', 'The number must be unique by animal'))
 
     #TODO aquestes restriccions les deixem aqui o les passem a 'animal'
     # (i group?). Afegir-ho a la tasca

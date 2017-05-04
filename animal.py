@@ -207,6 +207,7 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
             ('unknown', 'Unknown'),
             ], 'Purpose', states=_STATES_INDIVIDUAL_FIELD,
         depends=_DEPENDS_INDIVIDUAL_FIELD)
+    active = fields.Boolean('Active')
 
     # We can't use the 'required' attribute in field because it's
     # checked on view before execute 'create()' function where this
@@ -905,6 +906,14 @@ class FemaleCycle(ModelSQL, ModelView):
             help='Number of days between Farrowing and Weaning.'),
         'get_lactating_days')
 
+    @classmethod
+    def __setup__(cls):
+        super(FemaleCycle, cls).__setup__()
+        cls._error_messages.update({
+                'invalid_date': ("The date of the cycle is before the one "
+                    "of the precious cycle")
+                })
+
     @staticmethod
     def default_sequence(animal_id=None):
         '''
@@ -937,6 +946,18 @@ class FemaleCycle(ModelSQL, ModelView):
     @staticmethod
     def default_state():
         return 'unmated'
+
+    @fields.depends('ordination_date')
+    def on_change_ordination_date(self):
+        if not self.ordination_date:
+            return {}
+
+        past_date = self.animals.current_cycle.ordination_date.date()
+        current_date = self.ordination_date.date()
+
+        if past_date > current_date:
+            self.raise_user_error('invalid_date')
+        return {}
 
     def get_rec_name(self, name):
         state_labels = dict(self.fields_get(['state'])['state']['selection'])
