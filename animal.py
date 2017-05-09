@@ -144,7 +144,7 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
             ('animal_type', '=', Eval('type')),
         ], depends=['type'])
     number = fields.Function(fields.Char('Number'),
-        'get_number', 'set_number')
+        'get_number', 'set_number', searcher='search_number')
     # location is updated in do() of stock.move
     location = fields.Many2One('stock.location', 'Current Location',
         readonly=True, domain=[
@@ -283,6 +283,10 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
 
     @classmethod
     def search_rec_name(cls, name, clause):
+        return [('lot.number',) + tuple(clause[1:])]
+
+    @classmethod
+    def search_number(cls, name, clause):
         return [('lot.number',) + tuple(clause[1:])]
 
     def get_number(self, name):
@@ -629,6 +633,14 @@ class Female:
             'Farrowing Group'),
         'get_farrowing_group')
 
+    @classmethod
+    def __setup__(cls):
+        super(Female, cls).__setup__()
+        cls._error_messages.update({
+            'duplicate_animal': ('A female animal with the same number (%s) '
+                'already exisit in this farm')
+            })
+
     @staticmethod
     def default_state():
         '''
@@ -824,10 +836,40 @@ class Female:
 
     @classmethod
     def create(cls, vlist):
+        Animal = Pool().get('farm.animal')
         for vals in vlist:
             if vals.get('type', '') == 'female' and not vals.get('state'):
                 vals['state'] = 'prospective'
+            number = vals.get('number')
+            initial_location = vals.get('initial_location')
+
+            duplicate = Animal.search([('number', '=', number),
+                ('location', '=', initial_location),
+                ('active', '=', True)], limit=1)
+
+            if duplicate:
+                cls.raise_user_error('duplicate_animal', number)
         return super(Female, cls).create(vlist)
+
+    @classmethod
+    def write(cls, *args):
+        actions = iter(args)
+
+        for females, values in zip(actions, actions):
+            number = values.get('number')
+            if not number:
+                continue
+
+            for female in females:
+                location = female.location
+
+                duplicate = Animal.search([('number', '=', number),
+                    ('location', '=', location),
+                    ('active', '=', True)], limit=1)
+                if duplicate:
+                    cls.raise_user_error('duplicate_animal', number)
+
+        super(Female, cls).write(*args)
 
     @classmethod
     def copy(cls, females, default=None):

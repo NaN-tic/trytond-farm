@@ -560,22 +560,6 @@ msgid ""
 "validated semen extraction event."
 msgstr ""
 
-msgctxt "error:stock.lot-farm.animal.group:"
-msgid "The group must be unique."
-msgstr ""
-
-msgctxt "error:stock.lot-farm.animal.group:"
-msgid "The lot must be unique."
-msgstr ""
-
-msgctxt "error:stock.lot-farm.animal:"
-msgid "The Animal must be unique."
-msgstr ""
-
-msgctxt "error:stock.lot-farm.animal:"
-msgid "The Lot must be unique."
-msgstr ""
-
 msgctxt "field:farm.abort.event,animal:"
 msgid "Animal"
 msgstr "Animal"

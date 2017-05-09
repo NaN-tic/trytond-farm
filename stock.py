@@ -34,11 +34,6 @@ class Lot:
             'invisible': Not(Equal(Eval('animal_type'), 'group')),
             }, depends=['animal_type'])
 
-    @classmethod
-    def __setup__(cls):
-        cls._sql_constraints.append(('unique_number',
-            'UNIQUE(number, product)', 'The number must be unique by animal'))
-
     #TODO aquestes restriccions les deixem aqui o les passem a 'animal'
     # (i group?). Afegir-ho a la tasca
     # Add constraint that ensures that if the stock lot is of
@@ -150,14 +145,6 @@ class LotAnimal(ModelSQL):
     animal = fields.Many2One('farm.animal', 'Animal', required=True,
         ondelete='RESTRICT', select=True)
 
-    @classmethod
-    def __setup__(cls):
-        super(LotAnimal, cls).__setup__()
-        cls._sql_constraints += [
-            ('lot_unique', 'UNIQUE(lot)', 'The Lot must be unique.'),
-            ('animal_unique', 'UNIQUE(animal)', 'The Animal must be unique.'),
-            ]
-
 
 class LotAnimalGroup(ModelSQL):
     "Lot - Animal Group"
@@ -167,15 +154,6 @@ class LotAnimalGroup(ModelSQL):
         ondelete='RESTRICT', select=True)
     animal_group = fields.Many2One('farm.animal.group', 'Animal Group',
         required=True, ondelete='RESTRICT', select=True)
-
-    @classmethod
-    def __setup__(cls):
-        super(LotAnimalGroup, cls).__setup__()
-        cls._sql_constraints += [
-            ('lot_unique', 'UNIQUE(lot)', 'The lot must be unique.'),
-            ('animal_group_unique', 'UNIQUE(animal_group)',
-                'The group must be unique.'),
-            ]
 
 
 class Location:
