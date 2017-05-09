@@ -156,6 +156,7 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
     def get_lot(self, name):
         if self.animal_type == 'group':
             return self.animal_group.lot.id
+        return self.animal.lot.id
 
     @staticmethod
     def valid_animal_types():
