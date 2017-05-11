@@ -20,8 +20,8 @@ msgid "The date of the cycle is before the one of the precious cycle"
 msgstr "La fecha del ciclo es anterior a la del ciclo anterior"
 
 msgctxt "error:farm.animal:"
-msgid "A female animal with the same number (\"%s\") already exisit in this farm"
-msgstr "Una hembra con el mismo numero (\"%s\") ya existe en esta granja"
+msgid "A female animal with the same number \"%s\" already exisit in this farm"
+msgstr "Una hembra con el mismo numero \"%s\" ya existe en esta granja"
 
 msgctxt "error:farm.animal.group:"
 msgid ""

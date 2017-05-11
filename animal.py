@@ -836,15 +836,18 @@ class Female:
 
     @classmethod
     def create(cls, vlist):
-        Animal = Pool().get('farm.animal')
+        pool = Pool()
+        Animal = pool.get('farm.animal')
+        Location = pool.get('stock.location')
         for vals in vlist:
             if vals.get('type', '') == 'female' and not vals.get('state'):
                 vals['state'] = 'prospective'
             number = vals.get('number')
             initial_location = vals.get('initial_location')
+            location = Location(initial_location)
 
             duplicate = Animal.search([('number', '=', number),
-                ('location', '=', initial_location),
+                ('farm', '=', location.warehouse.id),
                 ('active', '=', True)], limit=1)
 
             if duplicate:
@@ -861,11 +864,12 @@ class Female:
                 continue
 
             for female in females:
-                location = female.location
+                farm = female.farm
 
                 duplicate = Animal.search([('number', '=', number),
-                    ('location', '=', location),
-                    ('active', '=', True)], limit=1)
+                    ('farm', '=', farm),
+                    ('active', '=', True),
+                    ('id', '!=', female.id)], limit=1)
                 if duplicate:
                     cls.raise_user_error('duplicate_animal', number)
 
