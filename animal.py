@@ -144,7 +144,7 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
             ('animal_type', '=', Eval('type')),
         ], depends=['type'])
     number = fields.Function(fields.Char('Number'),
-        'get_number', 'set_number')
+        'get_number', 'set_number', searcher='search_number')
     # location is updated in do() of stock.move
     location = fields.Many2One('stock.location', 'Current Location',
         readonly=True, domain=[
@@ -207,6 +207,7 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
             ('unknown', 'Unknown'),
             ], 'Purpose', states=_STATES_INDIVIDUAL_FIELD,
         depends=_DEPENDS_INDIVIDUAL_FIELD)
+    active = fields.Boolean('Active')
 
     # We can't use the 'required' attribute in field because it's
     # checked on view before execute 'create()' function where this
@@ -282,6 +283,10 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
 
     @classmethod
     def search_rec_name(cls, name, clause):
+        return [('lot.number',) + tuple(clause[1:])]
+
+    @classmethod
+    def search_number(cls, name, clause):
         return [('lot.number',) + tuple(clause[1:])]
 
     def get_number(self, name):
@@ -628,6 +633,14 @@ class Female:
             'Farrowing Group'),
         'get_farrowing_group')
 
+    @classmethod
+    def __setup__(cls):
+        super(Female, cls).__setup__()
+        cls._error_messages.update({
+            'duplicate_animal': ('A female animal with the same number (%s) '
+                'already exisit in this farm')
+            })
+
     @staticmethod
     def default_state():
         '''
@@ -823,10 +836,44 @@ class Female:
 
     @classmethod
     def create(cls, vlist):
+        pool = Pool()
+        Animal = pool.get('farm.animal')
+        Location = pool.get('stock.location')
         for vals in vlist:
             if vals.get('type', '') == 'female' and not vals.get('state'):
                 vals['state'] = 'prospective'
+            number = vals.get('number')
+            initial_location = vals.get('initial_location')
+            location = Location(initial_location)
+
+            duplicate = Animal.search([('number', '=', number),
+                ('farm', '=', location.warehouse.id),
+                ('active', '=', True)], limit=1)
+
+            if duplicate:
+                cls.raise_user_error('duplicate_animal', number)
         return super(Female, cls).create(vlist)
+
+    @classmethod
+    def write(cls, *args):
+        actions = iter(args)
+
+        for females, values in zip(actions, actions):
+            number = values.get('number')
+            if not number:
+                continue
+
+            for female in females:
+                farm = female.farm
+
+                duplicate = Animal.search([('number', '=', number),
+                    ('farm', '=', farm),
+                    ('active', '=', True),
+                    ('id', '!=', female.id)], limit=1)
+                if duplicate:
+                    cls.raise_user_error('duplicate_animal', number)
+
+        super(Female, cls).write(*args)
 
     @classmethod
     def copy(cls, females, default=None):
@@ -905,6 +952,14 @@ class FemaleCycle(ModelSQL, ModelView):
             help='Number of days between Farrowing and Weaning.'),
         'get_lactating_days')
 
+    @classmethod
+    def __setup__(cls):
+        super(FemaleCycle, cls).__setup__()
+        cls._error_messages.update({
+                'invalid_date': ("The date of the cycle is before the one "
+                    "of the precious cycle")
+                })
+
     @staticmethod
     def default_sequence(animal_id=None):
         '''
@@ -937,6 +992,18 @@ class FemaleCycle(ModelSQL, ModelView):
     @staticmethod
     def default_state():
         return 'unmated'
+
+    @fields.depends('ordination_date')
+    def on_change_ordination_date(self):
+        if not self.ordination_date:
+            return {}
+
+        past_date = self.animals.current_cycle.ordination_date.date()
+        current_date = self.ordination_date.date()
+
+        if past_date > current_date:
+            self.raise_user_error('invalid_date')
+        return {}
 
     def get_rec_name(self, name):
         state_labels = dict(self.fields_get(['state'])['state']['selection'])

@@ -15,6 +15,14 @@ msgid "The event '%s' can't be deleted because is not in 'Draft' state."
 msgstr ""
 "El evento '%s' no puede ser eliminado porqué no está en estado 'Borrador'."
 
+msgctxt "error:farm.animal.female_cycle:"
+msgid "The date of the cycle is before the one of the precious cycle"
+msgstr "La fecha del ciclo es anterior a la del ciclo anterior"
+
+msgctxt "error:farm.animal:"
+msgid "A female animal with the same number \"%s\" already exisit in this farm"
+msgstr "Una hembra con el mismo numero \"%s\" ya existe en esta granja"
+
 msgctxt "error:farm.animal.group:"
 msgid ""
 "Supplier Location of company's party \"%s\" is empty but it is required to "
@@ -723,26 +731,6 @@ msgid ""
 msgstr ""
 "El test de calidad \"%s\" no puede establecerse a Borrador porque está "
 "relacionado con una extracción de semen validada."
-
-msgctxt "error:stock.lot-farm.animal.group:"
-msgid "The group must be unique."
-msgstr "El grupo debe ser único."
-
-msgctxt "error:stock.lot-farm.animal.group:"
-msgid "The lot must be unique."
-msgstr "El lote debe ser único"
-
-msgctxt "error:stock.lot-farm.animal:"
-msgid "The Animal must be unique."
-msgstr "El animal debe ser único."
-
-msgctxt "error:stock.lot-farm.animal:"
-msgid "The Lot must be unique."
-msgstr "El lote debe ser único."
-
-msgctxt "error:stock.lot:"
-msgid "The number must be unique by sex"
-msgstr "El numero debe ser único por sexo"
 
 msgctxt "field:farm.abort.event,animal:"
 msgid "Animal"
@@ -5364,7 +5352,6 @@ msgctxt "selection:farm.weaning.event,state:"
 msgid "Validated"
 msgstr "Validado"
 
-#, fuzzy
 msgctxt "selection:stock.lot,animal_type:"
 msgid ""
 msgstr ""

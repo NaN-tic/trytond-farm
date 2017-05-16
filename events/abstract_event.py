@@ -1,6 +1,6 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
-from datetime import datetime
+from datetime import datetime, date
 
 from trytond.model import fields, ModelSQL, ModelView, Workflow
 from trytond.pyson import Equal, Eval, Id, Not
@@ -106,14 +106,15 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
         cls._error_messages.update({
                 'invalid_state_to_delete': ("The event '%s' can't be deleted "
                     "because is not in 'Draft' state."),
+                'invalid_date': ("The date of the event is set in the future")
                 })
         cls._buttons.update({
                 # 'cancel': {
                 #     'invisible': Eval('state') == 'cancel',
                 #     },
-                'draft': {
-                    'invisible': Eval('state') == 'draft',
-                    },
+                # 'draft': {
+                #    'invisible': Eval('state') == 'draft',
+                #    },
                 'validate_event': {
                     'invisible': Eval('state') != 'draft',
                     },
@@ -155,6 +156,7 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
     def get_lot(self, name):
         if self.animal_type == 'group':
             return self.animal_group.lot.id
+        return self.animal.lot.id
 
     @staticmethod
     def valid_animal_types():
@@ -169,6 +171,18 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
         return {
             'farm': self.animal.farm.id
             }
+
+    @fields.depends('timestamp')
+    def on_change_timestamp(self):
+        if not self.timestamp:
+            return {}
+
+        today = date.today()
+        set_date = self.timestamp.date()
+
+        if set_date > today:
+            self.raise_user_error('invalid_date')
+        return {}
 
     @fields.depends('animal_type', 'animal_group')
     def on_change_animal_group(self):
