@@ -54,6 +54,7 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
         states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT,
         domain=[
             ('type', '=', 'warehouse'),
+            ('id', 'in', Eval('context', {}).get('farms', [])),
             ],
         context={
             'restrict_by_specie_animal_type': True,

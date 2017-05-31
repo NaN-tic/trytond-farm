@@ -22,6 +22,13 @@ class User:
         help="Farms to which this user is assigned. Determine animals that "
         "he/she can manage.")
 
+    @classmethod
+    def __setup__(cls):
+        super(User, cls).__setup__()
+        cls._preferences_fields.extend([
+                'farms'])
+        cls._context_fields.insert(0, 'farms')
+
 
 class UserLocation(ModelSQL):
     'User - Location'

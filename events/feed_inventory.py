@@ -379,6 +379,7 @@ class FeedInventoryMixin(object):
     location = fields.Many2One('stock.location', 'Silo', required=True,
         domain=[
             ('silo', '=', True),
+            ('parent', 'child_of', Eval('context', {}).get('farms', [])),
             ],
         states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
     dest_locations = fields.Many2Many('farm.feed.inventory-stock.location',

@@ -19,7 +19,18 @@
             <field name="type">tree</field>
             <field name="name">farm_event_list_editable</field>
         </record>
-
+    
+        <!-- Rule Group -->
+        <record model="ir.rule.group" id="rule_group_farms">
+            <field name="model" search="[('model', '=', 'farm.event')]"/>
+            <field name="global_p" eval="False"/>
+            <field name="default_p" eval="True"/>
+        </record>
+        <record model="ir.rule" id="rule_farms">
+            <field name="domain">[('farm', 'in', [c.id for c in user.farms])]</field>
+            <field name="rule_group" ref="rule_group_farms"/>
+        </record>
+ 
         <!--
         <record model="ir.model.button" id="farm_event_cancel_button">
             <field name="name">cancel</field>

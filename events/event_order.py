@@ -74,6 +74,7 @@ class EventOrder(ModelSQL, ModelView, Workflow):
     farm = fields.Many2One('stock.location', 'Farm', required=True,
         domain=[
             ('type', '=', 'warehouse'),
+            ('id', 'in', Eval('context', {}).get('farms', [])),
             ],
         context={
             'restrict_by_specie_animal_type': True,
