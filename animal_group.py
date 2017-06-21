@@ -152,6 +152,8 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
         return name
 
     def get_current_location(self, name):
+        if not self.locations:
+            return
         return self.locations[0].id
 
     @classmethod
