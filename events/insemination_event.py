@@ -33,7 +33,10 @@ class InseminationEvent(AbstractEvent, ImportedEventMixin):
                 ('product', '=', Eval('dose_product', 0)),
                 ()),
             ], states=_STATES_WRITE_DRAFT,
-        depends=_DEPENDS_WRITE_DRAFT + ['dose_product'])
+        depends=_DEPENDS_WRITE_DRAFT + ['dose_product'],
+        context={
+            'locations': [Eval('farm')]
+            })
     female_cycle = fields.Many2One('farm.animal.female_cycle', 'Female Cycle',
         readonly=True, domain=[
             ('animal', '=', Eval('animal')),
