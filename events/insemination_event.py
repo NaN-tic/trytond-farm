@@ -4,6 +4,7 @@ from trytond.model import fields, ModelView, Workflow
 from trytond.pyson import Bool, Equal, Eval, If
 from trytond.pool import Pool
 from trytond.transaction import Transaction
+from datetime import date
 
 from .abstract_event import AbstractEvent, ImportedEventMixin, \
     _STATES_WRITE_DRAFT, _DEPENDS_WRITE_DRAFT, \
@@ -35,7 +36,8 @@ class InseminationEvent(AbstractEvent, ImportedEventMixin):
             ], states=_STATES_WRITE_DRAFT,
         depends=_DEPENDS_WRITE_DRAFT + ['dose_product'],
         context={
-            'locations': [Eval('farm')]
+            'locations': [Eval('farm')],
+            'stock_date_end': date.today(),
             })
     female_cycle = fields.Many2One('farm.animal.female_cycle', 'Female Cycle',
         readonly=True, domain=[
