@@ -107,9 +107,6 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
             If(~Eval('imported', True),
                 ('current_cycle', '!=', None),
                 ()),
-            If(Equal(Eval('state'), 'draft') & ~Eval('imported', True),
-                ('current_cycle.state', '=', 'lactating'),
-                ()),
             ]
         if 'farm' not in cls.animal.depends:
             cls.animal.depends.append('farm')

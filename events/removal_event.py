@@ -76,10 +76,6 @@ class RemovalEvent(AbstractEvent):
                     ('location', '=', Eval('from_location')),
                     ('location.type', '=', 'storage')),
                 ('location.type', '=', 'lost_found')),
-            ['OR',
-                ('current_cycle', '=', None),
-                ('current_cycle.state', '!=', 'lactating'),
-             ],
             ]
         if 'from_location' not in cls.animal.depends:
             cls.animal.depends.append('from_location')
