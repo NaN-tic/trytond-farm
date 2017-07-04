@@ -82,9 +82,6 @@ class RemovalEvent(AbstractEvent):
         if 'farm' not in cls.animal.depends:
             cls.animal.depends.append('farm')
         cls._error_messages.update({
-                'female_is_lactating': ('The female of removal event '
-                    '"%s" is lactating. To remove it you have to create a '
-                    'weaning event or remove its produced group.'),
                 'animal_not_in_location': ('The removal event of animal '
                     '"%(animal)s" is trying to remove it from location '
                     '"%(from_location)s" but it isn\'t there at '
@@ -186,10 +183,6 @@ class RemovalEvent(AbstractEvent):
                                 removal_event.from_location.rec_name,
                             'timestamp': removal_event.timestamp,
                             })
-                if (removal_event.animal_type == 'female' and
-                        removal_event.animal.is_lactating()):
-                    cls.raise_user_error('female_is_lactating',
-                        removal_event.rec_name)
                 removal_event._check_existing_validated_removal_events()
             else:
                 if not removal_event.animal_group.check_in_location(
