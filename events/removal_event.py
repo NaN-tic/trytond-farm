@@ -119,7 +119,8 @@ class RemovalEvent(AbstractEvent):
             None)
         return res
 
-    @fields.depends('animal_group', 'from_location', 'farm')
+    @fields.depends('animal_group', 'from_location', 'farm', 'timestamp',
+        'quantity')
     def on_change_animal_group(self):
         location_id = None
         if self.animal_group is None:
@@ -136,21 +137,21 @@ class RemovalEvent(AbstractEvent):
             if self.farm is not None and \
                     location.warehouse != self.farm:
                 location_id = None
-        return {
-            'from_location': location_id,
-        }
+            with Transaction().set_context(
+                    locations=[location_id],
+                    stock_date_end=self.timestamp.date()):
+                quantity = None
+                if not self.quantity:
+                    quantity = self.animal_group.lot.quantity
+                return {
+                    'from_location': location_id,
+                    'quantity': quantity,
+                }
 
-    @fields.depends('animal_type', 'animal_group', 'from_location',
-        'timestamp')
+    @fields.depends('animal_type')
     def on_change_with_quantity(self):
         if self.animal_type != 'group':
             return 1
-        if not self.animal_group or not self.from_location:
-            return None
-        with Transaction().set_context(
-                locations=[self.from_location.id],
-                stock_date_end=self.timestamp.date()):
-            return self.animal_group.lot.quantity or None
 
     @classmethod
     @ModelView.button
@@ -252,7 +253,6 @@ class RemovalEvent(AbstractEvent):
 
         lot = (self.animal_type != 'group' and self.animal.lot or
             self.animal_group.lot)
-
         return Move(
             product=lot.product.id,
             uom=lot.product.default_uom.id,
