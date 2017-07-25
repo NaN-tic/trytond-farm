@@ -8,10 +8,11 @@ from trytond.model import ModelView, ModelSQL, fields
 from trytond.pyson import Equal, Eval, Greater, Id, Not, Bool
 from trytond.transaction import Transaction
 from trytond.pool import Pool, PoolMeta
-from trytond.wizard import Wizard, StateView, StateAction, Button
+from trytond.wizard import Wizard, StateView, StateAction, Button, StateTransition
 
 __all__ = ['Tag', 'Animal', 'AnimalTag', 'AnimalWeight', 'Male', 'Female',
-    'FemaleCycle', 'CreateFemaleStart', 'CreateFemaleLine', 'CreateFemale']
+    'FemaleCycle', 'CreateFemaleStart', 'CreateFemaleLine', 'CreateFemale',
+    'ChangeCycleObservationStart', 'ChangeCycleObservation']
 __metaclass__ = PoolMeta
 
 _STATES_MALE_FIELD = {
@@ -640,6 +641,11 @@ class Female:
             'duplicate_animal': ('A female animal with the same number (%s) '
                 'already exisit in this farm')
             })
+        cls._buttons.update({
+                'change_observation': {
+                    'invisible': Not(Bool(Eval('cycles'))),
+                }
+            })
 
     @staticmethod
     def default_state():
@@ -649,6 +655,11 @@ class Female:
         if Transaction().context.get('animal_type') == 'female':
             return 'prospective'
         return None
+
+    @classmethod
+    @ModelView.button_action('farm.wizard_farm_cycle_observation_female')
+    def change_observation(cls, records):
+        pass
 
     def is_lactating(self):
         return (self.current_cycle and self.current_cycle.state == 'lactating'
@@ -951,6 +962,7 @@ class FemaleCycle(ModelSQL, ModelView):
         fields.Integer('Lactating Days',
             help='Number of days between Farrowing and Weaning.'),
         'get_lactating_days')
+    observations = fields.Text('Observations')
 
     @classmethod
     def __setup__(cls):
@@ -1113,6 +1125,54 @@ class FemaleCycle(ModelSQL, ModelView):
             if not vals.get('sequence') and vals.get('animal'):
                 vals['sequence'] = cls.default_sequence(vals['animal'])
         return super(FemaleCycle, cls).create(vlist)
+
+
+class ChangeCycleObservationStart(ModelView):
+    'Sets the value of the observation field of a cycle'
+    __name__ = 'female.cycle.observation.start'
+
+    cycle = fields.Many2One('farm.animal.female_cycle', 'Cycle',
+        domain=[
+            ('animal', '=', Eval('animal'))
+            ],
+        states={
+            'required': True,
+        })
+    observation = fields.Text('Observation', required=True)
+    animal = fields.Many2One('farm.animal', 'Current animal',
+        readonly=True, states={
+            'invisible': True,
+        })
+
+    @staticmethod
+    def default_cycle():
+        Animal = Pool().get('farm.animal')
+        active_id = Transaction().context.get('active_id')
+        active_animal = Animal(active_id)
+        last_cycle = active_animal.cycles[-1]
+        return last_cycle.id
+
+    @staticmethod
+    def default_animal():
+        return Transaction().context.get('active_id')
+
+
+class ChangeCycleObservation(Wizard):
+    'Sets the value of the observation field of a cycle'
+    __name__ = 'female.cycle.observation'
+
+    start = StateView('female.cycle.observation.start',
+        'farm.farm_cycle_observation_start_view', [
+            Button('Cancel', 'end', 'tryton-cancel'),
+            Button('Create', 'result', 'tryton-ok', default=True),
+            ])
+    result = StateTransition()
+
+    def transition_result(self):
+        cycle = self.start.cycle
+        cycle.observations = self.start.observation
+        cycle.save()
+        return 'end'
 
 
 class CreateFemaleStart(ModelView):

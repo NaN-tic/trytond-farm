@@ -68,6 +68,7 @@
                 <label name="last_produced_group"/>
                 <field name="last_produced_group"/>
             </group>
+            <button name="change_observation" string="Change Cycle Observation"/>
         </page>
         <page string="Weights" id="weights">
             <label name="current_weight"/>

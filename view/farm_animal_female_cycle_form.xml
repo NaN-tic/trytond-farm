@@ -22,24 +22,31 @@
         <label name="removed"/>
         <field name="removed"/>
     </group>
-    <separator id="events" string="Events" colspan="4"/>
-    <field name="insemination_events" colspan="4"/>
-    <field name="diagnosis_events" colspan="4"/>
-    <group id="abort_and_farrowing" colspan="4" col="6">
-        <label name="abort_event"/>
-        <field name="abort_event"/>
-        <newline/>
-        <label name="farrowing_event"/>
-        <field name="farrowing_event"/>
-        <label name="live"/>
-        <field name="live"/>
-        <label name="dead"/>
-        <field name="dead"/>
-    </group>
-    <field name="foster_events" colspan="4"/>
-    <newline/>
-    <label name="weaning_event"/>
-    <field name="weaning_event"/>
-    <label name="weaned"/>
-    <field name="weaned"/>
+    <notebook>
+        <page id="inseminations" string="Events">
+            <field name="insemination_events" colspan="4"/>"
+            <field name="diagnosis_events" colspan="4"/>
+            <group id="abort_and_farrowing" colspan="4" col="6">
+                <label name="abort_event"/>
+                <field name="abort_event"/>
+                <newline/>
+                <label name="farrowing_event"/>
+                <field name="farrowing_event"/>
+                <label name="live"/>
+                <field name="live"/>
+                <label name="dead"/>
+                <field name="dead"/>
+            </group>
+            <field name="foster_events" colspan="4"/>
+            <newline/>
+            <label name="weaning_event"/>
+            <field name="weaning_event"/>
+            <label name="weaned"/>
+            <field name="weaned"/>
+        </page>
+        <page id="observations" string="Observations">
+            <label name="observations"/>
+            <field name="observations"/>
+        </page>
+    </notebook>
 </form>

@@ -404,12 +404,6 @@ msgstr ""
 
 msgctxt "error:farm.removal.event:"
 msgid ""
-"The female of removal event \"%s\" is lactating. To remove it you have to "
-"create a weaning event or remove its produced group."
-msgstr ""
-
-msgctxt "error:farm.removal.event:"
-msgid ""
 "The removal event of animal \"%(animal)s\" is trying to remove it from "
 "location \"%(from_location)s\" but it isn't there at \"%(timestamp)s\"."
 msgstr ""

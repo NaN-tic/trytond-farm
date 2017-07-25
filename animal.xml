@@ -314,6 +314,16 @@
             <field name="group" ref="group_farm_females"/>
         </record>
 
+        <record model="ir.ui.view" id="farm_cycle_observation_start_view">
+            <field name="model">female.cycle.observation.start</field>
+            <field name="type">form</field>
+            <field name="name">farm_cycle_observation_start</field>
+        </record>
+        <record model="ir.action.wizard" id="wizard_farm_cycle_observation_female">
+            <field name="name">Update Observations</field>
+            <field name="wiz_name">female.cycle.observation</field>
+        </record>
+
         <!-- Menus -->
         <menuitem action="act_farm_tag" id="menu_farm_tag"
             parent="menu_configuration" sequence="2"/>

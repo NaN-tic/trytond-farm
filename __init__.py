@@ -34,6 +34,7 @@ def register():
         animal.Female,
         animal.CreateFemaleStart,
         animal.CreateFemaleLine,
+        animal.ChangeCycleObservationStart,
         animal_group.AnimalGroup,
         animal_group.AnimalGroupTag,
         animal_group.AnimalGroupWeight,
@@ -76,4 +77,5 @@ def register():
         module='farm', type_='model')
     Pool.register(
         animal.CreateFemale,
+        animal.ChangeCycleObservation,
         module='farm', type_='wizard')
