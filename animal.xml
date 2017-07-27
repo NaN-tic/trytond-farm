@@ -324,6 +324,12 @@
             <field name="wiz_name">female.cycle.observation</field>
         </record>
 
+        <record model="ir.ui.view" id="farm_events_list_view">
+            <field name="model">farm.animal.cycle.events</field>
+            <field name="type">tree</field>
+            <field name="name">farm_female_event</field>
+        </record>
+
         <!-- Menus -->
         <menuitem action="act_farm_tag" id="menu_farm_tag"
             parent="menu_configuration" sequence="2"/>

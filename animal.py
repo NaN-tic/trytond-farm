@@ -4,7 +4,8 @@ from datetime import date, datetime, timedelta
 from decimal import Decimal
 import logging
 
-from trytond.model import ModelView, ModelSQL, fields
+from trytond.rpc import RPC
+from trytond.model import ModelView, ModelSQL, fields, UnionMixin
 from trytond.pyson import Equal, Eval, Greater, Id, Not, Bool
 from trytond.transaction import Transaction
 from trytond.pool import Pool, PoolMeta
@@ -12,7 +13,7 @@ from trytond.wizard import Wizard, StateView, StateAction, Button, StateTransiti
 
 __all__ = ['Tag', 'Animal', 'AnimalTag', 'AnimalWeight', 'Male', 'Female',
     'FemaleCycle', 'CreateFemaleStart', 'CreateFemaleLine', 'CreateFemale',
-    'ChangeCycleObservationStart', 'ChangeCycleObservation']
+    'ChangeCycleObservationStart', 'ChangeCycleObservation', 'EventUnion']
 __metaclass__ = PoolMeta
 
 _STATES_MALE_FIELD = {
@@ -634,6 +635,9 @@ class Female:
             'Farrowing Group'),
         'get_farrowing_group')
 
+    events = fields.One2Many('farm.animal.cycle.events', 'animal', 'Events',
+        readonly=True)
+
     @classmethod
     def __setup__(cls):
         super(Female, cls).__setup__()
@@ -1125,6 +1129,81 @@ class FemaleCycle(ModelSQL, ModelView):
             if not vals.get('sequence') and vals.get('animal'):
                 vals['sequence'] = cls.default_sequence(vals['animal'])
         return super(FemaleCycle, cls).create(vlist)
+
+
+class EventUnion(UnionMixin, ModelSQL, ModelView):
+    'Union between female cycles and events'
+    __name__ = 'farm.animal.cycle.events'
+
+    timestamp = fields.DateTime('Date & Time', required=True)
+    cycle = fields.Function(fields.Many2One('farm.animal.female_cycle',
+        'Cycle'), 'get_cycle')
+    event_type = fields.Function(fields.Char('Event Type'), 'get_event_type')
+    event_link = fields.Function(fields.Reference('Event',
+        selection='get_fieldname'), 'get_event')
+    animal = fields.Many2One('farm.animal', 'Animal')
+
+    @classmethod
+    def __setup__(cls):
+        super(EventUnion, cls).__setup__()
+        cls.__rpc__.update({
+               'get_fieldname': RPC(),
+                })
+        cls._order.insert(0, ('timestamp', 'ASC'))
+
+    @classmethod
+    def _get_fieldname(cls):
+        return ['farm.abort.event', 'farm.event.order',
+            'farm.farrowing.event', 'farm.feed.event',
+            'farm.foster.event', 'farm.insemination.event',
+            'farm.medication.event', 'farm.move.event',
+            'farm.pregnancy_diagnosis.event', 'farm.removal.event',
+            'farm.semen_extraction.event', 'farm.transformation.event',
+            'farm.weaning.event']
+
+    @classmethod
+    def get_fieldname(cls):
+        pool = Pool()
+        Model = pool.get('ir.model')
+        models = cls._get_fieldname()
+        models = Model.search([
+                ('model', 'in', models),
+                ])
+        return [('', '')] + [(m.model, m.name) for m in models]
+
+    def _get_event(self):
+        cls = self.__class__
+        model = cls.union_unshard(self.id)
+        return model
+
+    def get_event_type(self, name=None):
+        pool = Pool()
+        Model = pool.get('ir.model')
+        model, = Model.search([
+                ('model', '=', self._get_event().__class__.__name__),
+                ], limit=1)
+        return model.name
+
+    def get_event(self, name=None):
+        return str(self._get_event())
+
+    def get_cycle(self, name=None):
+        model = self._get_event()
+        if hasattr(model, 'female_cycle'):
+            return model.female_cycle.id
+        return None
+
+    @staticmethod
+    def union_models():
+        res = super(EventUnion, EventUnion).union_models()
+        models = ['farm.abort.event', 'farm.event.order',
+            'farm.farrowing.event', 'farm.feed.event',
+            'farm.foster.event', 'farm.insemination.event',
+            'farm.medication.event', 'farm.move.event',
+            'farm.pregnancy_diagnosis.event', 'farm.removal.event',
+            'farm.semen_extraction.event', 'farm.transformation.event',
+            'farm.weaning.event']
+        return res + models
 
 
 class ChangeCycleObservationStart(ModelView):

@@ -4568,12 +4568,10 @@ msgctxt "selection:farm.abort.event,state:"
 msgid "Validated"
 msgstr "Validat"
 
-#, fuzzy
 msgctxt "selection:farm.animal,current_cycle_state:"
 msgid ""
 msgstr " "
 
-#, fuzzy
 msgctxt "selection:farm.animal,current_cycle_state:"
 msgid "Lactating"
 msgstr "En lactància"
@@ -4582,7 +4580,6 @@ msgctxt "selection:farm.animal,current_cycle_state:"
 msgid "Mated"
 msgstr ""
 
-#, fuzzy
 msgctxt "selection:farm.animal,current_cycle_state:"
 msgid "Pregnant"
 msgstr "Embarasada"

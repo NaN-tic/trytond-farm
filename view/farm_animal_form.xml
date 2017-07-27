@@ -70,6 +70,9 @@
             </group>
             <button name="change_observation" string="Change Cycle Observation"/>
         </page>
+        <page string="Events" id="events">
+            <field name="events" colspan="4" widget="many2many"/>
+        </page>
         <page string="Weights" id="weights">
             <label name="current_weight"/>
             <field name="current_weight"/>

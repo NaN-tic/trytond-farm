@@ -35,6 +35,7 @@ def register():
         animal.CreateFemaleStart,
         animal.CreateFemaleLine,
         animal.ChangeCycleObservationStart,
+        animal.EventUnion,
         animal_group.AnimalGroup,
         animal_group.AnimalGroupTag,
         animal_group.AnimalGroupWeight,

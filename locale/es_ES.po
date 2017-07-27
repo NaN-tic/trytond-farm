@@ -936,6 +936,10 @@ msgctxt "field:farm.animal,days_from_insemination:"
 msgid "Inseminated Days"
 msgstr "Dias inseminada"
 
+msgctxt "field:farm.animal,events:"
+msgid "Events"
+msgstr "Eventos"
+
 msgctxt "field:farm.animal,extractions:"
 msgid "Semen Extractions"
 msgstr "Extracciones de semen"
@@ -1073,6 +1077,50 @@ msgid "Write Date"
 msgstr "Fecha modificación"
 
 msgctxt "field:farm.animal-farm.tag,write_uid:"
+msgid "Write User"
+msgstr "Usuario modificación"
+
+msgctxt "field:farm.animal.cycle.events,animal:"
+msgid "Animal"
+msgstr "Animal"
+
+msgctxt "field:farm.animal.cycle.events,create_date:"
+msgid "Create Date"
+msgstr "Fecha de creación"
+
+msgctxt "field:farm.animal.cycle.events,create_uid:"
+msgid "Create User"
+msgstr "Usuario de creación"
+
+msgctxt "field:farm.animal.cycle.events,cycle:"
+msgid "Cycle"
+msgstr "Ciclo"
+
+msgctxt "field:farm.animal.cycle.events,event_link:"
+msgid "Event"
+msgstr "Evento"
+
+msgctxt "field:farm.animal.cycle.events,event_type:"
+msgid "Event Type"
+msgstr "Tipo del evento"
+
+msgctxt "field:farm.animal.cycle.events,id:"
+msgid "ID"
+msgstr "Identificador"
+
+msgctxt "field:farm.animal.cycle.events,rec_name:"
+msgid "Name"
+msgstr "Nombre"
+
+msgctxt "field:farm.animal.cycle.events,timestamp:"
+msgid "Date & Time"
+msgstr "Fecha & Hora"
+
+msgctxt "field:farm.animal.cycle.events,write_date:"
+msgid "Write Date"
+msgstr "Fecha modificación"
+
+msgctxt "field:farm.animal.cycle.events,write_uid:"
 msgid "Write User"
 msgstr "Usuario modificación"
 
@@ -4278,6 +4326,10 @@ msgctxt "model:farm.animal-farm.tag,name:"
 msgid "Animal - Tag"
 msgstr "Animal - Etiqueta"
 
+msgctxt "model:farm.animal.cycle.events,name:"
+msgid "Union between female cycles and events"
+msgstr ""
+
 msgctxt "model:farm.animal.female_cycle,name:"
 msgid "Farm Female Cycle"
 msgstr "Ciclo hembras"
@@ -4844,7 +4896,6 @@ msgctxt "selection:farm.abort.event,state:"
 msgid "Validated"
 msgstr "Validado"
 
-#, fuzzy
 msgctxt "selection:farm.animal,current_cycle_state:"
 msgid ""
 msgstr ""
@@ -4884,7 +4935,6 @@ msgctxt "selection:farm.animal,origin:"
 msgid "Raised"
 msgstr "Criado"
 
-#, fuzzy
 msgctxt "selection:farm.animal,purpose:"
 msgid ""
 msgstr ""
@@ -4924,7 +4974,6 @@ msgctxt "selection:farm.animal,sex:"
 msgid "Undetermined"
 msgstr "No determinado"
 
-#, fuzzy
 msgctxt "selection:farm.animal,state:"
 msgid ""
 msgstr ""
@@ -5455,6 +5504,10 @@ msgctxt "selection:stock.lot,animal_type:"
 msgid "Male"
 msgstr "Macho"
 
+msgctxt "view:farm.animal.cycle.events:"
+msgid "Events"
+msgstr "Eventos"
+
 msgctxt "view:farm.animal.female_cycle:"
 msgid "Events"
 msgstr "Eventos"
@@ -5514,6 +5567,11 @@ msgstr "Animales"
 msgctxt "view:farm.animal:"
 msgid "Change Cycle Observation"
 msgstr "Cambiar observación"
+
+#, fuzzy
+msgctxt "view:farm.animal:"
+msgid "Events"
+msgstr "Eventos"
 
 msgctxt "view:farm.animal:"
 msgid "General"
