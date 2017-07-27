@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<form string="Create Female">
+    <label name="cycle"/>
+    <field name="cycle"/>
+    <newline/>
+    <label name="observation"/>
+    <field name="observation"/>
+    <field name="animal"/>
+</form>
