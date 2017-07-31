@@ -30,9 +30,10 @@ class InseminationEvent(AbstractEvent, ImportedEventMixin):
     # TODO: (no fer) add flag in context to restrict lots with stock in 'farm'
     # locations
     dose_lot = fields.Many2One('stock.lot', 'Dose Lot', domain=[
-            If(Bool(Eval('dose_product')),
+            (If(Bool(Eval('dose_product')),
                 ('product', '=', Eval('dose_product', 0)),
-                ()),
+                ())),
+            ('quantity', '>', 0.0)
             ], states=_STATES_WRITE_DRAFT,
         depends=_DEPENDS_WRITE_DRAFT + ['dose_product'],
         context={

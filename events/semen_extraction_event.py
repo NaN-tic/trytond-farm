@@ -1,7 +1,7 @@
 #The COPYRIGHT file at the top level of this repository contains the full
 #copyright notices and license terms.
 import math
-from datetime import datetime
+from datetime import datetime, date
 
 from trytond.model import fields, ModelView, ModelSQL, Workflow
 from trytond.pyson import Bool, Equal, Eval, Greater, Id
@@ -79,8 +79,13 @@ class SemenExtractionEvent(AbstractEvent):
     semen_lot = fields.Many2One('stock.lot', 'Semen Lot', readonly=True,
         domain=[
             ('product', '=', Eval('semen_product')),
+            ('quantity', '>', 0.0)
             ], states=_STATES_VALIDATED,
-        depends=_DEPENDS_VALIDATED + ['semen_product'])
+        depends=_DEPENDS_VALIDATED + ['semen_product'],
+        context={
+            'locations': [Eval('farm')],
+            'stock_date_end': date.today(),
+            })
     semen_move = fields.Many2One('stock.move', 'Semen Move', readonly=True,
         domain=[
             ('lot', '=', Eval('semen_lot')),

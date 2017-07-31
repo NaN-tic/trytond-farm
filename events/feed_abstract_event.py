@@ -1,6 +1,6 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
-from datetime import datetime
+from datetime import datetime, date
 
 from trytond.model import fields, ModelView, Workflow
 from trytond.pyson import Bool, Equal, Eval, Not, Or
@@ -55,8 +55,16 @@ class FeedEventMixin(AbstractEvent):
         depends=_DEPENDS_WRITE_DRAFT_VALIDATED)
     feed_lot = fields.Many2One('stock.lot', 'Feed Lot', domain=[
             ('product', '=', Eval('feed_product')),
-            ], states=_STATES_WRITE_DRAFT,
-        depends=_DEPENDS_WRITE_DRAFT + ['feed_product'])
+            ('quantity', '>', 0.0)
+            ], states={
+                'readonly': (Not(Bool(Eval('farm'))) |
+                    Not(Equal(Eval('state'), 'draft'))),
+                },
+        depends=_DEPENDS_WRITE_DRAFT + ['feed_product'],
+        context={
+            'locations': [Eval('farm')],
+            'stock_date_end': date.today(),
+            })
     uom = fields.Many2One('product.uom', "UOM", required=True,
         states=_STATES_WRITE_DRAFT,
         depends=_DEPENDS_WRITE_DRAFT + ['feed_product'])
