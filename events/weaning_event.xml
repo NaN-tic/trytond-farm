@@ -86,5 +86,28 @@
             <field name="perm_create" eval="True"/>
             <field name="perm_delete" eval="True"/>
         </record>
+
+        <!-- sale.handle.production.exception -->
+        <record model="ir.action.wizard" id="wizard_weaning_event">
+            <field name="name">Weaning Event</field>
+            <field name="wiz_name">farm.weaning.event_wizard</field>
+            <field name="model">farm.animal</field>
+        </record>
+        <record model="ir.ui.view" id="weaning_wizard_start_form">
+            <field name="model">farm.weaning.event_wizard.start</field>
+            <field name="type">form</field>
+            <field name="name">weaning_wizard_start_form</field>
+        </record>
+        <record model="ir.ui.view" id="weaning_animal_quantity_form">
+            <field name="model">farm.weaning.event_animal_quantity</field>
+            <field name="type">tree</field>
+            <field name="name">weaning_animal_quantity_tree</field>
+        </record>
+        <record model="ir.action.keyword"
+                id="act_open_production_form_keyword1">
+            <field name="keyword">form_relate</field>
+            <field name="model">farm.animal,-1</field>
+            <field name="action" ref="wizard_weaning_event"/>
+        </record>
     </data>
 </tryton>

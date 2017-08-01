@@ -72,6 +72,8 @@ def register():
         events.foster_event.FosterEvent,
         events.weaning_event.WeaningEvent,
         events.weaning_event.WeaningEventFemaleCycle,
+        events.weaning_event.CreateWeaningEventStart,
+        events.weaning_event.AnimalQuantityWeaningEvent,
         stock.Move,
         production.BOM,
         quality.QualityTest,
@@ -79,4 +81,5 @@ def register():
     Pool.register(
         animal.CreateFemale,
         animal.ChangeCycleObservation,
+        events.weaning_event.CreateWeaningEvent,
         module='farm', type_='wizard')

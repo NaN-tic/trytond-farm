@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<form string="Weaning Events">
+    <label name="reference"/>
+    <field name="reference"/>
+    <newline/>
+    <field name="animals" widget="many2many" colspan="4"/>
+</form>

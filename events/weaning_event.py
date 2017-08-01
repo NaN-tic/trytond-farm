@@ -10,15 +10,18 @@ No possibility of creating individuals from here. Maybe in the future we
 - Farrowing creates groups and weaning is for individuals
 """
 from trytond.model import fields, ModelView, ModelSQL, Workflow
-from trytond.pyson import Equal, Eval, Id, If, Not
+from trytond.pyson import Equal, Eval, Id, If, Not, PYSONEncoder
 from trytond.pool import Pool
 from trytond.transaction import Transaction
+from trytond.wizard import Wizard, StateAction, StateView, Button
 
 from .abstract_event import AbstractEvent, ImportedEventMixin, \
     _STATES_WRITE_DRAFT, _DEPENDS_WRITE_DRAFT, \
     _STATES_VALIDATED, _DEPENDS_VALIDATED
 
-__all__ = ['WeaningEvent', 'WeaningEventFemaleCycle']
+__all__ = ['WeaningEvent', 'WeaningEventFemaleCycle',
+    'CreateWeaningEventStart', 'CreateWeaningEvent',
+    'AnimalQuantityWeaningEvent']
 
 
 class WeaningEvent(AbstractEvent, ImportedEventMixin):
@@ -372,3 +375,104 @@ class WeaningEventFemaleCycle(ModelSQL):
             ('cycle_unique', 'UNIQUE(cycle)',
                 'The Female Cycle must be unique.'),
             ]
+
+
+class CreateWeaningEventStart(ModelView):
+    'Initial view for creating weaning events for multiple animals'
+    __name__ = 'farm.weaning.event_wizard.start'
+
+    reference = fields.Char('Reference')
+    animals = fields.One2Many('farm.weaning.event_animal_quantity', 'weaning',
+        'Animals')
+
+    @staticmethod
+    def default_animals():
+        Farm = Pool().get('farm.animal')
+        active_animals = Transaction().context.get('active_ids')
+        vals = []
+        for animal in active_animals:
+            a = Farm(animal)
+            dic = {
+                'animal': animal,
+                'quantity': 0,
+                'farm': a.farm.id,
+                'female_to_location': None,
+                'weaning_to_location': None,
+            }
+            vals.append(dic)
+        return vals
+
+
+class CreateWeaningEvent(Wizard):
+    'Creates multiple weaning events for animals'
+    __name__ = 'farm.weaning.event_wizard'
+
+    start = StateView('farm.weaning.event_wizard.start',
+        'farm.weaning_wizard_start_form', [
+            Button('Cancel', 'end', 'tryton-cancel'),
+            Button('Ok', 'weaning', 'tryton-ok', default=True),
+            ])
+    weaning = StateAction('farm.act_farm_event_order')
+
+    def do_weaning(self, action):
+        pool = Pool()
+        WeaningEvent = pool.get('farm.weaning.event')
+        EventOrder = pool.get('farm.event.order')
+
+        animals = self.start.animals
+        farm = animals[0].farm
+
+        weaning_events = []
+        # Animals is a dic containing the specific values for weach weaning
+        for animal_qty in animals:
+            animal = animal_qty.animal
+            quantity = animal_qty.quantity
+            female_destination = animal_qty.female_to_location
+            weaned_destination = animal_qty.weaned_to_location
+            # Create weaning events for the animals
+            weaning_event = WeaningEvent()
+            weaning_event.animal = animal
+            weaning_event.farm = animal.farm
+            weaning_event.quantity = quantity
+            weaning_event.female_to_location = female_destination
+            weaning_event.weaned_to_location = weaned_destination
+
+            weaning_events.append(weaning_event)
+
+        if weaning_events:
+            event_order = EventOrder()
+
+            res = WeaningEvent.create([x._save_values for x in weaning_events])
+
+            event_order.name = self.start.reference
+            event_order.animal_type = 'female'
+            event_order.event_type = 'weaning'
+            event_order.farm = farm
+            event_order.weaning_events = res
+            created_ids, = EventOrder.create([event_order._save_values])
+            action['pyson_domain'] = PYSONEncoder().encode([
+                'id', '=', created_ids.id])
+        return action, {}
+
+
+class AnimalQuantityWeaningEvent(ModelView):
+    'Shows the animals for which a weaning event will be created'
+    __name__ = 'farm.weaning.event_animal_quantity'
+
+    weaning = fields.Many2One('farm.weaning.event_wizard.start',
+        'Weaning', required=True)
+    animal = fields.Many2One('farm.animal', 'Animal', required=True)
+    quantity = fields.Integer('Quantity', required=True)
+    farm = fields.Many2One('stock.location', 'Farm', required=True)
+    female_to_location = fields.Many2One('stock.location',
+        'Female Destination', domain=[
+            ('type', '=', 'storage'),
+            ('silo', '=', False),
+            ('warehouse', '=', Eval('farm')),
+            ])
+    weaned_to_location = fields.Many2One('stock.location',
+        'Weaned Destination', domain=[
+            ('type', '=', 'storage'),
+            ('silo', '=', False),
+            ('warehouse', '=', Eval('farm')),
+            ])
