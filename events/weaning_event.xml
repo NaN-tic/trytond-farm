@@ -104,8 +104,8 @@
             <field name="name">weaning_animal_quantity_tree</field>
         </record>
         <record model="ir.action.keyword"
-                id="act_open_production_form_keyword1">
-            <field name="keyword">form_relate</field>
+                id="act_open_weaning_events">
+            <field name="keyword">form_action</field>
             <field name="model">farm.animal,-1</field>
             <field name="action" ref="wizard_weaning_event"/>
         </record>

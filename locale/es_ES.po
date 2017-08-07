@@ -3658,13 +3658,54 @@ msgctxt "field:farm.weaning.event-farm.animal.female_cycle,write_uid:"
 msgid "Write User"
 msgstr "Usuario modificación"
 
+msgctxt "field:farm.weaning.event_animal_quantity,animal:"
+msgid "Animal"
+msgstr "Animal"
+
+msgctxt "field:farm.weaning.event_animal_quantity,farm:"
+msgid "Farm"
+msgstr "Granja"
+
+msgctxt "field:farm.weaning.event_animal_quantity,female_to_location:"
+msgid "Female Destination"
+msgstr "Destino hembra"
+
+msgctxt "field:farm.weaning.event_animal_quantity,id:"
+msgid "ID"
+msgstr "Identificador"
+
+msgctxt "field:farm.weaning.event_animal_quantity,quantity:"
+msgid "Quantity"
+msgstr "Cantidad"
+
+msgctxt "field:farm.weaning.event_animal_quantity,weaned_to_location:"
+msgid "Weaned Destination"
+msgstr "Destino destete"
+
+msgctxt "field:farm.weaning.event_animal_quantity,weaning:"
+msgid "Weaning"
+msgstr "Destete"
+
+msgctxt "field:farm.weaning.event_wizard.start,animals:"
+msgid "Animals"
+msgstr "Animales"
+
+msgctxt "field:farm.weaning.event_wizard.start,id:"
+msgid "ID"
+msgstr "Identificador"
+
+msgctxt "field:farm.weaning.event_wizard.start,reference:"
+msgid "Reference"
+msgstr "Referencia"
+
 msgctxt "field:female.cycle.observation.start,animal:"
 msgid "Current animal"
 msgstr ""
 
+#, fuzzy
 msgctxt "field:female.cycle.observation.start,cycle:"
 msgid "Cycle"
-msgstr ""
+msgstr "Ciclo"
 
 msgctxt "field:female.cycle.observation.start,id:"
 msgid "ID"
@@ -4544,6 +4585,14 @@ msgctxt "model:farm.weaning.event-farm.animal.female_cycle,name:"
 msgid "Weaning Event - Female Cycle"
 msgstr "Evento de destete - Ciclo hembras"
 
+msgctxt "model:farm.weaning.event_animal_quantity,name:"
+msgid "Shows the animals for which a weaning event will be created"
+msgstr "Muestra los animales for los quales un evento de destete será creado"
+
+msgctxt "model:farm.weaning.event_wizard.start,name:"
+msgid "Initial view for creating weaning events for multiple animals"
+msgstr "Vista inicial para crear multiples eventos de destete"
+
 msgctxt "model:female.cycle.observation.start,name:"
 msgid "Sets the value of the observation field of a cycle"
 msgstr "Pone el valor del campo de observacion de un ciclo"
@@ -4667,6 +4716,10 @@ msgstr "Crear hembra"
 msgctxt "model:ir.action,name:wizard_farm_cycle_observation_female"
 msgid "Update Observations"
 msgstr ""
+
+msgctxt "model:ir.action,name:wizard_weaning_event"
+msgid "Weaning Event"
+msgstr "Evento de destete"
 
 msgctxt "model:ir.sequence.type,name:sequence_type_animal"
 msgid "Farm Animal"
@@ -5754,6 +5807,14 @@ msgctxt "view:farm.tag:"
 msgid "Tags"
 msgstr "Etiquetas"
 
+msgctxt "view:farm.weaning.event_animal_quantity:"
+msgid "Animals"
+msgstr "Animales"
+
+msgctxt "view:farm.weaning.event_wizard.start:"
+msgid "Weaning Events"
+msgstr "Eventos de Destete"
+
 msgctxt "view:female.cycle.observation.start:"
 msgid "Create Female"
 msgstr "Crear hembra"
@@ -5785,6 +5846,14 @@ msgstr "Cancelar"
 msgctxt "wizard_button:farm.create_female,start,result:"
 msgid "Create"
 msgstr "Crear"
+
+msgctxt "wizard_button:farm.weaning.event_wizard,start,end:"
+msgid "Cancel"
+msgstr "Cancel·lar"
+
+msgctxt "wizard_button:farm.weaning.event_wizard,start,weaning:"
+msgid "Ok"
+msgstr "Aceptar"
 
 msgctxt "wizard_button:female.cycle.observation,start,end:"
 msgid "Cancel"
