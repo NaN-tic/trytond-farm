@@ -95,6 +95,10 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
     @classmethod
     def __setup__(cls):
         super(WeaningEvent, cls).__setup__()
+        cls._error_messages.update({
+            'incorrect_quantity': 'The entered quantity is incorrect, '
+            'the maximum allowed quantity is: %s'
+            })
         cls.animal.domain += [
             ('farm', '=', Eval('farm')),
             ('location.type', '=', 'storage'),
@@ -186,6 +190,9 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
 
             current_cycle = weaning_event.animal.current_cycle
             weaning_event.female_cycle = current_cycle
+            maximum = current_cycle.live + current_cycle.fostered
+            if weaning_event.quantity > maximum:
+                cls.raise_user_error('incorrect_quantity', maximum)
 
             if (weaning_event.female_to_location and
                     weaning_event.female_to_location !=
