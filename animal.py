@@ -1360,11 +1360,11 @@ class CreateFemale(Wizard):
                     'imported': False,
                     })
             if cycle.foster_events:
-                Foster.write(cycle.foster_events, {
+                Foster.write(list(cycle.foster_events), {
                     'state': 'draft',
                     })
                 Foster.validate_event(cycle.foster_events)
-                Foster.write(cycle.foster_events, {
+                Foster.write(list(cycle.foster_events), {
                     'imported': False,
                     })
             if cycle.weaning_event:
