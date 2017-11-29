@@ -188,9 +188,9 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
 
             current_cycle = weaning_event.animal.current_cycle
             weaning_event.female_cycle = current_cycle
-            if weaning_event.quantity > current_cycle.live:
-                cls.raise_user_error('incorrect_quantity',
-                    current_cycle.live)
+            maximum = current_cycle.live + current_cycle.fostered
+            if weaning_event.quantity > maximum:
+                cls.raise_user_error('incorrect_quantity', maximum)
 
             if (weaning_event.female_to_location and
                     weaning_event.female_to_location !=
