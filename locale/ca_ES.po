@@ -4545,7 +4545,7 @@ msgstr "Raised"
 
 msgctxt "selection:farm.animal,purpose:"
 msgid ""
-msgstr """
+msgstr ""
 
 msgctxt "selection:farm.animal,purpose:"
 msgid "Replacement"
