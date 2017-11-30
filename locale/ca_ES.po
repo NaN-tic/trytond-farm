@@ -588,7 +588,7 @@ msgstr "Cicle de femella"
 
 msgctxt "field:farm.abort.event,id:"
 msgid "ID"
-msgstr "Identificador"
+msgstr "ID"
 
 msgctxt "field:farm.abort.event,imported:"
 msgid "Imported"
@@ -648,7 +648,7 @@ msgstr ""
 
 msgctxt "field:farm.abort.event-farm.animal.female_cycle,id:"
 msgid "ID"
-msgstr "Identificador"
+msgstr "ID"
 
 msgctxt "field:farm.abort.event-farm.animal.female_cycle,rec_name:"
 msgid "Name"
@@ -714,7 +714,6 @@ msgctxt "field:farm.animal,days_from_insemination:"
 msgid "Inseminated Days"
 msgstr "Dies inseminada"
 
-#, fuzzy
 msgctxt "field:farm.animal,extractions:"
 msgid "Semen Extractions"
 msgstr "Semen Extractions"
@@ -737,11 +736,11 @@ msgstr ""
 
 msgctxt "field:farm.animal,id:"
 msgid "ID"
-msgstr "Identificador"
+msgstr "ID"
 
 msgctxt "field:farm.animal,initial_location:"
 msgid "Initial Location"
-msgstr ""
+msgstr "Initial Location"
 
 msgctxt "field:farm.animal,last_extraction:"
 msgid "Last Extraction"
@@ -749,7 +748,7 @@ msgstr "Última extracció"
 
 msgctxt "field:farm.animal,last_produced_group:"
 msgid "Last Produced Group"
-msgstr ""
+msgstr "Last Produced Group"
 
 msgctxt "field:farm.animal,location:"
 msgid "Current Location"
@@ -904,7 +903,6 @@ msgctxt "field:farm.animal.female_cycle,id:"
 msgid "ID"
 msgstr "Identificador"
 
-#, fuzzy
 msgctxt "field:farm.animal.female_cycle,insemination_events:"
 msgid "Inseminations"
 msgstr "Insemination Events"
@@ -1389,12 +1387,10 @@ msgctxt "field:farm.event.order,id:"
 msgid "ID"
 msgstr "Identificador"
 
-#, fuzzy
 msgctxt "field:farm.event.order,insemination_events:"
 msgid "Inseminations"
 msgstr "Insemination Events"
 
-#, fuzzy
 msgctxt "field:farm.event.order,medication_events:"
 msgid "Medications"
 msgstr "Medication Events"
@@ -1403,7 +1399,6 @@ msgctxt "field:farm.event.order,name:"
 msgid "Reference"
 msgstr "Referència"
 
-#, fuzzy
 msgctxt "field:farm.event.order,pregnancy_diagnosis_events:"
 msgid "Pregnancy Diagnosis"
 msgstr "Pregnancy Diagnosis Events"
@@ -1420,7 +1415,6 @@ msgctxt "field:farm.event.order,timestamp:"
 msgid "Date & Time"
 msgstr ""
 
-#, fuzzy
 msgctxt "field:farm.event.order,weaning_events:"
 msgid "Weanings"
 msgstr "Weaning Events"
@@ -1489,7 +1483,6 @@ msgctxt "field:farm.farrowing.event,move:"
 msgid "Stock Move"
 msgstr "Moviment d'existències"
 
-#, fuzzy
 msgctxt "field:farm.farrowing.event,mummified:"
 msgid "Mummified"
 msgstr "Momificats"
@@ -1670,7 +1663,6 @@ msgctxt "field:farm.feed.animal_location_date,id:"
 msgid "ID"
 msgstr "Identificador"
 
-#, fuzzy
 msgctxt "field:farm.feed.animal_location_date,inventory_qty:"
 msgid "Inventories"
 msgstr "Inventaris"
@@ -1679,17 +1671,14 @@ msgctxt "field:farm.feed.animal_location_date,location:"
 msgid "Location fed"
 msgstr ""
 
-#, fuzzy
 msgctxt "field:farm.feed.animal_location_date,rec_name:"
 msgid "Name"
 msgstr "Nom"
 
-#, fuzzy
 msgctxt "field:farm.feed.animal_location_date,write_date:"
 msgid "Write Date"
 msgstr "Data modificació"
 
-#, fuzzy
 msgctxt "field:farm.feed.animal_location_date,write_uid:"
 msgid "Write User"
 msgstr "Usuari modificació"
@@ -1726,7 +1715,6 @@ msgctxt "field:farm.feed.event,farm:"
 msgid "Farm"
 msgstr "Granja"
 
-#, fuzzy
 msgctxt "field:farm.feed.event,feed_inventory:"
 msgid "Inventory"
 msgstr "Inventory"
@@ -1739,7 +1727,6 @@ msgctxt "field:farm.feed.event,feed_lot:"
 msgid "Feed Lot"
 msgstr ""
 
-#, fuzzy
 msgctxt "field:farm.feed.event,feed_product:"
 msgid "Feed"
 msgstr "Pienso"
@@ -1750,11 +1737,11 @@ msgstr "Quantitat consumida"
 
 msgctxt "field:farm.feed.event,feed_quantity_animal_day:"
 msgid "Qty. per Animal-Day"
-msgstr ""
+msgstr "Qty. per Animal-Day"
 
 msgctxt "field:farm.feed.event,id:"
 msgid "ID"
-msgstr "Identificador"
+msgstr "ID"
 
 msgctxt "field:farm.feed.event,location:"
 msgid "Location"
@@ -1776,10 +1763,9 @@ msgctxt "field:farm.feed.event,order:"
 msgid "Order"
 msgstr "Ordre"
 
-#, fuzzy
 msgctxt "field:farm.feed.event,quantity:"
 msgid "Num. of animals"
-msgstr "Quantitat"
+msgstr "Num. of animals"
 
 msgctxt "field:farm.feed.event,rec_name:"
 msgid "Name"
@@ -1893,7 +1879,6 @@ msgctxt "field:farm.feed.inventory-stock.location,id:"
 msgid "ID"
 msgstr "Identificador"
 
-#, fuzzy
 msgctxt "field:farm.feed.inventory-stock.location,inventory:"
 msgid "Inventory"
 msgstr "Inventory"
@@ -1930,18 +1915,17 @@ msgctxt "field:farm.feed.provisional_inventory,feed_events:"
 msgid "Feed Events"
 msgstr "Events de pinso"
 
-#, fuzzy
 msgctxt "field:farm.feed.provisional_inventory,feed_inventory:"
 msgid "Inventory"
 msgstr "Inventory"
 
 msgctxt "field:farm.feed.provisional_inventory,id:"
 msgid "ID"
-msgstr "Identificador"
+msgstr "ID"
 
 msgctxt "field:farm.feed.provisional_inventory,inventory:"
 msgid "Standard Inventory"
-msgstr ""
+msgstr "Standard Inventory"
 
 msgctxt "field:farm.feed.provisional_inventory,location:"
 msgid "Silo"
@@ -2207,17 +2191,14 @@ msgctxt "field:farm.medication.event,farm:"
 msgid "Farm"
 msgstr "Granja"
 
-#, fuzzy
 msgctxt "field:farm.medication.event,feed_location:"
 msgid "Feed/Medication Source"
 msgstr "Origen Pinso/Medicament"
 
-#, fuzzy
 msgctxt "field:farm.medication.event,feed_lot:"
 msgid "Feed/Medication Lot"
 msgstr "Lot Pinso/Medicament"
 
-#, fuzzy
 msgctxt "field:farm.medication.event,feed_product:"
 msgid "Feed/Medication Product"
 msgstr "Pinso/Medicament"
@@ -2242,12 +2223,10 @@ msgctxt "field:farm.medication.event,lot:"
 msgid "Lot"
 msgstr "Lot"
 
-#, fuzzy
 msgctxt "field:farm.medication.event,medication_end_date:"
 msgid "End Date"
 msgstr "Data final"
 
-#, fuzzy
 msgctxt "field:farm.medication.event,medication_start_date:"
 msgid "Start Date"
 msgstr "Data inicial"
@@ -2264,7 +2243,6 @@ msgctxt "field:farm.medication.event,order:"
 msgid "Order"
 msgstr "Ordre"
 
-#, fuzzy
 msgctxt "field:farm.medication.event,quantity:"
 msgid "Num. of animals"
 msgstr "Quantitat"
@@ -2965,7 +2943,6 @@ msgctxt "field:farm.specie,semen_product:"
 msgid "Semen's Product"
 msgstr ""
 
-#, fuzzy
 msgctxt "field:farm.specie,wizards:"
 msgid "Wizards"
 msgstr "Assistents"
@@ -4210,12 +4187,10 @@ msgctxt "model:ir.action,name:act_farm_animal_individual"
 msgid "Individuals"
 msgstr "Individuals"
 
-#, fuzzy
 msgctxt "model:ir.action,name:act_farm_animal_male"
 msgid "Males"
 msgstr "Mascles"
 
-#, fuzzy
 msgctxt "model:ir.action,name:act_farm_event_order"
 msgid "Work Orders"
 msgstr "Work Orders"
@@ -4244,12 +4219,10 @@ msgctxt "model:ir.action,name:act_farm_feed_event"
 msgid "Feed Events"
 msgstr "Events de pinso"
 
-#, fuzzy
 msgctxt "model:ir.action,name:act_farm_feed_inventory"
 msgid "Inventory"
 msgstr "Inventory"
 
-#, fuzzy
 msgctxt "model:ir.action,name:act_farm_feed_provisional_inventory"
 msgid "Provisional Inventory"
 msgstr "Provisional Inventory"
@@ -4258,27 +4231,22 @@ msgctxt "model:ir.action,name:act_farm_foster_event"
 msgid "Fosters"
 msgstr "Adopcions"
 
-#, fuzzy
 msgctxt "model:ir.action,name:act_farm_insemination_event"
 msgid "Inseminations"
-msgstr "Insemination Events"
+msgstr "Insemination"
 
-#, fuzzy
 msgctxt "model:ir.action,name:act_farm_medication_event"
 msgid "Medications"
 msgstr "Medication Events"
 
-#, fuzzy
 msgctxt "model:ir.action,name:act_farm_move_event"
 msgid "Moves"
 msgstr "Move Events"
 
-#, fuzzy
 msgctxt "model:ir.action,name:act_farm_pregnancy_diagnosis_event"
 msgid "Pregnancy Diagnosis"
 msgstr "Pregnancy Diagnosis Events"
 
-#, fuzzy
 msgctxt "model:ir.action,name:act_farm_removal_event"
 msgid "Removals"
 msgstr "Removal Events"
@@ -4291,7 +4259,6 @@ msgctxt "model:ir.action,name:act_farm_removal_type"
 msgid "Removal Types"
 msgstr ""
 
-#, fuzzy
 msgctxt "model:ir.action,name:act_farm_semen_extraction_event"
 msgid "Semen Extractions"
 msgstr "Semen Extraction Events"
@@ -4302,21 +4269,19 @@ msgstr ""
 
 msgctxt "model:ir.action,name:act_farm_specie_breed"
 msgid "Breeds"
-msgstr ""
+msgstr "Breeds"
 
 msgctxt "model:ir.action,name:act_farm_tag"
 msgid "Tags"
 msgstr "Etiquetes"
 
-#, fuzzy
 msgctxt "model:ir.action,name:act_farm_transformation_event"
 msgid "Transformations"
-msgstr "Transformation Events"
+msgstr "Transformation"
 
-#, fuzzy
 msgctxt "model:ir.action,name:act_farm_weaning_event"
 msgid "Weanings"
-msgstr "Weaning Events"
+msgstr "Weaning"
 
 msgctxt "model:ir.action,name:wizard_farm_create_female"
 msgid "Create female"
@@ -4324,15 +4289,15 @@ msgstr "Crea una femella"
 
 msgctxt "model:ir.sequence.type,name:sequence_type_animal"
 msgid "Farm Animal"
-msgstr ""
+msgstr "Farm Animal"
 
 msgctxt "model:ir.sequence.type,name:sequence_type_animal_group"
 msgid "Farm Animal Group"
-msgstr ""
+msgstr "Farm Animal Group"
 
 msgctxt "model:ir.sequence.type,name:sequence_type_event_order"
 msgid "Farm Event Order"
-msgstr ""
+msgstr "Farm Event Order"
 
 msgctxt "model:ir.sequence.type,name:sequence_type_lot"
 msgid "Stock Lot"
@@ -4362,17 +4327,14 @@ msgctxt "model:ir.ui.menu,name:menu_farm_animal_individuals"
 msgid "Individuals"
 msgstr "Individuals"
 
-#, fuzzy
 msgctxt "model:ir.ui.menu,name:menu_farm_animal_males"
 msgid "Males"
 msgstr "Mascles"
 
-#, fuzzy
 msgctxt "model:ir.ui.menu,name:menu_farm_create_female"
 msgid "Create female"
 msgstr "Crea una femella"
 
-#, fuzzy
 msgctxt "model:ir.ui.menu,name:menu_farm_event_order"
 msgid "Work Orders"
 msgstr "Work Orders"
@@ -4383,18 +4345,16 @@ msgstr "Parts"
 
 msgctxt "model:ir.ui.menu,name:menu_farm_farrowing_problem"
 msgid "Farrowing Problems"
-msgstr ""
+msgstr "Farrowing Problems"
 
 msgctxt "model:ir.ui.menu,name:menu_farm_feed_event"
 msgid "Feed Events"
 msgstr "Events de pinso"
 
-#, fuzzy
 msgctxt "model:ir.ui.menu,name:menu_farm_feed_inventory"
 msgid "Inventory"
 msgstr "Inventory"
 
-#, fuzzy
 msgctxt "model:ir.ui.menu,name:menu_farm_feed_provisional_inventory"
 msgid "Provisional Inventory"
 msgstr "Provisional Inventory"
@@ -4407,27 +4367,22 @@ msgctxt "model:ir.ui.menu,name:menu_farm_generic_events"
 msgid "Generic Events"
 msgstr ""
 
-#, fuzzy
 msgctxt "model:ir.ui.menu,name:menu_farm_insemination_event"
 msgid "Inseminations"
-msgstr "Insemination Events"
+msgstr "Insemination"
 
-#, fuzzy
 msgctxt "model:ir.ui.menu,name:menu_farm_medication_event"
 msgid "Medications"
-msgstr "Medication Events"
+msgstr "Medication"
 
-#, fuzzy
 msgctxt "model:ir.ui.menu,name:menu_farm_move_event"
 msgid "Moves"
-msgstr "Move Events"
+msgstr "Move"
 
-#, fuzzy
 msgctxt "model:ir.ui.menu,name:menu_farm_order_females"
 msgid "Female Orders"
 msgstr "Female Orders"
 
-#, fuzzy
 msgctxt "model:ir.ui.menu,name:menu_farm_order_groups"
 msgid "Groups Orders"
 msgstr "Groups Orders"
@@ -4436,20 +4391,17 @@ msgctxt "model:ir.ui.menu,name:menu_farm_order_individuals"
 msgid "Individuals Orders"
 msgstr ""
 
-#, fuzzy
 msgctxt "model:ir.ui.menu,name:menu_farm_order_males"
 msgid "Male Orders"
 msgstr "Male Orders"
 
-#, fuzzy
 msgctxt "model:ir.ui.menu,name:menu_farm_pregnancy_diagnosis_event"
 msgid "Pregnancy Diagnosis"
 msgstr "Pregnancy Diagnosis Events"
 
-#, fuzzy
 msgctxt "model:ir.ui.menu,name:menu_farm_removal_event"
 msgid "Removals"
-msgstr "Removal Events"
+msgstr "Removal"
 
 msgctxt "model:ir.ui.menu,name:menu_farm_removal_reason"
 msgid "Removal Reasons"
@@ -4459,19 +4411,17 @@ msgctxt "model:ir.ui.menu,name:menu_farm_removal_type"
 msgid "Removal Types"
 msgstr ""
 
-#, fuzzy
 msgctxt "model:ir.ui.menu,name:menu_farm_semen_extraction_event"
 msgid "Semen Extractions"
-msgstr "Semen Extraction Events"
+msgstr "Semen Extraction"
 
-#, fuzzy
 msgctxt "model:ir.ui.menu,name:menu_farm_silo_inventories"
 msgid "Silo Inventories"
 msgstr "Silo Inventories"
 
 msgctxt "model:ir.ui.menu,name:menu_farm_specie"
 msgid "Species"
-msgstr ""
+msgstr "Species"
 
 msgctxt "model:ir.ui.menu,name:menu_farm_specie_breed"
 msgid "Breeds"
@@ -4481,17 +4431,14 @@ msgctxt "model:ir.ui.menu,name:menu_farm_tag"
 msgid "Tags"
 msgstr "Etiquetes"
 
-#, fuzzy
 msgctxt "model:ir.ui.menu,name:menu_farm_transformation_event"
 msgid "Transformations"
-msgstr "Transformation Events"
+msgstr "Transformation"
 
-#, fuzzy
 msgctxt "model:ir.ui.menu,name:menu_farm_weaning_event"
 msgid "Weanings"
 msgstr "Weaning Events"
 
-#, fuzzy
 msgctxt "model:ir.ui.menu,name:menu_specie_menu_template"
 msgid "Specie Menu Template"
 msgstr "Specie Menu Template"
@@ -4502,7 +4449,7 @@ msgstr "Granja"
 
 msgctxt "model:res.group,name:group_farm_admin"
 msgid "Farm Administration"
-msgstr ""
+msgstr "Farm Administration"
 
 msgctxt "model:res.group,name:group_farm_females"
 msgid "Farm / Females"
@@ -4510,31 +4457,31 @@ msgstr "Granja / Femelles"
 
 msgctxt "model:res.group,name:group_farm_groups"
 msgid "Farm / Groups"
-msgstr ""
+msgstr "Farm / Groups"
 
 msgctxt "model:res.group,name:group_farm_individuals"
 msgid "Farm / Individuals"
-msgstr ""
+msgstr "Farm / Individuals"
 
 msgctxt "model:res.group,name:group_farm_males"
 msgid "Farm / Males"
-msgstr ""
+msgstr "Farm / Males"
 
 msgctxt "model:res.user-stock.location,name:"
 msgid "User - Location"
-msgstr ""
+msgstr "User - Location"
 
 msgctxt "model:stock.location.silo-stock.location,name:"
 msgid "Silo - Location"
-msgstr ""
+msgstr "Silo - Location"
 
 msgctxt "model:stock.lot-farm.animal,name:"
 msgid "Lot - Animal"
-msgstr ""
+msgstr "Lot - Animal"
 
 msgctxt "model:stock.lot-farm.animal.group,name:"
 msgid "Lot - Animal Group"
-msgstr ""
+msgstr "Lot - Animal Group"
 
 msgctxt "model:stock.lot.cost_category,name:cost_category_farrowing_cost"
 msgid "Farrowing Cost"
@@ -4542,7 +4489,7 @@ msgstr "Cost del part"
 
 msgctxt "model:stock.lot.cost_category,name:cost_category_weaning_cost"
 msgid "Weaning Cost"
-msgstr ""
+msgstr "Weaning Cost"
 
 msgctxt "selection:farm.abort.event,animal_type:"
 msgid "Female"
@@ -4570,7 +4517,7 @@ msgstr "Validat"
 
 msgctxt "selection:farm.animal,current_cycle_state:"
 msgid ""
-msgstr " "
+msgstr ""
 
 msgctxt "selection:farm.animal,current_cycle_state:"
 msgid "Lactating"
@@ -4578,7 +4525,7 @@ msgstr "En lactància"
 
 msgctxt "selection:farm.animal,current_cycle_state:"
 msgid "Mated"
-msgstr ""
+msgstr "Mated"
 
 msgctxt "selection:farm.animal,current_cycle_state:"
 msgid "Pregnant"
@@ -4586,7 +4533,7 @@ msgstr "Embarasada"
 
 msgctxt "selection:farm.animal,current_cycle_state:"
 msgid "Unmated"
-msgstr ""
+msgstr "Unmated"
 
 msgctxt "selection:farm.animal,origin:"
 msgid "Purchased"
@@ -4594,15 +4541,15 @@ msgstr "Comprat"
 
 msgctxt "selection:farm.animal,origin:"
 msgid "Raised"
-msgstr ""
+msgstr "Raised"
 
 msgctxt "selection:farm.animal,purpose:"
 msgid ""
-msgstr " "
+msgstr """
 
 msgctxt "selection:farm.animal,purpose:"
 msgid "Replacement"
-msgstr ""
+msgstr "Replacement"
 
 msgctxt "selection:farm.animal,purpose:"
 msgid "Sale"
@@ -4622,27 +4569,27 @@ msgstr "Mascle"
 
 msgctxt "selection:farm.animal,sex:"
 msgid "Undetermined"
-msgstr ""
+msgstr "Undetermined"
 
 msgctxt "selection:farm.animal,state:"
 msgid ""
-msgstr " "
+msgstr ""
 
 msgctxt "selection:farm.animal,state:"
 msgid "Mated"
-msgstr ""
+msgstr "Mated"
 
 msgctxt "selection:farm.animal,state:"
 msgid "Prospective"
-msgstr ""
+msgstr "Prospective"
 
 msgctxt "selection:farm.animal,state:"
 msgid "Removed"
-msgstr ""
+msgstr "Removed"
 
 msgctxt "selection:farm.animal,state:"
 msgid "Unmated"
-msgstr ""
+msgstr "Unmated"
 
 msgctxt "selection:farm.animal,type:"
 msgid "Female"
@@ -4662,7 +4609,7 @@ msgstr "En lactància"
 
 msgctxt "selection:farm.animal.female_cycle,state:"
 msgid "Mated"
-msgstr ""
+msgstr "Mated"
 
 msgctxt "selection:farm.animal.female_cycle,state:"
 msgid "Pregnant"
@@ -4670,7 +4617,7 @@ msgstr "Embarasada"
 
 msgctxt "selection:farm.animal.female_cycle,state:"
 msgid "Unmated"
-msgstr ""
+msgstr "Unmated"
 
 msgctxt "selection:farm.animal.group,origin:"
 msgid "Purchased"
@@ -4678,7 +4625,7 @@ msgstr "Comprat"
 
 msgctxt "selection:farm.animal.group,origin:"
 msgid "Raised"
-msgstr ""
+msgstr "Raised"
 
 msgctxt "selection:farm.create_female.start,origin:"
 msgid "Purchased"
@@ -4686,7 +4633,7 @@ msgstr "Comprat"
 
 msgctxt "selection:farm.create_female.start,origin:"
 msgid "Raised"
-msgstr ""
+msgstr "Raised"
 
 msgctxt "selection:farm.event,animal_type:"
 msgid "Female"
@@ -4744,17 +4691,14 @@ msgctxt "selection:farm.event.order,event_type:"
 msgid "Inseminations"
 msgstr "Inseminacions"
 
-#, fuzzy
 msgctxt "selection:farm.event.order,event_type:"
 msgid "Medications"
-msgstr "Medication Events"
+msgstr "Medication"
 
-#, fuzzy
 msgctxt "selection:farm.event.order,event_type:"
 msgid "Pregnancy Diagnosis"
-msgstr "Pregnancy Diagnosis Events"
+msgstr "Pregnancy Diagnosis"
 
-#, fuzzy
 msgctxt "selection:farm.event.order,event_type:"
 msgid "Weanings"
 msgstr "Weanings"
@@ -4795,7 +4739,6 @@ msgctxt "selection:farm.feed.animal_location_date,animal_type:"
 msgid "Individual"
 msgstr "Individu"
 
-#, fuzzy
 msgctxt "selection:farm.feed.animal_location_date,animal_type:"
 msgid "Male"
 msgstr "Mascle"
@@ -4822,7 +4765,7 @@ msgstr "Esborrany"
 
 msgctxt "selection:farm.feed.event,state:"
 msgid "Provisional"
-msgstr ""
+msgstr "Provisional"
 
 msgctxt "selection:farm.feed.event,state:"
 msgid "Validated"
@@ -4950,15 +4893,15 @@ msgstr "Validat"
 
 msgctxt "selection:farm.move.event,weight_record:"
 msgid ""
-msgstr " "
+msgstr ""
 
 msgctxt "selection:farm.move.event,weight_record:"
 msgid "Animal Weight"
-msgstr ""
+msgstr "Animal Weight"
 
 msgctxt "selection:farm.move.event,weight_record:"
 msgid "Group Weight"
-msgstr ""
+msgstr "Group Weight"
 
 msgctxt "selection:farm.pregnancy_diagnosis.event,animal_type:"
 msgid "Female"
@@ -4982,11 +4925,11 @@ msgstr "Negatiu"
 
 msgctxt "selection:farm.pregnancy_diagnosis.event,result:"
 msgid "Non conclusive"
-msgstr ""
+msgstr "Non conclusive"
 
 msgctxt "selection:farm.pregnancy_diagnosis.event,result:"
 msgid "Observed not Pregnant"
-msgstr ""
+msgstr "Observed not Pregnant"
 
 msgctxt "selection:farm.pregnancy_diagnosis.event,result:"
 msgid "Positive"
@@ -5106,7 +5049,7 @@ msgstr "Validat"
 
 msgctxt "selection:stock.lot,animal_type:"
 msgid ""
-msgstr " "
+msgstr ""
 
 msgctxt "selection:stock.lot,animal_type:"
 msgid "Female"
@@ -5126,7 +5069,7 @@ msgstr "Mascle"
 
 msgctxt "view:farm.animal.female_cycle:"
 msgid "Events"
-msgstr ""
+msgstr "Events"
 
 msgctxt "view:farm.animal.female_cycle:"
 msgid "Female Cycle"
@@ -5202,40 +5145,39 @@ msgstr "Confirma"
 
 msgctxt "view:farm.event.order:"
 msgid "Work Order"
-msgstr ""
+msgstr "Work Order"
 
-#, fuzzy
 msgctxt "view:farm.event.order:"
 msgid "Work Orders"
 msgstr "Work Orders"
 
 msgctxt "view:farm.event:"
 msgid "Are you sure to validate this event?"
-msgstr ""
+msgstr "Are you sure to validate this event?"
 
 msgctxt "view:farm.event:"
 msgid "Event"
-msgstr ""
+msgstr "Event"
 
 msgctxt "view:farm.event:"
 msgid "Events"
-msgstr ""
+msgstr "Events"
 
 msgctxt "view:farm.event:"
 msgid "_Validate"
-msgstr ""
+msgstr "_Validate"
 
 msgctxt "view:farm.farrowing.problem:"
 msgid "Farrowing Problem"
-msgstr ""
+msgstr "Farrowing Problem"
 
 msgctxt "view:farm.feed.animal_location_date:"
 msgid "Consumed Qty. per Animal"
-msgstr ""
+msgstr "Consumed Qty. per Animal"
 
 msgctxt "view:farm.feed.animal_location_date:"
 msgid "Feed Consumption per Animal, Location and Date"
-msgstr ""
+msgstr "Feed Consumption per Animal, Location and Date"
 
 msgctxt "view:farm.feed.inventory:"
 msgid "Confirm"
@@ -5243,7 +5185,7 @@ msgstr "Confirma"
 
 msgctxt "view:farm.feed.inventory:"
 msgid "Feed Inventory"
-msgstr ""
+msgstr "Feed Inventory"
 
 msgctxt "view:farm.feed.provisional_inventory:"
 msgid "Cancel"
@@ -5259,27 +5201,27 @@ msgstr "Esborrany"
 
 msgctxt "view:farm.feed.provisional_inventory:"
 msgid "Feed Provisional Inventory"
-msgstr ""
+msgstr "Feed Provisional Inventory"
 
 msgctxt "view:farm.move.event:"
 msgid "Weight Record"
-msgstr ""
+msgstr "Weight Record"
 
 msgctxt "view:farm.removal.reason:"
 msgid "Removal Reason"
-msgstr ""
+msgstr "emoval Reason"
 
 msgctxt "view:farm.removal.type:"
 msgid "Removal Type"
-msgstr ""
+msgstr "Removal Type"
 
 msgctxt "view:farm.semen_extraction.dose:"
 msgid "Semen Extraction Dose"
-msgstr ""
+msgstr "Semen Extraction Dose"
 
 msgctxt "view:farm.semen_extraction.dose:"
 msgid "Semen Extraction Doses"
-msgstr ""
+msgstr "Semen Extraction Doses"
 
 msgctxt "view:farm.semen_extraction.event:"
 msgid "Calculate Doses"
@@ -5287,15 +5229,15 @@ msgstr "Calcula dosis"
 
 msgctxt "view:farm.semen_extraction.event:"
 msgid "Extraction & Quality Test"
-msgstr ""
+msgstr "Extraction & Quality Test"
 
 msgctxt "view:farm.semen_extraction.event:"
 msgid "Extraction data"
-msgstr ""
+msgstr "Extraction data"
 
 msgctxt "view:farm.semen_extraction.event:"
 msgid "Generated Doses"
-msgstr ""
+msgstr "Generated Doses"
 
 msgctxt "view:farm.semen_extraction.event:"
 msgid "Notes"
@@ -5315,15 +5257,15 @@ msgstr "Raça"
 
 msgctxt "view:farm.specie.breed:"
 msgid "Breeds"
-msgstr ""
+msgstr "Breeds"
 
 msgctxt "view:farm.specie.farm_line:"
 msgid "Farm Line"
-msgstr ""
+msgstr "Farm Line"
 
 msgctxt "view:farm.specie.farm_line:"
 msgid "Farm Lines"
-msgstr ""
+msgstr "Farm Lines"
 
 msgctxt "view:farm.specie:"
 msgid "General"
@@ -5339,11 +5281,11 @@ msgstr "Espècie"
 
 msgctxt "view:farm.specie:"
 msgid "Species"
-msgstr ""
+msgstr "Species"
 
 msgctxt "view:farm.specie:"
 msgid "_Create Menu Entries"
-msgstr ""
+msgstr "_Create Menu Entries"
 
 msgctxt "view:farm.tag:"
 msgid "Tag"
