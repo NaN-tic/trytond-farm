@@ -1249,7 +1249,6 @@ msgctxt "field:farm.animal.group,create_uid:"
 msgid "Create User"
 msgstr "Usuario creación"
 
-#, fuzzy
 msgctxt "field:farm.animal.group,current_location:"
 msgid "Current Location"
 msgstr "Ubicación actual"
@@ -5512,7 +5511,6 @@ msgctxt "view:farm.animal:"
 msgid "Change Cycle Observation"
 msgstr "Cambiar observación"
 
-#, fuzzy
 msgctxt "view:farm.animal:"
 msgid "Events"
 msgstr "Eventos"
@@ -5561,7 +5559,6 @@ msgctxt "view:farm.event:"
 msgid "Events"
 msgstr "Eventos"
 
-#, fuzzy
 msgctxt "view:farm.event:"
 msgid "_Draft"
 msgstr "_Borrador"
