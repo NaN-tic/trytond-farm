@@ -145,10 +145,10 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
             return farrowing_event.produced_group.id
         return None
 
-    @fields.depends('animal', 'farrowing_group', 'timestamp')
+    @fields.depends('animal', 'farrowing_group', 'timestamp', 'quantity')
     def on_change_with_quantity(self):
         if not self.animal or not self.farrowing_group:
-            return None
+            return self.quantity
         with Transaction().set_context(
                 locations=[self.animal.location.id],
                 stock_date_end=self.timestamp.date()):
