@@ -24,7 +24,7 @@
     </group>
     <notebook>
         <page id="inseminations" string="Events">
-            <field name="insemination_events" colspan="4"/>"
+            <field name="insemination_events" colspan="4"/>
             <field name="diagnosis_events" colspan="4"/>
             <group id="abort_and_farrowing" colspan="4" col="6">
                 <label name="abort_event"/>
