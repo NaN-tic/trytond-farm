@@ -1216,7 +1216,9 @@ class ChangeCycleObservationStart(ModelView):
             ],
         states={
             'required': True,
-        })
+        },
+        depends=['animal'],
+        )
     observation = fields.Text('Observation', required=True)
     animal = fields.Many2One('farm.animal', 'Current animal',
         readonly=True, states={
