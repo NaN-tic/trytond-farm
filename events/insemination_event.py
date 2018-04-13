@@ -84,7 +84,7 @@ class InseminationEvent(AbstractEvent, ImportedEventMixin):
         return (self.dose_bom and self.dose_bom.output_products and
             self.dose_bom.output_products[0].id or None)
 
-    @fields.depends('dose_product', 'farm', 'timestamp')
+    @fields.depends('dose_lot', 'dose_bom', 'dose_product', 'farm', 'timestamp')
     def on_change_with_dose_lot(self, name=None):
         Lot = Pool().get('stock.lot')
 
@@ -97,7 +97,9 @@ class InseminationEvent(AbstractEvent, ImportedEventMixin):
                 ('product', '=', self.dose_product.id),
                 ('quantity', '>', 0),
                 ])
-            if len(lots) == 1:
+            if self.dose_lot in lots:
+                return self.dose_lot.id
+            elif len(lots) == 1:
                 return lots[0].id
 
     @classmethod
