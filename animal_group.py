@@ -318,9 +318,7 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
                     ]],
                 ])
 
-        kg, = Uom.search([
-                ('symbol', '=', 'kg'),
-                ])
+        kg, = Uom.search([('symbol', '=', 'kg')], limit=1)
         consumed_feed = Decimal('0.0')
         for event in feed_events:
             if event.start_date and event.timestamp > now:
