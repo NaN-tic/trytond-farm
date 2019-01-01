@@ -6,6 +6,8 @@
         <field name="female_cycle"/>
         <field name="problem"/>
         <field name="live"/>
+        <field name="stillborn"/>
+        <field name="mummified"/>
         <field name="dead"/>
         <field name="produced_group"/>
     </xpath>
