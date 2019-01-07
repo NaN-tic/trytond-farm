@@ -45,9 +45,19 @@ class BOM:
             bom.check_specie_semen_in_inputs()
 
     def check_specie_semen_in_inputs(self):
+        if not self.semen_dose:
+            return
+        if not self.check_specie_semen_in_inputs_recursive():
+            self.raise_user_error('missing_semen_input', self.rec_name)
+
+    def check_specie_semen_in_inputs_recursive(self):
         if self.semen_dose:
             semen_product = self.specie.semen_product
-            semen_input_lines = [i for i in self.inputs
-                if i.product == semen_product]
-            if not semen_input_lines:
-                self.raise_user_error('missing_semen_input', (self.rec_name,))
+            for i in self.inputs:
+                if i.product.boms:
+                    for l in i.product.boms:
+                        if l.bom.check_specie_semen_in_inputs_recursive():
+                            return True
+                elif i.product == semen_product:
+                    return True
+        return False
