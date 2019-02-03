@@ -115,6 +115,17 @@ class FarrowingEvent(AbstractEvent, ImportedEventMixin):
     def on_change_with_dead(self, name=None):
         return (self.stillborn or 0) + (self.mummified or 0)
 
+    @fields.depends('animal')
+    def on_change_animal(self):
+        if not self.animal:
+            return {}
+        changes = super(FarrowingEvent, self).on_change_animal()
+        current_cycle = self.animal.current_cycle
+        changes.update({
+            'female_cycle': current_cycle.id,
+            })
+        return changes
+
     @classmethod
     @ModelView.button
     @Workflow.transition('validated')
