@@ -165,6 +165,14 @@ class EventOrder(ModelSQL, ModelView, Workflow):
     def default_employee():
         return Transaction().context.get('employee')
 
+    @staticmethod
+    def default_farm():
+        pool = Pool()
+        User = pool.get('res.user')
+        user = User(Transaction().user)
+        if user.farms:
+            return user.farms[0].id
+
     @classmethod
     def validate(cls, orders):
         super(EventOrder, cls).validate(orders)
