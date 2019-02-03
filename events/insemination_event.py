@@ -85,6 +85,17 @@ class InseminationEvent(AbstractEvent, ImportedEventMixin):
                 self.timestamp)
         return super(InseminationEvent, self).get_rec_name(name)
 
+    @fields.depends('animal')
+    def on_change_animal(self):
+        if not self.animal:
+            return {}
+        changes = super(InseminationEvent, self).on_change_animal()
+        current_cycle = self.animal.current_cycle
+        changes.update({
+                'female_cycle': current_cycle.id,
+                })
+        return changes
+
     @fields.depends('dose_bom')
     def on_change_with_dose_product(self, name=None):
         return (self.dose_bom and self.dose_bom.output_products and
