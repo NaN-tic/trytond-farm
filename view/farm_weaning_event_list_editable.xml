@@ -4,8 +4,12 @@
 <data>
     <xpath expr="//field[@name='animal_group']" position="after">
         <field name="female_cycle"/>
+        <field name="born_alive"/>
+        <field name="fostered"/>
         <field name="farrowing_group"/>
         <field name="quantity"/>
+        <field name="last_minute_fostered"/>
+        <field name="casualties"/>
         <field name="female_to_location"/>
         <field name="weaned_to_location"/>
         <field name="weaned_group"/>

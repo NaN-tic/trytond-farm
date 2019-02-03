@@ -10,7 +10,7 @@ No possibility of creating individuals from here. Maybe in the future we
 - Farrowing creates groups and weaning is for individuals
 """
 from trytond.model import fields, ModelView, ModelSQL, Workflow
-from trytond.pyson import Equal, Eval, Id, If, Not
+from trytond.pyson import Eval, Id, If, Not
 from trytond.pool import Pool
 from trytond.transaction import Transaction
 
@@ -29,8 +29,16 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
     farrowing_group = fields.Function(fields.Many2One('farm.animal.group',
             'Farrowing Group'),
         'get_farrowing_group')
+    born_alive = fields.Function(fields.Integer('Born Alive'),
+        'on_change_with_born_alive')
     quantity = fields.Integer('Quantity', required=True,
         states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
+    fostered = fields.Function(fields.Integer('Fostered'),
+        'on_change_with_fostered')
+    last_minute_fostered = fields.Integer('Last minute fostered',
+	states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
+    casualties = fields.Function(fields.Integer('Casualties'),
+        'on_change_with_casualties')
     female_to_location = fields.Many2One('stock.location',
         'Female Destination', required=True, domain=[
             ('type', '=', 'storage'),
@@ -155,6 +163,39 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
             quantity = self.farrowing_group.lot.quantity
         return quantity or None
 
+    @fields.depends('born_alive', 'quantity', 'fostered',
+        'last_minute_fostered')
+    def on_change_with_casualties(self, name=None):
+        return ((self.born_alive or 0) + (self.fostered or 0) +
+            (self.last_minute_fostered or 0) - (self.quantity or 0))
+
+    @fields.depends('animal')
+    def on_change_with_fostered(self, name=None):
+        'Returns the sum of foster event quantity for the current farrowing '
+        'group. Used to display and check'
+        current_cycle = self.animal.current_cycle
+        return current_cycle.fostered or 0
+
+    @fields.depends('animal')
+    def on_change_with_born_alive(self, name=None):
+        'Returns the number of alive in the current farrowing event. Used to '
+        'display and check'
+        current_cycle = self.animal.current_cycle
+        return current_cycle.live or 0
+
+    @fields.depends('animal')
+    def on_change_animal(self):
+        if not self.animal:
+            return {}
+        changes = super(WeaningEvent, self).on_change_animal()
+        current_cycle = self.animal.current_cycle
+        changes.update({
+            'female_cycle': current_cycle.id,
+            'quantity': current_cycle.live + current_cycle.fostered,
+            'last_minute_fostered': 0,
+            })
+        return changes
+
     @classmethod
     @ModelView.button
     @Workflow.transition('validated')
@@ -162,7 +203,6 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
         """
         Allow the event only if the female has an open cycle and it's in the
             state of 'lactating'.
-
         Create stock move for the female:
         What: animal_id, From: animal's location, To: female_location_dest
 
@@ -188,7 +228,8 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
 
             current_cycle = weaning_event.animal.current_cycle
             weaning_event.female_cycle = current_cycle
-            maximum = current_cycle.live + current_cycle.fostered
+            maximum = (current_cycle.live + current_cycle.fostered +
+                weaning_event.last_minute_fostered)
             if weaning_event.quantity > maximum:
                 cls.raise_user_error('incorrect_quantity', maximum)
 
@@ -203,21 +244,19 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
                 weaning_event.female_move = female_move
                 todo_moves.append(female_move)
 
-            farrowing_group_lot = weaning_event.farrowing_group.lot
-            with Transaction().set_context(
-                    product=farrowing_group_lot.product.id,
-                    locations=[weaning_event.animal.location.id],
-                    stock_date_end=weaning_event.timestamp.date()):
-                farrowing_group_qty = farrowing_group_lot.quantity
-            lost_qty = farrowing_group_qty - weaning_event.quantity
-
-            if lost_qty != 0:
-                # put in 'animal.location' exactly 'quantity' units of
-                # farrowing_group
-                lost_move = weaning_event._get_lost_move(lost_qty)
+            if weaning_event.casualties != 0:
+                lost_move = weaning_event._get_lost_move(
+                    weaning_event.casualties)
                 lost_move.save()
                 weaning_event.lost_move = lost_move
                 todo_moves.append(lost_move)
+
+            if weaning_event.last_minute_fostered !=0:
+                last_minute_fostered_move = (
+                    weaning_event._get_last_minute_fostered_move(
+                        weaning_event.last_minute_fostered))
+                last_minute_fostered_move.save()
+                todo_moves.append(last_minute_fostered_move)
 
             if (weaning_event.quantity and weaning_event.weaned_group and
                     weaning_event.weaned_group !=
@@ -265,6 +304,29 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
             effective_date=self.timestamp.date(),
             company=context.get('company'),
             lot=self.lot,
+            origin=self)
+
+    def _get_last_minute_fostered_move(self, last_minute_fostered):
+        pool = Pool()
+        Move = pool.get('stock.move')
+        context = Transaction().context
+        if last_minute_fostered < 0:
+            from_location = self.animal.location
+            to_location = self.specie.foster_location
+        else:
+            # recover lost units
+            from_location = self.specie.foster_location
+            to_location = self.animal.location
+        return Move(
+            product=self.farrowing_group.lot.product,
+            uom=self.farrowing_group.lot.product.default_uom,
+            quantity=abs(last_minute_fostered),
+            from_location=from_location,
+            to_location=to_location,
+            planned_date=self.timestamp.date(),
+            effective_date=self.timestamp.date(),
+            company=context.get('company'),
+            lot=self.farrowing_group.lot,
             origin=self)
 
     def _get_lost_move(self, lost_qty):
