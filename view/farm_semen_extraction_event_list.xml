@@ -3,6 +3,7 @@
      copyright notices and license terms. -->
 <data>
     <xpath expr="//field[@name='timestamp']" position="after">
+        <field name="reference"/>
         <field name="untreated_semen_qty"/>
         <field name="untreated_semen_uom"/>
         <field name="formula_result"/>

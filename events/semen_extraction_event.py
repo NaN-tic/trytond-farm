@@ -21,6 +21,7 @@ class SemenExtractionEvent(AbstractEvent):
     __name__ = 'farm.semen_extraction.event'
     _table = 'farm_semen_extraction_event'
 
+    reference = fields.Char('Reference')
     semen_product = fields.Function(fields.Many2One('product.product',
             "Semen's Product"),
         'on_change_with_semen_product')

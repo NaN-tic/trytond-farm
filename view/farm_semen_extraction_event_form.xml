@@ -7,9 +7,11 @@
     <xpath expr="//field[@name='employee']" position="after">
         <notebook colspan="4">
             <page string="Extraction &amp; Quality Test" id="extraction_page">
-                <group colspan="4" col="4" id="untreated_semen_group">
-                    <separator string="Extraction data" colspan="4"
+                <group colspan="4" col="6" id="untreated_semen_group">
+                    <separator string="Extraction data" colspan="6"
                         id="untreated_semen_sep"/>
+                    <label name="reference"/>
+                    <field name="reference"/>
                     <label name="untreated_semen_qty"/>
                     <field name="untreated_semen_qty"/>
                     <label name="untreated_semen_uom" string="UoM"/>
