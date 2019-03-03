@@ -13,17 +13,15 @@ __all__ = ['EventOrder']
 # The fields of the header are readonly if there are lines defined because they
 # are used in the lines' domain
 _STATES_HEADER = {
-    'readonly': (Bool(Eval('medication_events')) |
-        Bool(Eval('insemination_events')) |
-        Bool(Eval('pregnancy_diagnosis_events')) |
-        Bool(Eval('abort_events')) |
-        Bool(Eval('farrowing_events')) |
-        Bool(Eval('foster_events')) |
-        Bool(Eval('weaning_events'))),
+    'readonly': (Bool(Eval('medication_events', [])) |
+        Bool(Eval('insemination_events', [])) |
+        Bool(Eval('pregnancy_diagnosis_events', [])) |
+        Bool(Eval('abort_events', [])) |
+        Bool(Eval('farrowing_events', [])) |
+        Bool(Eval('foster_events', [])) |
+        Bool(Eval('weaning_events', []))),
     }
-_DEPENDS_HEADER = ['medication_events', 'insemination_events',
-    'pregnancy_diagnosis_events', 'abort_events', 'farrowing_events',
-    'foster_events', 'weaning_events']
+_DEPENDS_HEADER = []
 _DOMAIN_LINES = [
     ('animal_type', '=', Eval('animal_type')),
     ('specie', '=', Eval('specie')),
