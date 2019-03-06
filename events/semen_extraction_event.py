@@ -2,7 +2,7 @@
 #copyright notices and license terms.
 import math
 from datetime import datetime, date
-
+from decimal import Decimal
 from trytond.model import fields, ModelView, ModelSQL, Workflow
 from trytond.pyson import Bool, Equal, Eval, Greater, Id
 from trytond.pool import Pool
@@ -240,7 +240,8 @@ class SemenExtractionEvent(AbstractEvent):
         assert consumed_semen_qty > 0.0, ('BOM of semen extraction event "%s" '
             'generetes 0.0 consumed semen qty' % self.id)
         n_doses = float(self.semen_qty) / consumed_semen_qty
-        return n_doses
+        digits = self.__class__.dose_calculated_units.digits[1]
+        return float(Decimal(n_doses).quantize(Decimal(str(10.0 ** -digits))))
 
     @fields.depends('semen_qty', 'doses')
     def on_change_with_doses_semen_qty(self, name=None):

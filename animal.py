@@ -1189,7 +1189,7 @@ class EventUnion(UnionMixin, ModelSQL, ModelView):
 
     def get_cycle(self, name=None):
         model = self._get_event()
-        if hasattr(model, 'female_cycle'):
+        if hasattr(model, 'female_cycle') and model.female_cycle:
             return model.female_cycle.id
         return None
 
