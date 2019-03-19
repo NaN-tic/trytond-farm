@@ -1,10 +1,10 @@
 #The COPYRIGHT file at the top level of this repository contains the full
 #copyright notices and license terms.
 import math
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from decimal import Decimal
 from trytond.model import fields, ModelView, ModelSQL, Workflow
-from trytond.pyson import Bool, Equal, Eval, Greater, Id
+from trytond.pyson import Bool, Equal, Eval, Id
 from trytond.pool import Pool
 from trytond.transaction import Transaction
 
@@ -37,6 +37,8 @@ class SemenExtractionEvent(AbstractEvent):
         states=_STATES_WRITE_DRAFT,
         depends=_DEPENDS_WRITE_DRAFT + ['untreated_semen_unit_digits'],
         help='The amount of untreated semen taken from male.')
+    test_required = fields.Boolean('Test Required',
+        help='Check to require quality test')
     test = fields.One2One('farm.semen_extraction.event-quality.test', 'event',
         'test', string='Quality Test', readonly=False, domain=[
             # TODO: Falla el test al cridar el super().create()
@@ -45,7 +47,8 @@ class SemenExtractionEvent(AbstractEvent):
             #('unit', '=', Id('product', 'uom_cubic_centimeter')),
             ],
         states={
-            'required': Greater(Eval('id', 0), 0),
+            'required': Eval('test_required', True) & (Eval('id', 0) > 0),
+            'visible': Eval('test_required', True)
             }, depends=['semen_product', 'id'])
     formula_uom = fields.Function(fields.Many2One('product.uom',
             'Formula UOM'),
@@ -207,7 +210,8 @@ class SemenExtractionEvent(AbstractEvent):
             untreated_semen_qty = Uom.compute_qty(
                 extraction_event.untreated_semen_uom,
                 extraction_event.untreated_semen_qty,
-                extraction_event.formula_uom)
+                (extraction_event.formula_uom if extraction_event.test_required
+                    else extraction_event.untreated_semen_uom))
             semen_calculated_qty = ((extraction_event.formula_result or 0.0) *
                     untreated_semen_qty)
             res['semen_calculated_qty'][extraction_event.id] = (
@@ -330,19 +334,20 @@ class SemenExtractionEvent(AbstractEvent):
                 cls.raise_user_error('no_doses_on_validate',
                     extraction_event.rec_name)
 
-            to_aprove = (extraction_event.test.state == 'confirmed')
-            if extraction_event.test.state == 'draft':
-                QualityTest.confirmed([extraction_event.test])
-                to_aprove = True
-            if to_aprove:
-                QualityTest.successful([extraction_event.test])
-            quality_test = QualityTest(extraction_event.test)
+            if extraction_event.test_required:
+                to_aprove = (extraction_event.test.state == 'confirmed')
+                if extraction_event.test.state == 'draft':
+                    QualityTest.confirmed([extraction_event.test])
+                    to_aprove = True
+                if to_aprove:
+                    QualityTest.successful([extraction_event.test])
+                quality_test = QualityTest(extraction_event.test)
 
-            if not quality_test.success:
-                cls.raise_user_error('quality_test_not_succeeded', {
-                        'test': quality_test.rec_name,
-                        'event': extraction_event.rec_name,
-                        })
+                if not quality_test.success:
+                    cls.raise_user_error('quality_test_not_succeeded', {
+                            'test': quality_test.rec_name,
+                            'event': extraction_event.rec_name,
+                            })
 
             semen_move = extraction_event._get_semen_move()
             semen_move.save()
@@ -663,9 +668,13 @@ class SemenExtractionDose(ModelSQL, ModelView):
                 ('farm', '=', self.event.farm.id),
                 ('has_male', '=', True),
                 ])
-        return Lot(
-            number=Sequence.get_id(farm_line.dose_lot_sequence.id),
-            product=self.dose_product.id)
+        number = (self.event.animal.breed.rec_name + '/' +
+            self.event.animal.rec_name + '/' + self.event.reference + '/' +
+            Sequence.get_id(farm_line.dose_lot_sequence.id))
+
+        return Lot(number=number, product=self.dose_product.id,
+            expiry_date=(self.event.timestamp +
+                timedelta(days=self.dose_product.expiry_time or 4)))
 
     @classmethod
     def copy(cls, doses, default=None):

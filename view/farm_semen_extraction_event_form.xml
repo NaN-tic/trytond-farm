@@ -6,42 +6,22 @@
     <xpath expr="//field[@name='notes']" position="replace"/>
     <xpath expr="//field[@name='employee']" position="after">
         <notebook colspan="4">
-            <page string="Extraction &amp; Quality Test" id="extraction_page">
-                <group colspan="4" col="6" id="untreated_semen_group">
-                    <separator string="Extraction data" colspan="6"
-                        id="untreated_semen_sep"/>
-                    <label name="reference"/>
-                    <field name="reference"/>
-                    <label name="untreated_semen_qty"/>
-                    <field name="untreated_semen_qty"/>
-                    <label name="untreated_semen_uom" string="UoM"/>
-                    <field name="untreated_semen_uom"/>
-                </group>
-                <group colspan="4" col="6" id="quality_test_group">
-                    <separator name="test" colspan="6"/>
-                    <label name="test" string="Test"/>
-                    <field name="test"/>
-                    <label name="formula_result"/>
-                    <field name="formula_result"/>
-                    <label name="formula_uom"/>
-                    <field name="formula_uom"/>
-                </group>
-                <separator string="" colspan="4" id="semen_qty_sep"/>
-                <label name="solvent_calculated_qty"/>
-                <field name="solvent_calculated_qty"/>
-                <newline/>
-                <label name="semen_calculated_qty"/>
-                <field name="semen_calculated_qty"/>
-                <label name="semen_qty"/>
-                <field name="semen_qty"/>
-                <separator string="" colspan="4" id="advanced_fields_sep"/>
-                <label name="semen_lot"/>
-                <field name="semen_lot"/>
-                <label name="semen_move"/>
-                <field name="semen_move"/>
-            </page>
             <page string="Generated Doses" id="doses_page">
-                <group colspan="4" col="5" id="calculate_doses_group">
+                <label name="test_required"/>
+                <field name="test_required"/>
+                <label name="reference"/>
+                <field name="reference"/>
+                <separator string="Extraction data" colspan="8"
+                      id="untreated_semen_sep"/>
+              <group colspan="4" col="6" id="untreated_semen_group">
+                  <label name="untreated_semen_qty"/>
+                  <field name="untreated_semen_qty"/>
+                  <label name="untreated_semen_uom" string="UoM"/>
+                  <field name="untreated_semen_uom"/>
+                  <label name="semen_qty"/>
+                  <field name="semen_qty"/>
+              </group>
+                <group colspan="4" col="6" id="calculate_doses_group">
                     <label name="dose_bom"/>
                     <field name="dose_bom"/>
                     <label name="dose_calculated_units"/>
@@ -60,6 +40,28 @@
             </page>
             <page string="Notes" id="notes_page">
                 <field name="notes" colspan="4"/>
+            </page>
+            <page string="Extraction &amp; Quality Test" id="extraction_page" states="{'invisible': ~Eval('test_required')}">
+                <group colspan="4" col="6" id="quality_test_group">
+                    <separator name="test" colspan="6"/>
+                    <label name="test" string="Test"/>
+                    <field name="test"/>
+                    <label name="formula_result"/>
+                    <field name="formula_result"/>
+                    <label name="formula_uom"/>
+                    <field name="formula_uom"/>
+                </group>
+                <separator string="" colspan="4" id="semen_qty_sep"/>
+                <label name="solvent_calculated_qty"/>
+                <field name="solvent_calculated_qty"/>
+                <newline/>
+                <label name="semen_calculated_qty"/>
+                <field name="semen_calculated_qty"/>
+                <separator string="" colspan="4" id="advanced_fields_sep"/>
+                <label name="semen_lot"/>
+                <field name="semen_lot"/>
+                <label name="semen_move"/>
+                <field name="semen_move"/>
             </page>
         </notebook>
     </xpath>
