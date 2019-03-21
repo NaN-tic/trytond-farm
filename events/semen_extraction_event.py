@@ -674,7 +674,7 @@ class SemenExtractionDose(ModelSQL, ModelView):
 
         return Lot(number=number, product=self.dose_product.id,
             expiry_date=(self.event.timestamp +
-                timedelta(days=self.dose_product.expiry_time or 4)))
+                timedelta(days=self.dose_product.expiry_time or 4)).date())
 
     @classmethod
     def copy(cls, doses, default=None):
