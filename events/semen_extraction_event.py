@@ -48,7 +48,7 @@ class SemenExtractionEvent(AbstractEvent):
             ],
         states={
             'required': Eval('test_required', True) & (Eval('id', 0) > 0),
-            'visible': Eval('test_required', True)
+            'invisible': ~Eval('test_required', True),
             }, depends=['semen_product', 'id'])
     formula_uom = fields.Function(fields.Many2One('product.uom',
             'Formula UOM'),
