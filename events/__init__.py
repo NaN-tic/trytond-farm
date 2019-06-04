@@ -1,19 +1,19 @@
 #The COPYRIGHT file at the top level of this repository contains the full
 #copyright notices and license terms.
-import abstract_event
+from . import abstract_event
 
-import move_event
-import feed_event
-import feed_inventory
-import medication_event
-import transformation_event
-import removal_event
-import semen_extraction_event
-import insemination_event
-import pregnancy_diagnosis_event
-import abort_event
-import farrowing_event
-import foster_event
-import weaning_event
+from . import move_event
+from . import feed_event
+from . import feed_inventory
+from . import medication_event
+from . import transformation_event
+from . import removal_event
+from . import semen_extraction_event
+from . import insemination_event
+from . import pregnancy_diagnosis_event
+from . import abort_event
+from . import farrowing_event
+from . import foster_event
+from . import weaning_event
 
-import event_order
+from . import event_order

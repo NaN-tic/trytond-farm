@@ -1,17 +1,15 @@
 #The COPYRIGHT file at the top level of this repository contains the full
 #copyright notices and license terms.
 from trytond.pool import Pool
-
-import animal
-import animal_group
-import events
-import product
-import production
-import quality
-import specie
-import stock
-import user
-
+from . import animal
+from . import animal_group
+from . import events
+from . import product
+from . import production
+from . import quality
+from . import specie
+from . import stock
+from . import user
 
 def register():
     Pool.register(
