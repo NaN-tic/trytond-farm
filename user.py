@@ -5,11 +5,11 @@ from trytond.pool import PoolMeta
 from trytond.pyson import Eval, Id, Not
 
 __all__ = ['User', 'UserLocation']
-__metaclass__ = PoolMeta
 
 
 class User:
     __name__ = 'res.user'
+    __metaclass__ = PoolMeta
 
     farms = fields.Many2Many('res.user-stock.location', 'user', 'location',
         'Farms', domain=[

@@ -10,7 +10,6 @@ from trytond.transaction import Transaction
 
 __all__ = ['Specie', 'SpecieModel', 'SpecieFarmLine', 'Breed',
     'UIMenu', 'ActionActWindow', 'ActionWizard']
-__metaclass__ = PoolMeta
 
 MODULE_NAME = 'farm'
 
@@ -618,14 +617,17 @@ class SpecieModel(ModelSQL):
 
 class UIMenu:
     __name__ = 'ir.ui.menu'
+    __metaclass__ = PoolMeta
     specie = fields.Many2One('farm.specie', 'Specie', ondelete='CASCADE')
 
 
 class ActionActWindow:
     __name__ = 'ir.action.act_window'
+    __metaclass__ = PoolMeta
     specie = fields.Many2One('farm.specie', 'Specie', ondelete='CASCADE')
 
 
 class ActionWizard:
     __name__ = 'ir.action.wizard'
+    __metaclass__ = PoolMeta
     specie = fields.Many2One('farm.specie', 'Specie', ondelete='CASCADE')

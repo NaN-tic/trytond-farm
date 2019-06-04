@@ -5,11 +5,11 @@ from trytond.pyson import Bool, Eval, Not
 from trytond.pool import PoolMeta
 
 __all__ = ['QualityTest']
-__metaclass__ = PoolMeta
 
 
 class QualityTest:
     __name__ = 'quality.test'
+    __metaclass__ = PoolMeta
 
     semen_extraction = fields.One2One(
         'farm.semen_extraction.event-quality.test', 'test', 'event',

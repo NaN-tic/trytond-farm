@@ -5,17 +5,17 @@ from collections import defaultdict
 from decimal import Decimal
 
 from trytond.model import ModelView, ModelSQL, fields, Workflow
-from trytond.pyson import Equal, Eval, Not, Or
+from trytond.pyson import Equal, Eval, Not
 from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
 
 __all__ = ['Location', 'LocationSiloLocation', 'Lot', 'LotAnimal',
     'LotAnimalGroup', 'Move', 'LotCostLine']
-__metaclass__ = PoolMeta
 
 
 class Lot:
     __name__ = 'stock.lot'
+    __metaclass__ = PoolMeta
 
     animal_type = fields.Selection([
             (None, ''),
@@ -158,6 +158,7 @@ class LotAnimalGroup(ModelSQL):
 
 class Location:
     __name__ = 'stock.location'
+    __metaclass__ = PoolMeta
 
     silo = fields.Boolean('Silo', select=True,
         help='Indicates that the location is a silo.')
@@ -361,6 +362,7 @@ class LocationSiloLocation(ModelSQL):
 
 class Move:
     __name__ = 'stock.move'
+    __metaclass__ = PoolMeta
 
     @classmethod
     def _get_origin(cls):
@@ -397,6 +399,7 @@ class Move:
 
 class LotCostLine:
     __name__ = 'stock.lot.cost_line'
+    __metaclass__ = PoolMeta
 
     @classmethod
     def _get_origin(cls):

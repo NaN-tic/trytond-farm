@@ -14,7 +14,6 @@ from trytond.wizard import Wizard, StateView, StateAction, Button, StateTransiti
 __all__ = ['Tag', 'Animal', 'AnimalTag', 'AnimalWeight', 'Male', 'Female',
     'FemaleCycle', 'CreateFemaleStart', 'CreateFemaleLine', 'CreateFemale',
     'ChangeCycleObservationStart', 'ChangeCycleObservation', 'EventUnion']
-__metaclass__ = PoolMeta
 
 _STATES_MALE_FIELD = {
     'invisible': Not(Equal(Eval('type'), 'male')),
@@ -561,6 +560,7 @@ class AnimalWeight(ModelSQL, ModelView):
 
 class Male:
     __name__ = 'farm.animal'
+    __metaclass__ = PoolMeta
 
     extractions = fields.One2Many('farm.semen_extraction.event',
         'animal', 'Semen Extractions', states=_STATES_MALE_FIELD,
@@ -588,6 +588,7 @@ class Male:
 
 class Female:
     __name__ = 'farm.animal'
+    __metaclass__ = PoolMeta
 
     cycles = fields.One2Many('farm.animal.female_cycle', 'animal', 'Cycles',
         readonly=True, order=[

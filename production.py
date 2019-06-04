@@ -5,11 +5,11 @@ from trytond.pyson import Bool, Eval, Id, If, Not, Or
 from trytond.pool import PoolMeta
 
 __all__ = ['BOM']
-__metaclass__ = PoolMeta
 
 
 class BOM:
     __name__ = 'production.bom'
+    __metaclass__ = PoolMeta
 
     semen_dose = fields.Boolean('Semen Dose')
     specie = fields.Many2One('farm.specie', 'Dose Specie', states={
