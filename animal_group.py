@@ -7,6 +7,8 @@ from trytond.model import ModelView, ModelSQL, fields
 from trytond.pyson import Equal, Eval, Greater, Id, Not
 from trytond.transaction import Transaction
 from trytond.pool import Pool
+from trytond.exceptions import UserError
+from trytond.i18n import gettext
 
 from .animal import AnimalMixin
 
@@ -102,22 +104,6 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
             #    'In Groups, the initial quantity must be positive (greater or '
             #    'equals 1)'),
             ]
-        cls._error_messages.update({
-                'missing_supplier_location': ('Supplier Location of '
-                    'company\'s party "%s" is empty but it is required to '
-                    'create the arrival stock move for a new group.'),
-                'missing_production_location': ('The warehouse location "%s" '
-                    'doesn\'t have set production location, but it is '
-                    'required to create the arrival stock move for a new '
-                    'group.'),
-                'no_farm_specie_farm_line_available': ('The specified farm '
-                    '"%(farm)s" is not configured as farm with groups for '
-                    'the specie "%(specie)s".'),
-                'invalid_group_destination': ('The event "%(event)s" is '
-                    'trying to move the group "%(group)s" to location '
-                    '"%(location)s", but the location\'s warehouse is not '
-                    'configured as a farm for this kind of animals.'),
-                })
 
     @staticmethod
     def default_specie():
@@ -255,17 +241,18 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
 
         # Lots that have any unit in any location
         lot_ids = set(l for l in qbl
-            if qbl[l] and any(q > 0.0 for q in qbl[l].values()))
+            if qbl[l] and any(q > 0.0 for q in list(qbl[l].values())))
         return [('lot', 'in', list(lot_ids))]
 
     @classmethod
     def get_quantity(cls, animal_groups, name):
         pool = Pool()
-        Lot = pool.get('stock.lot')
+        #Lot = pool.get('stock.lot')
         Specie = pool.get('farm.specie')
 
         specie_id = cls.default_specie()
         location_ids = Transaction().context.get('locations')
+
         lots = [ag.lot for ag in animal_groups]
         products = []
         if specie_id:
@@ -278,10 +265,11 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
         else:
             products = list(set(l.product for l in lots))
 
-        lot_quantities = Lot._get_quantity(lots, name, location_ids,
-                products, grouping=('product', 'lot'))
-        return dict((ag.id, int(lot_quantities[ag.lot.id]))
-            for ag in animal_groups)
+        return dict([(x.id, int(x.lot.quantity)) for x in animal_groups])
+        #with Transaction().set_context({'locations': location_ids}):
+            #lot_quantities = Lot._get_quantity(lots, name)
+        #return dict((ag.id, int(lot_quantities[ag.lot.id]))
+            #for ag in animal_groups)
 
     @classmethod
     def search_quantity(cls, name, domain=None):
@@ -352,11 +340,11 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
             if farm_line.farm.id == location.warehouse.id:
                 if farm_line.has_group:
                     return
-        self.raise_user_error('invalid_group_destination', {
-                'event': event_rec_name,
-                'group': self.rec_name,
-                'location': location.rec_name,
-                })
+        raise UserError(gettext('farm.invalid_group_destination', 
+                event=event_rec_name,
+                group=self.rec_name,
+                location=location.rec_name,
+                ))
 
     @classmethod
     def copy(cls, records, default=None):
@@ -415,10 +403,11 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
                 ('has_group', '=', True),
                 ])
         if not farm_lines:
-            cls.raise_user_error('no_farm_specie_farm_line_available', {
-                    'farm': Location(farm_id).rec_name,
-                    'specie': Specie(specie_id).rec_name,
-                    })
+            raise UserError(gettext(
+                    'farm.group_no_farm_specie_farm_line_available', 
+                    farm=Location(farm_id).rec_name,
+                    specie=Specie(specie_id).rec_name,
+                    ))
         sequence = farm_lines[0].group_sequence
         return sequence and Sequence.get_id(sequence.id) or ''
 

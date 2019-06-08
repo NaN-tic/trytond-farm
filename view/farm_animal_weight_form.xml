@@ -1,12 +1,15 @@
 <?xml version="1.0"?>
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
-<form string="Weight" col="6">
+<form>
     <label name="animal"/>
     <field name="animal"/>
     <newline/>
     <label name="timestamp"/>
-    <field name="timestamp"/>
+    <group col="2" id="timestamp">
+        <field name="timestamp" widget="date"/>
+        <field name="timestamp" widget="time"/>
+    </group>
     <label name="weight"/>
     <field name="weight"/>
     <label name="uom"/>

@@ -1,22 +1,25 @@
 <?xml version="1.0"?>
 <!--The COPYRIGHT file at the top level of this repository
 contains the full copyright notices and license terms. -->
-<form string="Feed Provisional Inventory">
-	<label name="location"/>
+<form>
+    <label name="location"/>
     <field name="location"/>
-	<label name="timestamp"/>
-	<field name="timestamp"/>
-	<label name="quantity"/>
-	<field name="quantity"/>
-	<label name="uom"/>
-	<field name="uom"/>
+    <label name="timestamp"/>
+    <group col="2" id="timestamp">
+        <field name="timestamp" widget="date"/>
+        <field name="timestamp" widget="time"/>
+    </group>
+    <label name="quantity"/>
+    <field name="quantity"/>
+    <label name="uom"/>
+    <field name="uom"/>
     <separator id="blank_sep" string="" colspan="4"/>
-	<label name="prev_inventory_date"/>
-	<field name="prev_inventory_date"/>
-	<label name="inventory"/>
-	<field name="inventory"/>
-	<label name="feed_inventory"/>
-	<field name="feed_inventory"/>
+    <label name="prev_inventory_date"/>
+    <field name="prev_inventory_date"/>
+    <label name="inventory"/>
+    <field name="inventory"/>
+    <label name="feed_inventory"/>
+    <field name="feed_inventory"/>
     <notebook colspan="4">
         <page name="dest_locations">
             <field name="dest_locations" colspan="4"/>

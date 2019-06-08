@@ -7,7 +7,7 @@
         <record model="ir.ui.view"
             id="farm_foster_event_form_view">
             <field name="model">farm.foster.event</field>
-            <field name="type">form</field>
+            <field name="type" eval="None"/>
             <field name="inherit" ref="farm.farm_abstract_event_form_view"/>
             <field name="name">farm_foster_event_form</field>
         </record>
@@ -15,7 +15,7 @@
         <record model="ir.ui.view"
                 id="farm_foster_event_list_view">
             <field name="model">farm.foster.event</field>
-            <field name="type">tree</field>
+            <field name="type" eval="None"/>
             <field name="inherit" ref="farm.farm_abstract_event_list_view"/>
             <field name="name">farm_foster_event_list</field>
         </record>
@@ -23,24 +23,33 @@
         <record model="ir.ui.view"
                 id="farm_foster_event_list_editable_view">
             <field name="model">farm.foster.event</field>
-            <field name="type">tree</field>
+            <field name="type" eval="None"/>
             <field name="inherit" ref="farm.farm_abstract_event_list_editable_view"/>
             <field name="name">farm_foster_event_list_editable</field>
         </record>
 
-        <record model="ir.model.button"
-            id="validate_foster_event_button">
-            <field name="name">validate_event</field>
-            <field name="model"
-                search="[('model', '=', 'farm.foster.event')]"/>
+        <record model="ir.model.button" id="draft_foster_event_button">
+            <field name="name">draft</field>
+            <field name="model" search="[('model', '=', 'farm.foster.event')]"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="validate_foster_event_button_group_farm_admin">
+        <record model="ir.model.button-res.group" id="draft_foster_event_button_group_farm_admin">
+            <field name="button" ref="draft_foster_event_button"/>
+            <field name="group" ref="group_farm_admin"/>
+        </record>
+        <record model="ir.model.button-res.group" id="draft_foster_event_button_group_farm_females">
+            <field name="button" ref="draft_foster_event_button"/>
+            <field name="group" ref="group_farm_females"/>
+        </record>
+
+        <record model="ir.model.button" id="validate_foster_event_button">
+            <field name="name">validate_event</field>
+            <field name="model" search="[('model', '=', 'farm.foster.event')]"/>
+        </record>
+        <record model="ir.model.button-res.group" id="validate_foster_event_button_group_farm_admin">
             <field name="button" ref="validate_foster_event_button"/>
             <field name="group" ref="group_farm_admin"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="validate_foster_event_button_group_farm_females">
+        <record model="ir.model.button-res.group" id="validate_foster_event_button_group_farm_females">
             <field name="button" ref="validate_foster_event_button"/>
             <field name="group" ref="group_farm_females"/>
         </record>
@@ -48,9 +57,7 @@
         <record model="ir.action.act_window" id="act_farm_foster_event">
             <field name="name">Fosters</field>
             <field name="res_model">farm.foster.event</field>
-            <field name="search_value"></field>
-            <field name="domain"></field>
-            <field name="context">{'animal_type': 'female'}</field>
+            <field name="context" eval="{'animal_type': 'female'}" pyson="1"/>
         </record>
         <record model="ir.action.act_window.view"
             id="act_farm_foster_event_view1">
@@ -66,6 +73,14 @@
         </record>
 
         <!-- Permissions -->
+        <record model="ir.model.access" id="access_farm_foster_event">
+            <field name="model" search="[('model', '=', 'farm.foster.event')]"/>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+
         <record model="ir.model.access" id="access_farm_foster_event_farm">
             <field name="model" search="[('model', '=', 'farm.foster.event')]"/>
             <field name="group" ref="group_farm"/>

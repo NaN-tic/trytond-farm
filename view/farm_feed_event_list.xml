@@ -2,7 +2,8 @@
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
 <data>
-    <xpath expr="//field[@name='timestamp']" position="after">
+    <!-- <xpath expr="//field[@name='timestamp']" position="after"> -->
+    <xpath expr="/tree" position="inside">
         <field name="start_date"/>
         <field name="end_date"/>
         <field name="location"/>

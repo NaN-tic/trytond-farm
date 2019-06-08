@@ -1,6 +1,6 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
-from trytond.model import fields
+from trytond.model import fields, Check
 from trytond.pyson import Eval
 
 from .feed_abstract_event import FeedEventMixin
@@ -40,35 +40,16 @@ class MedicationEvent(FeedEventMixin):
         if 'feed_product_uom_category' not in cls.uom.depends:
             cls.uom.depends.append('feed_product_uom_category')
 
-        cls._error_messages.update({
-                'animal_not_in_location': ('The medication event of animal '
-                    '"%(animal)s" is trying to move it from location '
-                    '"%(location)s" but it isn\'t there at '
-                    '"%(timestamp)s".'),
-                'group_not_in_location': ('The medication event of group '
-                    '"%(group)s" is trying to move animals from location '
-                    '"%(location)s" but there isn\'t any there at '
-                    '"%(timestamp)s".'),
-                'not_enought_feed_lot': ('The medication event "%(event)s" is '
-                    'trying to move %(quantity)s of lot "%(lot)s" from silo '
-                    '"%(location)s" but there isn\'t enought quantity there '
-                    'at "%(timestamp)s".'),
-                'not_enought_feed_product': ('The medication event '
-                    '"%(event)s" is trying to move %(quantity)s of product '
-                    '"%(product)s" from silo "%(location)s" but there isn\'t '
-                    'enought quantity there at "%(timestamp)s".'),
-                })
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('quantity_positive', 'check ( quantity != 0 )',
-                'In Medication Events, the quantity can\'t be zero'),
+            ('quantity_positive', Check(t, t.quantity != 0),
+                'farm.check_feed_quantity_non_zero'),
             ('quantity_1_for_animals',
-                ("check ( animal_type = 'group' or "
-                    "(quantity = 1 or quantity = -1))"),
-                'In Medication Events, the quantity must be 1 for Animals '
-                '(not Groups).'),
-            ('feed_quantity_positive', 'check ( feed_quantity != 0.0 )',
-                'In Medication Events, the quantity must be positive (greater '
-                'or equal to 1)'),
+                Check(t, t.animal_type == 'group' or t.quantity == 1 or
+                    t.quantity == -1),
+                'farm.check_feed_quantity_one_for_animals'),
+            ('feed_quantity_positive', Check(t, t.feed_quantity != 0.0),
+                'farm.check_feed_quantity_positive'),
             ]
 
     @fields.depends('feed_product')

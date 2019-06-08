@@ -6,9 +6,8 @@ from trytond.pool import PoolMeta
 __all__ = ['Template']
 
 
-class Template:
+class Template(metaclass=PoolMeta):
     __name__ = 'product.template'
-    __metaclass__ = PoolMeta
 
     farrowing_price = fields.Numeric('Farrowing Price', digits=(16, 4),
         help=('Unitary cost for farrowing events. It\'s only used when the '

@@ -1,0 +1,305 @@
+<?xml version="1.0"?>
+<!-- This file is part of Tryton.  The COPYRIGHT file at the top level of
+this repository contains the full copyright notices and license terms. -->
+<tryton>
+    <data group="1">
+        <!-- animal.py & animal_group.py -->
+        <record model="ir.message" id="missing_supplier_location">
+            <field name="text">Supplier Location of company's party "%(party)s" is empty but it is required to create the arrival stock move for a new group.</field>
+        </record>
+        <record model="ir.message" id="missing_production_location">
+            <field name="text">The warehouse location "%(location)s" doesn't have set production location, but it is required to create the arrival stock move for a new animal.</field>
+        </record>
+
+        <!-- animal_group.py -->
+        <record model="ir.message" id="group_no_farm_specie_farm_line_available">
+            <field name="text">The specified farm "%(farm)s" is not configured as farm with groups for the specie "%(specie)s".</field>
+        </record>
+        <record model="ir.message" id="invalid_group_destination">
+            <field name="text">The event "%(event)s" is trying to move the group "%(group)s" to location "%(location)s", but the location's warehouse is not configured as a farm for this kind of animals.</field>
+        </record>
+
+        <!-- animal.py -->
+        <record model="ir.message" id="birthdate_after_arrival">
+            <field name="text">Birthdate "%(birth)s" can not be after arrival date "%(arrival)s"</field>
+        </record>
+        <record model="ir.message" id="insemination_before_arrival">
+            <field name="text">Insemination date "%(insemination)s" on line "%(line)s" can not be before arrival date "%(arrival)s".</field>
+        </record>
+        <record model="ir.message" id="abort_before_insemination">
+            <field name="text">Abort date "%(abort)s" on line "%(line)s" can not be before insemination date "%(insemination)s".</field>
+        </record>
+        <record model="ir.message" id="farrowing_before_insemination">
+            <field name="text">Farrowing date "%(farrowing)s" on line "%(line)s" can not be before insemination date "%(insemination)s".</field>
+        </record>
+        <record model="ir.message" id="weaning_before_farrowing">
+            <field name="text">Weaning date "%(weaning)s" on line "%(line)s" can not be before farrowing date "%(farrowing)s".</field>
+        </record>
+        <record model="ir.message" id="missing_weaning">
+            <field name="text">Line "%(line)s" misses its weaning event.</field>
+        </record>
+        <record model="ir.message" id="greather_than_zero">
+            <field name="text">Live, stillborn, muffied and weaned quantity on line "%(line)s" must be grether than zero.</field>
+        </record>
+        <record model="ir.message" id="more_fostered_than_live">
+            <field name="text">On line "%(line)s" there are more fostered animals than live.</field>
+        </record>
+        <record model="ir.message" id="more_weaned_than_live">
+            <field name="text">On line "%(line)s" there are more weaned animals than live.</field>
+        </record>
+        <record model="ir.message" id="animal_no_farm_specie_farm_line_available">
+            <field name="text">The specified farm "%(farm)s" is not configured as farm with "%(animal_type)s" for the specie "%(specie)s".</field>
+        </record>
+        <record model="ir.message" id="no_sequence_in_farm_line">
+            <field name="text">The required sequence "%(sequence_field)s" is not set in the farm line "%(farm_line)s".</field>
+        </record>
+        <record model="ir.message" id="invalid_animal_destination">
+            <field name="text">The event "%(event)s" is trying to move the animal "%(animal)s" to location "%(location)s", but the location's warehouse is not configured as a farm for this kind of animals.</field>
+        </record>
+        <record model="ir.message" id="no_product_in_specie">
+            <field name="text">The required product "%(product_field)s" is not set in the farm "%(farm)s".</field>
+        </record>
+        <record model="ir.message" id="duplicate_animal">
+            <field name="text">A female animal with the same number (%(number)s) already exisit in this farm.</field>
+        </record>
+        <record model="ir.message" id="cycle_invalid_date">
+            <field name="text">The date of the cycle is before the one of the precious cycle.</field>
+        </record>
+        <record model="ir.message" id="tag_must_be_unique">
+            <field name="text">The Name of the Tag must be unique.</field>
+        </record>
+
+        <!-- production.py -->
+        <record model="ir.message" id="missing_semen_input">
+            <field name="text">The Semen Dose BOM "%(bom)s" doesn't have any input for the Specie's Semen Product.</field>
+        </record>
+
+
+        <!-- quality.py -->
+        <record model="ir.message" id="no_set_draft_semen_extraction_test">
+            <field name="text">The quality test "%(test)s" can't be set to Draft because it is related to a validated semen extraction event.</field>
+        </record>
+
+        <!-- specie.py -->
+        <record model="ir.message" id="no_animal_type_enabled">
+            <field name="text">The action "Create menus and actions" has been launched for the specie "%(specie)s" but it does not have any animal type enabled.</field>
+        </record>
+        <record model="ir.message" id="specie_semen_product_unique">
+            <field name="text">The Semen's Product of the Specie must be unique.</field>
+        </record>
+        <record model="ir.message" id="specie_breed_name_unique">
+            <field name="text">Breed name must be unique per specie.</field>
+        </record>
+        <record model="ir.message" id="specie_farm_unique">
+            <field name="text">The Farm of Managed Farms of an specie must be unique.</field>
+        </record>
+
+        <!-- events/abort_event.py -->
+        <record model="ir.message" id="abort_event_unique">
+            <field name="text">The Abort Event must be unique.</field>
+        </record>
+        <record model="ir.message" id="abort_cycle_unique">
+            <field name="text">The Abort Cycle must be unique.</field>
+        </record>
+
+        <!-- events/farrowing_event.py -->
+        <record model="ir.message" id="event_without_dead_nor_live">
+            <field name="text">The farrowing event "%(event)s" has 0 in Dead and Live. It has to have some unit in some of these fields.</field>
+        </record>
+        <record model="ir.message" id="check_farrowing_live_positive">
+            <field name="text">The value of "Live" must to be positive.</field>
+        </record>
+        <record model="ir.message" id="check_farrowing_stillborn_positive">
+            <field name="text">The value of "Stillborn" must to be positive.</field>
+        </record>
+        <record model="ir.message" id="check_farrowing_mummified_positive">
+            <field name="text">The value of "Mummified" must to be positive.</field>
+        </record>
+        <record model="ir.message" id="farrowing_event_unique">
+            <field name="text">The Farrowing Event must be unique.</field>
+        </record>
+        <record model="ir.message" id="farrowing_cycle_unique">
+            <field name="text">The Female Cycle must be unique.</field>
+        </record>
+        <record model="ir.message" id="farrowing_animal_group_unique">
+            <field name="text">The Animal Group must be unique.</field>
+        </record>
+
+        <!-- events/feed_abstract_event.py -->
+        <record model="ir.message" id="timestamp_after_start_date">
+            <field name="text">The Timestamp must be after the Start Date</field>
+        </record>
+
+
+        <!-- events/feed_event.py -->
+        <record model="ir.message" id="check_feed_quantity_non_zero">
+            <field name="text">In Feed Events, the quantity can't be zero.</field>
+        </record>
+        <record model="ir.message" id="check_feed_quantity_one_for_animals">
+            <field name="text">In Feed Events, the quantity must be 1 for Animals (not Groups).</field>
+        </record>
+        <record model="ir.message" id="check_feed_quantity_positive">
+            <field name="text">In Feed Events, the quantity must be positive (greater or equal to 1).</field>
+        </record>
+
+        <!-- events/medication_event.py -->
+        <record model="ir.message" id="not_enough_feed_lot">
+            <field name="text">The medication event "%(event)s" is trying to move %(quantity)s of lot "%(lot)s" from silo "%(location)s" but there is not enough quantity there at "%(timestamp)s".</field>
+        </record>
+        <record model="ir.message" id="not_enough_feed_product">
+            <field name="text">The medication event "%(event)s" is trying to move %(quantity)s of product "%(product)s" from silo "%(location)s" but there isn't enough quantity there at "%(timestamp)s".</field>
+        </record>
+
+        <!-- events/medication_event.py events/transformation_event.py / events/move_event.py / events/feeds_abstract_event.py-->
+        <record model="ir.message" id="animal_not_in_location">
+            <field name="text">The event of animal "%(animal)s" is trying to move it from location "%(from_location)s" but it isn't there at "%(timestamp)s".</field>
+        </record>
+        <record model="ir.message" id="group_not_in_location">
+            <field name="text">The event of group "%(group)s" is trying to move %(quantity)s animals from location "%(from_location)s" but there isn't enough there at "%(timestamp)s".</field>
+        </record>
+        <record model="ir.message" id="check_medication_quantity_non_zero">
+            <field name="text">In Medication Events, the quantity can't be zero.</field>
+        </record>
+        <record model="ir.message" id="check_medication_quantity_one_for_animals">
+            <field name="text">In Medication Events, the quantity must be 1 for Animals (not Groups).</field>
+        </record>
+        <record model="ir.message" id="check_medication_quantity_positive">
+            <field name="text">In Medication Events, the quantity must be positive (greater or equal to 1).</field>
+        </record>
+
+        <!-- events/move_event.py -->
+        <record model="ir.message" id="check_move_quantity_non_zero">
+            <field name="text">In Move Events, the quantity can't be zero.</field>
+        </record>
+        <record model="ir.message" id="check_move_quantity_one_for_animals">
+            <field name="text">In Move Events, the quantity must be 1 for Animals (not Groups).</field>
+        </record>
+        <record model="ir.message" id="check_move_weight_positive">
+            <field name="text">In Move Events, the weight must be positive (greater or equal to 1).</field>
+        </record>
+
+        <!-- events/weaning_event.py -->
+        <record model="ir.message" id="incorrect_quantity">
+            <field name="text">The entered quantity is incorrect, the maximum allowed quantity is: %(quantity)s</field>
+        </record>
+        <!-- events/abstract_event.py -->
+        <record model="ir.message" id="invalid_state_to_delete">
+            <field name="text">The event '%(event)s' can't be deleted because is not in 'Draft' state.</field>
+        </record>
+        <record model="ir.message" id="abstract_invalid_date">
+            <field name="text">The date of the event is set in the future.</field>
+        </record>
+        <record model="ir.message" id="weaning_event_unique">
+            <field name="text">The Weaning Event must be unique.</field>
+        </record>
+        <record model="ir.message" id="weaning_cycle_unique">
+            <field name="text">The Female Cycle must be unique.</field>
+        </record>
+
+        <!-- events/foster_event.py -->
+        <record model="ir.message" id="farrowing_group_not_in_location">
+            <field name="text">The farrowing group of foster event "%(event)s" doesn't have %(quantity)s units in location "%(location)s" at "%(timestamp)s".</field>
+        </record>
+        <record model="ir.message" id="pair_farrowing_group_not_in_location">
+            <field name="text">The farrowing group of the pair female of foster event "%(event)s" doesn't have %(quantity)s units in location "%(location)s" at "%(timestamp)s".</field>
+        </record>
+
+        <!-- events/removal_event.py -->
+        <record model="ir.message" id="already_exist_validated_removal_event">
+            <field name="text">There are other removal validated events for the animal "%(animal)s".</field>
+        </record>
+        <record model="ir.message" id="check_removal_quantity_positive">
+            <field name="text">In Removal Events, the quantity must be positive (greater or equal to 1.</field>
+        </record>
+        <record model="ir.message" id="check_removal_quantity_one_for_animals">
+            <field name="text">In Removal Events, the quantity must be 1 for Animals (not Groups).</field>
+        </record>
+
+        <!-- events/feed_inventory.py -->
+        <record model="ir.message" id="inventory_invalid_state_to_delete">
+            <field name="text">The inventory "%(inventory)s" can't be deleted because is not in "Draft" or "Cancelled" state.</field>
+        </record>
+        <record model="ir.message" id="invalid_inventory_quantity">
+            <field name="text">The quantity specified in feed inventory "%(inventory)s" is not correct.\nThe current stock of this silo is %(curr_qty)s. The quantity in the inventory must to be less than the current stock.</field>
+        </record>
+        <record model="ir.message" id="invalid_inventory_date">
+            <field name="text">The date of feed inventory "%(inventory)s" is too soon. This should be at least two days after the previous inventory to have enough data.</field>
+        </record>
+        <record model="ir.message" id="no_animals_in_inventory_destinations">
+            <field name="text">There hasn't been any animal in destination locations of Feed Inventory "%(inventory)s" since %(start_date)s to inventory's date.</field>
+        </record>
+
+        <record model="ir.message" id="exists_later_real_inventories">
+            <field name="text">There are real inventories after the provisional inventory "%(inventory)s" you are trying to confirm.</field>
+        </record>
+        <record model="ir.message" id="missing_previous_inventory">
+            <field name="text">There isn't any Feed Inventory before the feed provisional inventory "%(inventory)s" you are trying to confirm.</field>
+        </record>
+
+        <!-- events/event_order.py -->
+        <record model="ir.message" id="incompatible_animal_and_event_type">
+            <field name="text">The Animal and Event Type of Event Order "%(order)s" are incompatibles.</field>
+        </record>
+        <record model="ir.message" id="no_farm_specie_farm_line_available">
+            <field name="text">The specified farm "%(farm)s" is not configured as farm with "%(animal_type)s" for the specie "%(specie)s".</field>
+        </record>
+        <record model="ir.message" id="event_order_reference_required">
+            <field name="text">The Reference of the Event Order is required.</field>
+        </record>
+        <record model="ir.message" id="event_order_name_unique">
+            <field name="text">The Reference of the Event Order must be unique.</field>
+        </record>
+
+        <!-- events/insemination_event.py -->
+        <record model="ir.message" id="dose_not_in_farm">
+            <field name="text">There isn't any unit of dose "%(dose)s" selected in the insemination event "%(event)s" in the farm "%(farm)s" at "%(timestamp)s".</field>
+        </record>
+
+        <!-- events/semen_extraction_event.py -->
+        <record model="ir.message" id="more_semen_in_doses_than_produced">
+            <field name="text">The sum of semen quantity in the doses of semen extraction event "%(event)s" is greater than the semen produced quantity.</field>
+        </record>
+        <record model="ir.message" id="dose_already_defined">
+            <field name="text">The semen extraction event "%(event)s" already has defined doses.\nPlease empty the list before click to calculate them by the system.</field>
+        </record>
+        <record model="ir.message" id="no_doses_on_validate">
+            <field name="text">The semen extraction event "%(event)s" doesn't have any produced dose defined.\nIt can't be validated.</field>
+        </record>
+        <record model="ir.message" id="quality_test_not_succeeded">
+            <field name="text">The Quality Test "%(test)s" of semen extraction event "%(event)s" did not succeed.\nPlease, check its values and try to it again.</field>
+        </record>
+        <record model="ir.message" id="missing_quality_template_for_semen">
+            <field name="text">Missing Quality Template for product "%(product)s".</field>
+        </record>
+        <record model="ir.message" id="semen_invalid_state_to_delete">
+            <field name="text">The semen extraction dose "%(dose)s" can't be deleted because is not in "Draft" state.</field>
+        </record>
+        <record model="ir.message" id="check_semen_extraction_quantity_positive">
+            <field name="text">In Semen Extraction Events, the quantity must be positive (greater or equal to 1.</field>
+        </record>
+        <record model="ir.message" id="semen_extraction_event_unique">
+            <field name="text">The Semen Extraction Event must be unique.</field>
+        </record>
+        <record model="ir.message" id="quality_test_unique">
+            <field name="text">The Quality Test must be unique.</field>
+        </record>
+        <record model="ir.message" id="dose_line_unique">
+            <field name="text">In Semen Extraction Doses, the Line Num. must be unique in a event.</field>
+        </record>
+        <record model="ir.message" id="dose_event_bom_unique">
+            <field name="text">In Semen Extraction Doses, the Container must be unique in a event.</field>
+        </record>
+        <record model="ir.message" id="check_dose_quantity_positive">
+            <field name="text">In Semen Extraction Doses, the Quantity must be positive (greater than 0).</field>
+        </record>
+
+        <!-- events/transformation_event.py -->
+        <record model="ir.message" id="transformation_quantity_positive">
+            <field name="text">In Transformation Events, the quantity must be positive (greater or equal to 1)</field>
+        </record>
+        <record model="ir.message" id="check_transformation_quantity_one_for_animals">
+            <field name="text">In Transformation Events, the quantity must be 1 for Animals (not Groups).</field>
+        </record>
+
+    </data>
+</tryton>

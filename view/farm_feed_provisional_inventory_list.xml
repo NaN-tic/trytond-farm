@@ -1,9 +1,10 @@
-<tree string="Feed Provisional Inventory">
-	 <field name="location"/>
-	 <field name="timestamp"/>
-	 <field name="dest_locations"/>
-	 <field name="prev_inventory_date"/>
-	 <field name="quantity"/>
-	 <field name="uom"/>
-	 <field name="state"/>
+<tree>
+    <field name="location"/>
+    <field name="timestamp" widget="date"/>
+    <field name="timestamp" widget="time"/>
+    <field name="dest_locations"/>
+    <field name="prev_inventory_date"/>
+    <field name="quantity"/>
+    <field name="uom"/>
+    <field name="state"/>
 </tree>

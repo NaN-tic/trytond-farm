@@ -5,11 +5,13 @@ from decimal import Decimal
 import logging
 
 from trytond.rpc import RPC
-from trytond.model import ModelView, ModelSQL, fields, UnionMixin
+from trytond.model import ModelView, ModelSQL, fields, UnionMixin, Unique
 from trytond.pyson import Equal, Eval, Greater, Id, Not, Bool
 from trytond.transaction import Transaction
 from trytond.pool import Pool, PoolMeta
 from trytond.wizard import Wizard, StateView, StateAction, Button, StateTransition
+from trytond.exceptions import UserError
+from trytond.i18n import gettext
 
 __all__ = ['Tag', 'Animal', 'AnimalTag', 'AnimalWeight', 'Male', 'Female',
     'FemaleCycle', 'CreateFemaleStart', 'CreateFemaleLine', 'CreateFemale',
@@ -53,9 +55,10 @@ class Tag(ModelSQL, ModelView):
     @classmethod
     def __setup__(cls):
         super(Tag, cls).__setup__()
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('name_uniq', 'UNIQUE (name)',
-                'The Name of the Tag must be unique.'),
+            ('name_uniq', Unique(t, t.name),
+                'farm.tag_must_be_unique'),
             ]
 
 
@@ -104,13 +107,13 @@ class AnimalMixin:
         if self.origin == 'purchased':
             from_location = company.party.supplier_location
             if not from_location:
-                self.raise_user_error('missing_supplier_location',
-                    company.party.rec_name)
+                raise UserError(gettext('farm.missing_supplier_location',
+                    party=company.party.rec_name))
         else:  # raised
             from_location = self.initial_location.warehouse.production_location
             if not from_location:
-                self.raise_user_error('missing_production_location',
-                    self.initial_location.warehouse.rec_name)
+                raise UserError(gettext('farm.missing_production_location',
+                    location=self.initial_location.warehouse.rec_name))
 
         move_date = self.arrival_date or date.today()
         return Move(
@@ -213,30 +216,6 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
     # We can't use the 'required' attribute in field because it's
     # checked on view before execute 'create()' function where this
     # field is filled in.
-    @classmethod
-    def __setup__(cls):
-        super(Animal, cls).__setup__()
-        cls._error_messages.update({
-                'missing_supplier_location': ('Supplier Location of '
-                    'company\'s party "%s" is empty but it is required to '
-                    'create the arrival stock move for a new animal.'),
-                'missing_production_location': ('The warehouse location "%s" '
-                    'doesn\'t have set production location, but it is '
-                    'required to create the arrival stock move for a new '
-                    'animal.'),
-                'no_farm_specie_farm_line_available': ('The specified farm '
-                    '"%(farm)s" is not configured as farm with '
-                    '"%(animal_type)s" for the specie "%(specie)s"'),
-                'no_sequence_in_farm_line': ('The required sequence '
-                    '"%(sequence_field)s" is not set in the farm line '
-                    '"%(farm_line)s".'),
-                'invalid_animal_destination': ('The event "%(event)s" is '
-                    'trying to move the animal "%(animal)s" to location '
-                    '"%(location)s", but the location\'s warehouse is not '
-                    'configured as a farm for this kind of animals.'),
-                'no_product_in_specie': ('The required product '
-                    '"%(product_field)s" is not set in the farm "%(farm)s".'),
-                })
 
     @staticmethod
     def default_specie():
@@ -364,11 +343,11 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
             if farm_line.farm.id == location.warehouse.id:
                 if getattr(farm_line, 'has_%s' % self.type):
                     return
-        self.raise_user_error('invalid_animal_destination', {
-                'event': event_rec_name,
-                'animal': self.rec_name,
-                'location': location.rec_name,
-                })
+        raise UserError(gettext('farm.invalid_animal_destination',
+                event=event_rec_name,
+                animal=self.rec_name,
+                location=location.rec_name,
+                ))
 
     @classmethod
     def copy(cls, animals, default=None):
@@ -433,19 +412,18 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
                 ('has_' + type, '=', True),
                 ])
         if not farm_lines:
-            cls.raise_user_error('no_farm_specie_farm_line_available', {
-                    'farm': Location(farm_id).rec_name,
-                    'animal_type': type,
-                    'specie': Specie(specie_id).rec_name,
-                    })
+            raise UserError(gettext('farm.animal_no_farm_specie_farm_line_available',
+                    farm=Location(farm_id).rec_name,
+                    animal_type=type,
+                    specie=Specie(specie_id).rec_name,
+                    ))
         farm_line, = farm_lines
         sequence = getattr(farm_line, sequence_fieldname, False)
         if not sequence:
-            cls.raise_user_error('no_sequence_in_farm_line', {
-                    'sequence_field': getattr(FarmLine,
-                            sequence_fieldname).string,
-                    'farm_line': farm_line.rec_name,
-                    })
+            raise UserError(gettext('farm.no_sequence_in_farm_line',
+                    sequence_field=getattr(FarmLine, sequence_fieldname).string,
+                    farm_line=farm_line.rec_name,
+                    ))
         return Sequence.get_id(sequence.id)
 
     @classmethod
@@ -465,10 +443,10 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
         product_fieldname = '%s_product' % animal_vals['type']
         product = getattr(specie, product_fieldname, False)
         if not product:
-            cls.raise_user_error('no_product_in_specie', {
-                    'product_field': getattr(Specie, product_fieldname).string,
-                    'specie': specie.rec_name,
-                    })
+            raise UserError(gettext('farm.no_product_in_specie',
+                    product_field=getattr(Specie, product_fieldname).string,
+                    specie=specie.rec_name,
+                    ))
 
         lot_tmp = Lot(product=product)
         res = {
@@ -558,9 +536,8 @@ class AnimalWeight(ModelSQL, ModelView):
         return 2
 
 
-class Male:
+class Male(metaclass=PoolMeta):
     __name__ = 'farm.animal'
-    __metaclass__ = PoolMeta
 
     extractions = fields.One2Many('farm.semen_extraction.event',
         'animal', 'Semen Extractions', states=_STATES_MALE_FIELD,
@@ -586,9 +563,8 @@ class Male:
         return last_extraction
 
 
-class Female:
+class Female(metaclass=PoolMeta):
     __name__ = 'farm.animal'
-    __metaclass__ = PoolMeta
 
     cycles = fields.One2Many('farm.animal.female_cycle', 'animal', 'Cycles',
         readonly=True, order=[
@@ -642,10 +618,6 @@ class Female:
     @classmethod
     def __setup__(cls):
         super(Female, cls).__setup__()
-        cls._error_messages.update({
-            'duplicate_animal': ('A female animal with the same number (%s) '
-                'already exisit in this farm')
-            })
         cls._buttons.update({
                 'change_observation': {
                     'invisible': Not(Bool(Eval('cycles'))),
@@ -867,7 +839,7 @@ class Female:
                 ('active', '=', True)], limit=1)
 
             if duplicate:
-                cls.raise_user_error('duplicate_animal', number)
+                raise UserError(gettext('farm.duplicate_animal', number=number))
         return super(Female, cls).create(vlist)
 
     @classmethod
@@ -887,7 +859,7 @@ class Female:
                     ('active', '=', True),
                     ('id', '!=', female.id)], limit=1)
                 if duplicate:
-                    cls.raise_user_error('duplicate_animal', number)
+                    raise UserError('farm.duplicate_animal', number=number)
 
         super(Female, cls).write(*args)
 
@@ -906,7 +878,6 @@ class Female:
 class FemaleCycle(ModelSQL, ModelView):
     'Farm Female Cycle'
     __name__ = 'farm.animal.female_cycle'
-    _rec_name = 'sequence'
     _order = [
         ('animal', 'ASC'),
         ('sequence', 'ASC'),
@@ -969,14 +940,6 @@ class FemaleCycle(ModelSQL, ModelView):
         'get_lactating_days')
     observations = fields.Text('Observations')
 
-    @classmethod
-    def __setup__(cls):
-        super(FemaleCycle, cls).__setup__()
-        cls._error_messages.update({
-                'invalid_date': ("The date of the cycle is before the one "
-                    "of the precious cycle")
-                })
-
     @staticmethod
     def default_sequence(animal_id=None):
         '''
@@ -1010,17 +973,18 @@ class FemaleCycle(ModelSQL, ModelView):
     def default_state():
         return 'unmated'
 
-    @fields.depends('ordination_date')
+    def get_rec_name(self, name):
+        return str(self.sequence)
+
+    @fields.depends('animal', 'ordination_date')
     def on_change_ordination_date(self):
-        if not self.ordination_date:
-            return {}
+        if not self.ordination_date or not self.animal:
+            return
 
-        past_date = self.animals.current_cycle.ordination_date.date()
+        past_date = self.animal.current_cycle.ordination_date.date()
         current_date = self.ordination_date.date()
-
         if past_date > current_date:
-            self.raise_user_error('invalid_date')
-        return {}
+            raise UserError(gettext('farm.cycle_invalid_date'))
 
     def get_rec_name(self, name):
         state_labels = dict(self.fields_get(['state'])['state']['selection'])
@@ -1230,9 +1194,10 @@ class ChangeCycleObservationStart(ModelView):
     def default_cycle():
         Animal = Pool().get('farm.animal')
         active_id = Transaction().context.get('active_id')
-        active_animal = Animal(active_id)
-        last_cycle = active_animal.cycles[-1]
-        return last_cycle.id
+        if active_id:
+            active_animal = Animal(active_id)
+            last_cycle = active_animal.cycles[-1]
+            return last_cycle.id
 
     @staticmethod
     def default_animal():
@@ -1367,29 +1332,6 @@ class CreateFemale(Wizard):
             ])
     result = StateAction('farm.act_farm_animal_female')
 
-    @classmethod
-    def __setup__(cls):
-        super(CreateFemale, cls).__setup__()
-        cls._error_messages.update({
-                'birthdate_after_arrival': ('Birthdate "%s" can not be '
-                    'after arrival date "%s".'),
-                'insemination_before_arrival': ('Insemination date "%s" on '
-                    'line "%s" can not be before arrival date "%s".'),
-                'abort_before_insemination': ('Abort date "%s" on line'
-                    ' "%s" can not be before insemination date "%s".'),
-                'farrowing_before_insemination': ('Farrowing date "%s" on line'
-                    ' "%s" can not be before insemination date "%s".'),
-                'weaning_before_farrowing': ('Weaning date "%s" on line "%s"'
-                    ' can not be before farrowing date "%s".'),
-                'missing_weaning': 'Line "%s" misses its weaning event.',
-                'greather_than_zero': ('Live, stillborn, muffied and weaned '
-                    'quantity on line "%s" must be grether than zero.'),
-                'more_fostered_than_live': ('On line "%s" there are more '
-                    'fostered animals than live.'),
-                'more_weaned_than_live': ('On line "%s" there are more '
-                    'weaned animals than live.'),
-                })
-
     def do_result(self, action):
         pool = Pool()
         Abort = pool.get('farm.abort.event')
@@ -1404,8 +1346,9 @@ class CreateFemale(Wizard):
 
         if (self.start.birthdate and self.start.birthdate >
                 self.start.arrival_date):
-            self.raise_user_error('birthdate_after_arrival',
-                (self.start.birthdate, self.start.arrival_date))
+            raise UserError(gettext('farm.birthdate_after_arrival',
+                    birth=self.start.birthdate,
+                    arrival=self.start.arrival_date))
 
         female = Animal()
         female.type = 'female'
@@ -1423,8 +1366,8 @@ class CreateFemale(Wizard):
             for field in ('live', 'stillborn', 'mummified', 'weaned_quantity'):
                 value = getattr(line, field)
                 if value and value < 0:
-                    self.raise_user_error('greather_than_zero',
-                        line.insemination_date)
+                    raise UserError(gettext('farm.greather_than_zero',
+                        line=line.insemination_date))
             cycle = Cycle()
             cycle.sequence = sequence + 1
             cycle.animal = female
@@ -1442,18 +1385,22 @@ class CreateFemale(Wizard):
                         last_insemination_date < insemination_date):
                     last_insemination_date = insemination_date
                 if insemination_date < self.start.arrival_date:
-                    self.raise_user_error('insemination_before_arrival', (
-                            insemination_date, line.insemination_date,
-                            self.start.arrival_date))
+                    raise UserError(gettext('farm.insemination_before_arrival',
+                            insemination=insemination_date,
+                            line=line.insemination_date,
+                            arrival=self.start.arrival_date))
                 if (line.farrowing_date and insemination_date >
                         line.farrowing_date):
-                    self.raise_user_error('farrowing_before_insemination', (
-                            line.farrowing_date, line.insemination_date,
-                            insemination_date))
+                    raise UserError(gettext(
+                            'farm.farrowing_before_insemination',
+                            farrowing=line.farrowing_date,
+                            line=line.insemination_date,
+                            insemination=insemination_date))
                 if line.abort_date and insemination_date > line.abort_date:
-                    self.raise_user_error('abort_before_insemination', (
-                            line.abort_date, line.insemination_date,
-                            insemination_date))
+                    raise UserError(gettext('farm.abort_before_insemination',
+                            abort=line.abort_date,
+                            line=line.insemination_date,
+                            insemination=insemination_date))
                 insemination = Insemination()
                 insemination.imported = True
                 insemination.animal = female
@@ -1499,8 +1446,8 @@ class CreateFemale(Wizard):
 
                 if line.fostered:
                     if line.fostered < 0 and abs(line.fostered) > line.live:
-                        self.raise_user_error('more_fostered_than_live',
-                            line.insemination_date)
+                        raise UserError(gettext('farm.more_fostered_than_live',
+                            line=line.insemination_date))
                     foster = Foster()
                     foster.imported = True
                     foster.female_cycle = cycle
@@ -1516,12 +1463,13 @@ class CreateFemale(Wizard):
 
                 if line.weaning_date:
                     if line.weaning_date < line.farrowing_date:
-                        self.raise_user_error('weaning_before_farrowing', (
-                                line.weaning_date, line.insemination_date,
-                                line.farrowing_date))
+                        raise UserError(gettext('farm.weaning_before_farrowing',
+                                weaning=line.weaning_date,
+                                line=line.insemination_date,
+                                farrowing=line.farrowing_date))
                     if line.weaned_quantity > line.to_weaning_quantity:
-                        self.raise_user_error('more_weaned_than_live',
-                            line.insemination_date)
+                        raise UserError(gettext('farm.more_weaned_than_live',
+                            line=line.insemination_date))
 
                     weaning = Weaning()
                     weaning.imported = True
@@ -1542,8 +1490,8 @@ class CreateFemale(Wizard):
                     if (line.live + (line.fostered or 0) -
                             (line.stillborn or 0) -
                             (line.mummified or 0) > 0):
-                        self.raise_user_error('missing_weaning',
-                            line.insemination_date)
+                        raise UserError(gettext('farm.missing_weaning',
+                            line=line.insemination_date))
             cycle.save()
             cycle.update_state(None)
 

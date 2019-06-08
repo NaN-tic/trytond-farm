@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
-<form string="Feed Consumption per Animal, Location and Date">
+<form>
     <group id="animal_or_group" colspan="2" col="2">
         <label name="animal"/>
         <field name="animal"/>

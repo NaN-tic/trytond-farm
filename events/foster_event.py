@@ -4,6 +4,8 @@ from trytond.model import fields, ModelView, Workflow
 from trytond.pyson import And, Bool, Equal, Eval, If
 from trytond.pool import Pool
 from trytond.transaction import Transaction
+from trytond.exceptions import UserError
+from trytond.i18n import gettext
 
 from .abstract_event import AbstractEvent, ImportedEventMixin, \
     _STATES_WRITE_DRAFT, _DEPENDS_WRITE_DRAFT, \
@@ -70,15 +72,6 @@ class FosterEvent(AbstractEvent, ImportedEventMixin):
             cls.animal.depends.append('farm')
         if 'imported' not in cls.animal.depends:
             cls.animal.depends.append('imported')
-        cls._error_messages.update({
-                'farrowing_group_not_in_location': ('The farrowing group of '
-                    'foster event "%(event)s" doesn\'t have %(quantity)s '
-                    'units in location "%(location)s" at "%(timestamp)s".'),
-                'pair_farrowing_group_not_in_location': ('The farrowing group '
-                    'of the pair female of foster event "%(event)s" doesn\'t '
-                    'have %(quantity)s units in location "%(location)s" at '
-                    '"%(timestamp)s".'),
-                })
 
     @staticmethod
     def default_animal_type():
@@ -137,23 +130,24 @@ class FosterEvent(AbstractEvent, ImportedEventMixin):
                         foster_event.animal.location,
                         foster_event.timestamp,
                         - foster_event.quantity)):
-                cls.raise_user_error('farrowing_group_not_in_location', {
-                        'event': foster_event.rec_name,
-                        'location': foster_event.from_location.rec_name,
-                        'quantity': - foster_event.quantity,
-                        'timestamp': foster_event.timestamp,
-                        })
+                raise UserError(gettext('farm.farrowing_group_not_in_location',
+                        event=foster_event.rec_name,
+                        location=foster_event.from_location.rec_name,
+                        quantity=- foster_event.quantity,
+                        timestamp=foster_event.timestamp,
+                        ))
             elif (foster_event.quantity and pair_farrowing_group and
                     not pair_farrowing_group.check_in_location(
                         foster_event.pair_female.location,
                         foster_event.timestamp,
                         foster_event.quantity)):
-                cls.raise_user_error('pair_farrowing_group_not_in_location', {
-                        'event': foster_event.rec_name,
-                        'location': foster_event.pair_female.location.rec_name,
-                        'quantity': - foster_event.quantity,
-                        'timestamp': foster_event.timestamp,
-                        })
+                raise UserError(gettext(
+                        'farm.pair_farrowing_group_not_in_location',
+                        event=foster_event.rec_name,
+                        location=foster_event.pair_female.location.rec_name,
+                        quantity=- foster_event.quantity,
+                        timestamp=foster_event.timestamp,
+                        ))
 
             current_cycle = foster_event.animal.current_cycle
             foster_event.female_cycle = current_cycle

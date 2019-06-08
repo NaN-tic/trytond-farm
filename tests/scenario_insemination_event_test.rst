@@ -11,54 +11,23 @@ Imports::
     >>> import datetime
     >>> from dateutil.relativedelta import relativedelta
     >>> from decimal import Decimal
-    >>> from proteus import config, Model, Wizard
+    >>> from proteus import Model, Wizard
+    >>> from trytond.tests.tools import activate_modules
+    >>> from trytond.modules.company.tests.tools import create_company, \
+    ...     get_company
+    >>> from trytond.modules.account.tests.tools import create_fiscalyear, \
+    ...     create_chart, get_accounts
     >>> now = datetime.datetime.now()
     >>> today = datetime.date.today()
 
-Create database::
+Install module::
 
-    >>> config = config.set_trytond()
-    >>> config.pool.test = True
-
-Install farm::
-
-    >>> Module = Model.get('ir.module.module')
-    >>> modules = Module.find([
-    ...         ('name', '=', 'farm'),
-    ...         ])
-    >>> Module.install([x.id for x in modules], config.context)
-    >>> Wizard('ir.module.module.install_upgrade').execute('upgrade')
+    >>> config = activate_modules('farm')
 
 Create company::
 
-    >>> Currency = Model.get('currency.currency')
-    >>> CurrencyRate = Model.get('currency.currency.rate')
-    >>> Company = Model.get('company.company')
-    >>> Party = Model.get('party.party')
-    >>> company_config = Wizard('company.company.config')
-    >>> company_config.execute('company')
-    >>> company = company_config.form
-    >>> party = Party(name='NaN·tic')
-    >>> party.save()
-    >>> company.party = party
-    >>> currencies = Currency.find([('code', '=', 'EUR')])
-    >>> if not currencies:
-    ...     currency = Currency(name='Euro', symbol=u'€', code='EUR',
-    ...         rounding=Decimal('0.01'), mon_grouping='[3, 3, 0]',
-    ...         mon_decimal_point=',')
-    ...     currency.save()
-    ...     CurrencyRate(date=now.date() + relativedelta(month=1, day=1),
-    ...         rate=Decimal('1.0'), currency=currency).save()
-    ... else:
-    ...     currency, = currencies
-    >>> company.currency = currency
-    >>> company_config.execute('add')
-    >>> company, = Company.find()
-
-Reload the context::
-
-    >>> User = Model.get('res.user')
-    >>> config._context = User.get_preferences(True, config.context)
+    >>> _ = create_company()
+    >>> company = get_company()
 
 Create specie's products::
 
@@ -266,12 +235,12 @@ Create first female to be inseminated::
     ...     initial_location=warehouse.storage_location)
     >>> female1.save()
     >>> female1.location.code
-    u'STO'
+    'STO'
     >>> female1.farm.code
-    u'WH'
+    'WH'
     >>> female1.current_cycle
     >>> female1.state
-    u'prospective'
+    'prospective'
 
 Create insemination event with dose BoM and Lot::
 
@@ -293,15 +262,15 @@ Validate insemination event::
     ...     config.context)
     >>> inseminate_female1.reload()
     >>> inseminate_female1.state
-    u'validated'
+    'validated'
 
 Check female is mated::
 
     >>> female1.reload()
     >>> female1.state
-    u'mated'
+    'mated'
     >>> female1.current_cycle.state
-    u'mated'
+    'mated'
 
 Create insemination event with dose BoM but not Lot::
 
@@ -321,15 +290,15 @@ Validate insemination event::
     ...     config.context)
     >>> inseminate_female12.reload()
     >>> inseminate_female12.state
-    u'validated'
+    'validated'
 
 Check female is mated and has two insemination events::
 
     >>> female1.reload()
     >>> female1.state
-    u'mated'
+    'mated'
     >>> female1.current_cycle.state
-    u'mated'
+    'mated'
     >>> len(female1.current_cycle.insemination_events)
     2
 
@@ -342,12 +311,12 @@ Create second female to be inseminated::
     ...     initial_location=warehouse.storage_location)
     >>> female2.save()
     >>> female2.location.code
-    u'STO'
+    'STO'
     >>> female2.farm.code
-    u'WH'
+    'WH'
     >>> female2.current_cycle
     >>> female2.state
-    u'prospective'
+    'prospective'
 
 Create insemination event without dose BoM nor Lot::
 
@@ -366,12 +335,12 @@ Validate insemination event::
     ...     config.context)
     >>> inseminate_female2.reload()
     >>> inseminate_female2.state
-    u'validated'
+    'validated'
 
 Check female is mated::
 
     >>> female2.reload()
     >>> female2.state
-    u'mated'
+    'mated'
     >>> female2.current_cycle.state
-    u'mated'
+    'mated'

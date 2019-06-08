@@ -3,10 +3,12 @@
 import math
 from datetime import datetime, date, timedelta
 from decimal import Decimal
-from trytond.model import fields, ModelView, ModelSQL, Workflow
+from trytond.model import fields, ModelView, ModelSQL, Workflow, Check, Unique
 from trytond.pyson import Bool, Equal, Eval, Id
 from trytond.pool import Pool
 from trytond.transaction import Transaction
+from trytond.exceptions import UserError
+from trytond.i18n import gettext
 
 from .abstract_event import AbstractEvent, _EVENT_STATES, _STATES_WRITE_DRAFT,\
     _DEPENDS_WRITE_DRAFT, _STATES_VALIDATED, _DEPENDS_VALIDATED, \
@@ -139,30 +141,17 @@ class SemenExtractionEvent(AbstractEvent):
         cls.animal.domain += [
             ('type', '=', 'male'),
             ]
+        t = cls.__table__()
         cls._sql_constraints += [
             ('untreated_semen_qty_positive',
-                'CHECK(untreated_semen_qty > 0.0)',
-                'In Semen Extraction Events, the quantity must be positive '
-                '(greater or equals 1)'),
+                Check(t, t.untreated_semen_qty > 0.0),
+                'farm.check_semen_extraction_quantity_positive'),
             ]
-        cls._error_messages.update({
-            'more_semen_in_doses_than_produced': ('The sum of semen quantity '
-                'in the doses of semen extraction event "%s" is greater than '
-                'the semen produced quantity'),
-            'dose_already_defined': ('The semen extraction event "%s" already '
-                'has defined doses.\nPlease empty the list before click to '
-                'calculate them by the system.'),
-            'no_doses_on_validate': ('The semen extraction event "%s" doesn\t '
-                'have any produced dose defined.\n'
-                'It can\'t be validated.'),
-            'quality_test_not_succeeded': ('The Quality Test "%(test)s" of '
-                'semen extraction event "%(event)s" did not succeed.\n'
-                'Please, check its values and try to it again.'),
-            })
         cls._buttons.update({
             'calculate_doses': {
                 'invisible': Eval('state') != 'draft',
                 'readonly': Bool(Eval('doses')),
+                'icon': 'tryton-go-next',
                 },
             })
 
@@ -284,8 +273,8 @@ class SemenExtractionEvent(AbstractEvent):
         if self.state == 'valid':
             return
         if self.semen_remaining_qty < 0.0:
-            self.raise_user_error('more_semen_in_doses_than_produced',
-                self.rec_name)
+            raise UserError(gettext('farm.more_semen_in_doses_than_produced',
+                    event=self.rec_name))
 
     @classmethod
     @ModelView.button
@@ -293,8 +282,8 @@ class SemenExtractionEvent(AbstractEvent):
         Dose = Pool().get('farm.semen_extraction.dose')
         for extraction_event in events:
             if extraction_event.doses:
-                cls.raise_user_error('dose_already_defined',
-                    extraction_event.rec_name)
+                raise UserError(gettext('farm.dose_already_defined',
+                        event=extraction_event.rec_name))
             if not extraction_event.dose_bom:
                 continue
             n_doses = math.floor(extraction_event.dose_calculated_units)
@@ -331,8 +320,8 @@ class SemenExtractionEvent(AbstractEvent):
                     'to be empty to validate the Extraction Event %s'
                     % extraction_event.id)
             if not extraction_event.doses:
-                cls.raise_user_error('no_doses_on_validate',
-                    extraction_event.rec_name)
+                raise UserError(gettext('farm.no_doses_on_validate',
+                        event=extraction_event.rec_name))
 
             if extraction_event.test_required:
                 to_aprove = (extraction_event.test.state == 'confirmed')
@@ -344,10 +333,10 @@ class SemenExtractionEvent(AbstractEvent):
                 quality_test = QualityTest(extraction_event.test)
 
                 if not quality_test.success:
-                    cls.raise_user_error('quality_test_not_succeeded', {
-                            'test': quality_test.rec_name,
-                            'event': extraction_event.rec_name,
-                            })
+                    raise UserError(gettext('farm.quality_test_not_succeeded',
+                            test=quality_test.rec_name,
+                            event=extraction_event.rec_name,
+                            ))
 
             semen_move = extraction_event._get_semen_move()
             semen_move.save()
@@ -434,8 +423,9 @@ class SemenExtractionEvent(AbstractEvent):
                         ('document', '=', semen_prod_ref),
                         ])
                 if not templates:
-                    cls.raise_user_error('missing_quality_template_for_semen',
-                        specie.semen_product.rec_name)
+                    raise UserError(gettext(
+                            'farm.missing_quality_template_for_semen',
+                            product=specie.semen_product.rec_name))
                 test = QualityTest(
                     test_date=values.get('timestamp') or datetime.today(),
                     templates=[templates[0]],
@@ -496,11 +486,11 @@ class SemenExtractionEventQualityTest(ModelSQL):
     @classmethod
     def __setup__(cls):
         super(SemenExtractionEventQualityTest, cls).__setup__()
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('event_unique', 'UNIQUE(event)',
-                'The Semen Extraction Event must be unique.'),
-            ('test_unique', 'UNIQUE(test)',
-                'The Quality Test must be unique.'),
+            ('event_unique', Unique(t, t.event),
+                'farm.semen_extraction_unique'),
+            ('test_unique', Unique(t, t.test), 'farm.quality_test_unique'),
             ]
 
 
@@ -551,20 +541,14 @@ class SemenExtractionDose(ModelSQL, ModelView):
     @classmethod
     def __setup__(cls):
         super(SemenExtractionDose, cls).__setup__()
-        cls._error_messages.update({
-                'invalid_state_to_delete': ('The semen extraction dose "%s" '
-                    'can\'t be deleted because is not in "Draft" state.'),
-                })
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('event_sequence_uniq', 'unique (event, sequence)',
-                'In Semen Extraction Doses, the Line Num. must be unique in a '
-                'event.'),
-            ('event_bom_uniq', 'unique (event, bom)',
-                'In Semen Extraction Doses, the Container must be unique in a '
-                'event.'),
-            ('quantity_positive', 'check (quantity > 0)',
-                'In Semen Extraction Doses, the Quantity must be positive '
-                '(greater than 0).'),
+            ('event_sequence_uniq', Unique(t, t.event, t.sequence),
+                'farm.dose_line_unique'),
+            ('event_bom_uniq', Unique(t, t.event, t.bom),
+                'farm.dose_event_bom_unique'),
+            ('quantity_positive', Check(t, t.quantity > 0),
+                'farm.check_dose_quantity_positive'),
             ]
 
     # TODO: these defaults should not be necessary, but...
@@ -692,6 +676,6 @@ class SemenExtractionDose(ModelSQL, ModelView):
     def delete(cls, doses):
         for dose in doses:
             if dose.state != 'draft':
-                cls.raise_user_error('invalid_state_to_delete',
-                    dose.rec_name)
+                raise UserError(gettext('farm.semen_invalid_state_to_delete',
+                        dose=dose.rec_name))
         return super(SemenExtractionDose, cls).delete(doses)

@@ -5,6 +5,8 @@ from datetime import datetime, date
 from trytond.model import fields, ModelSQL, ModelView, Workflow
 from trytond.pyson import Equal, Eval, Id, Not
 from trytond.transaction import Transaction
+from trytond.exceptions import UserError
+from trytond.i18n import gettext
 
 __all__ = ['AbstractEvent', 'ImportedEventMixin']
 
@@ -104,18 +106,13 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
     @classmethod
     def __setup__(cls):
         super(AbstractEvent, cls).__setup__()
-        cls._error_messages.update({
-                'invalid_state_to_delete': ("The event '%s' can't be deleted "
-                    "because is not in 'Draft' state."),
-                'invalid_date': ("The date of the event is set in the future")
-                })
         cls._buttons.update({
                 # 'cancel': {
                 #     'invisible': Eval('state') == 'cancel',
                 #     },
-                # 'draft': {
-                #    'invisible': Eval('state') == 'draft',
-                #    },
+                'draft': {
+                   'invisible': Eval('state') == 'draft',
+                   },
                 'validate_event': {
                     'invisible': Eval('state') != 'draft',
                     },
@@ -168,31 +165,25 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
     def on_change_animal(self):
         if (self.animal_type == 'group' or not self.animal or
                 not self.animal.farm):
-            return {}
-        return {
-            'farm': self.animal.farm.id
-            }
+            return
+        self.farm = self.animal.farm
 
     @fields.depends('timestamp')
     def on_change_timestamp(self):
         if not self.timestamp:
-            return {}
+            return
 
         today = date.today()
         set_date = self.timestamp.date()
-
         if set_date > today:
-            self.raise_user_error('invalid_date')
-        return {}
+            raise UserError(gettext('farm.abstract_invalid_date'))
 
     @fields.depends('animal_type', 'animal_group')
     def on_change_animal_group(self):
         if (self.animal_type != 'group' or not self.animal_group or
                 not self.animal_group.farms):
-            return {}
-        return {
-            'farm': self.animal_group.farms[0].id
-            }
+            return
+        self.farm = self.animal_group.farms[0]
 
     @classmethod
     def copy(cls, events, default=None):
@@ -205,7 +196,8 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
     def delete(cls, events):
         for event in events:
             if event.state != 'draft':
-                cls.raise_user_error('invalid_state_to_delete', event.rec_name)
+                raise UserError(gettext('farm.invalid_state_to_delete',
+                    event=event.rec_name))
         return super(AbstractEvent, cls).delete(events)
 
     @classmethod

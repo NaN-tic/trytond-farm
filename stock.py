@@ -13,9 +13,8 @@ __all__ = ['Location', 'LocationSiloLocation', 'Lot', 'LotAnimal',
     'LotAnimalGroup', 'Move', 'LotCostLine']
 
 
-class Lot:
+class Lot(metaclass=PoolMeta):
     __name__ = 'stock.lot'
-    __metaclass__ = PoolMeta
 
     animal_type = fields.Selection([
             (None, ''),
@@ -121,7 +120,7 @@ class Lot:
                 grouping_filter=grouping_filter)
 
         res = {}
-        for (location_id, unused, lot_id), quantity in quantities.iteritems():
+        for (location_id, unused, lot_id), quantity in quantities.items():
             if lot_id is None:
                 continue
             lot_quantities = res.setdefault(lot_id, {})
@@ -156,9 +155,8 @@ class LotAnimalGroup(ModelSQL):
         required=True, ondelete='RESTRICT', select=True)
 
 
-class Location:
+class Location(metaclass=PoolMeta):
     __name__ = 'stock.location'
-    __metaclass__ = PoolMeta
 
     silo = fields.Boolean('Silo', select=True,
         help='Indicates that the location is a silo.')
@@ -203,7 +201,7 @@ class Location:
             with_childs=False, grouping=('product', 'lot'))
 
         location_lots = defaultdict(set)
-        for (location_id, product_id, lot_id), quantity in pbl.iteritems():
+        for (location_id, product_id, lot_id), quantity in pbl.items():
             if (lot_id is not None and
                     Decimal(str(quantity)).quantize(Decimal('0.01'))
                     > Decimal('0.01')):
@@ -287,13 +285,13 @@ class Location:
                 grouping=('product', 'lot'))
 
         lot_quantities = {}
-        for (location_id, product_id, lot_id), quantity in pbl.iteritems():
+        for (location_id, product_id, lot_id), quantity in pbl.items():
             if lot_id is not None and quantity >= 0.0:
                 lot_quantities[lot_id] = quantity
 
         lot_fifo = []
         moves = Move.search([
-                ('lot', 'in', lot_quantities.keys()),
+                ('lot', 'in', list(lot_quantities.keys())),
                 ('state', '=', 'done'),
                 ('to_location', '=', self.id),
                 ('effective_date', '<=', stock_date),
@@ -337,7 +335,7 @@ class Location:
             pbl = Product.products_by_location([self.id], with_childs=False)
 
         total_quantity = Decimal('0.0')
-        for (location_id, product_id), quantity in pbl.iteritems():
+        for (location_id, product_id), quantity in pbl.items():
             product = Product(product_id)
             if to_uom is not None and product.default_uom.id != to_uom.id:
                 assert (product.default_uom.category.id ==
@@ -360,9 +358,8 @@ class LocationSiloLocation(ModelSQL):
         ondelete='CASCADE', required=True, select=True)
 
 
-class Move:
+class Move(metaclass=PoolMeta):
     __name__ = 'stock.move'
-    __metaclass__ = PoolMeta
 
     @classmethod
     def _get_origin(cls):
@@ -397,9 +394,8 @@ class Move:
         return res
 
 
-class LotCostLine:
+class LotCostLine(metaclass=PoolMeta):
     __name__ = 'stock.lot.cost_line'
-    __metaclass__ = PoolMeta
 
     @classmethod
     def _get_origin(cls):

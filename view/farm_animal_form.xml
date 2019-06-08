@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
-<form string="Animal">
+<form>
     <group id="header" col="4">
         <label name="number"/>
         <field name="number"/>
@@ -44,8 +44,7 @@
             </group>
             <field name="tags"/>
         </page>
-        <page name="extractions"
-            states="{'invisible': Not(Equal(Eval('animal_type'), 'male'))}">
+        <page name="extractions">
             <label name="last_extraction"/>
             <field name="last_extraction"/>
             <newline/>

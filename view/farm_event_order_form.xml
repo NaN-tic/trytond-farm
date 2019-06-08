@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
-<form string="Work Order">
+<form>
     <label name="name"/>
     <field name="name"/>
     <newline/>
@@ -12,24 +12,20 @@
 	<label name="farm"/>
 	<field name="farm"/>
 	<label name="timestamp"/>
-	<field name="timestamp"/>
+        <group col="2" id="timestamp">
+            <field name="timestamp" widget="date"/>
+            <field name="timestamp" widget="time"/>
+        </group>
     <label name="employee"/>
     <field name="employee"/>
     <separator id="events" string="" colspan="4"/>
-    <field name="medication_events" colspan="4"
-        view_ids="farm.farm_medication_event_list_editable_view"/>
-	<field name="insemination_events" colspan="4"
-        view_ids="farm.farm_insemination_event_list_editable_view"/>
-	<field name="pregnancy_diagnosis_events" colspan="4"
-        view_ids="farm.farm_pregnancy_diagnosis_event_list_editable_view"/>
-	<field name="abort_events" colspan="4"
-        view_ids="farm.farm_abort_event_list_editable_view"/>
-	<field name="farrowing_events" colspan="4"
-        view_ids="farm.farm_farrowing_event_list_editable_view"/>
-	<field name="foster_events" colspan="4"
-        view_ids="farm.farm_foster_event_list_editable_view"/>
-	<field name="weaning_events" colspan="4"
-        view_ids="farm.farm_weaning_event_list_editable_view"/>
+    <field name="medication_events" colspan="4" view_ids="farm.farm_medication_event_list_editable_view"/>
+    <field name="insemination_events" colspan="4" view_ids="farm.farm_insemination_event_list_editable_view"/>
+    <field name="pregnancy_diagnosis_events" colspan="4" view_ids="farm.farm_pregnancy_diagnosis_event_list_editable_view"/>
+    <field name="abort_events" colspan="4" view_ids="farm.farm_abort_event_list_editable_view"/>
+    <field name="farrowing_events" colspan="4" view_ids="farm.farm_farrowing_event_list_editable_view"/>
+    <field name="foster_events" colspan="4" view_ids="farm.farm_foster_event_list_editable_view"/>
+    <field name="weaning_events" colspan="4" view_ids="farm.farm_weaning_event_list_editable_view"/>
     <group colspan="4" col="3" id="buttons">
         <!--<button string="Cancel" name="cancel" icon="tryton-cancel" />-->
         <button string="Confirm" name="confirm" icon="tryton-ok"/>

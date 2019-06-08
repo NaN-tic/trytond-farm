@@ -7,7 +7,7 @@
         <field name="silo"/>
         <label name="current_lot"/>
         <field name="current_lot"/>
-        <group name="locations_to_fed" string="" colspan="4" col="1">
+        <group name="locations_to_fed" colspan="4" col="1">
             <field name="locations_to_fed"/>
         </group>
     </xpath>

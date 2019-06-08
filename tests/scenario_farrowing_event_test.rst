@@ -11,54 +11,23 @@ Imports::
     >>> import datetime
     >>> from dateutil.relativedelta import relativedelta
     >>> from decimal import Decimal
-    >>> from proteus import config, Model, Wizard
+    >>> from proteus import Model, Wizard
+    >>> from trytond.tests.tools import activate_modules
+    >>> from trytond.modules.company.tests.tools import create_company, \
+    ...     get_company
+    >>> from trytond.modules.account.tests.tools import create_fiscalyear, \
+    ...     create_chart, get_accounts
     >>> now = datetime.datetime.now()
     >>> today = datetime.date.today()
 
-Create database::
+Install module::
 
-    >>> config = config.set_trytond()
-    >>> config.pool.test = True
-
-Install farm::
-
-    >>> Module = Model.get('ir.module.module')
-    >>> modules = Module.find([
-    ...         ('name', '=', 'farm'),
-    ...         ])
-    >>> Module.install([x.id for x in modules], config.context)
-    >>> Wizard('ir.module.module.install_upgrade').execute('upgrade')
+    >>> config = activate_modules('farm')
 
 Create company::
 
-    >>> Currency = Model.get('currency.currency')
-    >>> CurrencyRate = Model.get('currency.currency.rate')
-    >>> Company = Model.get('company.company')
-    >>> Party = Model.get('party.party')
-    >>> company_config = Wizard('company.company.config')
-    >>> company_config.execute('company')
-    >>> company = company_config.form
-    >>> party = Party(name='NaN·tic')
-    >>> party.save()
-    >>> company.party = party
-    >>> currencies = Currency.find([('code', '=', 'EUR')])
-    >>> if not currencies:
-    ...     currency = Currency(name='Euro', symbol=u'€', code='EUR',
-    ...         rounding=Decimal('0.01'), mon_grouping='[3, 3, 0]',
-    ...         mon_decimal_point=',')
-    ...     currency.save()
-    ...     CurrencyRate(date=now.date() + relativedelta(month=1, day=1),
-    ...         rate=Decimal('1.0'), currency=currency).save()
-    ... else:
-    ...     currency, = currencies
-    >>> company.currency = currency
-    >>> company_config.execute('add')
-    >>> company, = Company.find()
-
-Reload the context::
-
-    >>> User = Model.get('res.user')
-    >>> config._context = User.get_preferences(True, config.context)
+    >>> _ = create_company()
+    >>> company = get_company()
 
 Create specie's products::
 
@@ -195,12 +164,12 @@ times (one without lives and second with)::
     ...     initial_location=warehouse.storage_location)
     >>> female.save()
     >>> female.location.code
-    u'STO'
+    'STO'
     >>> female.farm.code
-    u'WH'
+    'WH'
     >>> female.current_cycle
     >>> female.state
-    u'prospective'
+    'prospective'
 
 Create insemination event without dose BoM nor Lot and validate it::
 
@@ -217,15 +186,15 @@ Create insemination event without dose BoM nor Lot and validate it::
     ...     config.context)
     >>> inseminate_female.reload()
     >>> inseminate_female.state
-    u'validated'
+    'validated'
 
 Check female is mated::
 
     >>> female.reload()
     >>> female.state
-    u'mated'
+    'mated'
     >>> female.current_cycle.state
-    u'mated'
+    'mated'
 
 Create pregnancy diagnosis event with positive result and validate it::
 
@@ -243,13 +212,13 @@ Create pregnancy diagnosis event with positive result and validate it::
     ...     config.context)
     >>> diagnose_female.reload()
     >>> diagnose_female.state
-    u'validated'
+    'validated'
 
 Check female is pregnant::
 
     >>> female.reload()
     >>> female.current_cycle.state
-    u'pregnant'
+    'pregnant'
     >>> female.current_cycle.pregnant
     1
 
@@ -276,7 +245,7 @@ Validate farrowing event::
     >>> FarrowingEvent.validate_event([farrow_event.id], config.context)
     >>> farrow_event.reload()
     >>> farrow_event.state
-    u'validated'
+    'validated'
 
 Check female is not pregnant, its current cycle is in 'unmated' state, it is in
 'prospective' state and check female functional fields values::
@@ -285,9 +254,9 @@ Check female is not pregnant, its current cycle is in 'unmated' state, it is in
     >>> female.current_cycle.pregnant
     False
     >>> female.current_cycle.state
-    u'unmated'
+    'unmated'
     >>> female.state
-    u'prospective'
+    'prospective'
     >>> female.last_produced_group
     >>> female.current_cycle.live
     0
@@ -308,7 +277,7 @@ Create second insemination event without dose BoM nor Lot and validate it::
     ...     config.context)
     >>> inseminate_female2.reload()
     >>> inseminate_female2.state
-    u'validated'
+    'validated'
 
 Check female has two cycles with diferent sequences, it and its current
 cycle is mated and the first cycle (old) is unmated::
@@ -319,11 +288,11 @@ cycle is mated and the first cycle (old) is unmated::
     >>> female.cycles[0].sequence != female.cycles[1].sequence
     1
     >>> female.current_cycle.state
-    u'mated'
+    'mated'
     >>> female.state
-    u'mated'
+    'mated'
     >>> female.cycles[0].state
-    u'unmated'
+    'unmated'
 
 Create second pregnancy diagnosis event with positive result and validate it::
 
@@ -340,7 +309,7 @@ Create second pregnancy diagnosis event with positive result and validate it::
     ...     config.context)
     >>> diagnose_female2.reload()
     >>> diagnose_female2.state
-    u'validated'
+    'validated'
 
 Check female is pregnant::
 
@@ -348,7 +317,7 @@ Check female is pregnant::
     >>> female.current_cycle.pregnant
     1
     >>> female.current_cycle.state
-    u'pregnant'
+    'pregnant'
 
 Create second farrowing event with lives::
 
@@ -368,7 +337,7 @@ Validate farrowing event::
     >>> FarrowingEvent.validate_event([farrow_event2.id], config.context)
     >>> farrow_event2.reload()
     >>> farrow_event2.state
-    u'validated'
+    'validated'
 
 Check female is not pregnant, its current cycle are in 'lactating' state,
 it is 'mated' and check female functional fields values::
@@ -377,9 +346,9 @@ it is 'mated' and check female functional fields values::
     >>> female.current_cycle.pregnant
     0
     >>> female.current_cycle.state
-    u'lactating'
+    'lactating'
     >>> female.state
-    u'mated'
+    'mated'
     >>> female.current_cycle.live
     7
     >>> female.current_cycle.dead

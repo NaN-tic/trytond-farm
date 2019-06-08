@@ -1,10 +1,12 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
+from datetime import date
 from trytond.model import fields, ModelView, Workflow
 from trytond.pyson import Bool, Equal, Eval, If
 from trytond.pool import Pool
 from trytond.transaction import Transaction
-from datetime import date
+from trytond.exceptions import UserError
+from trytond.i18n import gettext
 
 from .abstract_event import AbstractEvent, ImportedEventMixin, \
     _STATES_WRITE_DRAFT, _DEPENDS_WRITE_DRAFT, \
@@ -62,11 +64,6 @@ class InseminationEvent(AbstractEvent, ImportedEventMixin):
                     ], ],
                 []),
             ]
-        cls._error_messages.update({
-                'dose_not_in_farm': ('There isn\'t any unit of dose '
-                    '"%(dose)s" selected in the insemination event '
-                    '"%(event)s" in the farm "%(farm)s" at "%(timestamp)s".'),
-                })
 
     @staticmethod
     def default_animal_type():
@@ -85,16 +82,12 @@ class InseminationEvent(AbstractEvent, ImportedEventMixin):
                 self.timestamp)
         return super(InseminationEvent, self).get_rec_name(name)
 
-    @fields.depends('animal')
+    @fields.depends('animal_type', 'animal')
     def on_change_animal(self):
         if not self.animal:
-            return {}
-        changes = super(InseminationEvent, self).on_change_animal()
-        current_cycle = self.animal.current_cycle
-        changes.update({
-                'female_cycle': current_cycle.id,
-                })
-        return changes
+            return
+        super(InseminationEvent, self).on_change_animal()
+        self.female_cycle = self.animal.current_cycle
 
     @fields.depends('dose_bom')
     def on_change_with_dose_product(self, name=None):
@@ -147,17 +140,17 @@ class InseminationEvent(AbstractEvent, ImportedEventMixin):
                 'already has the related stock move: "%s".' % (
                     insemination_event.id, insemination_event.move.id))
             if not insemination_event._check_dose_in_farm():
-                cls.raise_user_error('dose_not_in_farm', {
-                        'event': insemination_event.rec_name,
-                        'dose': (insemination_event.dose_lot and
+                raise UserError(gettext('farm.dose_not_in_farm',
+                        event=insemination_event.rec_name,
+                        dose=(insemination_event.dose_lot and
                             insemination_event.dose_lot.rec_name or
                             insemination_event.dose_product and
                             insemination_event.dose_product.rec_name or
                             insemination_event.specie.semen_product and
                             insemination_event.specie.semen_product.rec_name),
-                        'farm': insemination_event.farm.rec_name,
-                        'timestamp': insemination_event.timestamp,
-                        })
+                        farm=insemination_event.farm.rec_name,
+                        timestamp=insemination_event.timestamp,
+                        ))
             current_cycle = insemination_event.animal.current_cycle
             # Si no es necessari crear un segon cicle quan hi ha
             # diagnosis_event sense abort/farrowing (que tindra el mateix num)

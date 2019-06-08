@@ -2,7 +2,9 @@
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
 <data>
-    <xpath expr="//field[@name='timestamp']" position="after">
+    <!-- <xpath expr="//field[@name='timestamp']" position="after"> -->
+    <xpath expr="//tree" position="inside">
+<!--
         <field name="reference"/>
         <field name="untreated_semen_qty"/>
         <field name="untreated_semen_uom"/>
@@ -11,5 +13,6 @@
         <field name="formula_uom"/>
         <field name="doses"/>
         <field name="dose_location"/>
+-->
     </xpath>
 </data>

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
-<tree string="Female Cycles">
+<tree>
     <field name="animal"/>
     <field name="sequence"/>
     <field name="days_between_weaning_and_insemination"/>

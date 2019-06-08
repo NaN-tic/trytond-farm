@@ -12,6 +12,8 @@ from trytond.model import fields, ModelSQL, ModelView, Workflow
 from trytond.pyson import Equal, Eval, Id, Not
 from trytond.pool import Pool
 from trytond.transaction import Transaction
+from trytond.exceptions import UserError
+from trytond.i18n import gettext
 
 from .abstract_event import _STATES_WRITE_DRAFT, \
     _DEPENDS_WRITE_DRAFT, _STATES_VALIDATED_ADMIN, _DEPENDS_VALIDATED_ADMIN
@@ -93,14 +95,14 @@ class AnimalLocationStock():
                 product_ids.append(
                     getattr(specie, '%s_product' % animal_type).id)
 
-        location_ids = self._warehouse_by_location.keys()
+        location_ids = list(self._warehouse_by_location.keys())
         with Transaction().set_context(stock_date_end=self.start_date):
             pbl = Product.products_by_location(location_ids,
                 product_ids=product_ids, with_childs=False,
                 grouping=('product', 'lot'))
         # First, it initialize 'loc_stock' with stock of animals in
         # location_ids at start_date
-        for (location_id, _, lot_id), quantity in pbl.iteritems():
+        for (location_id, _, lot_id), quantity in pbl.items():
             if lot_id is None or quantity <= 0.0:
                 continue
             self._add_animals(Lot(lot_id), location_id, quantity,
@@ -115,7 +117,7 @@ class AnimalLocationStock():
                     grouping=('product', 'lot'))
             # registers with 'qty'==0 refer to animals/groups that have come
             # out and enter the same day.
-            for (loc_id, _, lot_id), qty in sorted(daily_pbl.iteritems(),
+            for (loc_id, _, lot_id), qty in sorted(iter(daily_pbl.items()),
                     key=pbl_sortkey):
                 if lot_id is None or qty == 0.0:
                     continue
@@ -247,7 +249,7 @@ class AnimalLocationStock():
             "'consumed_per_animal_day' param is not the expected Decimal")
         # TODO: use it
         events_vals = []
-        for (lot_id, location_id), periods in self._lot_loc_dict.items():
+        for (lot_id, location_id), periods in list(self._lot_loc_dict.items()):
             for (n_animals, start_date, end_date) in periods:
                 event = self._new_event(lot_id, n_animals, start_date,
                     location_id, None, uom, consumed_per_animal_day)
@@ -269,7 +271,7 @@ class AnimalLocationStock():
 
         zero_qty = Decimal('1E-%d' % uom.digits)
 
-        days_list = self._day_dict.keys()
+        days_list = list(self._day_dict.keys())
         days_list.sort()
         for date_it in days_list:
             for lot_id, location_id, n_animals, close, close_time \
@@ -409,18 +411,6 @@ class FeedInventoryMixin(object):
     @classmethod
     def __setup__(cls):
         super(FeedInventoryMixin, cls).__setup__()
-        cls._error_messages.update({
-                'invalid_state_to_delete': ('The inventory "%s" can\'t be '
-                    'deleted because is not in "Draft" or "Cancelled" state.'),
-                'invalid_inventory_quantity': ('The quantity specified in '
-                    'feed inventory "%(inventory)s" is not correct.\n'
-                    'The current stock of this silo is %(curr_qty)s. The '
-                    'quantity in the inventory must to be less than the '
-                    'current stock.'),
-                #'inventories_with_successors_not_cancellable': (
-                #    'Next feed inventories can\'t be cancelled because later '
-                #    'inventories exist for their own silos:\n - %s'),
-                })
         cls._buttons.update({
                 'confirm': {
                     'invisible': Eval('state') != 'draft',
@@ -464,12 +454,9 @@ class FeedInventoryMixin(object):
     @fields.depends('location')
     def on_change_location(self, name=None):
         if not self.location:
-            return {
-                'dest_locations': None,
-                }
-        return {
-            'dest_locations': [l.id for l in self.location.locations_to_fed],
-            }
+            self.dest_locations = None
+            return
+        self.dest_locations = self.location.locations_to_fed
 
     @fields.depends('uom')
     def on_change_with_unit_digits(self, name=None):
@@ -496,8 +483,9 @@ class FeedInventoryMixin(object):
         inventory_events = []
         for inventory in inventories:
             if inventory.state not in ('draft', 'cancel'):
-                cls.raise_user_error('invalid_state_to_delete',
-                    inventory.rec_name)
+                raise UserError(gettext(
+                        'farm.inventory_invalid_state_to_delete',
+                        inventory=inventory.rec_name))
             inventory_events += inventory.feed_events
         if inventory_events:
             FeedEvent.delete(inventory_events)
@@ -537,20 +525,6 @@ class FeedInventory(FeedInventoryMixin, ModelSQL, ModelView, Workflow):
 
     prev_inventory = fields.Many2One('farm.feed.inventory',
         'Previous Inventory', readonly=True)
-
-    @classmethod
-    def __setup__(cls):
-        super(FeedInventory, cls).__setup__()
-        cls._error_messages.update({
-                'invalid_inventory_date': (
-                    'The date of feed inventory "%s" is too soon. This should '
-                    'be at least two days after the previous inventory to '
-                    'have enough data.'),
-                'no_animals_in_inventory_destinations': (
-                    'There hasn\'t been any animal in destination locations '
-                    'of Feed Inventory "%(inventory)s" since %(start_date)s '
-                    'to inventory\'s date.'),
-                })
 
     @classmethod
     def copy(cls, inventories, default=None):
@@ -614,17 +588,17 @@ class FeedInventory(FeedInventoryMixin, ModelSQL, ModelView, Workflow):
             qty_in_silo = inventory.location.get_total_quantity(
                 inventory.timestamp.date(), inventory.uom)
             if inv_qty >= qty_in_silo:
-                cls.raise_user_error('invalid_inventory_quantity', {
-                        'inventory': inventory.rec_name,
-                        'curr_qty': qty_in_silo,
-                        })
+                raise UserError(gettext('farm.invalid_inventory_quantity',
+                        inventory=inventory.rec_name,
+                        curr_qty=qty_in_silo,
+                        ))
 
             # Prepare data to compute and create Feed Events
             # (using AnimalLocationStock class)
             start_date = prev_inventory.timestamp.date() + timedelta(days=1)
             if start_date >= inventory.timestamp.date():
-                cls.raise_user_error('invalid_inventory_date',
-                    (inventory.rec_name, ))
+                raise UserError(gettext('farm.invalid_inventory_date',
+                        inventory=inventory.rec_name))
 
             warehouse_by_location = {}
             for location in inventory.dest_locations:
@@ -638,10 +612,11 @@ class FeedInventory(FeedInventoryMixin, ModelSQL, ModelView, Workflow):
 
             animal_days = Decimal(str(animal_loc_stock.total_animal_days))
             if animal_days == Decimal('0'):
-                cls.raise_user_error('no_animals_in_inventory_destinations', {
-                        'inventory': inventory.rec_name,
-                        'start_date': start_date.strftime('%d/%m/%Y'),
-                        })
+                raise UserError(gettext(
+                        'farm.no_animals_in_inventory_destinations',
+                        inventory=inventory.rec_name,
+                        start_date=start_date.strftime('%d/%m/%Y'),
+                        ))
 
             consumed_qty = qty_in_silo - inv_qty
             consumed_per_animal_day = (consumed_qty / animal_days)
@@ -731,17 +706,6 @@ class FeedProvisionalInventory(FeedInventoryMixin, ModelSQL, ModelView,
         cls.feed_events.domain = [
             ('state', '=', 'provisional'),
             ]
-        cls._error_messages.update({
-                'exists_later_real_inventories': ('There are real inventories '
-                    'after the provisional inventory "%s" you are trying to '
-                    'confirm.'),
-                'missing_previous_inventory': ('There isn\'t any Feed '
-                    'Inventory before the feed provisional inventory "%s" you '
-                    'are trying to confirm.')
-                #'inventories_with_successors_not_cancellable': (
-                #    'Next feed inventories can\'t be cancelled because later '
-                #    'inventories exist for their own silos:\n - %s'),
-                })
         cls._buttons.update({
                 'cancel': {
                     'invisible': Eval('state') != 'validated',
@@ -791,23 +755,23 @@ class FeedProvisionalInventory(FeedInventoryMixin, ModelSQL, ModelView,
                     ('state', '=', 'validated'),
                     ])
             if current_real_inventories:
-                cls.raise_user_error('exists_later_real_inventories',
-                    inventory.rec_name)
+                raise UserError(gettext('farm.exists_later_real_inventories',
+                        inventory=inventory.rec_name))
 
             prev_inventory_date = inventory._get_previous_inventory_date()
             if not prev_inventory_date:
-                cls.raise_user_error('missing_previous_inventory',
-                    inventory.rec_name)
+                raise UserError(gettext('farm.missing_previous_inventory',
+                        inventory=inventory.rec_name))
             inventory.prev_inventory_date = prev_inventory_date
 
             inv_qty = inventory.quantity
             qty_in_silo = inventory.location.get_total_quantity(
                     inventory.timestamp.date(), inventory.uom)
             if inv_qty >= qty_in_silo:
-                cls.raise_user_error('invalid_inventory_quantity', {
-                        'inventory': inventory.rec_name,
-                        'curr_qty': qty_in_silo,
-                        })
+                raise UserError(gettext('farm.invalid_inventory_quantity',
+                            inventory=inventory.rec_name,
+                            curr_qty=qty_in_silo,
+                            ))
 
             # Prepare data to compute and create Feed Events
             # (using AnimalLocationStock class)
@@ -1052,7 +1016,7 @@ class FeedAnimalLocationDate(ModelSQL, ModelView):
                 feed_event.quantity).as_('daily_consumed_qty'),
             feed_event.feed_inventory)
 
-        return animals.join(days_q, condition=Literal(True)).join(
+        query = animals.join(days_q, condition=Literal(True)).join(
             feed_event,
             condition=((feed_event.animal_type == animals.animal_type)
                 & ((feed_event.animal == animals.animal)
@@ -1084,6 +1048,7 @@ class FeedAnimalLocationDate(ModelSQL, ModelView):
                 group_by=(animals.animal_type, animals.animal,
                     animals.animal_group, feed_event.location,
                     days_q.date))
+        return query
 
     @staticmethod
     def _days_to_compute():

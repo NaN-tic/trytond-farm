@@ -7,31 +7,54 @@
         <!-- farm.semen_extraction.event -->
         <record model="ir.ui.view" id="farm_semen_extraction_event_form_view">
             <field name="model">farm.semen_extraction.event</field>
-            <field name="type">form</field>
-            <field name="inherit" ref="farm.farm_abstract_event_form_view"/>
+            <field name="inherit" ref="farm_abstract_event_form_view"/>
             <field name="name">farm_semen_extraction_event_form</field>
         </record>
 
         <record model="ir.ui.view" id="farm_semen_extraction_event_list_view">
             <field name="model">farm.semen_extraction.event</field>
-            <field name="type">tree</field>
-            <field name="inherit" ref="farm.farm_abstract_event_list_view"/>
+            <field name="inherit" ref="farm_abstract_event_list_view"/>
             <field name="name">farm_semen_extraction_event_list</field>
         </record>
 
-        <record model="ir.model.button"
-            id="validate_semen_extraction_event_button">
+        <record model="ir.model.button" id="draft_semen_extraction_event_button">
+            <field name="name">draft</field>
+            <field name="model" search="[('model', '=', 'farm.semen_extraction.event')]"/>
+        </record>
+        <record model="ir.model.button-res.group" id="draft_semen_extraction_event_button_group_farm_admin">
+            <field name="button" ref="draft_semen_extraction_event_button"/>
+            <field name="group" ref="group_farm_admin"/>
+        </record>
+        <record model="ir.model.button-res.group" id="draft_semen_extraction_event_button_group_farm_females">
+            <field name="button" ref="draft_semen_extraction_event_button"/>
+            <field name="group" ref="group_farm_males"/>
+        </record>
+
+        <record model="ir.model.button" id="validate_semen_extraction_event_button">
             <field name="name">validate_event</field>
-            <field name="model"
-                search="[('model', '=', 'farm.semen_extraction.event')]"/>
+            <field name="model" search="[('model', '=', 'farm.semen_extraction.event')]"/>
+        </record>
+        <record model="ir.model.button-res.group" id="validate_semen_extraction_event_button_group_farm_admin">
+            <field name="button" ref="validate_semen_extraction_event_button"/>
+            <field name="group" ref="group_farm_admin"/>
+        </record>
+        <record model="ir.model.button-res.group" id="validate_semen_extraction_event_button_group_farm_females">
+            <field name="button" ref="validate_semen_extraction_event_button"/>
+            <field name="group" ref="group_farm_males"/>
+        </record>
+
+        <record model="ir.model.button" id="calculate_doses_semen_extraction_event_button">
+            <field name="name">calculate_doses</field>
+            <field name="string">Calculate Doses</field>
+            <field name="model" search="[('model', '=', 'farm.semen_extraction.event')]"/>
         </record>
         <record model="ir.model.button-res.group"
-            id="validate_semen_extraction_event_button_group_farm_admin">
+            id="calculate_doses_semen_extraction_event_button_group_farm_admin">
             <field name="button" ref="validate_semen_extraction_event_button"/>
             <field name="group" ref="group_farm_admin"/>
         </record>
         <record model="ir.model.button-res.group"
-            id="validate_semen_extraction_event_button_group_farm_females">
+            id="calculate_doses_semen_extraction_event_button_group_farm_females">
             <field name="button" ref="validate_semen_extraction_event_button"/>
             <field name="group" ref="group_farm_males"/>
         </record>
@@ -40,9 +63,7 @@
             id="act_farm_semen_extraction_event">
             <field name="name">Semen Extractions</field>
             <field name="res_model">farm.semen_extraction.event</field>
-            <field name="search_value"></field>
-            <field name="domain"></field>
-            <field name="context">{'animal_type': 'male'}</field>
+            <field name="context" eval="{'animal_type': 'male'}" pyson="1"/>
         </record>
         <record model="ir.action.act_window.view"
             id="act_farm_semen_extraction_event_view1">
@@ -57,10 +78,17 @@
             <field name="act_window" ref="act_farm_semen_extraction_event"/>
         </record>
 
-        <record model="ir.model.access"
-                id="access_farm_semen_extraction_event_farm">
-            <field name="model"
-                search="[('model', '=', 'farm.semen_extraction.event')]"/>
+        <record model="ir.model.access" id="access_farm_semen_extraction_event">
+            <field name="model" search="[('model', '=', 'farm.semen_extraction.event')]"/>
+            <field name="group" eval="None"/>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+
+        <record model="ir.model.access" id="access_farm_semen_extraction_event_farm">
+            <field name="model" search="[('model', '=', 'farm.semen_extraction.event')]"/>
             <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
@@ -68,10 +96,8 @@
             <field name="perm_delete" eval="False"/>
         </record>
 
-        <record model="ir.model.access"
-                id="access_farm_semen_extraction_event_males">
-            <field name="model"
-                search="[('model', '=', 'farm.semen_extraction.event')]"/>
+        <record model="ir.model.access" id="access_farm_semen_extraction_event_males">
+            <field name="model" search="[('model', '=', 'farm.semen_extraction.event')]"/>
             <field name="group" ref="group_farm_males"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
@@ -92,10 +118,16 @@
             <field name="name">farm_semen_extraction_dose_list</field>
         </record>
 
-        <record model="ir.model.access"
-                id="access_farm_semen_extraction_dose_farm">
-            <field name="model"
-                search="[('model', '=', 'farm.semen_extraction.dose')]"/>
+        <record model="ir.model.access" id="access_farm_semen_extraction_dose">
+            <field name="model" search="[('model', '=', 'farm.semen_extraction.dose')]"/>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+
+        <record model="ir.model.access" id="access_farm_semen_extraction_dose_farm">
+            <field name="model" search="[('model', '=', 'farm.semen_extraction.dose')]"/>
             <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
@@ -103,10 +135,8 @@
             <field name="perm_delete" eval="False"/>
         </record>
 
-        <record model="ir.model.access"
-                id="access_farm_semen_extraction_dose_males">
-            <field name="model"
-                search="[('model', '=', 'farm.semen_extraction.dose')]"/>
+        <record model="ir.model.access" id="access_farm_semen_extraction_dose_males">
+            <field name="model" search="[('model', '=', 'farm.semen_extraction.dose')]"/>
             <field name="group" ref="group_farm_males"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>

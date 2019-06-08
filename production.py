@@ -3,13 +3,14 @@
 from trytond.model import fields
 from trytond.pyson import Bool, Eval, Id, If, Not, Or
 from trytond.pool import PoolMeta
+from trytond.exceptions import UserError
+from trytond.i18n import gettext
 
 __all__ = ['BOM']
 
 
-class BOM:
+class BOM(metaclass=PoolMeta):
     __name__ = 'production.bom'
-    __metaclass__ = PoolMeta
 
     semen_dose = fields.Boolean('Semen Dose')
     specie = fields.Many2One('farm.specie', 'Dose Specie', states={
@@ -33,10 +34,6 @@ class BOM:
                 cls.outputs.size or -1)
         cls.outputs.domain.append(If(Bool(Eval('semen_dose', 0)),
                 ('uom', '=', Id('product', 'uom_unit')), ()))
-        cls._error_messages.update({
-                'missing_semen_input': 'The Semen Dose BOM "%s" doesn\'t have '
-                    'any input for the Specie\'s Semen Product.',
-                })
 
     @classmethod
     def validate(cls, boms):
@@ -48,7 +45,8 @@ class BOM:
         if not self.semen_dose:
             return
         if not self.check_specie_semen_in_inputs_recursive():
-            self.raise_user_error('missing_semen_input', self.rec_name)
+            raise UserError(gettext('farm.missing_semen_input',
+                    bom=self.rec_name))
 
     def check_specie_semen_in_inputs_recursive(self):
         if self.semen_dose:

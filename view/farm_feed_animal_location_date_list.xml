@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
-<tree string="Feed Consumption per Animal, Location and Date">
+<tree>
     <field name="animal"/>
     <field name="animal_group"/>
     <field name="animals_qty"/>

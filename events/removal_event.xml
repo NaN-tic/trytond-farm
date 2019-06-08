@@ -82,6 +82,15 @@
             <field name="act_window" ref="act_farm_removal_type"/>
         </record>
 
+        <record model="ir.model.access" id="access_farm_removal_type">
+            <field name="model" search="[('model', '=', 'farm.removal.type')]"/>
+            <field name="group" eval="None"/>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+
         <record model="ir.model.access" id="access_farm_removal_type_farm">
             <field name="model" search="[('model', '=', 'farm.removal.type')]"/>
             <field name="group" ref="group_farm"/>
@@ -107,9 +116,6 @@
         <record model="ir.action.act_window" id="act_farm_removal_reason">
             <field name="name">Removal Reasons</field>
             <field name="res_model">farm.removal.reason</field>
-            <field name="search_value"></field>
-            <field name="domain"></field>
-            <field name="context"></field>
         </record>
         <record model="ir.action.act_window.view"
             id="act_farm_removal_reason_view1">
@@ -126,6 +132,16 @@
 
         <record model="ir.model.access" id="access_farm_removal_reason">
             <field name="model" search="[('model', '=', 'farm.removal.reason')]"/>
+            <field name="group" eval="None"/>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+
+        <record model="ir.model.access" id="access_farm_removal_reason_farm">
+            <field name="model" search="[('model', '=', 'farm.removal.reason')]"/>
+            <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
@@ -144,45 +160,64 @@
         <!-- farm.removal.event -->
         <record model="ir.ui.view" id="farm_removal_event_form_view">
             <field name="model">farm.removal.event</field>
-            <field name="type">form</field>
+            <field name="type" eval="None"/>
             <field name="inherit" ref="farm.farm_abstract_event_form_view"/>
             <field name="name">farm_removal_event_form</field>
         </record>
 
         <record model="ir.ui.view" id="farm_removal_event_list_view">
             <field name="model">farm.removal.event</field>
-            <field name="type">tree</field>
+            <field name="type" eval="None"/>
             <field name="inherit" ref="farm.farm_abstract_event_list_view"/>
             <field name="name">farm_removal_event_list</field>
         </record>
 
+        <record model="ir.model.button" id="draft_removal_event_button">
+            <field name="name">draft</field>
+            <field name="model" search="[('model', '=', 'farm.removal.event')]"/>
+        </record>
+        <record model="ir.model.button-res.group" id="draft_removal_event_button_group_farm_admin">
+            <field name="button" ref="draft_removal_event_button"/>
+            <field name="group" ref="group_farm_admin"/>
+        </record>
+        <record model="ir.model.button-res.group" id="draft_removal_event_button_group_farm_males">
+            <field name="button" ref="draft_removal_event_button"/>
+            <field name="group" ref="group_farm_males"/>
+        </record>
+        <record model="ir.model.button-res.group" id="draft_removal_event_button_group_farm_females">
+            <field name="button" ref="draft_removal_event_button"/>
+            <field name="group" ref="group_farm_females"/>
+        </record>
+        <record model="ir.model.button-res.group" id="draft_removal_event_button_group_farm_individuals">
+            <field name="button" ref="draft_removal_event_button"/>
+            <field name="group" ref="group_farm_individuals"/>
+        </record>
+        <record model="ir.model.button-res.group" id="draft_removal_event_button_group_farm_groups">
+            <field name="button" ref="draft_removal_event_button"/>
+            <field name="group" ref="group_farm_groups"/>
+        </record>
+
         <record model="ir.model.button" id="validate_removal_event_button">
             <field name="name">validate_event</field>
-            <field name="model"
-                search="[('model', '=', 'farm.removal.event')]"/>
+            <field name="model" search="[('model', '=', 'farm.removal.event')]"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="validate_removal_event_button_group_farm_admin">
+        <record model="ir.model.button-res.group" id="validate_removal_event_button_group_farm_admin">
             <field name="button" ref="validate_removal_event_button"/>
             <field name="group" ref="group_farm_admin"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="validate_removal_event_button_group_farm_males">
+        <record model="ir.model.button-res.group" id="validate_removal_event_button_group_farm_males">
             <field name="button" ref="validate_removal_event_button"/>
             <field name="group" ref="group_farm_males"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="validate_removal_event_button_group_farm_females">
+        <record model="ir.model.button-res.group" id="validate_removal_event_button_group_farm_females">
             <field name="button" ref="validate_removal_event_button"/>
             <field name="group" ref="group_farm_females"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="validate_removal_event_button_group_farm_individuals">
+        <record model="ir.model.button-res.group" id="validate_removal_event_button_group_farm_individuals">
             <field name="button" ref="validate_removal_event_button"/>
             <field name="group" ref="group_farm_individuals"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="validate_removal_event_button_group_farm_groups">
+        <record model="ir.model.button-res.group" id="validate_removal_event_button_group_farm_groups">
             <field name="button" ref="validate_removal_event_button"/>
             <field name="group" ref="group_farm_groups"/>
         </record>
@@ -190,9 +225,6 @@
         <record model="ir.action.act_window" id="act_farm_removal_event">
             <field name="name">Removals</field>
             <field name="res_model">farm.removal.event</field>
-            <field name="search_value"></field>
-            <field name="domain"></field>
-            <field name="context"></field>
         </record>
         <record model="ir.action.act_window.view"
             id="act_farm_removal_event_view1">
@@ -209,6 +241,16 @@
 
         <record model="ir.model.access" id="access_farm_removal_event">
             <field name="model" search="[('model', '=', 'farm.removal.event')]"/>
+            <field name="group" eval="None"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+
+        <record model="ir.model.access" id="access_farm_removal_event_farm">
+            <field name="model" search="[('model', '=', 'farm.removal.event')]"/>
+            <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>

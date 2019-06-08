@@ -2,7 +2,7 @@
 # copyright notices and license terms.
 from decimal import Decimal
 
-from trytond.model import fields, ModelSQL, ModelView, Workflow
+from trytond.model import fields, ModelSQL, ModelView, Workflow, Check
 from trytond.pool import Pool
 from trytond.pyson import Eval, Id
 
@@ -51,17 +51,16 @@ class FeedEvent(FeedEventMixin, ModelSQL, ModelView, Workflow):
             ]
         cls.feed_location.depends += ['location']
 
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('quantity_positive', 'check ( quantity != 0 )',
-                'In Feed Events, the quantity can\'t be zero'),
+            ('quantity_positive', Check(t, t.quantity != 0),
+                'farm.check_feed_quantity_non_zero'),
             ('quantity_1_for_animals',
-                ("check ( animal_type = 'group' or "
-                    "(quantity = 1 or quantity = -1))"),
-                'In Feed Events, the quantity must be 1 for Animals (not '
-                'Groups).'),
-            ('feed_quantity_positive', 'check ( feed_quantity != 0.0 )',
-                'In Feed Events, the quantity must be positive (greater or '
-                'equal to 1)'),
+                Check(t, t.animal_type == 'group' or t.quantity == 1 or
+                    t.quantity == -1),
+                'farm.check_feed_quantity_on_for_animals'),
+            ('feed_quantity_positive', Check(t, t.feed_quantity != 0.0),
+                'farm.check_feed_quantity_positive'),
             ]
         cls._transitions |= set((
                 ('provisional', 'draft'),
@@ -79,16 +78,13 @@ class FeedEvent(FeedEventMixin, ModelSQL, ModelView, Workflow):
     @fields.depends('feed_location')
     def on_change_feed_location(self):
         if not self.feed_location or not self.feed_location.current_lot:
-            return {
-                'feed_product': None,
-                'feed_lot': None,
-                'feed_uom': None,
-                }
-        return {
-            'feed_product': self.feed_location.current_lot.product.id,
-            'feed_lot': self.feed_location.current_lot.id,
-            'uom': self.feed_location.current_lot.product.default_uom.id,
-            }
+            self.feed_product = None
+            self.feed_lot = None
+            self.feed_uom = None
+            return
+        self.feed_product = self.feed_location.current_lot.product.id,
+        self.feed_lot = self.feed_location.current_lot.id,
+        self.uom = self.feed_location.current_lot.product.default_uom.id,
 
     def _validated_hook(self):
         super(FeedEvent, self)._validated_hook()

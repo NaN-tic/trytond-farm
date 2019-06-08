@@ -1,9 +1,11 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
-from trytond.model import fields, ModelView, Workflow
+from trytond.model import fields, ModelView, Workflow, Check
 from trytond.pyson import Bool, Equal, Eval, Id, If, Not, Or
 from trytond.pool import Pool
 from trytond.transaction import Transaction
+from trytond.exceptions import UserError
+from trytond.i18n import gettext
 
 from .abstract_event import AbstractEvent, _STATES_WRITE_DRAFT, \
     _DEPENDS_WRITE_DRAFT, _STATES_VALIDATED_ADMIN, _DEPENDS_VALIDATED_ADMIN
@@ -102,26 +104,15 @@ class MoveEvent(AbstractEvent):
             cls.animal.depends.append('from_location')
         if 'to_location' not in cls.animal.depends:
             cls.animal.depends.append('to_location')
-        cls._error_messages.update({
-                'animal_not_in_location': ('The move event of animal '
-                    '"%(animal)s" is trying to move it from location '
-                    '"%(from_location)s" but it isn\'t there at '
-                    '"%(timestamp)s".'),
-                'group_not_in_location': ('The move event of group '
-                    '"%(group)s" is trying to move %(quantity)s animals '
-                    'from location "%(from_location)s" but there isn\'t '
-                    'enough there at "%(timestamp)s".'),
-                })
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('quantity_positive', 'check ( quantity != 0 )',
-                'In Move Events, the quantity can\'t be zero'),
-            ('quantity_1_for_animals',
-                ("check ( animal_type = 'group' or "
-                    "(quantity = 1 or quantity = -1))"),
-                'In Move Events, the quantity must be 1 for Animals (not '
-                'Groups).'),
-            ('weight_0_or_positive', "check ( weight >= 0.0 )",
-                'In Move Events, the weight can\'t be zero'),
+            ('quantity_positive', Check(t, t.quantity != 0),
+                'farm.check_move_quantity_non_zero'),
+            ('quantity_1_for_animals', Check(t, t.animal_type == 'group' or
+                    t.quantity == 1 or t.quantity == -1),
+                'farm.check_move_quantity_one_for_animals'),
+            ('weight_0_or_positive', Check(t, t.weight >= 0.0),
+                'farm.check_move_weight_positive'),
             ]
 
     @staticmethod
@@ -141,10 +132,8 @@ class MoveEvent(AbstractEvent):
         return ['male', 'female', 'individual', 'group']
 
     def on_change_animal(self):
-        res = super(MoveEvent, self).on_change_animal()
-        res['from_location'] = (self.animal and self.animal.location.id or
-            None)
-        return res
+        super(MoveEvent, self).on_change_animal()
+        self.from_location = self.animal and self.animal.location.id or None
 
     @fields.depends('animal_type', 'animal_group', 'from_location',
         'timestamp')
@@ -193,12 +182,11 @@ class MoveEvent(AbstractEvent):
                 if not move_event.animal.check_in_location(
                         move_event.from_location,
                         move_event.timestamp):
-                    cls.raise_user_error('animal_not_in_location', {
-                            'animal': move_event.animal.rec_name,
-                            'from_location':
-                                move_event.from_location.rec_name,
-                            'timestamp': move_event.timestamp,
-                            })
+                    raise UserError(gettext('farm.animal_not_in_location',
+                            animal=move_event.animal.rec_name,
+                            from_location= move_event.from_location.rec_name,
+                            timestamp=move_event.timestamp,
+                            ))
                 move_event.animal.check_allowed_location(
                         move_event.to_location, move_event.rec_name)
             else:
@@ -206,13 +194,12 @@ class MoveEvent(AbstractEvent):
                         move_event.from_location,
                         move_event.timestamp,
                         move_event.quantity):
-                    cls.raise_user_error('group_not_in_location', {
-                            'group': move_event.animal_group.rec_name,
-                            'from_location':
-                                move_event.from_location.rec_name,
-                            'quantity': move_event.quantity,
-                            'timestamp': move_event.timestamp,
-                            })
+                    raise UserError(gettext('farm.group_not_in_location',
+                            group=move_event.animal_group.rec_name,
+                            from_location=move_event.from_location.rec_name,
+                            quantity=move_event.quantity,
+                            timestamp=move_event.timestamp,
+                            ))
                 move_event.animal_group.check_allowed_location(
                     move_event.to_location, move_event.rec_name)
 

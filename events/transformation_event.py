@@ -1,6 +1,6 @@
 #The COPYRIGHT file at the top level of this repository contains the full
 #copyright notices and license terms.
-from trytond.model import fields, ModelView, Workflow
+from trytond.model import fields, ModelView, Workflow, Check
 from trytond.pyson import Bool, Equal, Eval, If, Not, Or
 from trytond.pool import Pool
 from trytond.rpc import RPC
@@ -99,25 +99,14 @@ class TransformationEvent(AbstractEvent):
         if 'to_location' not in cls.animal.depends:
             cls.animal.depends.append('to_location')
         cls.__rpc__['get_to_animal_types'] = RPC(instantiate=0)
-        cls._error_messages.update({
-                'animal_not_in_location': ('The move event of animal '
-                    '"%(animal)s" is trying to move it from location '
-                    '"%(from_location)s" but it isn\'t there at '
-                    '"%(timestamp)s".'),
-                'group_not_in_location': ('The move event of group '
-                    '"%(group)s" is trying to move %(quantity)s animals '
-                    'from location "%(from_location)s" but there isn\'t '
-                    'enough there at "%(timestamp)s".'),
-                })
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('quantity_positive', 'check ( quantity != 0 )',
-                'In Transformation Events, the quantity must be positive '
-                '(greater or equal to 1)'),
-            ('quantity_1_for_animals',
-                ("check ( animal_type = 'group' and to_animal_type = 'group' "
-                    "or (quantity = 1 or quantity = -1) )"),
-                'In Transformation Events, the quantity must be 1 for Animals '
-                '(not Groups).'),
+            ('quantity_positive', Check(t, t.quantity != 0),
+                'farm.transformation_quantity_positive'),
+            ('quantity_1_for_animals', Check(t, t.animal_type=='group' and
+                    t.to_animal_type == 'group'
+                    or (t.quantity == 1 or t.quantity == -1)),
+                'farm.check_transformation_quantity_one_for_animals'),
             ]
 
     @staticmethod
@@ -128,12 +117,10 @@ class TransformationEvent(AbstractEvent):
     def valid_animal_types():
         return ['male', 'female', 'individual', 'group']
 
-    @fields.depends('animal')
+    @fields.depends('animal_type', 'animal')
     def on_change_animal(self):
-        res = super(TransformationEvent, self).on_change_animal()
-        res['from_location'] = (self.animal and self.animal.location.id or
-            None)
-        return res
+        super(TransformationEvent, self).on_change_animal()
+        self.from_location = self.animal and self.animal.location.id or None
 
     @fields.depends('animal_type', 'to_animal_type', 'animal_group',
         'from_location', 'timestamp')

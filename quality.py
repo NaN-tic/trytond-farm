@@ -3,13 +3,14 @@
 from trytond.model import fields
 from trytond.pyson import Bool, Eval, Not
 from trytond.pool import PoolMeta
+from trytond.exceptions import UserError
+from trytond.i18n import gettext
 
 __all__ = ['QualityTest']
 
 
-class QualityTest:
+class QualityTest(metaclass=PoolMeta):
     __name__ = 'quality.test'
-    __metaclass__ = PoolMeta
 
     semen_extraction = fields.One2One(
         'farm.semen_extraction.event-quality.test', 'test', 'event',
@@ -18,19 +19,11 @@ class QualityTest:
             })
 
     @classmethod
-    def __setup__(cls):
-        super(QualityTest, cls).__setup__()
-        cls._error_messages.update({
-                'no_set_draft_semen_extraction_test': ('The quality test "%s" '
-                    'can\'t be set to Draft because it is related to a '
-                    'validated semen extraction event.'),
-                })
-
-    @classmethod
     def draft(cls, tests):
         for test in tests:
             if (test.state != 'draft' and test.semen_extraction and
                     test.semen_extraction.state == 'validated'):
-                cls.raise_user_exception('no_set_draft_semen_extraction_test',
-                    test.rec_name)
+                raise UserError(gettext(
+                        'farm.no_set_draft_semen_extraction_test',
+                        test=test.rec_name))
         super(QualityTest, cls).draft(tests)

@@ -9,10 +9,12 @@ No possibility of creating individuals from here. Maybe in the future we
 - Farrowing creates groups and weaning is for groups (current implementation)
 - Farrowing creates groups and weaning is for individuals
 """
-from trytond.model import fields, ModelView, ModelSQL, Workflow
+from trytond.model import fields, ModelView, ModelSQL, Workflow, Unique
 from trytond.pyson import Eval, Id, If, Not
 from trytond.pool import Pool
 from trytond.transaction import Transaction
+from trytond.exceptions import UserError
+from trytond.i18n import gettext
 
 from .abstract_event import AbstractEvent, ImportedEventMixin, \
     _STATES_WRITE_DRAFT, _DEPENDS_WRITE_DRAFT, \
@@ -104,10 +106,6 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
     @classmethod
     def __setup__(cls):
         super(WeaningEvent, cls).__setup__()
-        cls._error_messages.update({
-            'incorrect_quantity': 'The entered quantity is incorrect, '
-            'the maximum allowed quantity is: %s'
-            })
         cls.animal.domain += [
             ('farm', '=', Eval('farm')),
             ('location.type', '=', 'storage'),
@@ -173,28 +171,27 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
     def on_change_with_fostered(self, name=None):
         'Returns the sum of foster event quantity for the current farrowing '
         'group. Used to display and check'
-        current_cycle = self.animal.current_cycle
-        return current_cycle.fostered or 0
+        if self.animal:
+            current_cycle = self.animal.current_cycle
+            return current_cycle.fostered or 0
 
     @fields.depends('animal')
     def on_change_with_born_alive(self, name=None):
         'Returns the number of alive in the current farrowing event. Used to '
         'display and check'
-        current_cycle = self.animal.current_cycle
-        return current_cycle.live or 0
+        if self.animal:
+            current_cycle = self.animal.current_cycle
+            return current_cycle.live or 0
 
     @fields.depends('animal')
     def on_change_animal(self):
         if not self.animal:
-            return {}
-        changes = super(WeaningEvent, self).on_change_animal()
+            return
+        super(WeaningEvent, self).on_change_animal()
         current_cycle = self.animal.current_cycle
-        changes.update({
-            'female_cycle': current_cycle.id,
-            'quantity': current_cycle.live + current_cycle.fostered,
-            'last_minute_fostered': 0,
-            })
-        return changes
+        self.female_cycle = current_cycle
+        self.quantity = current_cycle.live + current_cycle.fostered
+        self.last_minute_fostered = 0
 
     @classmethod
     @ModelView.button
@@ -231,7 +228,8 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
             maximum = (current_cycle.live + current_cycle.fostered +
                 weaning_event.last_minute_fostered)
             if weaning_event.quantity > maximum:
-                cls.raise_user_error('incorrect_quantity', maximum)
+                raise UserError(gettext('farm.incorrect_quantity',
+                        quantity=maximum))
 
             if (weaning_event.female_to_location and
                     weaning_event.female_to_location !=
@@ -428,9 +426,8 @@ class WeaningEventFemaleCycle(ModelSQL):
     @classmethod
     def __setup__(cls):
         super(WeaningEventFemaleCycle, cls).__setup__()
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('event_unique', 'UNIQUE(event)',
-                'The Weaning Event must be unique.'),
-            ('cycle_unique', 'UNIQUE(cycle)',
-                'The Female Cycle must be unique.'),
+            ('event_unique', Unique(t, t.event), 'farm.weaning_event_unique'),
+            ('cycle_unique', Unique(t, t.cycle), 'farm.weaning_cycle_unique'),
             ]

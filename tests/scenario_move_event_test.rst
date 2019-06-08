@@ -11,54 +11,23 @@ Imports::
     >>> import datetime
     >>> from dateutil.relativedelta import relativedelta
     >>> from decimal import Decimal
-    >>> from proteus import config, Model, Wizard
+    >>> from proteus import Model, Wizard
+    >>> from trytond.tests.tools import activate_modules
+    >>> from trytond.modules.company.tests.tools import create_company, \
+    ...     get_company
+    >>> from trytond.modules.account.tests.tools import create_fiscalyear, \
+    ...     create_chart, get_accounts
     >>> now = datetime.datetime.now()
     >>> today = datetime.date.today()
 
-Create database::
+Install module::
 
-    >>> config = config.set_trytond()
-    >>> config.pool.test = True
-
-Install farm::
-
-    >>> Module = Model.get('ir.module.module')
-    >>> modules = Module.find([
-    ...         ('name', '=', 'farm'),
-    ...         ])
-    >>> Module.install([x.id for x in modules], config.context)
-    >>> Wizard('ir.module.module.install_upgrade').execute('upgrade')
+    >>> config = activate_modules('farm')
 
 Create company::
 
-    >>> Currency = Model.get('currency.currency')
-    >>> CurrencyRate = Model.get('currency.currency.rate')
-    >>> Company = Model.get('company.company')
-    >>> Party = Model.get('party.party')
-    >>> company_config = Wizard('company.company.config')
-    >>> company_config.execute('company')
-    >>> company = company_config.form
-    >>> party = Party(name='NaN·tic')
-    >>> party.save()
-    >>> company.party = party
-    >>> currencies = Currency.find([('code', '=', 'EUR')])
-    >>> if not currencies:
-    ...     currency = Currency(name='Euro', symbol=u'€', code='EUR',
-    ...         rounding=Decimal('0.01'), mon_grouping='[3, 3, 0]',
-    ...         mon_decimal_point=',')
-    ...     currency.save()
-    ...     CurrencyRate(date=now.date() + relativedelta(month=1, day=1),
-    ...         rate=Decimal('1.0'), currency=currency).save()
-    ... else:
-    ...     currency, = currencies
-    >>> company.currency = currency
-    >>> company_config.execute('add')
-    >>> company, = Company.find()
-
-Reload the context::
-
-    >>> User = Model.get('res.user')
-    >>> config._context = User.get_preferences(True, config.context)
+    >>> _ = create_company()
+    >>> company = get_company()
 
 Create products::
 
@@ -241,9 +210,9 @@ Create individual::
     ...     initial_location=location1_id)
     >>> individual.save()
     >>> individual.location.code
-    u'L1'
+    'L1'
     >>> individual.farm.code
-    u'WH'
+    'WH'
 
 Create individual move event::
 
@@ -270,7 +239,7 @@ Validate individual move event::
 
     >>> move_individual.click('validate_event')
     >>> move_individual.state
-    u'validated'
+    'validated'
     >>> individual.reload()
     >>> individual.location.id == location2_id
     True
@@ -297,7 +266,7 @@ Create individual move event changing cost price::
     Decimal('30.0')
     >>> move_individual.click('validate_event')
     >>> move_individual.state
-    u'validated'
+    'validated'
     >>> individual.reload()
     >>> individual.location.id == location1_id
     True
@@ -356,7 +325,7 @@ Validate animal_group move event::
     >>> config.user = group_user.id
     >>> move_animal_group.click('validate_event')
     >>> move_animal_group.state
-    u'validated'
+    'validated'
     >>> animal_group.reload()
     >>> animal_group.current_weight.weight
     Decimal('80.50')
@@ -417,7 +386,7 @@ When moving a non weaned female its group should be also moved::
     ...     ('animal_group', '=', farrowing_group.id),
     ...     ], limit=1)
     >>> farrowing_event.state
-    u'validated'
+    'validated'
     >>> farrowing_event.weight
     >>> config.user = stock_user.id
     >>> farrowing_event.from_location.id == location1_id

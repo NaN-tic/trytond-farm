@@ -1,9 +1,11 @@
 #The COPYRIGHT file at the top level of this repository contains the full
 #copyright notices and license terms.
-from trytond.model import fields, ModelSQL, ModelView, Workflow
+from trytond.model import fields, ModelSQL, ModelView, Workflow, Check
 from trytond.pyson import Bool, Equal, Eval, If, Not, Or
 from trytond.pool import Pool
 from trytond.transaction import Transaction
+from trytond.exceptions import UserError
+from trytond.i18n import gettext
 
 from .abstract_event import AbstractEvent, _STATES_WRITE_DRAFT, \
     _DEPENDS_WRITE_DRAFT, _STATES_VALIDATED_ADMIN, _DEPENDS_VALIDATED_ADMIN
@@ -81,27 +83,13 @@ class RemovalEvent(AbstractEvent):
             cls.animal.depends.append('from_location')
         if 'farm' not in cls.animal.depends:
             cls.animal.depends.append('farm')
-        cls._error_messages.update({
-                'animal_not_in_location': ('The removal event of animal '
-                    '"%(animal)s" is trying to remove it from location '
-                    '"%(from_location)s" but it isn\'t there at '
-                    '"%(timestamp)s".'),
-                'group_not_in_location': ('The removal event of group '
-                    '"%(group)s" is trying to remove %(quantity)s animals '
-                    'from location "%(from_location)s" but there isn\'t '
-                    'enough there at "%(timestamp)s".'),
-                'already_exist_validated_removal_event': ('There are other '
-                    'removal validated events for the animal "%s".'),
-                })
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('quantity_positive', 'check ( quantity != 0 )',
-                'In Removal Events, the quantity must be positive (greater or '
-                'equal to 1)'),
-            ('quantity_1_for_animals',
-                ("check ( animal_type = 'group' or "
-                    "(quantity = 1 or quantity = -1))"),
-                'In Removal Events, the quantity must be 1 for Animals (not '
-                'Groups).'),
+            ('quantity_positive', Check(t, t.quantity != 0),
+                'farm.check_removal_quantity_positive'),
+            ('quantity_1_for_animals', Check(t, t.animal_type == 'group' or
+                    t.quantity == 1 or t.quantity == -1),
+                'farm.check_removal_quantity_one_for_animals'),
             ]
 
     @staticmethod
@@ -114,39 +102,35 @@ class RemovalEvent(AbstractEvent):
 
     @fields.depends('animal')
     def on_change_animal(self):
-        res = super(RemovalEvent, self).on_change_animal()
-        res['from_location'] = (self.animal and self.animal.location.id or
-            None)
-        return res
+        super(RemovalEvent, self).on_change_animal()
+        self.from_location = self.animal and self.animal.location.id or None
 
     @fields.depends('animal_group', 'from_location', 'farm', 'timestamp',
         'quantity')
     def on_change_animal_group(self):
-        location_id = None
+        pool = Pool()
+        AnimalGroup = pool.get('farm.animal.group')
+        Location = pool.get('stock.location')
+
         if self.animal_group is None:
-            return {
-                'from_location': location_id,
-            }
-        AnimalGroup = Pool().get('farm.animal.group')
-        Location = Pool().get('stock.location')
+            self.from_location = None
+            return
+
         locations = AnimalGroup.get_locations([self.animal_group], None)
 
         if len(locations) == 1:
             location_id, = locations[self.animal_group.id]
             location = Location(location_id)
-            if self.farm is not None and \
-                    location.warehouse != self.farm:
-                location_id = None
-            with Transaction().set_context(
-                    locations=[location_id],
+            if self.farm is not None and location.warehouse != self.farm:
+                self.from_location = None
+                return
+            with Transaction().set_context(locations=[location_id],
                     stock_date_end=self.timestamp.date()):
                 quantity = None
                 if not self.quantity:
                     quantity = self.animal_group.lot.quantity
-                return {
-                    'from_location': location_id,
-                    'quantity': quantity,
-                }
+                self.from_location = location
+                self.quantity = quantity
 
     @fields.depends('animal_type')
     def on_change_with_quantity(self):
@@ -178,25 +162,23 @@ class RemovalEvent(AbstractEvent):
                 if not removal_event.animal.check_in_location(
                         removal_event.from_location,
                         removal_event.timestamp):
-                    cls.raise_user_error('animal_not_in_location', {
-                            'animal': removal_event.animal.rec_name,
-                            'from_location':
-                                removal_event.from_location.rec_name,
-                            'timestamp': removal_event.timestamp,
-                            })
+                    raise UserError(gettext('farm.animal_not_in_location',
+                            animal=removal_event.animal.rec_name,
+                            from_location=removal_event.from_location.rec_name,
+                            timestamp=removal_event.timestamp,
+                            ))
                 removal_event._check_existing_validated_removal_events()
             else:
                 if not removal_event.animal_group.check_in_location(
                         removal_event.from_location,
                         removal_event.timestamp,
                         removal_event.quantity):
-                    cls.raise_user_error('group_not_in_location', {
-                            'group': removal_event.animal_group.rec_name,
-                            'from_location':
-                                removal_event.from_location.rec_name,
-                            'quantity': removal_event.quantity,
-                            'timestamp': removal_event.timestamp,
-                            })
+                    raise UserError(gettext('farm.group_not_in_location',
+                            group=removal_event.animal_group.rec_name,
+                            from_location=removal_event.from_location.rec_name,
+                            quantity=removal_event.quantity,
+                            timestamp=removal_event.timestamp,
+                            ))
 
             new_move = removal_event._get_event_move()
             new_move.save()
@@ -242,8 +224,9 @@ class RemovalEvent(AbstractEvent):
                 ('state', '=', 'validated'),
                 ], count=True)
         if n_validated_events:
-            self.raise_user_error('already_exist_validated_removal_event',
-                (self.animal.rec_name,))
+            raise UserError(gettext(
+                    'farm.already_exist_validated_removal_event',
+                    animal=self.animal.rec_name))
         return True
 
     def _get_event_move(self):

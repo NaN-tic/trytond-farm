@@ -1,9 +1,11 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
-from trytond.model import fields, ModelView, ModelSQL, Workflow
+from trytond.model import fields, ModelView, ModelSQL, Workflow, Check, Unique
 from trytond.pyson import And, Bool, Equal, Eval, Id, If, Not
 from trytond.pool import Pool
 from trytond.transaction import Transaction
+from trytond.exceptions import UserError
+from trytond.i18n import gettext
 
 from .abstract_event import AbstractEvent, ImportedEventMixin, \
     _STATES_WRITE_DRAFT, _DEPENDS_WRITE_DRAFT, \
@@ -21,7 +23,8 @@ class FarrowingProblem(ModelSQL, ModelView):
     name = fields.Char('Name', required=True, translate=True)
 
 
-class FarrowingEvent(AbstractEvent, ImportedEventMixin):
+#class AbstractEvent(ModelSQL, ModelView, Workflow):
+class FarrowingEvent(AbstractEvent, ImportedEventMixin, ModelSQL, ModelView, Workflow):
     '''Farm Farrowing Event'''
     __name__ = 'farm.farrowing.event'
     _table = 'farm_farrowing_event'
@@ -77,22 +80,23 @@ class FarrowingEvent(AbstractEvent, ImportedEventMixin):
             ]
         if 'imported' not in cls.animal.depends:
             cls.animal.depends.append('imported')
-        cls._error_messages.update({
-                'event_without_dead_nor_live': ('The farrowing event "%s" has '
-                    '0 in Dead and Live. It has to have some unit in some of '
-                    'these fields.'),
-                })
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('live_not_negative', 'CHECK(live >= 0)',
-                'The value of "Live" must to be positive.'),
-            ('stillborn_not_negative', 'CHECK(stillborn >= 0)',
-                'The value of "Stillborn" must to be positive.'),
-            ('mummified_not_negative', 'CHECK(mummified >= 0)',
-                'The value of "Mummified" must to be positive.'),
+            ('live_not_negative', Check(t, t.live >= 0),
+                'farm.check_farrowing_live_positive'),
+            ('stillborn_not_negative', Check(t, t.stillborn >= 0),
+                'farm.check_farrowing_stillborn_positive'),
+            ('mummified_not_negative', Check(t, t.mummified >= 0),
+                'farm.check_farrowing_mummified_positive'),
             ]
         cls._buttons['validate_event']['readonly'] = And(
             Equal(Eval('live', 0), 0),
             Equal(Eval('dead', 0), 0))
+        cls._buttons.update({
+                'draft': {
+                    'invisible': Eval('state') == 'draft',
+                    },
+                })
 
     @staticmethod
     def default_animal_type():
@@ -115,16 +119,12 @@ class FarrowingEvent(AbstractEvent, ImportedEventMixin):
     def on_change_with_dead(self, name=None):
         return (self.stillborn or 0) + (self.mummified or 0)
 
-    @fields.depends('animal')
+    @fields.depends('animal_type', 'animal')
     def on_change_animal(self):
         if not self.animal:
-            return {}
-        changes = super(FarrowingEvent, self).on_change_animal()
-        current_cycle = self.animal.current_cycle
-        changes.update({
-            'female_cycle': current_cycle.id,
-            })
-        return changes
+            return
+        super(FarrowingEvent, self).on_change_animal()
+        self.female_cycle = self.animal.current_cycle
 
     @classmethod
     @ModelView.button
@@ -134,8 +134,8 @@ class FarrowingEvent(AbstractEvent, ImportedEventMixin):
         todo_moves = []
         for farrowing_event in events:
             if farrowing_event.dead == 0 and farrowing_event.live == 0:
-                cls.raise_user_error('event_without_dead_nor_live',
-                    farrowing_event.rec_name)
+                raise UserError(gettext('farm.event_without_dead_nor_live',
+                    event=farrowing_event.rec_name))
             current_cycle = farrowing_event.animal.current_cycle
             farrowing_event.female_cycle = current_cycle
 
@@ -229,11 +229,12 @@ class FarrowingEventFemaleCycle(ModelSQL):
     @classmethod
     def __setup__(cls):
         super(FarrowingEventFemaleCycle, cls).__setup__()
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('event_unique', 'UNIQUE(event)',
-                'The Farrowing Event must be unique.'),
-            ('cycle_unique', 'UNIQUE(cycle)',
-                'The Female Cycle must be unique.'),
+            ('event_unique', Unique(t, t.event),
+                'farm.farrowing_event_unique'),
+            ('cycle_unique', Unique(t, t.cycle),
+                'farm.farrowing_cycle_unique'),
             ]
 
 
@@ -249,9 +250,10 @@ class FarrowingEventAnimalGroup(ModelSQL):
     @classmethod
     def __setup__(cls):
         super(FarrowingEventAnimalGroup, cls).__setup__()
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('event_unique', 'UNIQUE(event)',
-                'The Farrowing Event must be unique.'),
-            ('animal_group_unique', 'UNIQUE(animal_group)',
-                'The Animal Group must be unique.'),
+            ('event_unique', Unique(t, t.event),
+                'farm.farrowing_event_unique'),
+            ('animal_group_unique', Unique(t, t.animal_group),
+                'farm.farrowing_animal_group_unique'),
             ]

@@ -3,10 +3,12 @@
 import logging
 from datetime import datetime
 
-from trytond.model import fields, ModelSQL, ModelView, Workflow
+from trytond.model import fields, ModelSQL, ModelView, Workflow, Unique, Check
 from trytond.pyson import Bool, Equal, Eval, Get, Not
 from trytond.pool import Pool
 from trytond.transaction import Transaction
+from trytond.exceptions import UserError
+from trytond.i18n import gettext
 
 __all__ = ['EventOrder']
 
@@ -38,7 +40,7 @@ def _STATES_LINES(event_type):
         }
 
 
-class EventOrder(ModelSQL, ModelView, Workflow):
+class EventOrder(ModelSQL, ModelView):
     'Farm Events Work Order'
     __name__ = 'farm.event.order'
     _order = [('name', 'ASC')]
@@ -124,19 +126,12 @@ class EventOrder(ModelSQL, ModelView, Workflow):
     @classmethod
     def __setup__(cls):
         super(EventOrder, cls).__setup__()
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('name_required', 'CHECK (name IS NOT NULL)',
-                'The Reference of the Event Order is required.'),
-            ('name_uniq', 'UNIQUE (name)',
-                'The Reference of the Event Order must be unique.'),
+            ('name_required', Check(t, t.name != None),
+                'farm.event_order_reference_required'),
+            ('name_uniq', Unique(t, t.name), 'farm.event_order_name_unique'),
             ]
-        cls._error_messages.update({
-                'incompatible_animal_and_event_type': ('The Animal and Event '
-                    'Type of Event Order "%s" are incompatibles.'),
-                'no_farm_specie_farm_line_available': ('The specified farm '
-                    '"%(farm)s" is not configured as farm with '
-                    '"%(animal_type)s" for the specie "%(specie)s"'),
-                })
         cls._buttons.update({
             'draft': {},
             'confirm': {},
@@ -180,8 +175,8 @@ class EventOrder(ModelSQL, ModelView, Workflow):
     def check_animal_and_event_type(self):
         if self.event_type not in self.event_types_by_animal_type(
                 self.animal_type, True):
-            self.raise_user_error('incompatible_animal_and_event_type',
-                self.rec_name)
+            raise UserError(gettext('farm.incompatible_animal_and_event_type',
+                order=self.rec_name))
 
     @staticmethod
     def event_types_by_animal_type(animal_type, include_generic):
@@ -258,11 +253,11 @@ class EventOrder(ModelSQL, ModelView, Workflow):
                 ('has_' + animal_type, '=', True),
                 ])
         if not farm_lines:
-            cls.raise_user_error('no_farm_specie_farm_line_available', {
-                    'farm': Location(farm_id).rec_name,
-                    'animal_type': animal_type,
-                    'specie': Specie(specie_id).rec_name,
-                    })
+            raise UserError(gettext('farm.no_farm_specie_farm_line_available',
+                    farm=Location(farm_id).rec_name,
+                    animal_type=animal_type,
+                    specie=Specie(specie_id).rec_name,
+                    ))
         farm_line, = farm_lines
         return Sequence.get_id(farm_line.event_order_sequence.id)
 

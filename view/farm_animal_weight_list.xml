@@ -1,9 +1,10 @@
 <?xml version="1.0"?>
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
-<tree string="Weights" editable="bottom">
+<tree>
     <field name="animal"/>
-    <field name="timestamp"/>
+    <field name="timestamp" widget="date"/>
+    <field name="timestamp" widget="time"/>
     <field name="weight"/>
     <field name="uom"/>
 </tree>

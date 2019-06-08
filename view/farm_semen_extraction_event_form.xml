@@ -26,9 +26,7 @@
                     <field name="dose_bom"/>
                     <label name="dose_calculated_units"/>
                     <field name="dose_calculated_units"/>
-                    <button name="calculate_doses"
-                        string="Calculate Doses"
-                        icon="tryton-go-next"/>
+                    <button name="calculate_doses"/>
                 </group>
                 <label name="dose_location"/>
                 <field name="dose_location"/>
@@ -41,7 +39,7 @@
             <page string="Notes" id="notes_page">
                 <field name="notes" colspan="4"/>
             </page>
-            <page string="Extraction &amp; Quality Test" id="extraction_page" states="{'invisible': ~Eval('test_required')}">
+            <page string="Extraction &amp; Quality Test" id="extraction_page">
                 <group colspan="4" col="6" id="quality_test_group">
                     <separator name="test" colspan="6"/>
                     <label name="test" string="Test"/>

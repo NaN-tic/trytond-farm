@@ -2,10 +2,12 @@
 # copyright notices and license terms.
 from datetime import datetime, date
 
-from trytond.model import fields, ModelView, Workflow
+from trytond.model import fields, ModelView, Workflow, Check
 from trytond.pyson import Bool, Equal, Eval, Not, Or
 from trytond.pool import Pool
 from trytond.transaction import Transaction
+from trytond.exceptions import UserError
+from trytond.i18n import gettext
 
 from .abstract_event import AbstractEvent, _STATES_WRITE_DRAFT, \
     _DEPENDS_WRITE_DRAFT, _STATES_WRITE_DRAFT_VALIDATED, \
@@ -100,29 +102,12 @@ class FeedEventMixin(AbstractEvent):
         #     cls.animal.depends.append('state')
         # if 'location' not in cls.animal.depends:
         #     cls.animal.depends.append('location')
+        t = cls.__table__()
         cls._sql_constraints += [
             ('check_start_date_timestamp',
-                'CHECK(timestamp >= start_date)',
-                'The Timestamp must be after the Start Date'),
+                Check(t, t.timestamp >= t.start_date),
+                'farm.timestamp_after_start_date'),
             ]
-        cls._error_messages.update({
-                'animal_not_in_location': ('The feed event of animal '
-                    '"%(animal)s" is trying to feed it in location '
-                    '"%(location)s" but it isn\'t there at '
-                    '"%(timestamp)s".'),
-                'group_not_in_location': ('The feed event of group '
-                    '"%(group)s" is trying to feed %(quantity)s animals in '
-                    'location "%(location)s" but there isn\'t enought there '
-                    'at "%(timestamp)s".'),
-                'not_enought_feed_lot': ('The feed event "%(event)s" is '
-                    'trying to move %(quantity)s of lot "%(lot)s" from silo '
-                    '"%(location)s" but there isn\'t enought quantity there '
-                    'at "%(timestamp)s".'),
-                'not_enought_feed_product': ('The feed event "%(event)s" is '
-                    'trying to move %(quantity)s of product "%(product)s" '
-                    'from silo "%(location)s" but there isn\'t enought '
-                    'quantity there at "%(timestamp)s".'),
-                })
 
     @staticmethod
     def default_quantity():
@@ -140,16 +125,14 @@ class FeedEventMixin(AbstractEvent):
             self.location.rec_name, self.timestamp)
 
     def on_change_animal(self):
-        res = super(FeedEventMixin, self).on_change_animal()
+        super(FeedEventMixin, self).on_change_animal()
         if self.animal and self.animal.location:
-            res['location'] = self.animal.location.id
-        return res
+            self.location = self.animal.location.id
 
     def on_change_animal_group(self):
-        res = super(FeedEventMixin, self).on_change_animal_group()
+        super(FeedEventMixin, self).on_change_animal_group()
         if self.animal_group and len(self.animal_group.locations) == 1:
-            res['location'] = self.animal_group.locations[0].id
-        return res
+            self.location = self.animal_group.locations[0].id
 
     @fields.depends('animal_type', 'animal_group', 'location', 'timestamp')
     def on_change_with_quantity(self):
@@ -211,31 +194,31 @@ class FeedEventMixin(AbstractEvent):
         if self.animal_type != 'group':
             if not self.animal.check_in_location(self.location,
                     self.timestamp):
-                self.raise_user_error('animal_not_in_location', {
-                        'animal': self.animal.rec_name,
-                        'location': self.location.rec_name,
-                        'timestamp': self.timestamp,
-                        })
+                raise UserError(gettext('farm.animal_not_in_location',
+                        animal=self.animal.rec_name,
+                        location=self.location.rec_name,
+                        timestamp=self.timestamp,
+                        ))
         else:
             if not self.animal_group.check_in_location(self.location,
                     self.timestamp, self.quantity):
-                self.raise_user_error('group_not_in_location', {
-                        'group': self.animal_group.rec_name,
-                        'location': self.location.rec_name,
-                        'quantity': self.quantity,
-                        'timestamp': self.timestamp,
-                        })
+                raise UserError(gettext('farm.group_not_in_location',
+                        group=self.animal_group.rec_name,
+                        location=self.location.rec_name,
+                        quantity=self.quantity,
+                        timestamp=self.timestamp,
+                        ))
             if self.start_date:
                 start_timestamp = datetime.combine(self.start_date,
                     self.timestamp.time())
                 if not self.animal_group.check_in_location(self.location,
                         start_timestamp, self.quantity):
-                    self.raise_user_error('group_not_in_location', {
-                            'group': self.animal_group.rec_name,
-                            'location': self.location.rec_name,
-                            'quantity': self.quantity,
-                            'timestamp': start_timestamp,
-                            })
+                    raise UserError(gettext('farm.group_not_in_location',
+                            group=self.animal_group.rec_name,
+                            location=self.location.rec_name,
+                            quantity=self.quantity,
+                            timestamp=start_timestamp,
+                            ))
 
     def check_feed_available(self):
         pool = Pool()
@@ -256,22 +239,22 @@ class FeedEventMixin(AbstractEvent):
                 stock_date_end=self.timestamp.date()):
             if self.feed_lot:
                 if self.feed_lot.quantity < feed_quantity:
-                    self.raise_user_error('not_enought_feed_lot', {
-                            'event': self.rec_name,
-                            'lot': self.feed_lot.rec_name,
-                            'location': self.feed_location.rec_name,
-                            'quantity': feed_quantity,
-                            'timestamp': self.timestamp,
-                            })
+                    raise UserError(gettext('farm.not_enought_feed_lot',
+                            event=self.rec_name,
+                            lot=self.feed_lot.rec_name,
+                            location=self.feed_location.rec_name,
+                            quantity=feed_quantity,
+                            timestamp=self.timestamp,
+                            ))
             else:
                 if self.feed_product.quantity < feed_quantity:
-                    self.raise_user_error('not_enought_feed_product', {
-                            'event': self.rec_name,
-                            'product': self.feed_product.rec_name,
-                            'location': self.feed_location.rec_name,
-                            'quantity': feed_quantity,
-                            'timestamp': self.timestamp,
-                            })
+                    raise UserError(gettext('farm.not_enought_feed_product',
+                            event=self.rec_name,
+                            product=self.feed_product.rec_name,
+                            location=self.feed_location.rec_name,
+                            quantity=feed_quantity,
+                            timestamp=self.timestamp,
+                            ))
 
     def _get_event_move(self):
         pool = Pool()

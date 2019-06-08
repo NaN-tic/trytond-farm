@@ -11,54 +11,23 @@ Imports::
     >>> import datetime
     >>> from dateutil.relativedelta import relativedelta
     >>> from decimal import Decimal
-    >>> from proteus import config, Model, Wizard
+    >>> from proteus import Model, Wizard
+    >>> from trytond.tests.tools import activate_modules
+    >>> from trytond.modules.company.tests.tools import create_company, \
+    ...     get_company
+    >>> from trytond.modules.account.tests.tools import create_fiscalyear, \
+    ...     create_chart, get_accounts
     >>> now = datetime.datetime.now()
     >>> today = datetime.date.today()
 
-Create database::
+Install module::
 
-    >>> config = config.set_trytond()
-    >>> config.pool.test = True
-
-Install farm::
-
-    >>> Module = Model.get('ir.module.module')
-    >>> modules = Module.find([
-    ...         ('name', '=', 'farm'),
-    ...         ])
-    >>> Module.install([x.id for x in modules], config.context)
-    >>> Wizard('ir.module.module.install_upgrade').execute('upgrade')
+    >>> config = activate_modules('farm')
 
 Create company::
 
-    >>> Currency = Model.get('currency.currency')
-    >>> CurrencyRate = Model.get('currency.currency.rate')
-    >>> Company = Model.get('company.company')
-    >>> Party = Model.get('party.party')
-    >>> company_config = Wizard('company.company.config')
-    >>> company_config.execute('company')
-    >>> company = company_config.form
-    >>> party = Party(name='NaN·tic')
-    >>> party.save()
-    >>> company.party = party
-    >>> currencies = Currency.find([('code', '=', 'EUR')])
-    >>> if not currencies:
-    ...     currency = Currency(name='Euro', symbol=u'€', code='EUR',
-    ...         rounding=Decimal('0.01'), mon_grouping='[3, 3, 0]',
-    ...         mon_decimal_point=',')
-    ...     currency.save()
-    ...     CurrencyRate(date=now.date() + relativedelta(month=1, day=1),
-    ...         rate=Decimal('1.0'), currency=currency).save()
-    ... else:
-    ...     currency, = currencies
-    >>> company.currency = currency
-    >>> company_config.execute('add')
-    >>> company, = Company.find()
-
-Reload the context::
-
-    >>> User = Model.get('res.user')
-    >>> config._context = User.get_preferences(True, config.context)
+    >>> _ = create_company()
+    >>> company = get_company()
 
 Create specie's products::
 
@@ -194,12 +163,12 @@ and do some foster events between them::
     ...     initial_location=warehouse.storage_location)
     >>> female1.save()
     >>> female1.location.code
-    u'STO'
+    'STO'
     >>> female1.farm.code
-    u'WH'
+    'WH'
     >>> female1.current_cycle
     >>> female1.state
-    u'prospective'
+    'prospective'
     >>> female2 = Animal(
     ...     type='female',
     ...     specie=pigs_specie,
@@ -207,12 +176,12 @@ and do some foster events between them::
     ...     initial_location=warehouse.storage_location)
     >>> female2.save()
     >>> female2.location.code
-    u'STO'
+    'STO'
     >>> female2.farm.code
-    u'WH'
+    'WH'
     >>> female2.current_cycle
     >>> female2.state
-    u'prospective'
+    'prospective'
 
 Create insemination events for the females without dose BoM nor Lot and
 validate them::
@@ -241,14 +210,14 @@ Check the females are mated::
 
     >>> female1.reload()
     >>> female1.state
-    u'mated'
+    'mated'
     >>> female1.current_cycle.state
-    u'mated'
+    'mated'
     >>> female2.reload()
     >>> female2.state
-    u'mated'
+    'mated'
     >>> female2.current_cycle.state
-    u'mated'
+    'mated'
 
 Create pregnancy diagnosis events with positive result and validate them::
 
@@ -278,12 +247,12 @@ Check females are pregnant::
 
     >>> female1.reload()
     >>> female1.current_cycle.state
-    u'pregnant'
+    'pregnant'
     >>> female1.current_cycle.pregnant
     1
     >>> female2.reload()
     >>> female2.current_cycle.state
-    u'pregnant'
+    'pregnant'
     >>> female2.current_cycle.pregnant
     1
 
@@ -320,9 +289,9 @@ they are 'mated' and check females functional fields values::
     >>> female1.current_cycle.pregnant
     0
     >>> female1.current_cycle.state
-    u'lactating'
+    'lactating'
     >>> female1.state
-    u'mated'
+    'mated'
     >>> female1.current_cycle.live
     7
     >>> female1.current_cycle.dead
@@ -331,9 +300,9 @@ they are 'mated' and check females functional fields values::
     >>> female2.current_cycle.pregnant
     0
     >>> female2.current_cycle.state
-    u'lactating'
+    'lactating'
     >>> female2.state
-    u'mated'
+    'mated'
     >>> female2.current_cycle.live
     8
     >>> female2.current_cycle.dead
@@ -358,7 +327,7 @@ Validate foster event::
     >>> FosterEvent.validate_event([foster_event1.id], config.context)
     >>> foster_event1.reload()
     >>> foster_event1.state
-    u'validated'
+    'validated'
 
 Check female's current cycle is still 'lactating', it has 1 foster event and
 it's fostered value is -1::
@@ -367,7 +336,7 @@ it's fostered value is -1::
     >>> female1.current_cycle.pregnant
     False
     >>> female1.current_cycle.state
-    u'lactating'
+    'lactating'
     >>> len(female1.current_cycle.foster_events)
     1
     >>> female1.current_cycle.fostered
@@ -390,7 +359,7 @@ Validate foster event::
     >>> FosterEvent.validate_event([foster_event2.id], config.context)
     >>> foster_event2.reload()
     >>> foster_event2.state
-    u'validated'
+    'validated'
 
 Check female's current cycle is still 'lactating', it has 1 foster event and
 it's fostered value is 2::
@@ -399,7 +368,7 @@ it's fostered value is 2::
     >>> female2.current_cycle.pregnant
     False
     >>> female2.current_cycle.state
-    u'lactating'
+    'lactating'
     >>> len(female2.current_cycle.foster_events)
     1
     >>> female2.current_cycle.fostered
@@ -425,14 +394,14 @@ Validate foster event::
     >>> FosterEvent.validate_event([foster_event3.id], config.context)
     >>> foster_event3.reload()
     >>> foster_event3.state
-    u'validated'
+    'validated'
 
 Check foster event has Pair female foster event and it is validated:
 
     >>> foster_event3.pair_event != False
     True
     >>> foster_event3.pair_event.state
-    u'validated'
+    'validated'
 
 Check the current cycle of the both females are still 'lactating', they has 2
 foster events and their fostered value is +3 and -2 respectively::
