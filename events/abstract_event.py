@@ -45,13 +45,17 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
         ]
 
     animal_type = fields.Selection([
-        ('male', 'Male'),
-        ('female', 'Female'),
-        ('individual', 'Individual'),
-        ('group', 'Group'),
-        ], "Animal Type", required=True, readonly=True, select=True)
+            ('male', 'Male'),
+            ('female', 'Female'),
+            ('individual', 'Individual'),
+            ('group', 'Group'),
+            ], 'Animal Type', required=True, select=True, states={
+            'readonly': True,
+            })
     specie = fields.Many2One('farm.specie', 'Specie', required=True,
-        readonly=True, select=True)
+        select=True, states={
+            'readonly': True,
+            })
     farm = fields.Many2One('stock.location', 'Farm', required=True,
         states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT,
         domain=[
