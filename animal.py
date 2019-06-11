@@ -835,10 +835,11 @@ class Female(metaclass=PoolMeta):
             number = vals.get('number')
             initial_location = vals.get('initial_location')
             location = Location(initial_location)
-
-            duplicate = Animal.search([('number', '=', number),
-                ('farm', '=', location.warehouse.id),
-                ('active', '=', True)], limit=1)
+            duplicate = Animal.search([
+                    ('number', '=', number),
+                    ('farm', '=', location.warehouse.id),
+                    ('active', '=', True),
+                    ], limit=1)
 
             if duplicate:
                 raise UserError(gettext('farm.duplicate_animal', number=number))
