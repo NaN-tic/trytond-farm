@@ -976,9 +976,6 @@ class FemaleCycle(ModelSQL, ModelView):
     def default_state():
         return 'unmated'
 
-    def get_rec_name(self, name):
-        return str(self.sequence)
-
     @fields.depends('animal', 'ordination_date')
     def on_change_ordination_date(self):
         if not self.ordination_date or not self.animal:
