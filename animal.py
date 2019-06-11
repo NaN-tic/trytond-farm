@@ -136,9 +136,13 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
             ('male', 'Male'),
             ('female', 'Female'),
             ('individual', 'Individual'),
-            ], 'Type', required=True, readonly=True, select=True)
+            ], 'Type', required=True, select=True, states={
+            'readonly': True,
+            })
     specie = fields.Many2One('farm.specie', 'Specie', required=True,
-        readonly=True, select=True)
+        select=True, states={
+            'readonly': True,
+            })
     breed = fields.Many2One('farm.specie.breed', 'Breed', required=True,
         domain=[('specie', '=', Eval('specie'))], depends=['specie'])
     lot = fields.One2One('stock.lot-farm.animal', 'animal', 'lot',
