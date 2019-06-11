@@ -413,7 +413,8 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
                 ('has_' + type, '=', True),
                 ])
         if not farm_lines:
-            raise UserError(gettext('farm.animal_no_farm_specie_farm_line_available',
+            raise UserError(gettext(
+                    'farm.animal_no_farm_specie_farm_line_available',
                     farm=Location(farm_id).rec_name,
                     animal_type=type,
                     specie=Specie(specie_id).rec_name,
