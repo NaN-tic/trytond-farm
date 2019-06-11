@@ -2,8 +2,6 @@
 # copyright notices and license terms.
 from datetime import date, datetime, timedelta
 from decimal import Decimal
-import logging
-
 from trytond.rpc import RPC
 from trytond.model import ModelView, ModelSQL, fields, UnionMixin, Unique
 from trytond.pyson import Equal, Eval, Greater, Id, Not, Bool
@@ -375,7 +373,6 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
         context = Transaction().context
         vlist = [x.copy() for x in vlist]
         for vals in vlist:
-            logging.getLogger(cls.__name__).debug("Create vals: %s" % vals)
             if not vals.get('specie'):
                 vals['specie'] = cls.default_specie()
             if not vals.get('type'):
