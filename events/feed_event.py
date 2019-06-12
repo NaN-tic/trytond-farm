@@ -56,8 +56,8 @@ class FeedEvent(FeedEventMixin, ModelSQL, ModelView, Workflow):
             ('quantity_positive', Check(t, t.quantity != 0),
                 'farm.check_feed_quantity_non_zero'),
             ('quantity_1_for_animals',
-                Check(t, t.animal_type == 'group' or t.quantity == 1 or
-                    t.quantity == -1),
+                Check(t, (t.animal_type == 'group') | (t.quantity == 1) |
+                    (t.quantity == -1)),
                 'farm.check_feed_quantity_on_for_animals'),
             ('feed_quantity_positive', Check(t, t.feed_quantity != 0.0),
                 'farm.check_feed_quantity_positive'),

@@ -108,8 +108,8 @@ class MoveEvent(AbstractEvent):
         cls._sql_constraints += [
             ('quantity_positive', Check(t, t.quantity != 0),
                 'farm.check_move_quantity_non_zero'),
-            ('quantity_1_for_animals', Check(t, t.animal_type == 'group' or
-                    t.quantity == 1 or t.quantity == -1),
+            ('quantity_1_for_animals', Check(t, (t.animal_type == 'group') |
+                    (t.quantity == 1) | (t.quantity == -1)),
                 'farm.check_move_quantity_one_for_animals'),
             ('weight_0_or_positive', Check(t, t.weight >= 0.0),
                 'farm.check_move_weight_positive'),
