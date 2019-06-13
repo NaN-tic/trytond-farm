@@ -555,7 +555,7 @@ class Breed(ModelSQL, ModelView):
 
 
 class SpecieFarmLine(ModelSQL, ModelView):
-    'Managed Farm of specie'
+    'Managed Farm of Specie'
     __name__ = 'farm.specie.farm_line'
 
     specie = fields.Many2One('farm.specie', 'Specie', required=True,
