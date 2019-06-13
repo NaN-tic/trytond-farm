@@ -333,10 +333,14 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
         return consumed_feed
 
     def check_in_location(self, location, timestamp):
+        Lot = Pool().get('stock.lot')
         with Transaction().set_context(
                 locations=[location.id],
                 stock_date_end=timestamp.date()):
-            return self.lot.quantity == 1
+            # Object must be reinstantiated in order for the context to take
+            # effect when computing lot's quantity.
+            lot = Lot(self.lot.id)
+            return lot.quantity == 1
 
     def check_allowed_location(self, location, event_rec_name):
         if not location.warehouse:
