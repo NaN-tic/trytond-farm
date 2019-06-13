@@ -410,9 +410,9 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
                 ])
         if not farm_lines:
             raise UserError(gettext(
-                    'farm.group_no_farm_specie_farm_line_available', 
-                    farm=Location(farm_id).rec_name,
-                    specie=Specie(specie_id).rec_name,
+                    'farm.group_no_farm_specie_farm_line_available',
+                    farm=Location(farm_id).rec_name if farm_id else '',
+                    specie=Specie(specie_id).rec_name if specie_id else '-',
                     ))
         sequence = farm_lines[0].group_sequence
         return sequence and Sequence.get_id(sequence.id) or ''
