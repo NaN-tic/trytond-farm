@@ -20,7 +20,9 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
     __name__ = 'farm.animal.group'
 
     specie = fields.Many2One('farm.specie', 'Specie', required=True,
-        readonly=True)
+        states={
+            'readonly': True,
+            })
     breed = fields.Many2One('farm.specie.breed', 'Breed', required=True,
         domain=[('specie', '=', Eval('specie'))], depends=['specie'])
     lot = fields.One2One('stock.lot-farm.animal.group', 'animal_group',
