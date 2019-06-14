@@ -2,8 +2,7 @@
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
 <data>
-    <xpath expr="//page[@id='general']/field[@name='list_price']"
-            position="after">
+    <xpath expr="//page[@id='general']/field[@name='list_price']" position="after">
         <newline/>
         <label name="farrowing_price"/>
         <field name="farrowing_price"/>

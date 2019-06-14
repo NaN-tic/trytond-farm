@@ -652,13 +652,17 @@ class SemenExtractionDose(ModelSQL, ModelView):
                 ('farm', '=', self.event.farm.id),
                 ('has_male', '=', True),
                 ])
-        number = (self.event.animal.breed.rec_name + '/' +
-            self.event.animal.rec_name + '/' + self.event.reference + '/' +
-            Sequence.get_id(farm_line.dose_lot_sequence.id))
 
+        number = []
+        number.append(self.event.animal.breed.rec_name)
+        number.append(self.event.animal.rec_name)
+        if self.event.reference:
+            number.append(self.event.reference)
+        number.append(Sequence.get_id(farm_line.dose_lot_sequence.id))
+        number = '/'.join(number)
         return Lot(number=number, product=self.dose_product.id,
-            expiry_date=(self.event.timestamp +
-                timedelta(days=self.dose_product.expiry_time or 4)).date())
+            expiration_date=(self.event.timestamp +
+                timedelta(days=self.dose_product.expiration_time or 4)).date())
 
     @classmethod
     def copy(cls, doses, default=None):

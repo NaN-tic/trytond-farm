@@ -1,31 +1,57 @@
 <?xml version="1.0"?>
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
-<data>
-    <xpath expr="//field[@name='employee']" position="after">
-        <group id="transformation_fields_group" colspan="4" col="4">
-            <separator id="transformation_fields_separator" colspan="4"/>
-            <label name="from_location"/>
-            <field name="from_location"/>
-            <group id="quantity_to_location_group" colspan="2" col="4">
-                <label name="quantity"/>
-                <field name="quantity"/>
-                <label name="to_animal_type"/>
-                <field name="to_animal_type"/>
-            </group>
-            <label name="to_location"/>
-            <field name="to_location"/>
-            <group id="to_animal_or_group" colspan="2" col="2">
-                <label name="to_animal"/>
-                <field name="to_animal"/>
-                <label name="to_animal_group"/>
-                <field name="to_animal_group"/>
-            </group>
-            <newline/>
-            <label name="in_move"/>
-            <field name="in_move"/>
-            <label name="out_move"/>
-            <field name="out_move"/>
+<form>
+    <group id="header" colspan="4" col="6">
+        <label name="farm"/>
+        <field name="farm"/>
+        <label name="timestamp"/>
+        <group col="2" id="timestamp">
+            <field name="timestamp" widget="date"/>
+            <field name="timestamp" widget="time"/>
         </group>
-    </xpath>
-</data>
+    </group>
+    <group id="animal_or_group" colspan="2" col="2">
+        <label name="animal"/>
+        <field name="animal"/>
+        <label name="animal_group"/>
+        <field name="animal_group"/>
+    </group>
+    <label name="employee"/>
+    <field name="employee"/>
+    <group id="transformation_fields_group" colspan="4" col="4">
+        <separator id="transformation_fields_separator" colspan="4"/>
+        <label name="from_location"/>
+        <field name="from_location"/>
+        <group id="quantity_to_location_group" colspan="2" col="4">
+            <label name="quantity"/>
+            <field name="quantity"/>
+            <label name="to_animal_type"/>
+            <field name="to_animal_type"/>
+        </group>
+        <label name="to_location"/>
+        <field name="to_location"/>
+        <group id="to_animal_or_group" colspan="2" col="2">
+            <label name="to_animal"/>
+            <field name="to_animal"/>
+            <label name="to_animal_group"/>
+            <field name="to_animal_group"/>
+        </group>
+        <newline/>
+        <label name="in_move"/>
+        <field name="in_move"/>
+        <label name="out_move"/>
+        <field name="out_move"/>
+    </group>
+    <separator name="notes" colspan="4"/>
+    <field name="notes" colspan="4"/>
+    <group id="state_and_buttons" colspan="4" col="12">
+        <label name="state"/>
+        <field name="state"/>
+        <!--<button name="cancel" string="_Cancel" icon="tryton-cancel"
+            help="Are you sure to cancel this event?"/>-->
+        <button name="draft" string="_Draft" icon="tryton-go-previous"/>
+        <button name="validate_event" string="_Validate" icon="tryton-ok"
+            help="Are you sure to validate this event?"/>
+    </group>
+</form>

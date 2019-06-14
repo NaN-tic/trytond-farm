@@ -1,29 +1,55 @@
 <?xml version="1.0"?>
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
-<data>
-    <xpath expr="//field[@name='employee']" position="after">
-        <group id="farrowing_fields_group" colspan="4" col="4">
-            <separator id="farrowing_fields_separator" colspan="4"/>
-            <group id="live_stillborn_mummified" colspan="4" col="6">
-                <label name="live"/>
-                <field name="live"/>
-                <label name="stillborn"/>
-                <field name="stillborn"/>
-                <label name="mummified"/>
-                <field name="mummified"/>
-                <label name="dead"/>
-                <field name="dead"/>
-                <label name="problem"/>
-                <field name="problem" colspan="3"/>
-            </group>
-            <separator id="validated_fields" colspan="4"/>
-            <label name="female_cycle"/>
-            <field name="female_cycle"/>
-            <label name="produced_group"/>
-            <field name="produced_group"/>
-            <label name="move"/>
-            <field name="move"/>
+<form>
+    <group id="header" colspan="4" col="6">
+        <label name="farm"/>
+        <field name="farm"/>
+        <label name="timestamp"/>
+        <group col="2" id="timestamp">
+            <field name="timestamp" widget="date"/>
+            <field name="timestamp" widget="time"/>
         </group>
-    </xpath>
-</data>
+    </group>
+    <group id="animal_or_group" colspan="2" col="2">
+        <label name="animal"/>
+        <field name="animal"/>
+        <label name="animal_group"/>
+        <field name="animal_group"/>
+    </group>
+    <label name="employee"/>
+    <field name="employee"/>
+    <group id="farrowing_fields_group" colspan="4" col="4">
+        <separator id="farrowing_fields_separator" colspan="4"/>
+        <group id="live_stillborn_mummified" colspan="4" col="6">
+            <label name="live"/>
+            <field name="live"/>
+            <label name="stillborn"/>
+            <field name="stillborn"/>
+            <label name="mummified"/>
+            <field name="mummified"/>
+            <label name="dead"/>
+            <field name="dead"/>
+            <label name="problem"/>
+            <field name="problem" colspan="3"/>
+        </group>
+        <separator id="validated_fields" colspan="4"/>
+        <label name="female_cycle"/>
+        <field name="female_cycle"/>
+        <label name="produced_group"/>
+        <field name="produced_group"/>
+        <label name="move"/>
+        <field name="move"/>
+    </group>
+    <separator name="notes" colspan="4"/>
+    <field name="notes" colspan="4"/>
+    <group id="state_and_buttons" colspan="4" col="12">
+        <label name="state"/>
+        <field name="state"/>
+        <!--<button name="cancel" string="_Cancel" icon="tryton-cancel"
+            help="Are you sure to cancel this event?"/>-->
+        <button name="draft" string="_Draft" icon="tryton-go-previous"/>
+        <button name="validate_event" string="_Validate" icon="tryton-ok"
+            help="Are you sure to validate this event?"/>
+    </group>
+</form>

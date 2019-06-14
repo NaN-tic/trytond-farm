@@ -82,17 +82,18 @@ class FeedEvent(FeedEventMixin, ModelSQL, ModelView, Workflow):
             self.feed_lot = None
             self.feed_uom = None
             return
-        self.feed_product = self.feed_location.current_lot.product.id,
-        self.feed_lot = self.feed_location.current_lot.id,
-        self.uom = self.feed_location.current_lot.product.default_uom.id,
+        self.feed_product = self.feed_location.current_lot.product
+        self.feed_lot = self.feed_location.current_lot
+        self.uom = self.feed_location.current_lot.product.default_uom
 
     def _validated_hook(self):
         super(FeedEvent, self)._validated_hook()
         if not self.feed_quantity_animal_day:
             qty_animal_day = self.feed_quantity / self.quantity
             if self.start_date:
-                n_days = (self.timestamp.date() - self.start_date).days
-                qty_animal_day = qty_animal_day / n_days
+                n_days = (self.end_date - self.start_date).days
+                if n_days != 0:
+                    qty_animal_day = qty_animal_day / n_days
 
             self.feed_quantity_animal_day = qty_animal_day.quantize(
                 Decimal('0.0001'))

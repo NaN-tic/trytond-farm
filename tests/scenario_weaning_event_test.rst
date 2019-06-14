@@ -2,10 +2,6 @@
 Weaning Events Scenario
 =======================
 
-=============
-General Setup
-=============
-
 Imports::
 
     >>> import datetime
@@ -17,6 +13,7 @@ Imports::
     ...     get_company
     >>> from trytond.modules.account.tests.tools import create_fiscalyear, \
     ...     create_chart, get_accounts
+    >>> from trytond.modules.farm.tests.tools import create_specie, create_users
     >>> now = datetime.datetime.now()
     >>> today = datetime.date.today()
 
@@ -29,166 +26,92 @@ Create company::
     >>> _ = create_company()
     >>> company = get_company()
 
-Create specie's products::
+Create specie::
 
-    >>> ProductUom = Model.get('product.uom')
-    >>> unit, = ProductUom.find([('name', '=', 'Unit')])
-    >>> cm3, = ProductUom.find([('name', '=', 'Cubic centimeter')])
-    >>> ProductTemplate = Model.get('product.template')
-    >>> Product = Model.get('product.product')
-    >>> female_template = ProductTemplate(
-    ...     name='Female Pig',
-    ...     default_uom=unit,
-    ...     type='goods',
-    ...     list_price=Decimal('40'),
-    ...     cost_price=Decimal('25'))
-    >>> female_template.save()
-    >>> female_product = Product(template=female_template)
-    >>> female_product.save()
-    >>> group_template = ProductTemplate(
-    ...     name='Group of Pig',
-    ...     default_uom=unit,
-    ...     type='goods',
-    ...     list_price=Decimal('30'),
-    ...     farrowing_price=Decimal('10'),
-    ...     weaning_price=Decimal('15'),
-    ...     cost_price=Decimal('20'))
-    >>> group_template.save()
-    >>> group_product = Product(template=group_template)
-    >>> group_product.save()
-    >>> semen_template = ProductTemplate(
-    ...     name='Pig Semen',
-    ...     default_uom=cm3,
-    ...     type='goods',
-    ...     consumable=True,
-    ...     list_price=Decimal('400'),
-    ...     cost_price=Decimal('250'))
-    >>> semen_template.save()
-    >>> semen_product = Product(template=semen_template)
-    >>> semen_product.save()
+    >>> specie, breed, products = create_specie('Pig')
+    >>> individual_product = products['individual']
+    >>> group_product = products['group']
+    >>> female_product = products['female']
+    >>> male_product = products['male']
+    >>> semen_product = products['semen']
 
-Create sequence::
+Create farm users::
 
-    >>> Sequence = Model.get('ir.sequence')
-    >>> event_order_sequence = Sequence(
-    ...     name='Event Order Pig Warehouse 1',
-    ...     code='farm.event.order',
-    ...     padding=4)
-    >>> event_order_sequence.save()
-    >>> female_sequence = Sequence(
-    ...     name='Female Pig Warehouse 1',
-    ...     code='farm.animal',
-    ...     padding=4)
-    >>> female_sequence.save()
-    >>> group_sequence = Sequence(
-    ...     name='Groups Pig Warehouse 1',
-    ...     code='farm.animal.group',
-    ...     padding=4)
-    >>> group_sequence.save()
+    >>> users = create_users(company)
+    >>> individual_user = users['individual']
+    >>> group_user = users['group']
+    >>> female_user = users['female']
+    >>> male_user = users['male']
 
-Prepare locations::
+Get locations::
 
     >>> Location = Model.get('stock.location')
     >>> lost_found_location, = Location.find([('type', '=', 'lost_found')])
     >>> warehouse, = Location.find([('type', '=', 'warehouse')])
-    >>> production_location = Location(
-    ...     name='Production Location',
-    ...     code='PROD',
-    ...     type='production',
-    ...     parent=warehouse)
-    >>> production_location.save()
-    >>> warehouse.production_location=production_location
-    >>> warehouse.save()
-    >>> warehouse.reload()
-    >>> production_location.reload()
-    >>> other_location_ids = Location.create([{
-    ...         'name': 'Other Location 1',
-    ...         'type': 'storage',
-    ...         'parent': warehouse.storage_location.id,
-    ...         }, {
-    ...         'name': 'Other Location 2',
-    ...         'type': 'storage',
-    ...         'parent': warehouse.storage_location.id,
-    ...         }, {
-    ...         'name': 'Other Location 3',
-    ...         'type': 'storage',
-    ...         'parent': warehouse.storage_location.id,
-    ...         }, {
-    ...         'name': 'Other Location 4',
-    ...         'type': 'storage',
-    ...         'parent': warehouse.storage_location.id,
-    ...         }, {
-    ...         'name': 'Other Location 5',
-    ...         'type': 'storage',
-    ...         'parent': warehouse.storage_location.id,
-    ...         }], config.context)
+    >>> production_location, = Location.find([('type', '=', 'production')])
 
-Create specie::
+Prepare locations::
 
-    >>> Specie = Model.get('farm.specie')
-    >>> SpecieBreed = Model.get('farm.specie.breed')
-    >>> SpecieFarmLine = Model.get('farm.specie.farm_line')
-    >>> pigs_specie = Specie(
-    ...     name='Pigs',
-    ...     male_enabled=False,
-    ...     female_enabled=True,
-    ...     female_product=female_product,
-    ...     semen_product=semen_product,
-    ...     individual_enabled=False,
-    ...     group_enabled=True,
-    ...     group_product=group_product,
-    ...     removed_location=lost_found_location,
-    ...     foster_location=lost_found_location,
-    ...     lost_found_location=lost_found_location,
-    ...     feed_lost_found_location=lost_found_location)
-    >>> pigs_specie.save()
-    >>> pigs_breed = SpecieBreed(
-    ...     specie=pigs_specie,
-    ...     name='Holland')
-    >>> pigs_breed.save()
-    >>> pigs_farm_line = SpecieFarmLine(
-    ...     specie=pigs_specie,
-    ...     farm=warehouse,
-    ...     event_order_sequence=event_order_sequence,
-    ...     has_male=False,
-    ...     has_female=True,
-    ...     female_sequence=female_sequence,
-    ...     has_individual=False,
-    ...     has_group=True,
-    ...     group_sequence=group_sequence)
-    >>> pigs_farm_line.save()
+    >>> location1 = Location()
+    >>> location1.name = 'Other Location 1'
+    >>> location1.type = 'storage'
+    >>> location1.parent = warehouse.storage_location
+    >>> location1.save()
+    >>> location2 = Location()
+    >>> location2.name = 'Other Location 2'
+    >>> location2.type = 'storage'
+    >>> location2.parent = warehouse.storage_location
+    >>> location2.save()
+    >>> location3 = Location()
+    >>> location3.name = 'Other Location 3'
+    >>> location3.type = 'storage'
+    >>> location3.parent = warehouse.storage_location
+    >>> location3.save()
+    >>> location4 = Location()
+    >>> location4.name = 'Other Location 4'
+    >>> location4.type = 'storage'
+    >>> location4.parent = warehouse.storage_location
+    >>> location4.save()
+    >>> location5 = Location()
+    >>> location5.name = 'Other Location 5'
+    >>> location5.type = 'storage'
+    >>> location5.parent = warehouse.storage_location
+    >>> location5.save()
 
 Set animal_type and specie in context to work as in the menus::
 
-    >>> config._context['specie'] = pigs_specie.id
+    >>> config._context['specie'] = specie.id
     >>> config._context['animal_type'] = 'female'
 
 Create some females to be inseminated, check their pregnancy state, farrow them
 to could test different weaning events::
 
     >>> Animal = Model.get('farm.animal')
-    >>> female_ids = Animal.create([{
-    ...         'type': 'female',
-    ...         'specie': pigs_specie.id,
-    ...         'breed': pigs_breed.id,
-    ...         'initial_location': other_location_ids[0],
-    ...         }, {
-    ...         'type': 'female',
-    ...         'specie': pigs_specie.id,
-    ...         'breed': pigs_breed.id,
-    ...         'initial_location': other_location_ids[1],
-    ...         }, {
-    ...         'type': 'female',
-    ...         'specie': pigs_specie.id,
-    ...         'breed': pigs_breed.id,
-    ...         'initial_location': other_location_ids[2],
-    ...         }, {
-    ...         'type': 'female',
-    ...         'specie': pigs_specie.id,
-    ...         'breed': pigs_breed.id,
-    ...         'initial_location': other_location_ids[3],
-    ...         }], config.context)
-    >>> females = [Animal(i) for i in female_ids]
+    >>> female1 = Animal()
+    >>> female1.type = 'female'
+    >>> female1.specie = specie
+    >>> female1.breed = breed
+    >>> female1.initial_location = location1
+    >>> female1.save()
+    >>> female2 = Animal()
+    >>> female2.type = 'female'
+    >>> female2.specie = specie
+    >>> female2.breed = breed
+    >>> female2.initial_location = location2
+    >>> female2.save()
+    >>> female3 = Animal()
+    >>> female3.type = 'female'
+    >>> female3.specie = specie
+    >>> female3.breed = breed
+    >>> female3.initial_location = location3
+    >>> female3.save()
+    >>> female4 = Animal()
+    >>> female4.type = 'female'
+    >>> female4.specie = specie
+    >>> female4.breed = breed
+    >>> female4.initial_location = location4
+    >>> female4.save()
+    >>> females = [female1, female2, female3, female4]
     >>> all(f.farm.code == 'WH' for f in females)
     True
     >>> not any(bool(f.current_cycle) for f in females)
@@ -203,7 +126,7 @@ validate them and check the females state::
     >>> now = datetime.datetime.now()
     >>> inseminate_events = InseminationEvent.create([{
     ...         'animal_type': 'female',
-    ...         'specie': pigs_specie.id,
+    ...         'specie': specie.id,
     ...         'farm': warehouse.id,
     ...         'timestamp': now,
     ...         'animal': f.id,
@@ -212,7 +135,7 @@ validate them and check the females state::
     >>> all(InseminationEvent(i).state == 'validated'
     ...     for i in inseminate_events)
     True
-    >>> females = [Animal(i) for i in female_ids]
+    >>> females = [Animal(x.id) for x in females]
     >>> all(f.current_cycle.state == 'mated' for f in females)
     True
     >>> all(f.state == 'mated' for f in females)
@@ -225,7 +148,7 @@ females state and pregnancy state::
     >>> now = datetime.datetime.now()
     >>> diagnosis_events = PregnancyDiagnosisEvent.create([{
     ...         'animal_type': 'female',
-    ...         'specie': pigs_specie.id,
+    ...         'specie': specie.id,
     ...         'farm': warehouse.id,
     ...         'timestamp': now,
     ...         'animal': f.id,
@@ -235,7 +158,7 @@ females state and pregnancy state::
     >>> all(PregnancyDiagnosisEvent(i).state == 'validated'
     ...     for i in diagnosis_events)
     True
-    >>> females = [Animal(i) for i in female_ids]
+    >>> females = [Animal(x.id) for x in females]
     >>> all(f.current_cycle.pregnant for f in females)
     True
     >>> all(f.current_cycle.state == 'pregnant' for f in females)
@@ -248,7 +171,7 @@ validate them and check females state and female's live values::
     >>> now = datetime.datetime.now()
     >>> farrow_events = FarrowingEvent.create([{
     ...         'animal_type': 'female',
-    ...         'specie': pigs_specie.id,
+    ...         'specie': specie.id,
     ...         'farm': warehouse.id,
     ...         'timestamp': now,
     ...         'animal': females[i].id,
@@ -257,10 +180,10 @@ validate them and check females state and female's live values::
     >>> FarrowingEvent.validate_event(farrow_events, config.context)
     >>> all(FarrowingEvent(i).state == 'validated' for i in farrow_events)
     True
-    >>> all(FarrowingEvent(i).produced_group.lot.cost_price == Decimal('10.0')
+    >>> all(FarrowingEvent(i).produced_group.lot.cost_price == Decimal('20.0')
     ...     for i in farrow_events)
     True
-    >>> females = [Animal(i) for i in female_ids]
+    >>> females = [Animal(x.id) for x in females]
     >>> not any(f.current_cycle.pregnant for f in females)
     True
     >>> all(f.current_cycle.state == 'lactating' for f in females)
@@ -280,20 +203,20 @@ without weaned group::
     >>> WeaningEvent = Model.get('farm.weaning.event')
     >>> now = datetime.datetime.now()
     >>> female1 = females[0]
-    >>> weaning_event1 = WeaningEvent(
-    ...     animal_type='female',
-    ...     specie=pigs_specie,
-    ...     farm=warehouse,
-    ...     timestamp=now,
-    ...     animal=female1,
-    ...     quantity=6,
-    ...     female_to_location=female1.location,
-    ...     weaned_to_location=female1.location)
+    >>> weaning_event1 = WeaningEvent()
+    >>> weaning_event1.animal_type = 'female'
+    >>> weaning_event1.specie = specie
+    >>> weaning_event1.farm = warehouse
+    >>> weaning_event1.timestamp = now
+    >>> weaning_event1.animal = female1
+    >>> weaning_event1.quantity = 6
+    >>> weaning_event1.female_to_location = female1.location
+    >>> weaning_event1.weaned_to_location = female1.location
     >>> weaning_event1.save()
 
 Validate weaning event::
 
-    >>> WeaningEvent.validate_event([weaning_event1.id], config.context)
+    >>> weaning_event1.click('validate_event')
     >>> weaning_event1.reload()
     >>> weaning_event1.state
     'validated'
@@ -314,11 +237,11 @@ the weaning event doesn't have female, weaned nor lost moves::
     >>> lot = weaning_event1.farrowing_group.lot
     >>> len(lot.cost_lines)
     2
-    >>> lot.cost_price == Decimal('15.0')
+    >>> lot.cost_price == Decimal('25.0')
     True
     >>> weaning_cost_line, = [x for x in lot.cost_lines
     ...     if x.origin == weaning_event1]
-    >>> weaning_cost_line.unit_price == Decimal('5.0')
+    >>> weaning_cost_line.unit_price == Decimal('5')
     True
 
 Create a weaning event for second female (7 lives) with 6 as quantity, with
@@ -328,21 +251,20 @@ female location and without weaned group::
     >>> WeaningEvent = Model.get('farm.weaning.event')
     >>> now = datetime.datetime.now()
     >>> female2 = females[1]
-    >>> weaning_event2 = WeaningEvent(
-    ...     animal_type='female',
-    ...     specie=pigs_specie,
-    ...     farm=warehouse,
-    ...     timestamp=now,
-    ...     animal=female2,
-    ...     quantity=6,
-    ...     female_to_location=other_location_ids[-1],
-    ...     weaned_to_location=female2.location)
+    >>> weaning_event2 = WeaningEvent()
+    >>> weaning_event2.animal_type = 'female'
+    >>> weaning_event2.specie = specie
+    >>> weaning_event2.farm = warehouse
+    >>> weaning_event2.timestamp = now
+    >>> weaning_event2.animal = female2
+    >>> weaning_event2.quantity = 6
+    >>> weaning_event2.female_to_location = location5
+    >>> weaning_event2.weaned_to_location = female2.location
     >>> weaning_event2.save()
 
 Validate weaning event::
 
-    >>> WeaningEvent.validate_event([weaning_event2.id], config.context)
-    >>> weaning_event2.reload()
+    >>> weaning_event2.click('validate_event')
     >>> weaning_event2.state
     'validated'
 
@@ -368,21 +290,20 @@ different destination location for female and group and without weaned group::
     >>> WeaningEvent = Model.get('farm.weaning.event')
     >>> now = datetime.datetime.now()
     >>> female3 = females[2]
-    >>> weaning_event3 = WeaningEvent(
-    ...     animal_type='female',
-    ...     specie=pigs_specie,
-    ...     farm=warehouse,
-    ...     timestamp=now,
-    ...     animal=female3,
-    ...     quantity=8,
-    ...     female_to_location=other_location_ids[-1],
-    ...     weaned_to_location=other_location_ids[-1])
+    >>> weaning_event3 = WeaningEvent()
+    >>> weaning_event3.animal_type = 'female'
+    >>> weaning_event3.specie = specie
+    >>> weaning_event3.farm = warehouse
+    >>> weaning_event3.timestamp = now
+    >>> weaning_event3.animal = female3
+    >>> weaning_event3.quantity = 8
+    >>> weaning_event3.female_to_location = location5
+    >>> weaning_event3.weaned_to_location = location5
     >>> weaning_event3.save()
 
 Validate weaning event::
 
-    >>> WeaningEvent.validate_event([weaning_event3.id], config.context)
-    >>> weaning_event3.reload()
+    >>> weaning_event3.click('validate_event')
     >>> weaning_event3.state
     'validated'
 
@@ -403,11 +324,11 @@ the weaning event has female and weaned group moves but not lost move::
 Create a group::
 
     >>> AnimalGroup = Model.get('farm.animal.group')
-    >>> animal_group = AnimalGroup(
-    ...     specie=pigs_specie,
-    ...     breed=pigs_breed,
-    ...     initial_location=other_location_ids[-1],
-    ...     initial_quantity=4)
+    >>> animal_group = AnimalGroup()
+    >>> animal_group.specie = specie
+    >>> animal_group.breed = breed
+    >>> animal_group.initial_location = location5
+    >>> animal_group.initial_quantity = 4
     >>> animal_group.save()
 
 Create a weaning event for third female (9 lives) with 7 as quantity, with
@@ -417,22 +338,21 @@ group::
     >>> WeaningEvent = Model.get('farm.weaning.event')
     >>> now = datetime.datetime.now()
     >>> female4 = females[3]
-    >>> weaning_event4 = WeaningEvent(
-    ...     animal_type='female',
-    ...     specie=pigs_specie,
-    ...     farm=warehouse,
-    ...     timestamp=now,
-    ...     animal=female4,
-    ...     quantity=7,
-    ...     female_to_location=female4.location,
-    ...     weaned_to_location=female4.location,
-    ...     weaned_group=animal_group)
+    >>> weaning_event4 = WeaningEvent()
+    >>> weaning_event4.animal_type = 'female'
+    >>> weaning_event4.specie = specie
+    >>> weaning_event4.farm = warehouse
+    >>> weaning_event4.timestamp = now
+    >>> weaning_event4.animal = female4
+    >>> weaning_event4.quantity = 7
+    >>> weaning_event4.female_to_location = female4.location
+    >>> weaning_event4.weaned_to_location = female4.location
+    >>> weaning_event4.weaned_group = animal_group
     >>> weaning_event4.save()
 
 Validate weaning event::
 
-    >>> WeaningEvent.validate_event([weaning_event4.id], config.context)
-    >>> weaning_event4.reload()
+    >>> weaning_event4.click('validate_event')
     >>> weaning_event4.state
     'validated'
 
@@ -454,10 +374,10 @@ weaned group moves::
     >>> lot = weaning_event4.weaned_group.lot
     >>> len(lot.cost_lines)
     2
-    >>> lot.cost_price == Decimal('15.0')
+    >>> lot.cost_price == Decimal('25.0')
     True
     >>> weaning_cost_line, = [x for x in lot.cost_lines
     ...     if x.origin == weaning_event4]
-    >>> weaning_cost_line.unit_price == Decimal('-5.0')
+    >>> weaning_cost_line.unit_price == Decimal('5.0')
     True
 

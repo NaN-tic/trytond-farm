@@ -1,13 +1,17 @@
 <?xml version="1.0"?>
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
-<data>
-    <!-- <xpath expr="//field[@name='timestamp']" position="after"> -->
-    <xpath expr="/tree" position="inside">
-        <field name="from_location"/>
-        <field name="to_location"/>
-        <field name="quantity"/>
-        <field name="unit_price"/>
-        <field name="weight"/>
-    </xpath>
-</data>
+<tree>
+    <field name="animal"/>
+    <field name="animal_group"/>
+    <field name="timestamp" widget="date"/>
+    <field name="timestamp" widget="time"/>
+    <field name="employee"/>
+    <field name="farm"/>
+    <field name="state"/>
+    <field name="from_location"/>
+    <field name="to_location"/>
+    <field name="quantity"/>
+    <field name="unit_price"/>
+    <field name="weight"/>
+</tree>

@@ -96,10 +96,11 @@ class AnimalLocationStock():
                     getattr(specie, '%s_product' % animal_type).id)
 
         location_ids = list(self._warehouse_by_location.keys())
-        with Transaction().set_context(stock_date_end=self.start_date):
+        with Transaction().set_context(stock_date_end=self.start_date,
+                with_childs=False):
             pbl = Product.products_by_location(location_ids,
-                product_ids=product_ids, with_childs=False,
-                grouping=('product', 'lot'))
+                with_childs=False, grouping=('product', 'lot'),
+                grouping_filter=[product_ids])
         # First, it initialize 'loc_stock' with stock of animals in
         # location_ids at start_date
         for (location_id, _, lot_id), quantity in pbl.items():
@@ -113,8 +114,8 @@ class AnimalLocationStock():
             with Transaction().set_context(stock_date_start=date_it,
                     stock_date_end=date_it):
                 daily_pbl = Product.products_by_location(location_ids,
-                    product_ids=product_ids, with_childs=False,
-                    grouping=('product', 'lot'))
+                    with_childs=False, grouping=('product', 'lot'),
+                    grouping_filter=[product_ids])
             # registers with 'qty'==0 refer to animals/groups that have come
             # out and enter the same day.
             for (loc_id, _, lot_id), qty in sorted(iter(daily_pbl.items()),
@@ -381,7 +382,6 @@ class FeedInventoryMixin(object):
     location = fields.Many2One('stock.location', 'Silo', required=True,
         domain=[
             ('silo', '=', True),
-            ('parent', 'child_of', Eval('context', {}).get('farms', [])),
             ],
         states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
     dest_locations = fields.Many2Many('farm.feed.inventory-stock.location',

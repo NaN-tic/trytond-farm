@@ -173,10 +173,8 @@
             <field name="perm_delete" eval="False"/>
         </record>
 
-        <record model="ir.model.access"
-            id="access_farm_specie_farm_line_admin">
-            <field name="model"
-                search="[('model', '=', 'farm.specie.farm_line')]"/>
+        <record model="ir.model.access" id="access_farm_specie_farm_line_admin">
+            <field name="model" search="[('model', '=', 'farm.specie.farm_line')]"/>
             <field name="group" ref="group_farm_admin"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
@@ -190,24 +188,19 @@
             <field name="path">icons/tryton-farm.svg</field>
         </record>
 
-        <menuitem name="Farm" sequence="2" id="menu_farm"
-            icon="tryton-farm"/>
+        <menuitem name="Farm" sequence="2" id="menu_farm" icon="tryton-farm"/>
         <record model="ir.ui.menu-res.group" id="menu_farm_group_farm">
             <field name="menu" ref="menu_farm"/>
             <field name="group" ref="group_farm"/>
         </record>
 
-        <menuitem name="Configuration" parent="menu_farm"
-            id="menu_configuration" sequence="0" icon="tryton-settings"/>
-        <record model="ir.ui.menu-res.group"
-                id="menu_configuration_group_admin">
+        <menuitem name="Configuration" parent="menu_farm" id="menu_configuration" sequence="0" icon="tryton-settings"/>
+        <record model="ir.ui.menu-res.group" id="menu_configuration_group_admin">
             <field name="menu" ref="menu_configuration"/>
             <field name="group" ref="group_farm_admin"/>
         </record>
 
-        <menuitem action="act_farm_specie" id="menu_farm_specie"
-            parent="menu_configuration" sequence="1"/>
-        <menuitem action="act_farm_specie_breed" id="menu_farm_specie_breed"
-            parent="menu_farm_specie" sequence="1"/>
+        <menuitem action="act_farm_specie" id="menu_farm_specie" parent="menu_configuration" sequence="1"/>
+        <menuitem action="act_farm_specie_breed" id="menu_farm_specie_breed" parent="menu_farm_specie" sequence="1"/>
     </data>
 </tryton>

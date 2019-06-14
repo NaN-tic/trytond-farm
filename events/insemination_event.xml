@@ -6,22 +6,22 @@
         <!-- farm.insemination.event -->
         <record model="ir.ui.view" id="farm_insemination_event_form_view">
             <field name="model">farm.insemination.event</field>
-            <field name="type" eval="None"/>
-            <field name="inherit" ref="farm.farm_abstract_event_form_view"/>
+            <field name="type">form</field>
+            <field name="inherit" eval="None"/>
             <field name="name">farm_insemination_event_form</field>
         </record>
 
         <record model="ir.ui.view" id="farm_insemination_event_list_view">
             <field name="model">farm.insemination.event</field>
-            <field name="type" eval="None"/>
-            <field name="inherit" ref="farm.farm_abstract_event_list_view"/>
+            <field name="type">tree</field>
+            <field name="inherit" eval="None"/>
             <field name="name">farm_insemination_event_list</field>
         </record>
 
         <record model="ir.ui.view" id="farm_insemination_event_list_editable_view">
             <field name="model">farm.insemination.event</field>
-            <field name="type" eval="None"/>
-            <field name="inherit" ref="farm.farm_abstract_event_list_editable_view"/>
+            <field name="type">tree</field>
+            <field name="inherit" eval="None"/>
             <field name="name">farm_insemination_event_list_editable</field>
         </record>
 

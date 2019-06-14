@@ -3,17 +3,18 @@
      copyright notices and license terms. -->
 <tryton>
     <data>
-        <!-- TODO permissions -->
         <!-- farm.semen_extraction.event -->
         <record model="ir.ui.view" id="farm_semen_extraction_event_form_view">
             <field name="model">farm.semen_extraction.event</field>
-            <field name="inherit" ref="farm_abstract_event_form_view"/>
+            <field name="type">form</field>
+            <field name="inherit" eval="None"/>
             <field name="name">farm_semen_extraction_event_form</field>
         </record>
 
         <record model="ir.ui.view" id="farm_semen_extraction_event_list_view">
             <field name="model">farm.semen_extraction.event</field>
-            <field name="inherit" ref="farm_abstract_event_list_view"/>
+            <field name="type">tree</field>
+            <field name="inherit" eval="None"/>
             <field name="name">farm_semen_extraction_event_list</field>
         </record>
 

@@ -176,14 +176,16 @@ class InseminationEvent(AbstractEvent, ImportedEventMixin):
         Move.do(todo_moves)
 
     def _check_dose_in_farm(self):
-        Lot = Pool().get('stock.lot')
+        pool = Pool()
+        Lot = pool.get('stock.lot')
+        Product = pool.get('product.product')
 
         if self.dose_lot:
             with Transaction().set_context(
                     locations=[self.farm.storage_location.id],
                     stock_date_end=self.timestamp.date()):
-                return Lot.get_quantity([self.dose_lot], 'quantity')[self.dose_lot.id] > 0
-                # return self.dose_lot.quantity > 0
+                return Lot(self.dose_lot.id).quantity > 0
+
         product = self.dose_product or self.specie.semen_product
         if product.consumable:
             return True
@@ -191,7 +193,7 @@ class InseminationEvent(AbstractEvent, ImportedEventMixin):
         with Transaction().set_context(
                 stock_date_end=self.timestamp.date(),
                 locations=[self.farm.storage_location.id]):
-            return product.quantity > 0
+            return Product(product.id).quantity > 0
 
     def _get_event_move(self):
         pool = Pool()

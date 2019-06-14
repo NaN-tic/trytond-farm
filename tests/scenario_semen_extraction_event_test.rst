@@ -2,10 +2,6 @@
 Semen Extraction Events Scenario
 ================================
 
-=============
-General Setup
-=============
-
 Imports::
 
     >>> import datetime
@@ -17,6 +13,7 @@ Imports::
     ...     get_company
     >>> from trytond.modules.account.tests.tools import create_fiscalyear, \
     ...     create_chart, get_accounts
+    >>> from trytond.modules.farm.tests.tools import create_specie, create_users
     >>> now = datetime.datetime.now()
     >>> today = datetime.date.today()
 
@@ -29,71 +26,32 @@ Create company::
     >>> _ = create_company()
     >>> company = get_company()
 
-Create specie's products::
+Create specie::
 
-    >>> ProductUom = Model.get('product.uom')
-    >>> unit, = ProductUom.find([('name', '=', 'Unit')])
-    >>> cm3, = ProductUom.find([('name', '=', 'Cubic centimeter')])
-    >>> ProductTemplate = Model.get('product.template')
-    >>> Product = Model.get('product.product')
-    >>> male_template = ProductTemplate(
-    ...     name='Male Pig',
-    ...     default_uom=unit,
-    ...     type='goods',
-    ...     list_price=Decimal('40'),
-    ...     cost_price=Decimal('25'))
-    >>> male_template.save()
-    >>> male_product = Product(template=male_template)
-    >>> male_product.save()
-    >>> semen_template = ProductTemplate(
-    ...     name='Pig Semen',
-    ...     default_uom=cm3,
-    ...     type='goods',
-    ...     list_price=Decimal('400'),
-    ...     cost_price=Decimal('250'))
-    >>> semen_template.save()
-    >>> semen_product = Product(template=semen_template)
-    >>> semen_product.save()
+    >>> specie, breed, products = create_specie('Pig')
+    >>> individual_product = products['individual']
+    >>> group_product = products['group']
+    >>> female_product = products['female']
+    >>> male_product = products['male']
+    >>> semen_product = products['semen']
 
-Create sequence::
+Create farm users::
 
-    >>> Sequence = Model.get('ir.sequence')
-    >>> event_order_sequence = Sequence(
-    ...     name='Event Order Pig Warehouse 1',
-    ...     code='farm.event.order',
-    ...     padding=4)
-    >>> event_order_sequence.save()
-    >>> male_sequence = Sequence(
-    ...     name='Male Pig Warehouse 1',
-    ...     code='farm.animal',
-    ...     padding=4)
-    >>> male_sequence.save()
-    >>> semen_lot_sequence = Sequence(
-    ...     name='Semen Extracted Lot Pig Warehouse 1',
-    ...     code='stock.lot',
-    ...     padding=4)
-    >>> semen_lot_sequence.save()
-    >>> semen_dose_lot_sequence = Sequence(
-    ...     name='Semen Dose Lot Pig Warehouse 1',
-    ...     code='stock.lot',
-    ...     padding=4)
-    >>> semen_dose_lot_sequence.save()
+    >>> users = create_users(company)
+    >>> individual_user = users['individual']
+    >>> group_user = users['group']
+    >>> female_user = users['female']
+    >>> male_user = users['male']
 
-Prepare locations::
+Get locations::
 
     >>> Location = Model.get('stock.location')
     >>> lost_found_location, = Location.find([('type', '=', 'lost_found')])
     >>> warehouse, = Location.find([('type', '=', 'warehouse')])
-    >>> production_location = Location(
-    ...     name='Production Location',
-    ...     code='PROD',
-    ...     type='production',
-    ...     parent=warehouse)
-    >>> production_location.save()
-    >>> warehouse.production_location=production_location
-    >>> warehouse.save()
-    >>> warehouse.reload()
-    >>> production_location.reload()
+    >>> production_location, = Location.find([('type', '=', 'production')])
+
+Prepare locations:
+
     >>> location1 = Location(
     ...     name='Location 1',
     ...     code='L1',
@@ -109,6 +67,11 @@ Prepare locations::
 
 Create Quality Configuration and Semen Quality Test Template::
 
+    >>> ProductUom = Model.get('product.uom')
+    >>> cm3, = ProductUom.find([('name', '=', 'Cubic centimeter')])
+    >>> unit, = ProductUom.find([('name', '=', 'Unit')])
+
+    >>> Sequence = Model.get('ir.sequence')
     >>> quality_sequence, = Sequence.find([('code','=','quality.test')])
     >>> Model_ = Model.get('ir.model')
     >>> product_model, = Model_.find([('model','=','product.product')])
@@ -132,61 +95,28 @@ Create Quality Configuration and Semen Quality Test Template::
     ...     unit=cm3)
     >>> quality_template.save()
 
-Create specie::
-
-    >>> Specie = Model.get('farm.specie')
-    >>> SpecieBreed = Model.get('farm.specie.breed')
-    >>> SpecieFarmLine = Model.get('farm.specie.farm_line')
-    >>> pigs_specie = Specie(
-    ...     name='Pigs',
-    ...     male_enabled=True,
-    ...     male_product=male_product,
-    ...     female_enabled=False,
-    ...     semen_product=semen_product,
-    ...     individual_enabled=False,
-    ...     group_enabled=False,
-    ...     removed_location=lost_found_location,
-    ...     foster_location=lost_found_location,
-    ...     lost_found_location=lost_found_location,
-    ...     feed_lost_found_location=lost_found_location)
-    >>> pigs_specie.save()
-    >>> pigs_breed = SpecieBreed(
-    ...     specie=pigs_specie,
-    ...     name='Holland')
-    >>> pigs_breed.save()
-    >>> pigs_farm_line = SpecieFarmLine(
-    ...     specie=pigs_specie,
-    ...     farm=warehouse,
-    ...     event_order_sequence=event_order_sequence,
-    ...     has_male=True,
-    ...     male_sequence=male_sequence,
-    ...     semen_lot_sequence=semen_lot_sequence,
-    ...     dose_lot_sequence=semen_dose_lot_sequence,
-    ...     has_female=False,
-    ...     has_individual=False,
-    ...     has_group=False)
-    >>> pigs_farm_line.save()
-
 Create dose Product and BoM::
 
-    >>> blister_template = ProductTemplate(
-    ...     name='100 cm3 blister',
-    ...     default_uom=unit,
-    ...     type='goods',
-    ...     consumable=True,
-    ...     list_price=Decimal('1'),
-    ...     cost_price=Decimal('1'))
+    >>> ProductTemplate = Model.get('product.template')
+    >>> blister_template = ProductTemplate()
+    >>> blister_template.name = '100 cm3 blister'
+    >>> blister_template.default_uom = unit
+    >>> blister_template.type = 'goods'
+    >>> blister_template.consumable = True
+    >>> blister_template.list_price = Decimal('1')
     >>> blister_template.save()
-    >>> blister_product = Product(template=blister_template)
+    >>> blister_product, = blister_template.products
+    >>> blister_product.cost_price = Decimal('1')
     >>> blister_product.save()
-    >>> dose_template = ProductTemplate(
-    ...     name='100 cm3 semen dose',
-    ...     default_uom=unit,
-    ...     type='goods',
-    ...     list_price=Decimal('10'),
-    ...     cost_price=Decimal('8'))
+    >>> dose_template = ProductTemplate()
+    >>> dose_template.name = '100 cm3 semen dose'
+    >>> dose_template.default_uom = unit
+    >>> dose_template.type = 'goods'
+    >>> dose_template.list_price = Decimal('10')
+    >>> dose_template.producible = True
     >>> dose_template.save()
-    >>> dose_product = Product(template=dose_template)
+    >>> dose_product, = dose_template.products
+    >>> dose_product.cost_price = Decimal('8')
     >>> dose_product.save()
     >>> Bom = Model.get('production.bom')
     >>> BomInput = Model.get('production.bom.input')
@@ -194,7 +124,7 @@ Create dose Product and BoM::
     >>> dose_bom = Bom(
     ...     name='100 cm3 semen dose',
     ...     semen_dose=True,
-    ...     specie=pigs_specie.id,
+    ...     specie=specie.id,
     ...     inputs=[
     ...         BomInput(
     ...             product=blister_product,
@@ -223,7 +153,7 @@ Create dose Product and BoM::
 
 Set animal_type and specie in context to work as in the menus::
 
-    >>> config._context['specie'] = pigs_specie.id
+    >>> config._context['specie'] = specie.id
     >>> config._context['animal_type'] = 'male'
 
 Create a male::
@@ -231,8 +161,8 @@ Create a male::
     >>> Animal = Model.get('farm.animal')
     >>> male1 = Animal(
     ...     type='male',
-    ...     specie=pigs_specie,
-    ...     breed=pigs_breed,
+    ...     specie=specie,
+    ...     breed=breed,
     ...     initial_location=location1)
     >>> male1.save()
     >>> male1.location.code
@@ -244,16 +174,16 @@ Create semen extraction event::
 
     >>> SemenExtractionEvent = Model.get('farm.semen_extraction.event')
     >>> now = datetime.datetime.now()
-    >>> extraction1 = SemenExtractionEvent(
-    ...     animal_type='male',
-    ...     specie=pigs_specie,
-    ...     farm=warehouse,
-    ...     timestamp=now,
-    ...     animal=male1,
-    ...     untreated_semen_uom=cm3,
-    ...     untreated_semen_qty=Decimal('410.0'),
-    ...     dose_location=lab1,
-    ...     dose_bom=dose_bom)
+    >>> extraction1 = SemenExtractionEvent()
+    >>> extraction1.animal_type = 'male'
+    >>> extraction1.specie = specie
+    >>> extraction1.farm = warehouse
+    >>> extraction1.timestamp = now
+    >>> extraction1.animal = male1
+    >>> extraction1.untreated_semen_uom = cm3
+    >>> extraction1.untreated_semen_qty = Decimal('410.0')
+    >>> extraction1.dose_location = lab1
+    >>> extraction1.dose_bom = dose_bom
     >>> extraction1.save()
 
 Check test is created and functional fields::
@@ -280,11 +210,11 @@ Set real semen produced quantity and check calculated doses::
 Add produced doses::
 
     >>> Dose = Model.get('farm.semen_extraction.dose')
-    >>> dose1 = Dose(
-    ...     event=extraction1,
-    ...     sequence=1,
-    ...     bom=dose_bom,
-    ...     quantity=6)
+    >>> dose1 = Dose()
+    >>> dose1.event = extraction1
+    >>> dose1.sequence = 1
+    >>> dose1.bom = dose_bom
+    >>> dose1.quantity = 6
     >>> dose1.save()
 
 Check dose functional fields::
@@ -297,7 +227,7 @@ Check dose functional fields::
 
 Validate semen extraction event::
 
-    >>> SemenExtractionEvent.validate_event([extraction1.id], config.context)
+    >>> extraction1.click('validate_event')
     >>> extraction1.reload()
     >>> extraction1.state
     'validated'

@@ -78,7 +78,11 @@ class FeedEventMixin(AbstractEvent):
     # TODO: start/end_date required?
     start_date = fields.Date('Start Date', states=_STATES_WRITE_DRAFT,
         help='Start date of the period in which the given quantity of product '
-        'was consumed.')
+        'was consumed.', domain=[
+            'OR',
+                [('start_date', '=', None)],
+                [('start_date', '<=', Eval('end_date'))],
+            ], depends=['end_date'])
     end_date = fields.Function(fields.Date('End Date',
             help='End date of the period in which the given quantity of '
             'product was consumed. It is the date of event\'s timestamp.'),
@@ -136,6 +140,7 @@ class FeedEventMixin(AbstractEvent):
 
     @fields.depends('animal_type', 'animal_group', 'location', 'timestamp')
     def on_change_with_quantity(self):
+        Lot = Pool().get('stock.lot')
         if self.animal_type != 'group':
             return 1
         if not self.animal_group or not self.location:
@@ -143,7 +148,7 @@ class FeedEventMixin(AbstractEvent):
         with Transaction().set_context(
                 locations=[self.location.id],
                 stock_date_end=self.timestamp.date()):
-            return self.animal_group.lot.quantity or None
+            return int(Lot(self.animal_group.lot.id).quantity) or None
 
     @fields.depends('feed_product')
     def on_change_with_uom(self, name=None):
@@ -223,6 +228,8 @@ class FeedEventMixin(AbstractEvent):
     def check_feed_available(self):
         pool = Pool()
         Uom = pool.get('product.uom')
+        Product = pool.get('product.product')
+        Lot = pool.get('stock.lot')
 
         if not self.feed_product:
             return
@@ -234,12 +241,13 @@ class FeedEventMixin(AbstractEvent):
             # this purpose but it works
             feed_quantity = Uom.compute_price(self.feed_product.default_uom,
                 self.feed_quantity, self.uom)
-        with Transaction().set_context(
-                locations=[self.feed_location.id],
+        assert self.feed_location.id, self.feed_location
+        with Transaction().set_context(locations=[self.feed_location.id],
                 stock_date_end=self.timestamp.date()):
             if self.feed_lot:
-                if self.feed_lot.quantity < feed_quantity:
-                    raise UserError(gettext('farm.not_enought_feed_lot',
+                lot = Lot(self.feed_lot.id)
+                if lot.quantity < feed_quantity:
+                    raise UserError(gettext('farm.not_enough_feed_lot',
                             event=self.rec_name,
                             lot=self.feed_lot.rec_name,
                             location=self.feed_location.rec_name,
@@ -247,8 +255,9 @@ class FeedEventMixin(AbstractEvent):
                             timestamp=self.timestamp,
                             ))
             else:
-                if self.feed_product.quantity < feed_quantity:
-                    raise UserError(gettext('farm.not_enought_feed_product',
+                product = Product(self.feed_product.id)
+                if product.quantity < feed_quantity:
+                    raise UserError(gettext('farm.not_enough_feed_product',
                             event=self.rec_name,
                             product=self.feed_product.rec_name,
                             location=self.feed_location.rec_name,

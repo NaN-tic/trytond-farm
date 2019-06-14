@@ -1,17 +1,22 @@
 <?xml version="1.0"?>
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
-<data>
-    <xpath expr="//field[@name='animal_group']" position="after">
-        <field name="female_cycle"/>
-        <field name="born_alive"/>
-        <field name="fostered"/>
-        <field name="farrowing_group"/>
-        <field name="quantity"/>
-        <field name="last_minute_fostered"/>
-        <field name="casualties"/>
-        <field name="female_to_location"/>
-        <field name="weaned_to_location"/>
-        <field name="weaned_group"/>
-    </xpath>
-</data>
+<tree>
+    <field name="animal"/>
+    <field name="animal_group"/>
+    <field name="female_cycle"/>
+    <field name="born_alive"/>
+    <field name="fostered"/>
+    <field name="farrowing_group"/>
+    <field name="quantity"/>
+    <field name="last_minute_fostered"/>
+    <field name="casualties"/>
+    <field name="female_to_location"/>
+    <field name="weaned_to_location"/>
+    <field name="weaned_group"/>
+    <field name="state"/>
+    <field name="farm" tree_invisible="1"/>
+    <field name="employee" tree_invisible="1"/>
+    <field name="timestamp" widget="date" tree_invisible="1"/>
+    <field name="timestamp" widget="time" tree_invisible="1"/>
+</tree>

@@ -2,10 +2,6 @@
 Removal Events Scenario
 =======================
 
-=============
-General Setup
-=============
-
 Imports::
 
     >>> import datetime
@@ -17,6 +13,7 @@ Imports::
     ...     get_company
     >>> from trytond.modules.account.tests.tools import create_fiscalyear, \
     ...     create_chart, get_accounts
+    >>> from trytond.modules.farm.tests.tools import create_specie, create_users
     >>> now = datetime.datetime.now()
     >>> today = datetime.date.today()
 
@@ -29,121 +26,44 @@ Create company::
     >>> _ = create_company()
     >>> company = get_company()
 
-Create product::
-
-    >>> ProductUom = Model.get('product.uom')
-    >>> unit, = ProductUom.find([('name', '=', 'Unit')])
-    >>> liter, = ProductUom.find([('name', '=', 'Liter')])
-    >>> ProductTemplate = Model.get('product.template')
-    >>> Product = Model.get('product.product')
-    >>> male_template = ProductTemplate(
-    ...     name='Male Pig',
-    ...     default_uom=unit,
-    ...     type='goods',
-    ...     list_price=Decimal('40'),
-    ...     cost_price=Decimal('25'))
-    >>> male_template.save()
-    >>> male_product = Product(template=male_template)
-    >>> male_product.save()
-    >>> semen_template = ProductTemplate(
-    ...     name='Pig Semen',
-    ...     default_uom=liter,
-    ...     type='goods',
-    ...     list_price=Decimal('400'),
-    ...     cost_price=Decimal('250'))
-    >>> semen_template.save()
-    >>> semen_product = Product(template=semen_template)
-    >>> semen_product.save()
-
-Create sequence::
-
-    >>> Sequence = Model.get('ir.sequence')
-    >>> event_order_sequence = Sequence(
-    ...     name='Event Order Pig Warehouse 1',
-    ...     code='farm.event.order',
-    ...     padding=4)
-    >>> event_order_sequence.save()
-    >>> male_sequence = Sequence(
-    ...     name='Male Pig Warehouse 1',
-    ...     code='farm.animal',
-    ...     padding=4)
-    >>> male_sequence.save()
-    >>> semen_lot_sequence = Sequence(
-    ...     name='Semen Extracted Lot Pig Warehouse 1',
-    ...     code='stock.lot',
-    ...     padding=4)
-    >>> semen_lot_sequence.save()
-    >>> semen_dose_lot_sequence = Sequence(
-    ...     name='Semen Dose Lot Pig Warehouse 1',
-    ...     code='stock.lot',
-    ...     padding=4)
-    >>> semen_dose_lot_sequence.save()
-
 Create specie::
+
+    >>> specie, breed, products = create_specie('Pig')
+    >>> individual_product = products['individual']
+    >>> group_product = products['group']
+    >>> female_product = products['female']
+    >>> male_product = products['male']
+    >>> semen_product = products['semen']
+
+Create farm users::
+
+    >>> users = create_users(company)
+    >>> individual_user = users['individual']
+    >>> group_user = users['group']
+    >>> female_user = users['female']
+    >>> male_user = users['male']
+
+Get locations::
 
     >>> Location = Model.get('stock.location')
     >>> lost_found_location, = Location.find([('type', '=', 'lost_found')])
     >>> warehouse, = Location.find([('type', '=', 'warehouse')])
-    >>> Specie = Model.get('farm.specie')
-    >>> SpecieBreed = Model.get('farm.specie.breed')
-    >>> SpecieFarmLine = Model.get('farm.specie.farm_line')
-    >>> pigs_specie = Specie(
-    ...     name='Pigs',
-    ...     male_enabled=True,
-    ...     male_product=male_product,
-    ...     semen_product=semen_product,
-    ...     female_enabled=False,
-    ...     individual_enabled=False,
-    ...     group_enabled=False,
-    ...     removed_location=lost_found_location,
-    ...     foster_location=lost_found_location,
-    ...     lost_found_location=lost_found_location,
-    ...     feed_lost_found_location=lost_found_location)
-    >>> pigs_specie.save()
-    >>> pigs_breed = SpecieBreed(
-    ...     specie=pigs_specie,
-    ...     name='Holland')
-    >>> pigs_breed.save()
-    >>> pigs_farm_line = SpecieFarmLine(
-    ...     specie=pigs_specie,
-    ...     farm=warehouse,
-    ...     event_order_sequence=event_order_sequence,
-    ...     has_male=True,
-    ...     male_sequence=male_sequence,
-    ...     semen_lot_sequence=semen_lot_sequence,
-    ...     dose_lot_sequence=semen_dose_lot_sequence)
-    >>> pigs_farm_line.save()
+    >>> production_location, = Location.find([('type', '=', 'production')])
 
-Create stock user::
+Set user and context::
 
-    >>> Group = Model.get('res.group')
-    >>> stock_user = User()
-    >>> stock_user.name = 'Stock'
-    >>> stock_user.login = 'stock'
-    >>> stock_user.main_company = company
-    >>> stock_group, = Group.find([('name', '=', 'Stock')])
-    >>> stock_user.groups.append(stock_group)
-    >>> stock_user.save()
-
-Create farm users::
-
-    >>> male_user = User()
-    >>> male_user.name = 'Males'
-    >>> male_user.login = 'males'
-    >>> male_user.main_company = company
-    >>> male_group, = Group.find([('name', '=', 'Farm / Males')])
-    >>> male_user.groups.append(male_group)
-    >>> male_user.save()
+    >>> config.user = male_user.id
+    >>> config._context['specie'] = specie.id
+    >>> config._context['animal_type'] = 'female'
 
 Create male::
 
-    >>> config.user = male_user.id
     >>> Animal = Model.get('farm.animal')
-    >>> male = Animal(
-    ...     type='male',
-    ...     specie=pigs_specie,
-    ...     breed=pigs_breed,
-    ...     initial_location=warehouse.storage_location)
+    >>> male = Animal()
+    >>> male.type = 'male'
+    >>> male.specie = specie
+    >>> male.breed = breed
+    >>> male.initial_location = warehouse.storage_location
     >>> male.save()
     >>> male.location.code
     'STO'
@@ -157,18 +77,18 @@ Create removal event::
     >>> RemovalReason = Model.get('farm.removal.reason')
     >>> removal_reason = RemovalReason.find([], limit=1)[0]
     >>> RemovalEvent = Model.get('farm.removal.event')
-    >>> remove_male = RemovalEvent(
-    ...     animal_type='male',
-    ...     specie=pigs_specie,
-    ...     farm=warehouse,
-    ...     animal=male,
-    ...     timestamp=now,
-    ...     from_location=male.location,
-    ...     removal_type=removal_type,
-    ...     reason=removal_reason)
+    >>> remove_male = RemovalEvent()
+    >>> remove_male.animal_type = 'male'
+    >>> remove_male.specie = specie
+    >>> remove_male.farm = warehouse
+    >>> remove_male.animal = male
+    >>> remove_male.timestamp = now
+    >>> remove_male.from_location = male.location
+    >>> remove_male.removal_type = removal_type
+    >>> remove_male.reason = removal_reason
     >>> remove_male.save()
 
-Animal doesn't chage its values::
+Animal doesn't change its values::
 
     >>> male.reload()
     >>> male.removal_date

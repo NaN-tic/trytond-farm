@@ -1,18 +1,22 @@
 <?xml version="1.0"?>
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
-<data>
-    <!-- <xpath expr="//field[@name='timestamp']" position="after"> -->
-    <xpath expr="/tree" position="inside">
-        <field name="start_date"/>
-        <field name="end_date"/>
-        <field name="location"/>
-        <field name="quantity"/>
-        <field name="feed_location"/>
-        <field name="feed_product"/>
-        <field name="feed_lot"/>
-        <field name="feed_quantity"/>
-        <field name="feed_quantity_animal_day"/>
-        <field name="feed_inventory"/>
-    </xpath>
-</data>
+<tree>
+    <field name="animal"/>
+    <field name="animal_group"/>
+    <field name="timestamp" widget="date"/>
+    <field name="timestamp" widget="time"/>
+    <field name="employee"/>
+    <field name="farm"/>
+    <field name="state"/>
+    <field name="start_date"/>
+    <field name="end_date"/>
+    <field name="location"/>
+    <field name="quantity"/>
+    <field name="feed_location"/>
+    <field name="feed_product"/>
+    <field name="feed_lot"/>
+    <field name="feed_quantity"/>
+    <field name="feed_quantity_animal_day"/>
+    <field name="feed_inventory"/>
+</tree>

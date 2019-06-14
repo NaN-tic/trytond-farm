@@ -248,30 +248,47 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
 
     @classmethod
     def get_quantity(cls, animal_groups, name):
-        pool = Pool()
-        #Lot = pool.get('stock.lot')
-        Specie = pool.get('farm.specie')
+        """
+        Returns the quantity of animals
 
-        specie_id = cls.default_specie()
-        location_ids = Transaction().context.get('locations')
+        If location_ids is provided in the context, then quantity only from
+        those locations is considered. In this case, the 'with_childs' context
+        value is also honoured just like in the stock module.
 
-        lots = [ag.lot for ag in animal_groups]
-        products = []
-        if specie_id:
-            specie = Specie(specie_id)
-            if specie.group_product:
-                products.append(specie.group_product)
-                if not location_ids:
-                    location_ids = [l.farm.storage_location.id
-                        for l in specie.farm_lines if l.has_group]
-        else:
-            products = list(set(l.product for l in lots))
+        Otherwise, stock is computed for all warehouse location ids, and
+        computing its children (with_childs = True). However, if there's a
+        'farms' value in the context, only those warehouses are considered.
+        """
+        Location = Pool().get('stock.location')
 
-        return dict([(x.id, int(x.lot.quantity)) for x in animal_groups])
-        #with Transaction().set_context({'locations': location_ids}):
-            #lot_quantities = Lot._get_quantity(lots, name)
-        #return dict((ag.id, int(lot_quantities[ag.lot.id]))
-            #for ag in animal_groups)
+        context = Transaction().context
+        location_ids = context.get('locations')
+        with_children = context.get('with_childs', False)
+
+        if not location_ids:
+            domain = [
+                ('type', '=', 'warehouse'),
+                ]
+            farm_ids = context.get('farms')
+            if farm_ids:
+                domain.append(('warehouse', 'in', farm_ids))
+            warehouses = Location.search(domain)
+            location_ids = [x.id for x in warehouses]
+            with_children = True
+        return cls.get_quantity_by_locations(animal_groups, location_ids,
+            with_children)
+
+    @classmethod
+    def get_quantity_by_locations(cls, animal_groups, locations,
+            with_children):
+        Lot = Pool().get('stock.lot')
+
+        ids = [x.id for x in animal_groups]
+        lots = [x.lot.id for x in animal_groups]
+        with Transaction().set_context({'locations': locations, 'with_childs':
+                    with_children}):
+            quantities = [int(x.quantity) for x in Lot.browse(lots)]
+        return dict(zip(ids, quantities))
 
     @classmethod
     def search_quantity(cls, name, domain=None):

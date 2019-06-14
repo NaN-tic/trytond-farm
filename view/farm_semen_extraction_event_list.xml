@@ -1,18 +1,12 @@
 <?xml version="1.0"?>
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
-<data>
-    <!-- <xpath expr="//field[@name='timestamp']" position="after"> -->
-    <xpath expr="//tree" position="inside">
-<!--
-        <field name="reference"/>
-        <field name="untreated_semen_qty"/>
-        <field name="untreated_semen_uom"/>
-        <field name="formula_result"/>
-        <field name="semen_qty"/>
-        <field name="formula_uom"/>
-        <field name="doses"/>
-        <field name="dose_location"/>
--->
-    </xpath>
-</data>
+<tree>
+    <field name="animal"/>
+    <field name="animal_group"/>
+    <field name="timestamp" widget="date"/>
+    <field name="timestamp" widget="time"/>
+    <field name="employee"/>
+    <field name="farm"/>
+    <field name="state"/>
+</tree>

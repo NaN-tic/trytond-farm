@@ -2,10 +2,6 @@
 Transformation Events Scenario
 ==============================
 
-=============
-General Setup
-=============
-
 Imports::
 
     >>> import datetime
@@ -17,6 +13,7 @@ Imports::
     ...     get_company
     >>> from trytond.modules.account.tests.tools import create_fiscalyear, \
     ...     create_chart, get_accounts
+    >>> from trytond.modules.farm.tests.tools import create_specie, create_users
     >>> now = datetime.datetime.now()
     >>> today = datetime.date.today()
 
@@ -29,162 +26,37 @@ Create company::
     >>> _ = create_company()
     >>> company = get_company()
 
-Create products::
+Create specie::
 
-    >>> ProductUom = Model.get('product.uom')
-    >>> unit, = ProductUom.find([('name', '=', 'Unit')])
-    >>> liter, = ProductUom.find([('name', '=', 'Liter')])
-    >>> ProductTemplate = Model.get('product.template')
-    >>> Product = Model.get('product.product')
-    >>> male_template = ProductTemplate(
-    ...     name='Male Pig',
-    ...     default_uom=unit,
-    ...     type='goods',
-    ...     list_price=Decimal('40'),
-    ...     cost_price=Decimal('25'))
-    >>> male_template.save()
-    >>> male_product = Product(template=male_template)
-    >>> male_product.save()
-    >>> semen_template = ProductTemplate(
-    ...     name='Pig Semen',
-    ...     default_uom=liter,
-    ...     type='goods',
-    ...     list_price=Decimal('400'),
-    ...     cost_price=Decimal('250'))
-    >>> semen_template.save()
-    >>> semen_product = Product(template=semen_template)
-    >>> semen_product.save()
-    >>> female_template = ProductTemplate(
-    ...     name='Female Pig',
-    ...     default_uom=unit,
-    ...     type='goods',
-    ...     list_price=Decimal('40'),
-    ...     cost_price=Decimal('25'))
-    >>> female_template.save()
-    >>> female_product = Product(template=female_template)
-    >>> female_product.save()
-    >>> individual_template = ProductTemplate(
-    ...     name='Male Pig',
-    ...     default_uom=unit,
-    ...     type='goods',
-    ...     list_price=Decimal('40'),
-    ...     cost_price=Decimal('25'))
-    >>> individual_template.save()
-    >>> individual_product = Product(template=individual_template)
-    >>> individual_product.save()
-    >>> group_template = ProductTemplate(
-    ...     name='Group of Pig',
-    ...     default_uom=unit,
-    ...     type='goods',
-    ...     list_price=Decimal('30'),
-    ...     cost_price=Decimal('20'))
-    >>> group_template.save()
-    >>> group_product = Product(template=group_template)
-    >>> group_product.save()
+    >>> specie, breed, products = create_specie('Pig')
+    >>> individual_product = products['individual']
+    >>> group_product = products['group']
+    >>> female_product = products['female']
+    >>> male_product = products['male']
+    >>> semen_product = products['semen']
 
-Create sequence::
+Create farm users::
 
-    >>> Sequence = Model.get('ir.sequence')
-    >>> event_order_sequence = Sequence(
-    ...     name='Event Order Pig Warehouse 1',
-    ...     code='farm.event.order',
-    ...     padding=4)
-    >>> event_order_sequence.save()
-    >>> male_sequence = Sequence(
-    ...     name='Male Pig Warehouse 1',
-    ...     code='farm.animal',
-    ...     padding=4)
-    >>> male_sequence.save()
-    >>> semen_lot_sequence = Sequence(
-    ...     name='Semen Extracted Lot Pig Warehouse 1',
-    ...     code='stock.lot',
-    ...     padding=4)
-    >>> semen_lot_sequence.save()
-    >>> semen_dose_lot_sequence = Sequence(
-    ...     name='Semen Dose Lot Pig Warehouse 1',
-    ...     code='stock.lot',
-    ...     padding=4)
-    >>> semen_dose_lot_sequence.save()
-    >>> female_sequence = Sequence(
-    ...     name='Female Pig Warehouse 1',
-    ...     code='farm.animal',
-    ...     padding=4)
-    >>> female_sequence.save()
-    >>> individual_sequence = Sequence(
-    ...     name='Individual Pig Warehouse 1',
-    ...     code='farm.animal',
-    ...     padding=4)
-    >>> individual_sequence.save()
-    >>> group_sequence = Sequence(
-    ...     name='Groups Pig Warehouse 1',
-    ...     code='farm.animal.group',
-    ...     padding=4)
-    >>> group_sequence.save()
+    >>> users = create_users(company)
+    >>> individual_user = users['individual']
+    >>> group_user = users['group']
+    >>> female_user = users['female']
+    >>> male_user = users['male']
 
-Prepare locations::
+Get locations::
 
     >>> Location = Model.get('stock.location')
     >>> lost_found_location, = Location.find([('type', '=', 'lost_found')])
     >>> warehouse, = Location.find([('type', '=', 'warehouse')])
-    >>> production_location = Location(
-    ...     name='Production Location',
-    ...     code='PROD',
-    ...     type='production',
-    ...     parent=warehouse)
-    >>> production_location.save()
-    >>> warehouse.production_location=production_location
-    >>> warehouse.save()
-    >>> warehouse.reload()
-    >>> production_location.reload()
-
-Create specie::
-
-    >>> Specie = Model.get('farm.specie')
-    >>> SpecieBreed = Model.get('farm.specie.breed')
-    >>> SpecieFarmLine = Model.get('farm.specie.farm_line')
-    >>> pigs_specie = Specie(
-    ...     name='Pigs',
-    ...     male_enabled=True,
-    ...     male_product=male_product,
-    ...     semen_product=semen_product,
-    ...     female_enabled=True,
-    ...     female_product=female_product,
-    ...     individual_enabled=True,
-    ...     individual_product=individual_product,
-    ...     group_enabled=True,
-    ...     group_product=group_product,
-    ...     removed_location=lost_found_location,
-    ...     foster_location=lost_found_location,
-    ...     lost_found_location=lost_found_location,
-    ...     feed_lost_found_location=lost_found_location)
-    >>> pigs_specie.save()
-    >>> pigs_breed = SpecieBreed(
-    ...     specie=pigs_specie,
-    ...     name='Holland')
-    >>> pigs_breed.save()
-    >>> pigs_farm_line = SpecieFarmLine(
-    ...     specie=pigs_specie,
-    ...     farm=warehouse,
-    ...     event_order_sequence=event_order_sequence,
-    ...     has_male=True,
-    ...     male_sequence=male_sequence,
-    ...     semen_lot_sequence=semen_lot_sequence,
-    ...     dose_lot_sequence=semen_dose_lot_sequence,
-    ...     has_female=True,
-    ...     female_sequence=female_sequence,
-    ...     has_individual=True,
-    ...     individual_sequence=individual_sequence,
-    ...     has_group=True,
-    ...     group_sequence=group_sequence)
-    >>> pigs_farm_line.save()
+    >>> production_location, = Location.find([('type', '=', 'production')])
 
 Create male to be transformed to individual::
 
     >>> Animal = Model.get('farm.animal')
     >>> male_to_individual = Animal(
     ...     type='male',
-    ...     specie=pigs_specie,
-    ...     breed=pigs_breed,
+    ...     specie=specie,
+    ...     breed=breed,
     ...     initial_location=warehouse.storage_location)
     >>> male_to_individual.save()
     >>> male_to_individual.location.code
@@ -197,7 +69,7 @@ Create transformation event::
     >>> TransformationEvent = Model.get('farm.transformation.event')
     >>> transform_male_to_individual = TransformationEvent(
     ...     animal_type='male',
-    ...     specie=pigs_specie,
+    ...     specie=specie,
     ...     farm=warehouse,
     ...     timestamp=now,
     ...     animal=male_to_individual,
@@ -227,7 +99,7 @@ Validate transformation event::
     'individual'
     >>> len(to_animal.lot.cost_lines) == 1
     True
-    >>> to_animal.lot.cost_price == individual_template.cost_price
+    >>> to_animal.lot.cost_price == individual_product.cost_price
     True
     >>> to_animal.location == transform_male_to_individual.to_location
     True
@@ -244,8 +116,8 @@ Create female to be transformed to a new group::
 
     >>> female_to_group = Animal(
     ...     type='female',
-    ...     specie=pigs_specie,
-    ...     breed=pigs_breed,
+    ...     specie=specie,
+    ...     breed=breed,
     ...     initial_location=warehouse.storage_location)
     >>> female_to_group.save()
     >>> female_to_group.location.code
@@ -257,7 +129,7 @@ Create transformation event::
 
     >>> transform_female_to_group = TransformationEvent(
     ...     animal_type='female',
-    ...     specie=pigs_specie,
+    ...     specie=specie,
     ...     farm=warehouse,
     ...     timestamp=now,
     ...     animal=female_to_group,
@@ -300,8 +172,8 @@ Create individual to be transformed to female::
 
     >>> individual_to_female = Animal(
     ...     type='individual',
-    ...     specie=pigs_specie,
-    ...     breed=pigs_breed,
+    ...     specie=specie,
+    ...     breed=breed,
     ...     sex='female',
     ...     initial_location=warehouse.storage_location)
     >>> individual_to_female.save()
@@ -314,7 +186,7 @@ Create transformation event::
 
     >>> transform_individual_to_female = TransformationEvent(
     ...     animal_type='individual',
-    ...     specie=pigs_specie,
+    ...     specie=specie,
     ...     farm=warehouse,
     ...     timestamp=now,
     ...     animal=individual_to_female,
@@ -357,8 +229,8 @@ Create individual to be transformed to existing group::
 
     >>> individual_to_group = Animal(
     ...     type='individual',
-    ...     specie=pigs_specie,
-    ...     breed=pigs_breed,
+    ...     specie=specie,
+    ...     breed=breed,
     ...     sex='undetermined',
     ...     initial_location=warehouse.storage_location)
     >>> individual_to_group.save()
@@ -375,8 +247,8 @@ Create existing group::
     ...     'animal_type': 'group',
     ...     })
     >>> existing_group = AnimalGroup(
-    ...     specie=pigs_specie,
-    ...     breed=pigs_breed,
+    ...     specie=specie,
+    ...     breed=breed,
     ...     initial_location=warehouse.storage_location,
     ...     initial_quantity=4,
     ...     arrival_date=(today - relativedelta(days=3)),
@@ -388,7 +260,7 @@ Create transformation event::
 
     >>> transform_individual_to_group = TransformationEvent(
     ...     animal_type='individual',
-    ...     specie=pigs_specie,
+    ...     specie=specie,
     ...     farm=warehouse,
     ...     timestamp=now,
     ...     animal=individual_to_group,

@@ -294,8 +294,6 @@ class MoveEvent(AbstractEvent):
             default = {}
         else:
             default = default.copy()
-        default.update({
-                'move': None,
-                'weight_record': None,
-                })
+        default.setdefault('move', None)
+        default.setdefault('weight_record', None)
         return super(MoveEvent, cls).copy(records, default=default)

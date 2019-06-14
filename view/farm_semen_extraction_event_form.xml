@@ -1,66 +1,88 @@
 <?xml version="1.0"?>
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
-<data>
-    <xpath expr="//separator[@name='notes']" position="replace"/>
-    <xpath expr="//field[@name='notes']" position="replace"/>
-    <xpath expr="//field[@name='employee']" position="after">
-        <notebook colspan="4">
-            <page string="Generated Doses" id="doses_page">
-                <label name="test_required"/>
-                <field name="test_required"/>
-                <label name="reference"/>
-                <field name="reference"/>
-                <separator string="Extraction data" colspan="8"
-                      id="untreated_semen_sep"/>
-              <group colspan="4" col="6" id="untreated_semen_group">
-                  <label name="untreated_semen_qty"/>
-                  <field name="untreated_semen_qty"/>
-                  <label name="untreated_semen_uom" string="UoM"/>
-                  <field name="untreated_semen_uom"/>
-                  <label name="semen_qty"/>
-                  <field name="semen_qty"/>
-              </group>
-                <group colspan="4" col="6" id="calculate_doses_group">
-                    <label name="dose_bom"/>
-                    <field name="dose_bom"/>
-                    <label name="dose_calculated_units"/>
-                    <field name="dose_calculated_units"/>
-                    <button name="calculate_doses"/>
-                </group>
-                <label name="dose_location"/>
-                <field name="dose_location"/>
-                <field name="doses" colspan="4"/>
-                <label name="doses_semen_qty"/>
-                <field name="doses_semen_qty"/>
-                <label name="semen_remaining_qty"/>
-                <field name="semen_remaining_qty"/>
-            </page>
-            <page string="Notes" id="notes_page">
-                <field name="notes" colspan="4"/>
-            </page>
-            <page string="Extraction &amp; Quality Test" id="extraction_page">
-                <group colspan="4" col="6" id="quality_test_group">
-                    <separator name="test" colspan="6"/>
-                    <label name="test" string="Test"/>
-                    <field name="test"/>
-                    <label name="formula_result"/>
-                    <field name="formula_result"/>
-                    <label name="formula_uom"/>
-                    <field name="formula_uom"/>
-                </group>
-                <separator string="" colspan="4" id="semen_qty_sep"/>
-                <label name="solvent_calculated_qty"/>
-                <field name="solvent_calculated_qty"/>
-                <newline/>
-                <label name="semen_calculated_qty"/>
-                <field name="semen_calculated_qty"/>
-                <separator string="" colspan="4" id="advanced_fields_sep"/>
-                <label name="semen_lot"/>
-                <field name="semen_lot"/>
-                <label name="semen_move"/>
-                <field name="semen_move"/>
-            </page>
-        </notebook>
-    </xpath>
-</data>
+<form>
+    <group id="header" colspan="4" col="6">
+        <label name="farm"/>
+        <field name="farm"/>
+        <label name="timestamp"/>
+        <group col="2" id="timestamp">
+            <field name="timestamp" widget="date"/>
+            <field name="timestamp" widget="time"/>
+        </group>
+    </group>
+    <group id="animal_or_group" colspan="2" col="2">
+        <label name="animal"/>
+        <field name="animal"/>
+        <label name="animal_group"/>
+        <field name="animal_group"/>
+    </group>
+    <label name="employee"/>
+    <field name="employee"/>
+    <notebook colspan="4">
+        <page string="Generated Doses" id="doses_page">
+            <label name="test_required"/>
+            <field name="test_required"/>
+            <label name="reference"/>
+            <field name="reference"/>
+            <separator string="Extraction data" colspan="8"
+                    id="untreated_semen_sep"/>
+            <group colspan="4" col="6" id="untreated_semen_group">
+                <label name="untreated_semen_qty"/>
+                <field name="untreated_semen_qty"/>
+                <label name="untreated_semen_uom" string="UoM"/>
+                <field name="untreated_semen_uom"/>
+                <label name="semen_qty"/>
+                <field name="semen_qty"/>
+            </group>
+            <group colspan="4" col="6" id="calculate_doses_group">
+                <label name="dose_bom"/>
+                <field name="dose_bom"/>
+                <label name="dose_calculated_units"/>
+                <field name="dose_calculated_units"/>
+                <button name="calculate_doses"/>
+            </group>
+            <label name="dose_location"/>
+            <field name="dose_location"/>
+            <field name="doses" colspan="4"/>
+            <label name="doses_semen_qty"/>
+            <field name="doses_semen_qty"/>
+            <label name="semen_remaining_qty"/>
+            <field name="semen_remaining_qty"/>
+        </page>
+        <page string="Notes" id="notes_page">
+            <field name="notes" colspan="4"/>
+        </page>
+        <page string="Extraction &amp; Quality Test" id="extraction_page">
+            <group colspan="4" col="6" id="quality_test_group">
+                <separator name="test" colspan="6"/>
+                <label name="test" string="Test"/>
+                <field name="test"/>
+                <label name="formula_result"/>
+                <field name="formula_result"/>
+                <label name="formula_uom"/>
+                <field name="formula_uom"/>
+            </group>
+            <separator string="" colspan="4" id="semen_qty_sep"/>
+            <label name="solvent_calculated_qty"/>
+            <field name="solvent_calculated_qty"/>
+            <newline/>
+            <label name="semen_calculated_qty"/>
+            <field name="semen_calculated_qty"/>
+            <separator string="" colspan="4" id="advanced_fields_sep"/>
+            <label name="semen_lot"/>
+            <field name="semen_lot"/>
+            <label name="semen_move"/>
+            <field name="semen_move"/>
+        </page>
+    </notebook>
+    <group id="state_and_buttons" colspan="4" col="12">
+        <label name="state"/>
+        <field name="state"/>
+        <!--<button name="cancel" string="_Cancel" icon="tryton-cancel"
+            help="Are you sure to cancel this event?"/>-->
+        <button name="draft" string="_Draft" icon="tryton-go-previous"/>
+        <button name="validate_event" string="_Validate" icon="tryton-ok"
+            help="Are you sure to validate this event?"/>
+    </group>
+</form>

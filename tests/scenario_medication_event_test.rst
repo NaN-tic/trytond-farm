@@ -2,10 +2,6 @@
 Medication Events Scenario
 ==========================
 
-=============
-General Setup
-=============
-
 Imports::
 
     >>> import datetime
@@ -17,6 +13,7 @@ Imports::
     ...     get_company
     >>> from trytond.modules.account.tests.tools import create_fiscalyear, \
     ...     create_chart, get_accounts
+    >>> from trytond.modules.farm.tests.tools import create_specie, create_users
     >>> now = datetime.datetime.now()
     >>> today = datetime.date.today()
 
@@ -29,167 +26,103 @@ Create company::
     >>> _ = create_company()
     >>> company = get_company()
 
-Create products::
+Create specie::
 
-    >>> ProductUom = Model.get('product.uom')
-    >>> unit, = ProductUom.find([('name', '=', 'Unit')])
-    >>> ProductTemplate = Model.get('product.template')
-    >>> Product = Model.get('product.product')
-    >>> individual_template = ProductTemplate(
-    ...     name='Male Pig',
-    ...     default_uom=unit,
-    ...     type='goods',
-    ...     list_price=Decimal('40'),
-    ...     cost_price=Decimal('25'))
-    >>> individual_template.save()
-    >>> individual_product = Product(template=individual_template)
-    >>> individual_product.save()
-    >>> group_template = ProductTemplate(
-    ...     name='Group of Pig',
-    ...     default_uom=unit,
-    ...     type='goods',
-    ...     list_price=Decimal('30'),
-    ...     cost_price=Decimal('20'))
-    >>> group_template.save()
-    >>> group_product = Product(template=group_template)
-    >>> group_product.save()
+    >>> specie, breed, products = create_specie('Pig')
+    >>> individual_product = products['individual']
+    >>> group_product = products['group']
+    >>> female_product = products['female']
+    >>> male_product = products['male']
+    >>> semen_product = products['semen']
 
-Create sequence::
+Create farm users::
 
-    >>> Sequence = Model.get('ir.sequence')
-    >>> event_order_sequence = Sequence(
-    ...     name='Event Order Pig Warehouse 1',
-    ...     code='farm.event.order',
-    ...     padding=4)
-    >>> event_order_sequence.save()
-    >>> individual_sequence = Sequence(
-    ...     name='Individual Pig Warehouse 1',
-    ...     code='farm.animal',
-    ...     padding=4)
-    >>> individual_sequence.save()
-    >>> group_sequence = Sequence(
-    ...     name='Groups Pig Warehouse 1',
-    ...     code='farm.animal.group',
-    ...     padding=4)
-    >>> group_sequence.save()
+    >>> users = create_users(company)
+    >>> individual_user = users['individual']
+    >>> group_user = users['group']
+    >>> female_user = users['female']
+    >>> male_user = users['male']
 
-Prepare farm locations::
+Get locations::
 
     >>> Location = Model.get('stock.location')
     >>> lost_found_location, = Location.find([('type', '=', 'lost_found')])
     >>> warehouse, = Location.find([('type', '=', 'warehouse')])
-    >>> production_location = Location(
-    ...     name='Production Location',
-    ...     code='PROD',
-    ...     type='production',
-    ...     parent=warehouse)
-    >>> production_location.save()
-    >>> warehouse.production_location=production_location
-    >>> warehouse.save()
-    >>> warehouse.reload()
-    >>> production_location.reload()
-    >>> location1_id, location2_id = Location.create([{
-    ...         'name': 'Location 1',
-    ...         'code': 'L1',
-    ...         'type': 'storage',
-    ...         'parent': warehouse.storage_location.id,
-    ...         }, {
-    ...         'name': 'Location 2',
-    ...         'code': 'L2',
-    ...         'type': 'storage',
-    ...         'parent': warehouse.storage_location.id,
-    ...         }], config.context)
-    >>> lab1 = Location(
-    ...     name='Laboratory 1',
-    ...     code='Lab1',
-    ...     type='storage',
-    ...     parent=warehouse.storage_location)
+    >>> production_location, = Location.find([('type', '=', 'production')])
+
+Prepare farm locations::
+
+    >>> location1 = Location()
+    >>> location1.name = 'Location 1'
+    >>> location1.code = 'L1'
+    >>> location1.type = 'storage'
+    >>> location1.parent = warehouse.storage_location
+    >>> location1.save()
+    >>> location2 = Location()
+    >>> location2.name = 'Location 2'
+    >>> location2.code = 'L2'
+    >>> location2.type = 'storage'
+    >>> location2.parent = warehouse.storage_location
+    >>> location2.save()
+    >>> lab1 = Location()
+    >>> lab1.name = 'Laboratory 1'
+    >>> lab1.code = 'Lab1'
+    >>> lab1.type = 'storage'
+    >>> lab1.parent = warehouse.storage_location
     >>> lab1.save()
-
-Create specie::
-
-    >>> Specie = Model.get('farm.specie')
-    >>> SpecieBreed = Model.get('farm.specie.breed')
-    >>> SpecieFarmLine = Model.get('farm.specie.farm_line')
-    >>> pigs_specie = Specie(
-    ...     name='Pigs',
-    ...     male_enabled=False,
-    ...     female_enabled=False,
-    ...     individual_enabled=True,
-    ...     individual_product=individual_product,
-    ...     group_enabled=True,
-    ...     group_product=group_product,
-    ...     removed_location=lost_found_location,
-    ...     foster_location=lost_found_location,
-    ...     lost_found_location=lost_found_location,
-    ...     feed_lost_found_location=lost_found_location)
-    >>> pigs_specie.save()
-    >>> pigs_breed = SpecieBreed(
-    ...     specie=pigs_specie,
-    ...     name='Holland')
-    >>> pigs_breed.save()
-    >>> pigs_farm_line = SpecieFarmLine(
-    ...     specie=pigs_specie,
-    ...     farm=warehouse,
-    ...     event_order_sequence=event_order_sequence,
-    ...     has_individual=True,
-    ...     individual_sequence=individual_sequence,
-    ...     has_group=True,
-    ...     group_sequence=group_sequence)
-    >>> pigs_farm_line.save()
 
 Create Medication Product and Lot::
 
     >>> ProductUom = Model.get('product.uom')
     >>> g, = ProductUom.find([('name', '=', 'Gram')])
-    >>> medication_template = ProductTemplate(
-    ...     name='Pig Medication',
-    ...     default_uom=g,
-    ...     type='goods',
-    ...     list_price=Decimal('40'),
-    ...     cost_price=Decimal('25'))
+    >>> ProductTemplate = Model.get('product.template')
+    >>> medication_template = ProductTemplate()
+    >>> medication_template.name = 'Pig Medication'
+    >>> medication_template.default_uom = g
+    >>> medication_template.type='goods'
+    >>> medication_template.list_price=Decimal('40')
     >>> medication_template.save()
-    >>> medication_product = Product(template=medication_template)
+    >>> medication_product, = medication_template.products
+    >>> medication_product.cost_price=Decimal('25')
     >>> medication_product.save()
     >>> Lot = Model.get('stock.lot')
-    >>> medication_lot = Lot(
-    ...     number='M001',
-    ...     product=medication_product)
+    >>> medication_lot = Lot()
+    >>> medication_lot.number = 'M001'
+    >>> medication_lot.product = medication_product
     >>> medication_lot.save()
 
 Put 500 g of medication into the laboratory location::
 
     >>> Move = Model.get('stock.move')
     >>> now = datetime.datetime.now()
-    >>> provisioning_moves = Move.create([{
-    ...         'product': medication_product.id,
-    ...         'uom': g.id,
-    ...         'quantity': 500,
-    ...         'from_location': party.supplier_location.id,
-    ...         'to_location': lab1.id,
-    ...         'planned_date': now.date(),
-    ...         'effective_date': now.date(),
-    ...         'company': config.context.get('company'),
-    ...         'lot': medication_lot.id,
-    ...         'unit_price': medication_product.template.list_price,
-    ...         }],
-    ...     config.context)
-    >>> Move.assign(provisioning_moves, config.context)
-    >>> Move.do(provisioning_moves, config.context)
+    >>> provisioning_move = Move()
+    >>> provisioning_move.product = medication_product
+    >>> provisioning_move.uom = g
+    >>> provisioning_move.quantity = 500
+    >>> provisioning_move.from_location = company.party.supplier_location
+    >>> provisioning_move.to_location = lab1
+    >>> provisioning_move.planned_date = now.date()
+    >>> provisioning_move.effective_date = now.date()
+    >>> provisioning_move.company = company
+    >>> provisioning_move.lot = medication_lot
+    >>> provisioning_move.unit_price = medication_product.template.list_price
+    >>> provisioning_move.save()
+    >>> provisioning_move.click('assign')
+    >>> provisioning_move.click('do')
 
 Set animal_type and specie in context to work as in the menus::
 
-    >>> config._context['specie'] = pigs_specie.id
+    >>> config._context['specie'] = specie.id
     >>> config._context['animal_type'] = 'individual'
 
 Create individual::
 
     >>> Animal = Model.get('farm.animal')
-    >>> individual = Animal(
-    ...     type='individual',
-    ...     specie=pigs_specie,
-    ...     breed=pigs_breed,
-    ...     initial_location=location1_id)
+    >>> individual = Animal()
+    >>> individual.type = 'individual'
+    >>> individual.specie = specie
+    >>> individual.breed = breed
+    >>> individual.initial_location = location1
     >>> individual.save()
     >>> individual.location.code
     'L1'
@@ -199,24 +132,24 @@ Create individual::
 Create individual medication event::
 
     >>> MedicationEvent = Model.get('farm.medication.event')
-    >>> medication_individual = MedicationEvent(
-    ...     animal_type='individual',
-    ...     specie=pigs_specie,
-    ...     farm=warehouse,
-    ...     animal=individual,
-    ...     timestamp=now,
-    ...     location=individual.location,
-    ...     feed_location=lab1,
-    ...     feed_product=medication_product,
-    ...     feed_lot=medication_lot,
-    ...     uom=g,
-    ...     feed_quantity=Decimal('154.0'))
+    >>> medication_individual = MedicationEvent()
+    >>> medication_individual.animal_type = 'individual'
+    >>> medication_individual.specie = specie
+    >>> medication_individual.farm = warehouse
+    >>> medication_individual.animal = individual
+    >>> medication_individual.timestamp = now
+    >>> medication_individual.medication_end_date = now.date()
+    >>> medication_individual.location = individual.location
+    >>> medication_individual.feed_location = lab1
+    >>> medication_individual.feed_product = medication_product
+    >>> medication_individual.feed_lot = medication_lot
+    >>> medication_individual.uom = g
+    >>> medication_individual.feed_quantity = Decimal('154.0')
     >>> medication_individual.save()
 
 Validate individual medication event::
 
-    >>> MedicationEvent.validate_event([medication_individual.id],
-    ...     config.context)
+    >>> medication_individual.click('validate_event')
     >>> medication_individual.reload()
     >>> medication_individual.state
     'validated'
@@ -224,40 +157,41 @@ Validate individual medication event::
 Create group::
 
     >>> AnimalGroup = Model.get('farm.animal.group')
-    >>> animal_group = AnimalGroup(
-    ...     specie=pigs_specie,
-    ...     breed=pigs_breed,
-    ...     initial_location=location2_id,
-    ...     initial_quantity=4)
+    >>> animal_group = AnimalGroup()
+    >>> animal_group.specie = specie
+    >>> animal_group.breed = breed
+    >>> animal_group.initial_location = location2
+    >>> animal_group.initial_quantity = 4
+    >>> animal_group.arrival_date = now.date() - datetime.timedelta(days=1)
     >>> animal_group.save()
 
 Create animal_group medication event::
 
-    >>> medication_animal_group = MedicationEvent(
-    ...     animal_type='group',
-    ...     specie=pigs_specie,
-    ...     farm=warehouse,
-    ...     animal_group=animal_group,
-    ...     timestamp=now,
-    ...     location=location2_id,
-    ...     quantity=4,
-    ...     feed_location=lab1,
-    ...     feed_product=medication_product,
-    ...     feed_lot=medication_lot,
-    ...     uom=g,
-    ...     feed_quantity=Decimal('320.0'),
-    ...     start_date=(now.date() - datetime.timedelta(days=1)))
+    >>> medication_animal_group = MedicationEvent()
+    >>> medication_animal_group.animal_type = 'group'
+    >>> medication_animal_group.specie = specie
+    >>> medication_animal_group.farm = warehouse
+    >>> medication_animal_group.animal_group = animal_group
+    >>> medication_animal_group.timestamp = now
+    >>> medication_animal_group.location = location2
+    >>> medication_animal_group.quantity = 4
+    >>> medication_animal_group.feed_location = lab1
+    >>> medication_animal_group.feed_product = medication_product
+    >>> medication_animal_group.feed_lot = medication_lot
+    >>> medication_animal_group.uom = g
+    >>> medication_animal_group.feed_quantity = Decimal('320.0')
+    >>> medication_animal_group.start_date = now.date() - datetime.timedelta(days=1)
+    >>> medication_animal_group.medication_end_date = now.date() + datetime.timedelta(days=3)
     >>> medication_animal_group.save()
 
 Validate animal_group medication event::
 
-    >>> MedicationEvent.validate_event([medication_animal_group.id],
-    ...     config.context)
+    >>> medication_animal_group.click('validate_event')
     >>> medication_animal_group.reload()
     >>> medication_animal_group.state
     'validated'
     >>> animal_group.reload()
-    >>> unused = config.set_context({'locations': [lab1.id]})
-    >>> medication_lot.reload()
+    >>> config._context['locations'] = [lab1.id]
+    >>> medication_lot = Lot(medication_lot.id)
     >>> medication_lot.quantity
     26.0
