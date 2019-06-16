@@ -13,7 +13,8 @@ Imports::
     ...     get_company
     >>> from trytond.modules.account.tests.tools import create_fiscalyear, \
     ...     create_chart, get_accounts
-    >>> from trytond.modules.farm.tests.tools import create_specie, create_users
+    >>> from trytond.modules.farm.tests.tools import create_specie, \
+    ...     create_users, create_feed_product
     >>> now = datetime.datetime.now()
     >>> today = datetime.date.today()
 
@@ -83,18 +84,7 @@ Prepare farm locations L1, L2 and L3, and Silo location::
 
 Create Feed Product and 2 Lots::
 
-    >>> ProductUom = Model.get('product.uom')
-    >>> kg, = ProductUom.find([('name', '=', 'Kilogram')])
-    >>> ProductTemplate = Model.get('product.template')
-    >>> feed_template = ProductTemplate()
-    >>> feed_template.name = 'Pig Feed'
-    >>> feed_template.default_uom = kg
-    >>> feed_template.type = 'goods'
-    >>> feed_template.list_price = Decimal('40')
-    >>> feed_template.save()
-    >>> feed_product, = feed_template.products
-    >>> feed_product.cost_price = Decimal('25')
-    >>> feed_product.save()
+    >>> feed_product = create_feed_product('Feed', 40, 25)
     >>> Lot = Model.get('stock.lot')
     >>> feed_lot1 = Lot()
     >>> feed_lot1.number = 'F001'
@@ -219,7 +209,7 @@ second Lot of Feed 3 days before::
     >>> provisioning_move1 = Move()
     >>> provisioning_move1.product = feed_product
     >>> provisioning_move1.lot = feed_lot1
-    >>> provisioning_move1.uom = kg
+    >>> provisioning_move1.uom = feed_product.default_uom
     >>> provisioning_move1.quantity = 2000.00
     >>> provisioning_move1.from_location = company.party.supplier_location
     >>> provisioning_move1.to_location = silo1
@@ -234,7 +224,7 @@ second Lot of Feed 3 days before::
     >>> provisioning_move2 = Move()
     >>> provisioning_move2.product = feed_product
     >>> provisioning_move2.lot = feed_lot2
-    >>> provisioning_move2.uom = kg
+    >>> provisioning_move2.uom = feed_product.default_uom
     >>> provisioning_move2.quantity = 1500.00
     >>> provisioning_move2.from_location = company.party.supplier_location
     >>> provisioning_move2.to_location = silo1
@@ -254,7 +244,7 @@ Create initial (real) feed inventory for silo S1 and silo's locations to fed at
     >>> feed_inventory0.location = silo1
     >>> feed_inventory0.timestamp = now - datetime.timedelta(days=8)
     >>> feed_inventory0.quantity = Decimal('2000.00')
-    >>> feed_inventory0.uom = kg
+    >>> feed_inventory0.uom = feed_product.default_uom
     >>> feed_inventory0.save()
     >>> feed_inventory0.state
     'draft'
@@ -279,7 +269,7 @@ with 1000.00 Kg at 5 days before::
     >>> feed_provisional_inventory1.location = silo1
     >>> feed_provisional_inventory1.timestamp = now - datetime.timedelta(days=5)
     >>> feed_provisional_inventory1.quantity = Decimal('1000.00')
-    >>> feed_provisional_inventory1.uom = kg
+    >>> feed_provisional_inventory1.uom = feed_product.default_uom
     >>> feed_provisional_inventory1.save()
     >>> feed_provisional_inventory1.state
     'draft'
@@ -303,7 +293,7 @@ fed with 1100.00 Kg at 2 days before::
     ...     location=silo1,
     ...     timestamp=(now - datetime.timedelta(days=2)),
     ...     quantity=Decimal('1100.00'),
-    ...     uom=kg,
+    ...     uom=feed_product.default_uom,
     ...     )
     >>> feed_provisional_inventory2.save()
     >>> feed_provisional_inventory2.state
@@ -328,7 +318,7 @@ Create (real) feed inventory for silo S1 and silo's locations to fed with
     >>> feed_inventory1.location = silo1
     >>> feed_inventory1.timestamp = now - datetime.timedelta(days=0)
     >>> feed_inventory1.quantity = Decimal('200.00')
-    >>> feed_inventory1.uom = kg
+    >>> feed_inventory1.uom = feed_product.default_uom
     >>> feed_inventory1.save()
     >>> feed_inventory1.state
     'draft'

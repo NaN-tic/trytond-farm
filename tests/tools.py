@@ -38,6 +38,22 @@ def create_semen_product(name, list_price, cost_price):
     product.save()
     return product
 
+def create_feed_product(name, list_price, cost_price):
+    Template = Model.get('product.template')
+    ProductUom = Model.get('product.uom')
+
+    kg, = ProductUom.find([('name', '=', 'Kilogram')])
+    template = Template()
+    template.name = name
+    template.default_uom = kg
+    template.type = 'goods'
+    template.list_price = Decimal(str(list_price))
+    template.save()
+    product, = template.products
+    product.cost_price = Decimal(str(cost_price))
+    product.save()
+    return product
+
 def create_specie(name='Pig'):
     group_product = create_animal_product('Group of %s' % name, 30, 20, 25)
     individual_product = create_animal_product('Individual %s' % name, 40, 25)

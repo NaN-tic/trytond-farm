@@ -13,7 +13,8 @@ Imports::
     ...     get_company
     >>> from trytond.modules.account.tests.tools import create_fiscalyear, \
     ...     create_chart, get_accounts
-    >>> from trytond.modules.farm.tests.tools import create_specie, create_users
+    >>> from trytond.modules.farm.tests.tools import create_specie, \
+    ...     create_users, create_feed_product
     >>> now = datetime.datetime.now()
     >>> today = datetime.date.today()
 
@@ -76,18 +77,7 @@ Prepare farm locations::
 
 Create feed Product and Lot::
 
-    >>> ProductUom = Model.get('product.uom')
-    >>> kg, = ProductUom.find([('name', '=', 'Kilogram')])
-    >>> ProductTemplate = Model.get('product.template')
-    >>> feed_template = ProductTemplate()
-    >>> feed_template.name = 'Pig Feed'
-    >>> feed_template.default_uom = kg
-    >>> feed_template.type = 'goods'
-    >>> feed_template.list_price = Decimal('40')
-    >>> feed_template.save()
-    >>> feed_product, = feed_template.products
-    >>> feed_product.cost_price = Decimal('25')
-    >>> feed_product.save()
+    >>> feed_product = create_feed_product('Feed', 40, 25)
     >>> Lot = Model.get('stock.lot')
     >>> feed_lot = Lot()
     >>> feed_lot.number = 'F001'
@@ -100,7 +90,7 @@ Put 5,1 Kg of feed into the silo location::
     >>> now = datetime.datetime.now()
     >>> provisioning_move = Move()
     >>> provisioning_move.product = feed_product
-    >>> provisioning_move.uom = kg
+    >>> provisioning_move.uom = feed_product.default_uom
     >>> provisioning_move.quantity = 5.20
     >>> provisioning_move.from_location = company.party.supplier_location
     >>> provisioning_move.to_location = silo1
@@ -135,6 +125,7 @@ Create individual::
 Create individual feed event::
 
     >>> FeedEvent = Model.get('farm.feed.event')
+    >>> ProductUom = Model.get('product.uom')
     >>> gr, = ProductUom.find([('name', '=', 'Gram')])
     >>> feed_individual = FeedEvent()
     >>> feed_individual.animal_type = 'individual'
