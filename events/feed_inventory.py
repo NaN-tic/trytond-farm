@@ -259,7 +259,7 @@ class AnimalLocationStock():
                         Decimal(str(10.0 ** -uom.digits)))
                 event['state'] = 'provisional'
                 events_vals.append(event)
-        return events_vals
+        return [x for x in events_vals if x['feed_quantity']]
 
     def get_events_vals(self, consumed_per_animal_day, lot_qty_fifo, uom):
         assert isinstance(consumed_per_animal_day, Decimal), ("The type of "
@@ -334,7 +334,7 @@ class AnimalLocationStock():
 
         for key in self._open_animal_event:
             self._close_event(key, self._open_animal_event[key], uom)
-        return self._animal_events
+        return [x for x in self._animal_events if x['feed_quantity']]
 
     def _new_event(self, lot_id, n_animals, start_date, location_id, feed_lot,
             uom, consumed_per_animal_day):
