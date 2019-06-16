@@ -3,8 +3,9 @@
 import doctest
 import unittest
 
+from trytond import backend
 import trytond.tests.test_tryton
-from trytond.tests.test_tryton import ModuleTestCase
+from trytond.tests.test_tryton import ModuleTestCase, with_transaction
 from trytond.tests.test_tryton import doctest_setup, doctest_teardown
 
 SCENARIOS = [
@@ -28,6 +29,17 @@ class FarmTestCase(ModuleTestCase):
     'Test Farm module'
     module = 'farm'
 
+    @with_transaction()
+    def test_ir_action_window(self):
+        """
+        Override test_ir_action_window to prevent its execution with sqlite
+        backend. SQLite (v 3.16.2) has a bug that makes the process hang with
+        100% CPU usage when search is executed on
+        farm.feed.animal_location_date, which uses table_query.
+        """
+        if backend.name() == 'sqlite':
+            return
+        super().test_ir_action_window()
 
 def suite():
     suite = trytond.tests.test_tryton.suite()
