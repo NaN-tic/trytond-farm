@@ -19,61 +19,54 @@
         </record>
 
         <record model="ir.model.button" id="draft_feed_event_button">
+            <field name="string">Draft</field>
             <field name="name">draft</field>
             <field name="model" search="[('model', '=', 'farm.feed.event')]"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="draft_feed_event_button_group_farm_admin">
+        <record model="ir.model.button-res.group" id="draft_feed_event_button_group_farm_admin">
             <field name="button" ref="draft_feed_event_button"/>
             <field name="group" ref="group_farm_admin"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="draft_feed_event_button_group_farm_males">
+        <record model="ir.model.button-res.group" id="draft_feed_event_button_group_farm_males">
             <field name="button" ref="draft_feed_event_button"/>
             <field name="group" ref="group_farm_males"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="draft_feed_event_button_group_farm_females">
+        <record model="ir.model.button-res.group" id="draft_feed_event_button_group_farm_females">
             <field name="button" ref="draft_feed_event_button"/>
             <field name="group" ref="group_farm_females"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="draft_feed_event_button_group_farm_individuals">
+        <record model="ir.model.button-res.group" id="draft_feed_event_button_group_farm_individuals">
             <field name="button" ref="draft_feed_event_button"/>
             <field name="group" ref="group_farm_individuals"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="draft_feed_event_button_group_farm_groups">
+        <record model="ir.model.button-res.group" id="draft_feed_event_button_group_farm_groups">
             <field name="button" ref="draft_feed_event_button"/>
             <field name="group" ref="group_farm_groups"/>
         </record>
 
         <record model="ir.model.button" id="validate_feed_event_button">
+            <field name="string">Validate</field>
             <field name="name">validate_event</field>
             <field name="model" search="[('model', '=', 'farm.feed.event')]"/>
+            <field name="help">Are you sure to validate this event?</field>
         </record>
-        <record model="ir.model.button-res.group"
-            id="validate_feed_event_button_group_farm_admin">
+        <record model="ir.model.button-res.group" id="validate_feed_event_button_group_farm_admin">
             <field name="button" ref="validate_feed_event_button"/>
             <field name="group" ref="group_farm_admin"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="validate_feed_event_button_group_farm_males">
+        <record model="ir.model.button-res.group" id="validate_feed_event_button_group_farm_males">
             <field name="button" ref="validate_feed_event_button"/>
             <field name="group" ref="group_farm_males"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="validate_feed_event_button_group_farm_females">
+        <record model="ir.model.button-res.group" id="validate_feed_event_button_group_farm_females">
             <field name="button" ref="validate_feed_event_button"/>
             <field name="group" ref="group_farm_females"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="validate_feed_event_button_group_farm_individuals">
+        <record model="ir.model.button-res.group" id="validate_feed_event_button_group_farm_individuals">
             <field name="button" ref="validate_feed_event_button"/>
             <field name="group" ref="group_farm_individuals"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="validate_feed_event_button_group_farm_groups">
+        <record model="ir.model.button-res.group" id="validate_feed_event_button_group_farm_groups">
             <field name="button" ref="validate_feed_event_button"/>
             <field name="group" ref="group_farm_groups"/>
         </record>

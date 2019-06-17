@@ -26,6 +26,7 @@
         </record>
 
         <record model="ir.model.button" id="draft_abort_event_button">
+            <field name="string">Draft</field>
             <field name="name">draft</field>
             <field name="model" search="[('model', '=', 'farm.abort.event')]"/>
         </record>
@@ -38,10 +39,11 @@
             <field name="group" ref="group_farm_females"/>
         </record>
 
-        <record model="ir.model.button"
-            id="validate_abort_event_button">
+        <record model="ir.model.button" id="validate_abort_event_button">
+            <field name="string">Validate</field>
             <field name="name">validate_event</field>
             <field name="model" search="[('model', '=', 'farm.abort.event')]"/>
+            <field name="help">Are you sure to validate this event?</field>
         </record>
         <record model="ir.model.button-res.group"
             id="validate_abort_event_button_group_farm_admin">

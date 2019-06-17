@@ -67,7 +67,7 @@
                 <label name="last_produced_group"/>
                 <field name="last_produced_group"/>
             </group>
-            <button name="change_observation" string="Change Cycle Observation"/>
+            <button name="change_observation"/>
         </page>
         <page string="Events" id="events">
             <field name="events" colspan="4" widget="many2many"/>

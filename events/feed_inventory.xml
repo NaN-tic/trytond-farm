@@ -16,32 +16,27 @@
         </record>
 
         <record model="ir.model.button" id="confirm_feed_inventory_button">
+            <field name="string">Confirm</field>
             <field name="name">confirm</field>
-            <field name="model"
-                search="[('model', '=', 'farm.feed.inventory')]"/>
+            <field name="model" search="[('model', '=', 'farm.feed.inventory')]"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="confirm_feed_inventory_button_group_farm_admin">
+        <record model="ir.model.button-res.group" id="confirm_feed_inventory_button_group_farm_admin">
             <field name="button" ref="confirm_feed_inventory_button"/>
             <field name="group" ref="group_farm_admin"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="confirm_feed_inventory_button_group_farm_males">
+        <record model="ir.model.button-res.group" id="confirm_feed_inventory_button_group_farm_males">
             <field name="button" ref="confirm_feed_inventory_button"/>
             <field name="group" ref="group_farm_males"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="confirm_feed_inventory_button_group_farm_females">
+        <record model="ir.model.button-res.group" id="confirm_feed_inventory_button_group_farm_females">
             <field name="button" ref="confirm_feed_inventory_button"/>
             <field name="group" ref="group_farm_females"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="confirm_feed_inventory_button_group_farm_individuals">
+        <record model="ir.model.button-res.group" id="confirm_feed_inventory_button_group_farm_individuals">
             <field name="button" ref="confirm_feed_inventory_button"/>
             <field name="group" ref="group_farm_individuals"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="confirm_feed_inventory_button_group_farm_groups">
+        <record model="ir.model.button-res.group" id="confirm_feed_inventory_button_group_farm_groups">
             <field name="button" ref="confirm_feed_inventory_button"/>
             <field name="group" ref="group_farm_groups"/>
         </record>
@@ -95,138 +90,98 @@
             <field name="name">farm_feed_provisional_inventory_list</field>
         </record>
 
-        <record model="ir.model.button"
-            id="draft_feed_provisional_inventory_button">
+        <record model="ir.model.button" id="draft_feed_provisional_inventory_button">
+            <field name="string">Draft</field>
             <field name="name">draft</field>
-            <field name="model"
-                search="[('model', '=', 'farm.feed.provisional_inventory')]"/>
+            <field name="model" search="[('model', '=', 'farm.feed.provisional_inventory')]"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="draft_feed_provisional_inventory_button_group_farm_admin">
-            <field name="button"
-                ref="draft_feed_provisional_inventory_button"/>
+        <record model="ir.model.button-res.group" id="draft_feed_provisional_inventory_button_group_farm_admin">
+            <field name="button" ref="draft_feed_provisional_inventory_button"/>
             <field name="group" ref="group_farm_admin"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="draft_feed_provisional_inventory_button_group_farm_males">
-            <field name="button"
-                ref="draft_feed_provisional_inventory_button"/>
+        <record model="ir.model.button-res.group" id="draft_feed_provisional_inventory_button_group_farm_males">
+            <field name="button" ref="draft_feed_provisional_inventory_button"/>
             <field name="group" ref="group_farm_males"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="draft_feed_provisional_inventory_button_group_farm_females">
-            <field name="button"
-                ref="draft_feed_provisional_inventory_button"/>
+        <record model="ir.model.button-res.group" id="draft_feed_provisional_inventory_button_group_farm_females">
+            <field name="button" ref="draft_feed_provisional_inventory_button"/>
             <field name="group" ref="group_farm_females"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="draft_feed_provisional_inventory_button_group_farm_individuals">
-            <field name="button"
-                ref="draft_feed_provisional_inventory_button"/>
+        <record model="ir.model.button-res.group" id="draft_feed_provisional_inventory_button_group_farm_individuals">
+            <field name="button" ref="draft_feed_provisional_inventory_button"/>
             <field name="group" ref="group_farm_individuals"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="draft_feed_provisional_inventory_button_group_farm_groups">
-            <field name="button"
-                ref="draft_feed_provisional_inventory_button"/>
+        <record model="ir.model.button-res.group" id="draft_feed_provisional_inventory_button_group_farm_groups">
+            <field name="button" ref="draft_feed_provisional_inventory_button"/>
             <field name="group" ref="group_farm_groups"/>
         </record>
 
-        <record model="ir.model.button"
-            id="confirm_feed_provisional_inventory_button">
+        <record model="ir.model.button" id="confirm_feed_provisional_inventory_button">
+            <field name="string">Confirm</field>
             <field name="name">confirm</field>
-            <field name="model"
-                search="[('model', '=', 'farm.feed.provisional_inventory')]"/>
+            <field name="model" search="[('model', '=', 'farm.feed.provisional_inventory')]"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="confirm_feed_provisional_inventory_button_group_farm_admin">
-            <field name="button"
-                ref="confirm_feed_provisional_inventory_button"/>
+        <record model="ir.model.button-res.group" id="confirm_feed_provisional_inventory_button_group_farm_admin">
+            <field name="button" ref="confirm_feed_provisional_inventory_button"/>
             <field name="group" ref="group_farm_admin"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="confirm_feed_provisional_inventory_button_group_farm_males">
-            <field name="button"
-                ref="confirm_feed_provisional_inventory_button"/>
+        <record model="ir.model.button-res.group" id="confirm_feed_provisional_inventory_button_group_farm_males">
+            <field name="button" ref="confirm_feed_provisional_inventory_button"/>
             <field name="group" ref="group_farm_males"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="confirm_feed_provisional_inventory_button_group_farm_females">
-            <field name="button"
-                ref="confirm_feed_provisional_inventory_button"/>
+        <record model="ir.model.button-res.group" id="confirm_feed_provisional_inventory_button_group_farm_females">
+            <field name="button" ref="confirm_feed_provisional_inventory_button"/>
             <field name="group" ref="group_farm_females"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="confirm_feed_provisional_inventory_button_group_farm_individuals">
-            <field name="button"
-                ref="confirm_feed_provisional_inventory_button"/>
+        <record model="ir.model.button-res.group" id="confirm_feed_provisional_inventory_button_group_farm_individuals">
+            <field name="button" ref="confirm_feed_provisional_inventory_button"/>
             <field name="group" ref="group_farm_individuals"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="confirm_feed_provisional_inventory_button_group_farm_groups">
-            <field name="button"
-                ref="confirm_feed_provisional_inventory_button"/>
+        <record model="ir.model.button-res.group" id="confirm_feed_provisional_inventory_button_group_farm_groups">
+            <field name="button" ref="confirm_feed_provisional_inventory_button"/>
             <field name="group" ref="group_farm_groups"/>
         </record>
 
-        <record model="ir.model.button"
-            id="cancel_feed_provisional_inventory_button">
+        <record model="ir.model.button" id="cancel_feed_provisional_inventory_button">
+            <field name="string">Cancel</field>
             <field name="name">cancel</field>
-            <field name="model"
-                search="[('model', '=', 'farm.feed.provisional_inventory')]"/>
+            <field name="model" search="[('model', '=', 'farm.feed.provisional_inventory')]"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="cancel_feed_provisional_inventory_button_group_farm_admin">
-            <field name="button"
-                ref="cancel_feed_provisional_inventory_button"/>
+        <record model="ir.model.button-res.group" id="cancel_feed_provisional_inventory_button_group_farm_admin">
+            <field name="button" ref="cancel_feed_provisional_inventory_button"/>
             <field name="group" ref="group_farm_admin"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="cancel_feed_provisional_inventory_button_group_farm_males">
-            <field name="button"
-                ref="cancel_feed_provisional_inventory_button"/>
+        <record model="ir.model.button-res.group" id="cancel_feed_provisional_inventory_button_group_farm_males">
+            <field name="button" ref="cancel_feed_provisional_inventory_button"/>
             <field name="group" ref="group_farm_males"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="cancel_feed_provisional_inventory_button_group_farm_females">
-            <field name="button"
-                ref="cancel_feed_provisional_inventory_button"/>
+        <record model="ir.model.button-res.group" id="cancel_feed_provisional_inventory_button_group_farm_females">
+            <field name="button" ref="cancel_feed_provisional_inventory_button"/>
             <field name="group" ref="group_farm_females"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="cancel_feed_provisional_inventory_button_group_farm_individuals">
-            <field name="button"
-                ref="cancel_feed_provisional_inventory_button"/>
+        <record model="ir.model.button-res.group" id="cancel_feed_provisional_inventory_button_group_farm_individuals">
+            <field name="button" ref="cancel_feed_provisional_inventory_button"/>
             <field name="group" ref="group_farm_individuals"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="cancel_feed_provisional_inventory_button_group_farm_groups">
-            <field name="button"
-                ref="cancel_feed_provisional_inventory_button"/>
+        <record model="ir.model.button-res.group" id="cancel_feed_provisional_inventory_button_group_farm_groups">
+            <field name="button" ref="cancel_feed_provisional_inventory_button"/>
             <field name="group" ref="group_farm_groups"/>
         </record>
 
-        <record model="ir.action.act_window"
-            id="act_farm_feed_provisional_inventory">
+        <record model="ir.action.act_window" id="act_farm_feed_provisional_inventory">
             <field name="name">Provisional Inventory</field>
             <field name="res_model">farm.feed.provisional_inventory</field>
             <field name="search_value"></field>
         </record>
-        <record model="ir.action.act_window.view"
-            id="act_farm_feed_provisional_inventory_view1">
+        <record model="ir.action.act_window.view" id="act_farm_feed_provisional_inventory_view1">
             <field name="sequence" eval="10"/>
-            <field name="view"
-                ref="farm_feed_provisional_inventory_list_view"/>
-            <field name="act_window"
-                ref="act_farm_feed_provisional_inventory"/>
+            <field name="view" ref="farm_feed_provisional_inventory_list_view"/>
+            <field name="act_window" ref="act_farm_feed_provisional_inventory"/>
         </record>
-        <record model="ir.action.act_window.view"
-            id="act_farm_feed_provisional_inventory_view2">
+        <record model="ir.action.act_window.view" id="act_farm_feed_provisional_inventory_view2">
             <field name="sequence" eval="20"/>
-            <field name="view"
-                ref="farm_feed_provisional_inventory_form_view"/>
-            <field name="act_window"
-                ref="act_farm_feed_provisional_inventory"/>
+            <field name="view" ref="farm_feed_provisional_inventory_form_view"/>
+            <field name="act_window" ref="act_farm_feed_provisional_inventory"/>
         </record>
 
         <record model="ir.model.access" id="access_farm_feed_provisional_inventory">
@@ -247,15 +202,13 @@
         </record>
 
         <!-- farm.feed.animal_location_date -->
-        <record model="ir.ui.view"
-                id="farm_feed_animal_location_date_form_view">
+        <record model="ir.ui.view" id="farm_feed_animal_location_date_form_view">
             <field name="model">farm.feed.animal_location_date</field>
             <field name="type">form</field>
             <field name="name">farm_feed_animal_location_date_form</field>
         </record>
 
-        <record model="ir.ui.view"
-                id="farm_feed_animal_location_date_list_view">
+        <record model="ir.ui.view" id="farm_feed_animal_location_date_list_view">
             <field name="model">farm.feed.animal_location_date</field>
             <field name="type">tree</field>
             <field name="name">farm_feed_animal_location_date_list</field>
@@ -283,40 +236,32 @@
             <field name="res_model">farm.feed.animal_location_date</field>
             <field name="domain" eval="[('animal', '=', Eval('active_id'))]" pyson="1"/>
         </record>
-        <record model="ir.action.keyword"
-                id="act_farm_feed_animal_location_date_by_animal_keyword">
+        <record model="ir.action.keyword" id="act_farm_feed_animal_location_date_by_animal_keyword">
             <field name="keyword">form_relate</field>
             <field name="model">farm.animal,-1</field>
-            <field name="action"
-                ref="act_farm_feed_animal_location_date_by_animal"/>
+            <field name="action" ref="act_farm_feed_animal_location_date_by_animal"/>
         </record>
 
-        <record model="ir.action.act_window"
-                id="act_farm_feed_animal_location_date_by_group">
+        <record model="ir.action.act_window" id="act_farm_feed_animal_location_date_by_group">
             <field name="name">Feed consumption by Group</field>
             <field name="res_model">farm.feed.animal_location_date</field>
             <field name="domain" eval="[('animal_group', '=', Eval('active_id'))]" pyson="1"/>
         </record>
-        <record model="ir.action.keyword"
-                id="act_farm_feed_animal_location_date_by_group_keyword">
+        <record model="ir.action.keyword" id="act_farm_feed_animal_location_date_by_group_keyword">
             <field name="keyword">form_relate</field>
             <field name="model">farm.animal.group,-1</field>
-            <field name="action"
-                ref="act_farm_feed_animal_location_date_by_group"/>
+            <field name="action" ref="act_farm_feed_animal_location_date_by_group"/>
         </record>
 
-        <record model="ir.action.act_window"
-                id="act_farm_feed_animal_location_date_by_location">
+        <record model="ir.action.act_window" id="act_farm_feed_animal_location_date_by_location">
             <field name="name">Feed consumption by Location</field>
             <field name="res_model">farm.feed.animal_location_date</field>
             <field name="domain" eval="[('location', '=', Eval('active_id'))]" pyson="1"/>
         </record>
-        <record model="ir.action.keyword"
-                id="act_farm_feed_animal_location_date_by_location_keyword">
+        <record model="ir.action.keyword" id="act_farm_feed_animal_location_date_by_location_keyword">
             <field name="keyword">form_relate</field>
             <field name="model">stock.location,-1</field>
-            <field name="action"
-                ref="act_farm_feed_animal_location_date_by_location"/>
+            <field name="action" ref="act_farm_feed_animal_location_date_by_location"/>
         </record>
     </data>
 </tryton>

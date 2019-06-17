@@ -55,10 +55,7 @@
     <group id="state_and_buttons" colspan="4" col="12">
         <label name="state"/>
         <field name="state"/>
-        <!--<button name="cancel" string="_Cancel" icon="tryton-cancel"
-            help="Are you sure to cancel this event?"/>-->
-        <button name="draft" string="_Draft" icon="tryton-go-previous"/>
-        <button name="validate_event" string="_Validate" icon="tryton-ok"
-            help="Are you sure to validate this event?"/>
+        <button name="draft"/>
+        <button name="validate_event"/>
     </group>
 </form>
