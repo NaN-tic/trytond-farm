@@ -227,6 +227,8 @@ class SemenExtractionEvent(AbstractEvent):
         for input_ in self.dose_bom.inputs:
             if input_.product == semen_product:
                 consumed_semen_qty = input_.compute_quantity(factor)
+                if not self.formula_uom:
+                    continue
                 consumed_semen_qty = Uom.compute_qty(self.formula_uom,
                     consumed_semen_qty, input_.uom)
                 break

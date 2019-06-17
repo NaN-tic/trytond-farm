@@ -95,6 +95,18 @@
             <field name="view" ref="farm_medication_event_form_view"/>
             <field name="act_window" ref="act_farm_medication_event"/>
         </record>
+        <record model="ir.action.act_window.domain" id="act_farm_medication_event_domain_draft">
+            <field name="name">Draft</field>
+            <field name="sequence" eval="10"/>
+            <field name="domain" eval="[('state', '=', 'draft')]" pyson="1"/>
+            <field name="count" eval="True"/>
+            <field name="act_window" ref="act_farm_medication_event"/>
+        </record>
+        <record model="ir.action.act_window.domain" id="act_farm_medication_event_domain_all">
+            <field name="name">All</field>
+            <field name="sequence" eval="20"/>
+            <field name="act_window" ref="act_farm_medication_event"/>
+        </record>
 
         <!-- Permissions -->
         <record model="ir.model.access" id="access_farm_medication_event">
