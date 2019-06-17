@@ -592,6 +592,8 @@ class SemenExtractionDose(ModelSQL, ModelView):
         for input_ in self.bom.inputs:
             if input_.product == semen_product:
                 semen_qty = input_.compute_quantity(factor)
+                if not self.event.formula_uom:
+                    continue
                 semen_qty = Uom.compute_qty(self.event.formula_uom, semen_qty,
                     input_.uom)
                 break
