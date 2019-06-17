@@ -114,10 +114,12 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
                 #     'invisible': Eval('state') == 'cancel',
                 #     },
                 'draft': {
-                   'invisible': Eval('state') == 'draft',
+                    'invisible': Eval('state') == 'draft',
+                    'icon': 'tryton-go-previous',
                    },
                 'validate_event': {
                     'invisible': Eval('state') != 'draft',
+                    'icon': 'tryton-ok',
                     },
                 })
         cls._transitions = set((

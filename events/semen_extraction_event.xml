@@ -19,6 +19,7 @@
         </record>
 
         <record model="ir.model.button" id="draft_semen_extraction_event_button">
+            <field name="string">Draft</field>
             <field name="name">draft</field>
             <field name="model" search="[('model', '=', 'farm.semen_extraction.event')]"/>
         </record>
@@ -32,8 +33,10 @@
         </record>
 
         <record model="ir.model.button" id="validate_semen_extraction_event_button">
+            <field name="string">Validate</field>
             <field name="name">validate_event</field>
             <field name="model" search="[('model', '=', 'farm.semen_extraction.event')]"/>
+            <field name="help">Are you sure to validate this event?</field>
         </record>
         <record model="ir.model.button-res.group" id="validate_semen_extraction_event_button_group_farm_admin">
             <field name="button" ref="validate_semen_extraction_event_button"/>
@@ -45,8 +48,8 @@
         </record>
 
         <record model="ir.model.button" id="calculate_doses_semen_extraction_event_button">
-            <field name="name">calculate_doses</field>
             <field name="string">Calculate Doses</field>
+            <field name="name">calculate_doses</field>
             <field name="model" search="[('model', '=', 'farm.semen_extraction.event')]"/>
         </record>
         <record model="ir.model.button-res.group"

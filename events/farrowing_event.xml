@@ -104,6 +104,7 @@
         </record>
 
         <record model="ir.model.button" id="draft_farrowing_event_button">
+            <field name="name">Draft</field>
             <field name="name">draft</field>
             <field name="model" search="[('model', '=', 'farm.farrowing.event')]"/>
         </record>
@@ -117,8 +118,10 @@
         </record>
 
         <record model="ir.model.button" id="validate_farrowing_event_button">
+            <field name="string">Validate</field>
             <field name="name">validate_event</field>
             <field name="model" search="[('model', '=', 'farm.farrowing.event')]"/>
+            <field name="help">Are you sure to validate this event?</field>
         </record>
         <record model="ir.model.button-res.group" id="validate_farrowing_event_button_group_farm_admin">
             <field name="button" ref="validate_farrowing_event_button"/>

@@ -185,6 +185,7 @@
 
         <!-- Buttons -->
         <record model="ir.model.button" id="change_observation_animal_button">
+            <field name="string">Change Cycle Observation</field>
             <field name="name">change_observation</field>
             <field name="model" search="[('model', '=', 'farm.animal')]"/>
         </record>
