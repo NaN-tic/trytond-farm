@@ -48,7 +48,7 @@
             <field name="string">Validate</field>
             <field name="name">validate_event</field>
             <field name="model" search="[('model', '=', 'farm.transformation.event')]"/>
-            <field name="help">Are you sure to validate this event?</field>
+            <field name="confirm">Are you sure to validate this event?</field>
         </record>
         <record model="ir.model.button-res.group" id="validate_transformation_event_button_group_farm_admin">
             <field name="button" ref="validate_transformation_event_button"/>
