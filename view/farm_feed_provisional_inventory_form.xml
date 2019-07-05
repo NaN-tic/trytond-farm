@@ -32,9 +32,9 @@ contains the full copyright notices and license terms. -->
         <label name="state"/>
         <field name="state"/>
         <group colspan="2" col="3" id="buttons">
-            <button name="cancel" icon="tryton-cancel" />
-            <button name="confirm" icon="tryton-ok"/>
-            <button name="draft" icon="tryton-go-previous"/>
+            <button name="cancel" />
+            <button name="confirm"/>
+            <button name="draft"/>
         </group>
     </group>
 </form>

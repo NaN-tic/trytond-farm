@@ -414,6 +414,7 @@ class FeedInventoryMixin(object):
         cls._buttons.update({
                 'confirm': {
                     'invisible': Eval('state') != 'draft',
+                    'icon': 'tryton-ok',
                     },
                 # 'cancel': {
                 #     'invisible': Eval('state') == 'cancel',
