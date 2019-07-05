@@ -27,8 +27,6 @@
     <field name="foster_events" colspan="4" view_ids="farm.farm_foster_event_list_editable_view"/>
     <field name="weaning_events" colspan="4" view_ids="farm.farm_weaning_event_list_editable_view"/>
     <group colspan="4" col="3" id="buttons">
-        <!--<button string="Cancel" name="cancel" icon="tryton-cancel" />-->
-        <button name="confirm" icon="tryton-ok"/>
-        <!--<button string="Draft" name="draft" icon="tryton-go-previous"/>-->
+        <button name="confirm"/>
     </group>
 </form>

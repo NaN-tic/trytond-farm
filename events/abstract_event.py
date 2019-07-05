@@ -110,9 +110,10 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
     def __setup__(cls):
         super(AbstractEvent, cls).__setup__()
         cls._buttons.update({
-                # 'cancel': {
-                #     'invisible': Eval('state') == 'cancel',
-                #     },
+                'cancel': {
+                     'invisible': Eval('state') == 'cancel',
+                     'icon': 'tryton-cancel'
+                     },
                 'draft': {
                     'invisible': Eval('state') == 'draft',
                     'icon': 'tryton-go-previous',

@@ -27,7 +27,7 @@ contains the full copyright notices and license terms. -->
         <label name="state"/>
         <field name="state"/>
         <group colspan="2" col="3" id="buttons">
-            <button name="confirm" icon="tryton-ok"/>
+            <button name="confirm"/>
         </group>
     </group>
 </form>
