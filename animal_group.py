@@ -452,7 +452,9 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
 
         group_product = specie.group_product.id
         lot_tmp = Lot(product=group_product)
-        cost_lines = lot_tmp._on_change_product_cost_lines().get('add')
+        cost_lines = None
+        if lot_tmp:
+            cost_lines = lot_tmp._on_change_product_cost_lines().get('add')
         return {
             'number': group_vals['number'],
             'product': group_product,
