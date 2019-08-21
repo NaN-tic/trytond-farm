@@ -363,7 +363,7 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
             if farm_line.farm.id == location.warehouse.id:
                 if farm_line.has_group:
                     return
-        raise UserError(gettext('farm.invalid_group_destination', 
+        raise UserError(gettext('farm.invalid_group_destination',
                 event=event_rec_name,
                 group=self.rec_name,
                 location=location.rec_name,
