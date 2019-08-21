@@ -2,10 +2,10 @@
 <!-- This file is part of Tryton.  The COPYRIGHT file at the top level of
 this repository contains the full copyright notices and license terms. -->
 <tryton>
-    <data group="1">
+    <data grouped="1">
         <!-- animal.py & animal_group.py -->
         <record model="ir.message" id="missing_supplier_location">
-            <field name="text">Supplier Location of company's party "%(party)s" is empty but it is required to create the arrival stock move for a new group.</field>
+            <field name="text">Supplier Location of company's party "%(party)s" is empty but it is required to create the arrival stock move for a new animal/group.</field>
         </record>
         <record model="ir.message" id="missing_production_location">
             <field name="text">The warehouse location "%(location)s" doesn't have set production location, but it is required to create the arrival stock move for a new animal.</field>
@@ -60,7 +60,7 @@ this repository contains the full copyright notices and license terms. -->
             <field name="text">The required product "%(product_field)s" is not set in the farm "%(farm)s".</field>
         </record>
         <record model="ir.message" id="duplicate_animal">
-            <field name="text">A female animal with the same number (%(number)s) already exisit in this farm.</field>
+            <field name="text">A female animal with the same number (%(number)s) already exists in this farm.</field>
         </record>
         <record model="ir.message" id="cycle_invalid_date">
             <field name="text">The date of the cycle is before the one of the precious cycle.</field>
@@ -77,7 +77,7 @@ this repository contains the full copyright notices and license terms. -->
 
         <!-- quality.py -->
         <record model="ir.message" id="no_set_draft_semen_extraction_test">
-            <field name="text">The quality test "%(test)s" can't be set to Draft because it is related to a validated semen extraction event.</field>
+            <field name="text">The quality test "%(test)s" can't be set to "Draft" because it is related to a validated semen extraction event.</field>
         </record>
 
         <!-- specie.py -->
@@ -99,7 +99,7 @@ this repository contains the full copyright notices and license terms. -->
             <field name="text">The Abort Event must be unique.</field>
         </record>
         <record model="ir.message" id="abort_cycle_unique">
-            <field name="text">The Abort Cycle must be unique.</field>
+            <field name="text">The Female Cycle must be unique.</field>
         </record>
 
         <!-- events/farrowing_event.py -->
@@ -184,7 +184,7 @@ this repository contains the full copyright notices and license terms. -->
         </record>
         <!-- events/abstract_event.py -->
         <record model="ir.message" id="invalid_state_to_delete">
-            <field name="text">The event '%(event)s' can't be deleted because is not in 'Draft' state.</field>
+            <field name="text">The event "%(event)s" can't be deleted because is not in "Draft" state.</field>
         </record>
         <record model="ir.message" id="abstract_invalid_date">
             <field name="text">The date of the event is set in the future.</field>
