@@ -151,7 +151,7 @@ class SemenExtractionEvent(AbstractEvent):
             'calculate_doses': {
                 'invisible': Eval('state') != 'draft',
                 'readonly': Bool(Eval('doses')),
-                'icon': 'tryton-go-next',
+                'icon': 'tryton-forward',
                 },
             })
 
