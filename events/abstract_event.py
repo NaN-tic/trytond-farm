@@ -112,7 +112,7 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
         cls._buttons.update({
                 'draft': {
                     'invisible': Eval('state') == 'draft',
-                    'icon': 'tryton-go-previous',
+                    'icon': 'tryton-back',
                    },
                 'validate_event': {
                     'invisible': Eval('state') != 'draft',
