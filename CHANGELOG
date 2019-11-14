@@ -1,3 +1,4 @@
+Version 5.4.0 - 2019-11-14
 @ 2017-05-31
 * Tryton now only allows the current user to use the user specified farms.
 
