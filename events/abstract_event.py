@@ -163,7 +163,7 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
         raise NotImplementedError(
             "Please Implement valid_animal_types() method")
 
-    @fields.depends('animal_type', 'animal')
+    @fields.depends('animal_type', 'animal', '_parent_animal.farm')
     def on_change_animal(self):
         if (self.animal_type == 'group' or not self.animal or
                 not self.animal.farm):
