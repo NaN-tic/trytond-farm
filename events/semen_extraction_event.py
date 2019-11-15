@@ -570,18 +570,18 @@ class SemenExtractionDose(ModelSQL, ModelView):
         return "#%d (%s)" % (self.sequence,
             self.lot and self.lot.rec_name or self.bom.rec_name)
 
-    @fields.depends('event')
+    @fields.depends('event', '_parent_event.specie')
     def on_change_with_specie(self, name=None):
         return self.event and self.event.specie.id or None
 
     def get_semen_unit_digits(self, name):
         return self.event and self.event.formula_unit_digits
 
-    @fields.depends('event')
+    @fields.depends('event', '_parent_event.state')
     def on_change_with_state(self, name=None):
         return self.event and self.event.state or 'draft'
 
-    @fields.depends('event', 'bom', 'quantity')
+    @fields.depends('_parent_event.specie' ,'event', 'bom', 'quantity')
     def on_change_with_semen_qty(self, name=None):
         Uom = Pool().get('product.uom')
         if not self.event or not self.bom or not self.quantity:
