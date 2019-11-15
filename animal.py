@@ -980,7 +980,7 @@ class FemaleCycle(ModelSQL, ModelView):
     def default_state():
         return 'unmated'
 
-    @fields.depends('animal', 'ordination_date')
+    @fields.depends('_parent_animal.id', 'animal', 'ordination_date')
     def on_change_ordination_date(self):
         if not self.ordination_date or not self.animal:
             return

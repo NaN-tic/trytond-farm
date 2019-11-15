@@ -80,7 +80,7 @@ class FeedEvent(FeedEventMixin, ModelSQL, ModelView, Workflow):
         if not self.feed_location or not self.feed_location.current_lot:
             self.feed_product = None
             self.feed_lot = None
-            self.feed_uom = None
+            self.uom = None
             return
         self.feed_product = self.feed_location.current_lot.product
         self.feed_lot = self.feed_location.current_lot
