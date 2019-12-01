@@ -235,7 +235,7 @@ class Specie(ModelSQL, ModelView):
                     specie._duplicate_menu(extra_menu, animals_menu,
                         animal_submenu_seq, current_menus, current_actions,
                         current_wizards, new_domain=new_domain,
-                        new_context=new_context)
+                        new_icon='tryton-launch', new_context=new_context)
                     animal_submenu_seq += 1
 
             # Orders submenus
