@@ -104,7 +104,7 @@
         </record>
 
         <record model="ir.model.button" id="draft_farrowing_event_button">
-            <field name="name">Draft</field>
+            <field name="string">Draft</field>
             <field name="name">draft</field>
             <field name="model" search="[('model', '=', 'farm.farrowing.event')]"/>
         </record>
