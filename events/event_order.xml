@@ -53,92 +53,78 @@
 
         <record model="ir.model.button" id="draft_farm_event_order_button">
             <field name="name">draft</field>
-            <field name="model"
-                search="[('model', '=', 'farm.event.order')]"/>
+            <field name="string">Draft</field>
+            <field name="model" search="[('model', '=', 'farm.event.order')]"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="draft_farm_event_order_button_group_farm_admin">
+        <record model="ir.model.button-res.group" id="draft_farm_event_order_button_group_farm_admin">
             <field name="button" ref="draft_farm_event_order_button"/>
             <field name="group" ref="group_farm_admin"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="draft_farm_event_order_button_group_farm_males">
+        <record model="ir.model.button-res.group" id="draft_farm_event_order_button_group_farm_males">
             <field name="button" ref="draft_farm_event_order_button"/>
             <field name="group" ref="group_farm_males"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="draft_farm_event_order_button_group_farm_females">
+        <record model="ir.model.button-res.group" id="draft_farm_event_order_button_group_farm_females">
             <field name="button" ref="draft_farm_event_order_button"/>
             <field name="group" ref="group_farm_females"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="draft_farm_event_order_button_group_farm_individuals">
+        <record model="ir.model.button-res.group" id="draft_farm_event_order_button_group_farm_individuals">
             <field name="button" ref="draft_farm_event_order_button"/>
             <field name="group" ref="group_farm_individuals"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="draft_farm_event_order_button_group_farm_groups">
+        <record model="ir.model.button-res.group" id="draft_farm_event_order_button_group_farm_groups">
             <field name="button" ref="draft_farm_event_order_button"/>
             <field name="group" ref="group_farm_groups"/>
         </record>
 
-        <record model="ir.model.button"
-            id="confirm_farm_event_order_button">
+        <record model="ir.model.button" id="confirm_farm_event_order_button">
             <field name="name">confirm</field>
+            <field name="string">Confirm</field>
             <field name="model" search="[('model', '=', 'farm.event.order')]"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="confirm_farm_event_order_button_group_farm_admin">
+        <record model="ir.model.button-res.group" id="confirm_farm_event_order_button_group_farm_admin">
             <field name="button" ref="confirm_farm_event_order_button"/>
             <field name="group" ref="group_farm_admin"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="confirm_farm_event_order_button_group_farm_males">
+        <record model="ir.model.button-res.group" id="confirm_farm_event_order_button_group_farm_males">
             <field name="button" ref="confirm_farm_event_order_button"/>
             <field name="group" ref="group_farm_males"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="confirm_farm_event_order_button_group_farm_females">
+        <record model="ir.model.button-res.group" id="confirm_farm_event_order_button_group_farm_females">
             <field name="button" ref="confirm_farm_event_order_button"/>
             <field name="group" ref="group_farm_females"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="confirm_farm_event_order_button_group_farm_individuals">
+        <record model="ir.model.button-res.group" id="confirm_farm_event_order_button_group_farm_individuals">
             <field name="button" ref="confirm_farm_event_order_button"/>
             <field name="group" ref="group_farm_individuals"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="confirm_farm_event_order_button_group_farm_groups">
+        <record model="ir.model.button-res.group" id="confirm_farm_event_order_button_group_farm_groups">
             <field name="button" ref="confirm_farm_event_order_button"/>
             <field name="group" ref="group_farm_groups"/>
         </record>
 
         <record model="ir.model.button" id="cancel_farm_event_order_button">
             <field name="name">cancel</field>
+            <field name="string">Cancel</field>
             <field name="model" search="[('model', '=', 'farm.event.order')]"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="cancel_farm_event_order_button_group_farm_admin">
+        <record model="ir.model.button-res.group" id="cancel_farm_event_order_button_group_farm_admin">
             <field name="button" ref="cancel_farm_event_order_button"/>
             <field name="group" ref="group_farm_admin"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="cancel_farm_event_order_button_group_farm_males">
+        <record model="ir.model.button-res.group" id="cancel_farm_event_order_button_group_farm_males">
             <field name="button" ref="cancel_farm_event_order_button"/>
             <field name="group" ref="group_farm_males"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="cancel_farm_event_order_button_group_farm_females">
+        <record model="ir.model.button-res.group" id="cancel_farm_event_order_button_group_farm_females">
             <field name="button" ref="cancel_farm_event_order_button"/>
             <field name="group" ref="group_farm_females"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="cancel_farm_event_order_button_group_farm_individuals">
+        <record model="ir.model.button-res.group" id="cancel_farm_event_order_button_group_farm_individuals">
             <field name="button" ref="cancel_farm_event_order_button"/>
             <field name="group" ref="group_farm_individuals"/>
         </record>
-        <record model="ir.model.button-res.group"
-            id="cancel_farm_event_order_button_group_farm_groups">
+        <record model="ir.model.button-res.group" id="cancel_farm_event_order_button_group_farm_groups">
             <field name="button" ref="cancel_farm_event_order_button"/>
             <field name="group" ref="group_farm_groups"/>
         </record>
