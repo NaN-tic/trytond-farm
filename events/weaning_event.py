@@ -37,7 +37,7 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
         states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
     fostered = fields.Function(fields.Integer('Fostered'),
         'on_change_with_fostered')
-    last_minute_fostered = fields.Integer('Last minute fostered',
+    last_minute_fostered = fields.Integer('Last minute fostered', required=True,
 	states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
     casualties = fields.Function(fields.Integer('Casualties'),
         'on_change_with_casualties')
@@ -124,6 +124,10 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
     @staticmethod
     def default_animal_type():
         return 'female'
+
+    @staticmethod
+    def default_last_minute_fostered():
+        return 0
 
     @staticmethod
     def valid_animal_types():
