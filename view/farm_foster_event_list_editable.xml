@@ -5,13 +5,13 @@
     <field name="animal"/>
     <field name="animal_group"/>
     <field name="state"/>
+    <field name="female_cycle"/>
+    <field name="farrowing_group"/>
+    <field name="quantity"/>
+    <field name="pair_female" tree_invisible="1"/>
+    <field name="pair_event" tree_invisible="1"/>
     <field name="farm" tree_invisible="1"/>
     <field name="employee" tree_invisible="1"/>
     <field name="timestamp" widget="date" tree_invisible="1"/>
     <field name="timestamp" widget="time" tree_invisible="1"/>
-    <field name="female_cycle"/>
-    <field name="farrowing_group"/>
-    <field name="quantity"/>
-    <field name="pair_female"/>
-    <field name="pair_event"/>
 </tree>
