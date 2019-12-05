@@ -579,6 +579,10 @@ msgctxt "field:farm.event.order,pregnancy_diagnosis_events:"
 msgid "Pregnancy Diagnosis"
 msgstr "Diagnósticos de gestación"
 
+msgctxt "field:farm.event.order,removal_events:"
+msgid "Removals"
+msgstr "Eliminaciones"
+
 msgctxt "field:farm.event.order,specie:"
 msgid "Specie"
 msgstr "Especie"
@@ -3463,20 +3467,107 @@ msgctxt "model:ir.message,text:weaning_event_unique"
 msgid "The Weaning Event must be unique."
 msgstr "El evento de destete debe ser único."
 
+msgctxt "model:ir.model.button,confirm:validate_abort_event_button"
+msgid "Are you sure to validate this event?"
+msgstr "Está seguro que quiere validar el evento?"
+
+msgctxt "model:ir.model.button,confirm:validate_farrowing_event_button"
+msgid "Are you sure to validate this event?"
+msgstr "Está seguro que quiere validar el evento?"
+
+msgctxt "model:ir.model.button,confirm:validate_feed_event_button"
+msgid "Are you sure to validate this event?"
+msgstr "Está seguro que quiere validar el evento?"
+
+msgctxt "model:ir.model.button,confirm:validate_foster_event_button"
+msgid "Are you sure to validate this event?"
+msgstr "Está seguro que quiere validar el evento?"
+
+msgctxt "model:ir.model.button,confirm:validate_insemination_event_button"
+msgid "Are you sure to validate this event?"
+msgstr "Está seguro que quiere validar el evento?"
+
+msgctxt "model:ir.model.button,confirm:validate_medication_event_button"
+msgid "Are you sure to validate this event?"
+msgstr "Está seguro que quiere validar el evento?"
+
+msgctxt "model:ir.model.button,confirm:validate_move_event_button"
+msgid "Are you sure to validate this event?"
+msgstr "Está seguro que quiere validar el evento?"
+
+msgctxt ""
+"model:ir.model.button,confirm:validate_pregnancy_diagnosis_event_button"
+msgid "Are you sure to validate this event?"
+msgstr "Está seguro que quiere validar el evento?"
+
+msgctxt "model:ir.model.button,confirm:validate_removal_event_button"
+msgid "Are you sure to validate this event?"
+msgstr "Está seguro que quiere validar el evento?"
+
+msgctxt "model:ir.model.button,confirm:validate_semen_extraction_event_button"
+msgid "Are you sure to validate this event?"
+msgstr "Está seguro que quiere validar el evento?"
+
+msgctxt "model:ir.model.button,confirm:validate_transformation_event_button"
+msgid "Are you sure to validate this event?"
+msgstr "Está seguro que quiere validar el evento?"
+
+msgctxt "model:ir.model.button,confirm:validate_weaning_event_button"
+msgid "Are you sure to validate this event?"
+msgstr "Está seguro que quiere validar el evento?"
+
 msgctxt ""
 "model:ir.model.button,string:calculate_doses_semen_extraction_event_button"
 msgid "Calculate Doses"
 msgstr "Calcular dosis"
 
+msgctxt "model:ir.model.button,string:cancel_farm_event_order_button"
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgctxt ""
+"model:ir.model.button,string:cancel_feed_provisional_inventory_button"
+msgid "Cancel"
+msgstr "Cancelar"
+
 msgctxt "model:ir.model.button,string:change_observation_animal_button"
 msgid "Change Cycle Observation"
 msgstr "Observaciones cambio de ciclo"
+
+msgctxt "model:ir.model.button,string:confirm_farm_event_order_button"
+msgid "Confirm"
+msgstr "Confirmar"
+
+msgctxt "model:ir.model.button,string:confirm_feed_inventory_button"
+msgid "Confirm"
+msgstr "Confirmar"
+
+msgctxt ""
+"model:ir.model.button,string:confirm_feed_provisional_inventory_button"
+msgid "Confirm"
+msgstr "Confirmar"
+
+msgctxt "model:ir.model.button,string:create_menu_entries_button"
+msgid "Create Menu Entries"
+msgstr "Crear entradas de menú"
 
 msgctxt "model:ir.model.button,string:draft_abort_event_button"
 msgid "Draft"
 msgstr "Borrador"
 
+msgctxt "model:ir.model.button,string:draft_farm_event_order_button"
+msgid "Draft"
+msgstr "Borrador"
+
+msgctxt "model:ir.model.button,string:draft_farrowing_event_button"
+msgid "Draft"
+msgstr "Borrador"
+
 msgctxt "model:ir.model.button,string:draft_feed_event_button"
+msgid "Draft"
+msgstr "Borrador"
+
+msgctxt "model:ir.model.button,string:draft_feed_provisional_inventory_button"
 msgid "Draft"
 msgstr "Borrador"
 
@@ -3515,6 +3606,55 @@ msgstr "Borrador"
 msgctxt "model:ir.model.button,string:draft_weaning_event_button"
 msgid "Draft"
 msgstr "Borrador"
+
+msgctxt "model:ir.model.button,string:validate_abort_event_button"
+msgid "Validate"
+msgstr "Validar"
+
+msgctxt "model:ir.model.button,string:validate_farrowing_event_button"
+msgid "Validate"
+msgstr "Validar"
+
+msgctxt "model:ir.model.button,string:validate_feed_event_button"
+msgid "Validate"
+msgstr "Validar"
+
+msgctxt "model:ir.model.button,string:validate_foster_event_button"
+msgid "Validate"
+msgstr "Validar"
+
+msgctxt "model:ir.model.button,string:validate_insemination_event_button"
+msgid "Validate"
+msgstr "Validar"
+
+msgctxt "model:ir.model.button,string:validate_medication_event_button"
+msgid "Validate"
+msgstr "Validar"
+
+msgctxt "model:ir.model.button,string:validate_move_event_button"
+msgid "Validate"
+msgstr "Validar"
+
+msgctxt ""
+"model:ir.model.button,string:validate_pregnancy_diagnosis_event_button"
+msgid "Validate"
+msgstr "Validar"
+
+msgctxt "model:ir.model.button,string:validate_removal_event_button"
+msgid "Validate"
+msgstr "Validar"
+
+msgctxt "model:ir.model.button,string:validate_semen_extraction_event_button"
+msgid "Validate"
+msgstr "Validar"
+
+msgctxt "model:ir.model.button,string:validate_transformation_event_button"
+msgid "Validate"
+msgstr "Validar"
+
+msgctxt "model:ir.model.button,string:validate_weaning_event_button"
+msgid "Validate"
+msgstr "Validar"
 
 msgctxt "model:ir.sequence.type,name:sequence_type_animal"
 msgid "Farm Animal"
@@ -3891,6 +4031,10 @@ msgstr "Medicaciones"
 msgctxt "selection:farm.event.order,event_type:"
 msgid "Pregnancy Diagnosis"
 msgstr "Diagnóstico de gestación"
+
+msgctxt "selection:farm.event.order,event_type:"
+msgid "Removals"
+msgstr "Eliminaciones"
 
 msgctxt "selection:farm.event.order,event_type:"
 msgid "Weanings"
@@ -4317,10 +4461,6 @@ msgid "Create Female"
 msgstr "Crear hembra"
 
 msgctxt "view:farm.event.order:"
-msgid "Confirm"
-msgstr "Confirmar"
-
-msgctxt "view:farm.event.order:"
 msgid "Work Order"
 msgstr "Órden de trebajo"
 
@@ -4337,24 +4477,12 @@ msgid "Consumed Qty. per Animal"
 msgstr "Cdad. consumida por animal"
 
 msgctxt "view:farm.feed.inventory:"
-msgid "Confirm"
-msgstr "Confirmar"
-
-msgctxt "view:farm.feed.inventory:"
 msgid "Feed Inventory"
 msgstr "Inventario de pienso"
 
 msgctxt "view:farm.feed.provisional_inventory:"
 msgid "Cancel"
 msgstr "Cancelar"
-
-msgctxt "view:farm.feed.provisional_inventory:"
-msgid "Confirm"
-msgstr "Confirmar"
-
-msgctxt "view:farm.feed.provisional_inventory:"
-msgid "Draft"
-msgstr "Borrador"
 
 msgctxt "view:farm.feed.provisional_inventory:"
 msgid "Feed Provisional Inventory"
@@ -4470,7 +4598,7 @@ msgstr "Crear"
 
 msgctxt "wizard_button:female.cycle.observation,start,end:"
 msgid "Cancel"
-msgstr "Cancel·lar"
+msgstr "Cancelar"
 
 msgctxt "wizard_button:female.cycle.observation,start,result:"
 msgid "Create"
