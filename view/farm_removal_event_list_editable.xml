@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tree editable="bottom">
+    <field name="animal"/>
+    <field name="animal_group"/>
+    <field name="from_location"/>
+    <field name="quantity"/>
+    <field name="removal_type"/>
+    <field name="reason"/>
+    <field name="state"/>
+</tree>
