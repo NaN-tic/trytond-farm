@@ -172,6 +172,13 @@
             <field name="name">farm_removal_event_list</field>
         </record>
 
+        <record model="ir.ui.view" id="farm_removal_event_list_editable_view">
+            <field name="model">farm.removal.event</field>
+            <field name="type">tree</field>
+            <field name="inherit" eval="None"/>
+            <field name="name">farm_removal_event_list_editable</field>
+        </record>
+
         <record model="ir.model.button" id="draft_removal_event_button">
             <field name="string">Draft</field>
             <field name="name">draft</field>
