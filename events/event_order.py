@@ -3,7 +3,7 @@
 import logging
 from datetime import datetime
 
-from trytond.model import fields, ModelSQL, ModelView, Workflow, Unique, Check
+from trytond.model import fields, ModelSQL, ModelView, Unique, Check
 from trytond.pyson import Bool, Equal, Eval, Get, Not
 from trytond.pool import Pool
 from trytond.transaction import Transaction
@@ -15,7 +15,9 @@ __all__ = ['EventOrder']
 # The fields of the header are readonly if there are lines defined because they
 # are used in the lines' domain
 _STATES_HEADER = {
-    'readonly': (Bool(Eval('medication_events', [])) |
+    'readonly': (
+        Bool(Eval('removal_events', [])) |
+        Bool(Eval('medication_events', [])) |
         Bool(Eval('insemination_events', [])) |
         Bool(Eval('pregnancy_diagnosis_events', [])) |
         Bool(Eval('abort_events', [])) |
@@ -60,6 +62,7 @@ class EventOrder(ModelSQL, ModelView):
             'invisible': Bool(Get(Eval('context', {}), 'specie')),
             })
     event_type = fields.Selection([
+            ('removal', 'Removals'),
             ('medication', 'Medications'),
             ('insemination', 'Inseminations'),
             ('pregnancy_diagnosis', 'Pregnancy Diagnosis'),
@@ -86,6 +89,11 @@ class EventOrder(ModelSQL, ModelView):
         states=_STATES_HEADER, depends=_DEPENDS_HEADER,
         help='Employee that did the job.')
     # Generic Events
+    removal_events = fields.One2Many('farm.removal.event', 'order',
+        'Removals', domain=_DOMAIN_LINES,
+        states=_STATES_LINES('removal'), context={
+            'timestamp': Eval('timestamp'),
+            }, depends=_DEPENDS_LINES)
     medication_events = fields.One2Many('farm.medication.event', 'order',
         'Medications', domain=_DOMAIN_LINES,
         states=_STATES_LINES('medication'), context={
@@ -133,10 +141,10 @@ class EventOrder(ModelSQL, ModelView):
             ('name_uniq', Unique(t, t.name), 'farm.event_order_name_unique'),
             ]
         cls._buttons.update({
-            'draft': {},
-            'confirm': {},
-            'cancel': {},
-            })
+                'draft': {},
+                'confirm': {},
+                'cancel': {},
+                })
 
     @staticmethod
     def default_animal_type():
@@ -183,6 +191,7 @@ class EventOrder(ModelSQL, ModelView):
         res = []
         if animal_type == 'generic' or include_generic:
             res.append('medication')
+            res.append('removal')
         if animal_type == 'female':
             res += [
                 'insemination',
@@ -215,6 +224,7 @@ class EventOrder(ModelSQL, ModelView):
 
         default.update({
                 'timestamp': datetime.now(),
+                'removal_events': None,
                 'medication_events': None,
                 'insemination_events': None,
                 'pregnancy_diagnosis_events': None,
