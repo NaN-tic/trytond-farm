@@ -37,7 +37,7 @@ class FarmTestCase(ModuleTestCase):
         100% CPU usage when search is executed on
         farm.feed.animal_location_date, which uses table_query.
         """
-        if backend.name() == 'sqlite':
+        if backend.name == 'sqlite':
             return
         super().test_ir_action_window()
 
