@@ -581,7 +581,8 @@ class SemenExtractionDose(ModelSQL, ModelView):
     def on_change_with_state(self, name=None):
         return self.event and self.event.state or 'draft'
 
-    @fields.depends('_parent_event.specie' ,'event', 'bom', 'quantity')
+    @fields.depends('_parent_event.specie', '_parent_event.formula_uom',
+        'event', 'bom', 'quantity')
     def on_change_with_semen_qty(self, name=None):
         Uom = Pool().get('product.uom')
         if not self.event or not self.bom or not self.quantity:
