@@ -5,6 +5,8 @@ from trytond.pyson import Bool, Equal, Eval, If, Not, Or
 from trytond.pool import Pool
 from trytond.rpc import RPC
 from trytond.transaction import Transaction
+from trytond.i18n import gettext
+from trytond.exceptions import UserError
 
 from .abstract_event import AbstractEvent, _STATES_VALIDATED_ADMIN, \
     _DEPENDS_VALIDATED_ADMIN
@@ -187,23 +189,21 @@ class TransformationEvent(AbstractEvent):
                         transf_event.from_location,
                         transf_event.timestamp,
                         transf_event.quantity):
-                    cls.raise_user_error('group_not_in_location', {
-                            'group': transf_event.animal_group.rec_name,
-                            'from_location':
-                                transf_event.from_location.rec_name,
-                            'quantity': transf_event.quantity,
-                            'timestamp': transf_event.timestamp,
-                            })
+                    raise UserError(gettext('farm.group_not_in_location',
+                        group=transf_event.animal_group.rec_name,
+                        from_location=transf_event.from_location.rec_name,
+                        quantity=transf_event.quantity,
+                        timestamp=transf_event.timestamp,
+                        ))
             else:
                 if not transf_event.animal.check_in_location(
                         transf_event.from_location,
                         transf_event.timestamp):
-                    cls.raise_user_error('animal_not_in_location', {
-                            'animal': transf_event.animal.rec_name,
-                            'from_location':
-                                transf_event.from_location.rec_name,
-                            'timestamp': transf_event.timestamp,
-                            })
+                    raise UserError(gettext('farm.animal_not_in_location',
+                        animal=transf_event.animal.rec_name,
+                        from_location=transf_event.from_location.rec_name,
+                        timestamp=transf_event.timestamp,
+                        ))
 
             if transf_event.to_animal_type == 'group':
                 if transf_event.to_animal_group:
