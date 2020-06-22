@@ -26,7 +26,7 @@ __all__ = ['AnimalLocationStock',
 _INVENTORY_STATES = [
     ('draft', 'Draft'),
     ('validated', 'Validated'),
-    ('cancel', 'Cancelled'),
+    ('cancelled', 'Cancelled'),
     ]
 
 
@@ -425,9 +425,22 @@ class FeedInventoryMixin(object):
                 })
         cls._transitions = set((
                 ('draft', 'validated'),
+                ('draft', 'cancelled'),
                 # ('validated', 'cancel'),
                 # ('cancel', 'draft'),
                 ))
+
+    @classmethod
+    def __register__(cls, module_name):
+        super(FeedInventoryMixin, cls).__register__(module_name)
+
+        cursor = Transaction().connection.cursor()
+        sql_table = cls.__table__()
+
+        # Migration from 5.6: rename state cancel to cancelled
+        cursor.execute(*sql_table.update(
+                [sql_table.state], ['cancelled'],
+                where=sql_table.state == 'cancel'))
 
     @staticmethod
     def default_specie():
@@ -483,7 +496,7 @@ class FeedInventoryMixin(object):
 
         inventory_events = []
         for inventory in inventories:
-            if inventory.state not in ('draft', 'cancel'):
+            if inventory.state not in ('draft', 'cancelled'):
                 raise UserError(gettext(
                         'farm.inventory_invalid_state_to_delete',
                         inventory=inventory.rec_name))
@@ -716,8 +729,8 @@ class FeedProvisionalInventory(FeedInventoryMixin, ModelSQL, ModelView,
                     },
                 })
         cls._transitions |= set((
-                ('validated', 'cancel'),
-                ('cancel', 'draft'),
+                ('validated', 'cancelled'),
+                ('cancelled', 'draft'),
                 ))
 
     @classmethod
@@ -860,12 +873,11 @@ class FeedProvisionalInventory(FeedInventoryMixin, ModelSQL, ModelView,
         return StockInventory(
             location=self.location,
             date=self.timestamp.date(),
-            lost_found=self.specie.feed_lost_found_location,
             lines=lines)
 
     @classmethod
     @ModelView.button
-    @Workflow.transition('cancel')
+    @Workflow.transition('cancelled')
     def cancel(cls, inventories):
         pool = Pool()
         Date = pool.get('ir.date')
@@ -890,7 +902,7 @@ class FeedProvisionalInventory(FeedInventoryMixin, ModelSQL, ModelView,
         StockMove._deny_modify_done_cancel.remove('effective_date')
         today = Date.today()
         for move in todo_stock_moves:
-            move.state = 'cancel'
+            move.state = 'cancelled'
             move.effective_date = today
             if (move.from_location.type in ('supplier', 'production')
                     and move.to_location.type == 'storage'
@@ -905,7 +917,7 @@ class FeedProvisionalInventory(FeedInventoryMixin, ModelSQL, ModelView,
         StockMove._deny_modify_done_cancel = deny_modify_done_cancel_bak
 
         StockInventory.write(todo_stock_inventories, {
-                'state': 'cancel',
+                'state': 'cancelled',
                 })
 
         FeedEvent.draft(inventory_events)
@@ -927,12 +939,11 @@ class FeedProvisionalInventory(FeedInventoryMixin, ModelSQL, ModelView,
         pool = Pool()
         StockInventory = pool.get('stock.inventory')
         StockMove = pool.get('stock.move')
-
         super(FeedProvisionalInventory, cls).write(*args)
 
         actions = iter(args)
         for inventories, values in zip(actions, actions):
-            if values.get('state', '') == 'cancel':
+            if values.get('state', '') == 'cancelled':
                 stock_inventories = [i.inventory for i in inventories]
                 stock_moves = [m for i in stock_inventories
                     for l in i.lines for m in l.moves]
