@@ -279,7 +279,7 @@ class EventOrder(ModelSQL, ModelView):
             Event = pool.get('farm.%s.event' % order.event_type)
             events = Event.search([
                     ('order', '=', order.id),
-                    ('state', '=', 'cancel'),
+                    ('state', '=', 'cancelled'),
                     ])
             Event.draft(events)
 

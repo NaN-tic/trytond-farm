@@ -417,17 +417,17 @@ class FeedInventoryMixin(object):
                     'icon': 'tryton-ok',
                     },
                 # 'cancel': {
-                #     'invisible': Eval('state') == 'cancel',
+                #     'invisible': Eval('state') == 'cancelled',
                 #     },
                 # 'draft': {
-                #     'invisible': Eval('state') != 'cancel',
+                #     'invisible': Eval('state') != 'cancelled',
                 #     },
                 })
         cls._transitions = set((
                 ('draft', 'validated'),
                 ('draft', 'cancelled'),
-                # ('validated', 'cancel'),
-                # ('cancel', 'draft'),
+                # ('validated', 'cancelled'),
+                # ('cancelled', 'draft'),
                 ))
 
     @classmethod

@@ -13,7 +13,7 @@ __all__ = ['AbstractEvent', 'ImportedEventMixin']
 _EVENT_STATES = [
     ('draft', 'Draft'),
     ('validated', 'Validated'),
-    # ('cancel', 'Cancelled'),
+    # ('cancelled', 'Cancelled'),
     ]
 _STATES_WRITE_DRAFT = {
     'readonly': Not(Equal(Eval('state'), 'draft')),
@@ -120,11 +120,11 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
                     },
                 })
         cls._transitions = set((
-                # ('draft', 'cancel'),
+                # ('draft', 'cancelled'),
                 ('draft', 'validated'),
                 ('validated', 'draft')
-                # ('validated', 'cancel'),
-                # ('cancel', 'draft'),
+                # ('validated', 'cancelled'),
+                # ('cancelled', 'draft'),
                 ))
 
     @staticmethod
@@ -219,7 +219,7 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
 
     # @classmethod
     # @ModelView.button
-    # @Workflow.transition('cancel')
+    # @Workflow.transition('cancelled')
     # def cancel(cls, events):
     #     raise NotImplementedError("Please Implement cancel() method")
 
