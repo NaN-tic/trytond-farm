@@ -667,7 +667,7 @@ class FeedInventory(FeedInventoryMixin, ModelSQL, ModelView, Workflow):
 
     #@classmethod
     #@ModelView.button
-    #@Workflow.transition('cancel')
+    #@Workflow.transition('cancelled')
     #def cancel(cls, inventories):
     #    pool = Pool()
     #    FeedEvent = pool.get('farm.feed.event')
@@ -725,7 +725,7 @@ class FeedProvisionalInventory(FeedInventoryMixin, ModelSQL, ModelView,
                     'invisible': Eval('state') != 'validated',
                     },
                 'draft': {
-                    'invisible': Eval('state') != 'cancel',
+                    'invisible': Eval('state') != 'cancelled',
                     },
                 })
         cls._transitions |= set((
