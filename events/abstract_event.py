@@ -30,8 +30,8 @@ _STATES_WRITE_DRAFT_VALIDATED = {
 _DEPENDS_WRITE_DRAFT_VALIDATED = ['state']
 _STATES_VALIDATED_ADMIN = {
     'required': Equal(Eval('state'), 'validated'),
-    'invisible': Not(Eval('groups', []).contains(
-        Id('farm', 'group_farm_admin'))),
+    'invisible': ~Eval('context', {}).get('groups', []).contains(
+        Id('farm', 'group_farm_admin')),
     }
 _DEPENDS_VALIDATED_ADMIN = ['state']
 

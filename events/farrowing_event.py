@@ -61,8 +61,8 @@ class FarrowingEvent(AbstractEvent, ImportedEventMixin, ModelSQL, ModelView, Wor
         states={
             'required': And(And(Equal(Eval('state'), 'validated'),
                     Bool(Eval('live', 0))), Not(Eval('imported', False))),
-            'invisible': Not(Eval('groups', []).contains(
-                Id('farm', 'group_farm_admin'))),
+            'invisible': ~Eval('context', {}).get('groups', []).contains(
+                    Id('farm', 'group_farm_admin')),
             },
         depends=['produced_group', 'live', 'state', 'imported'])
 
