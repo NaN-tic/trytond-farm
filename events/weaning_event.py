@@ -10,7 +10,7 @@ No possibility of creating individuals from here. Maybe in the future we
 - Farrowing creates groups and weaning is for individuals
 """
 from trytond.model import fields, ModelView, ModelSQL, Workflow, Unique
-from trytond.pyson import Eval, Id, If, Not
+from trytond.pyson import Eval, Id, If
 from trytond.pool import Pool
 from trytond.transaction import Transaction
 from trytond.exceptions import UserError
@@ -73,8 +73,8 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
             ('lot', '=', Eval('lot')),
             ],
         states={
-            'invisible': Not(Eval('groups', []).contains(
-                Id('farm', 'group_farm_admin'))),
+            'invisible': ~Eval('context', {}).get('groups', []).contains(
+                    Id('farm', 'group_farm_admin')),
             },
         depends=['lot'])
     lost_move = fields.Many2One('stock.move', 'Lost Stock Move',
@@ -82,8 +82,8 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
             ('lot.animal_group', '=', Eval('farrowing_group', 0)),
             ],
         states={
-            'invisible': Not(Eval('groups', []).contains(
-                Id('farm', 'group_farm_admin'))),
+            'invisible': ~Eval('context', {}).get('groups', []).contains(
+                    Id('farm', 'group_farm_admin')),
             },
         depends=['farrowing_group'])
     weaned_move = fields.Many2One('stock.move', 'Weaned Stock Move',
@@ -91,14 +91,14 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
             ('lot.animal_group', '=', Eval('farrowing_group', 0)),
             ],
         states={
-            'invisible': Not(Eval('groups', []).contains(
-                Id('farm', 'group_farm_admin'))),
+            'invisible': ~Eval('context', {}).get('groups', []).contains(
+                    Id('farm', 'group_farm_admin')),
             },
         depends=['farrowing_group'])
     transformation_event = fields.Many2One('farm.transformation.event',
         'Transformation Event', readonly=True, states={
-            'invisible': Not(Eval('groups', []).contains(
-                Id('farm', 'group_farm_admin'))),
+            'invisible': ~Eval('context', {}).get('groups', []).contains(
+                    Id('farm', 'group_farm_admin')),
             })
 
     # TODO: Extra 'weight': fields.float('Weight'),

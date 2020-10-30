@@ -84,8 +84,8 @@ class MoveEvent(AbstractEvent):
             ('farm.animal.group.weight', 'Group Weight'),
             ],
         readonly=True, states={
-            'invisible': Not(Eval('groups', []).contains(
-                Id('farm', 'group_farm_admin'))),
+            'invisible': ~Eval('context', {}).get('groups', []).contains(
+                    Id('farm', 'group_farm_admin')),
             }, depends=['state', 'weight'])
 
     @classmethod
