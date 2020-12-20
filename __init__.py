@@ -1,5 +1,5 @@
-#The COPYRIGHT file at the top level of this repository contains the full
-#copyright notices and license terms.
+# The COPYRIGHT file at the top level of this repository contains the full
+# copyright notices and license terms.
 from trytond.pool import Pool
 from . import animal
 from . import animal_group
@@ -72,6 +72,7 @@ def register():
         stock.Move,
         production.BOM,
         quality.QualityTest,
+        quality.QualityTemplate,
         module='farm', type_='model')
     Pool.register(
         animal.CreateFemale,
