@@ -156,7 +156,6 @@ def create_users(company):
     individual_user = User()
     individual_user.name = 'Individuals'
     individual_user.login = 'individuals'
-    individual_user.main_company = company
     individual_group, = Group.find([('name', '=', 'Farm / Individuals')])
     individual_user.groups.append(individual_group)
     individual_user.groups.append(farm_group)
@@ -165,7 +164,6 @@ def create_users(company):
     group_user = User()
     group_user.name = 'Groups'
     group_user.login = 'groups'
-    group_user.main_company = company
     group_group, = Group.find([('name', '=', 'Farm / Groups')])
     group_user.groups.append(group_group)
     group_user.groups.append(Group(farm_group.id))
@@ -174,7 +172,6 @@ def create_users(company):
     female_user = User()
     female_user.name = 'Females'
     female_user.login = 'females'
-    female_user.main_company = company
     female_group, = Group.find([('name', '=', 'Farm / Females')])
     female_user.groups.append(female_group)
     female_user.groups.append(Group(farm_group.id))
@@ -183,7 +180,6 @@ def create_users(company):
     male_user = User()
     male_user.name = 'Males'
     male_user.login = 'males'
-    male_user.main_company = company
     male_group, = Group.find([('name', '=', 'Farm / Females')])
     male_user.groups.append(male_group)
     male_user.groups.append(Group(farm_group.id))
