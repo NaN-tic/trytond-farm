@@ -6,8 +6,6 @@ from trytond.pyson import Equal, Eval, If
 from .abstract_event import AbstractEvent, ImportedEventMixin, \
     _STATES_VALIDATED, _DEPENDS_VALIDATED
 
-__all__ = ['AbortEvent', 'AbortEventFemaleCycle']
-
 
 class AbortEvent(AbstractEvent, ImportedEventMixin):
     '''Farm Abort Event'''

@@ -8,8 +8,6 @@ from trytond.transaction import Transaction
 from trytond.exceptions import UserError
 from trytond.i18n import gettext
 
-__all__ = ['AbstractEvent', 'ImportedEventMixin']
-
 _EVENT_STATES = [
     ('draft', 'Draft'),
     ('validated', 'Validated'),

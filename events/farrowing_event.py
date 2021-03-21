@@ -11,9 +11,6 @@ from .abstract_event import AbstractEvent, ImportedEventMixin, \
     _STATES_WRITE_DRAFT, _DEPENDS_WRITE_DRAFT, \
     _STATES_VALIDATED, _DEPENDS_VALIDATED
 
-__all__ = ['FarrowingProblem', 'FarrowingEvent', 'FarrowingEventFemaleCycle',
-    'FarrowingEventAnimalGroup']
-
 
 class FarrowingProblem(ModelSQL, ModelView):
     '''Farrowing Event Problem'''

@@ -11,8 +11,6 @@ from trytond.exceptions import UserError
 from .abstract_event import AbstractEvent, _STATES_VALIDATED_ADMIN, \
     _DEPENDS_VALIDATED_ADMIN
 
-__all__ = ['TransformationEvent']
-
 
 class TransformationEvent(AbstractEvent):
     '''Farm Transformation Event'''

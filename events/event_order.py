@@ -10,8 +10,6 @@ from trytond.transaction import Transaction
 from trytond.exceptions import UserError
 from trytond.i18n import gettext
 
-__all__ = ['EventOrder']
-
 # The fields of the header are readonly if there are lines defined because they
 # are used in the lines' domain
 _STATES_HEADER = {

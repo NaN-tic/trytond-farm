@@ -14,8 +14,6 @@ from .abstract_event import AbstractEvent, _STATES_WRITE_DRAFT, \
     _DEPENDS_WRITE_DRAFT_VALIDATED, _STATES_VALIDATED_ADMIN, \
     _DEPENDS_VALIDATED_ADMIN
 
-__all__ = ['FeedEventMixin']
-
 
 # It mustn't to be *registered* because of 'ir.model' nor 'ir.model.field' was
 # created (no views related). It is implemented by Feed and Medication Event

@@ -14,9 +14,6 @@ from .abstract_event import AbstractEvent, _EVENT_STATES, _STATES_WRITE_DRAFT,\
     _DEPENDS_WRITE_DRAFT, _STATES_VALIDATED, _DEPENDS_VALIDATED, \
     _STATES_VALIDATED_ADMIN, _DEPENDS_VALIDATED_ADMIN
 
-__all__ = ['SemenExtractionEvent', 'SemenExtractionEventQualityTest',
-    'SemenExtractionDose']
-
 
 class SemenExtractionEvent(AbstractEvent):
     '''Farm Semen Extraction Event'''

@@ -8,8 +8,6 @@ from trytond.pyson import Eval, Id
 
 from .feed_abstract_event import FeedEventMixin
 
-__all__ = ['FeedEvent']
-
 
 class FeedEvent(FeedEventMixin, ModelSQL, ModelView, Workflow):
     'Feed Event'

@@ -13,8 +13,6 @@ from .abstract_event import AbstractEvent, ImportedEventMixin, \
     _STATES_VALIDATED, _DEPENDS_VALIDATED, \
     _STATES_VALIDATED_ADMIN_BUT_IMPORTED, _DEPENDS_VALIDATED_ADMIN_BUT_IMPORTED
 
-__all__ = ['InseminationEvent']
-
 
 class InseminationEvent(AbstractEvent, ImportedEventMixin):
     '''Farm Insemination Event'''

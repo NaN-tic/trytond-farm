@@ -18,11 +18,6 @@ from trytond.i18n import gettext
 from .abstract_event import _STATES_WRITE_DRAFT, \
     _DEPENDS_WRITE_DRAFT, _STATES_VALIDATED_ADMIN, _DEPENDS_VALIDATED_ADMIN
 
-__all__ = ['AnimalLocationStock',
-    'FeedInventoryMixin', 'FeedInventoryLocation',
-    'FeedInventory', 'FeedProvisionalInventory',
-    'FeedAnimalLocationDate']
-
 _INVENTORY_STATES = [
     ('draft', 'Draft'),
     ('validated', 'Validated'),

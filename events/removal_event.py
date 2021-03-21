@@ -10,8 +10,6 @@ from trytond.i18n import gettext
 from .abstract_event import AbstractEvent, _STATES_WRITE_DRAFT, \
     _DEPENDS_WRITE_DRAFT, _STATES_VALIDATED_ADMIN, _DEPENDS_VALIDATED_ADMIN
 
-__all__ = ['RemovalType', 'RemovalReason', 'RemovalEvent']
-
 
 class RemovalType(ModelSQL, ModelView):
     '''Removal Event Type'''
