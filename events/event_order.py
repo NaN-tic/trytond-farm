@@ -251,7 +251,6 @@ class EventOrder(ModelSQL, ModelView):
         pool = Pool()
         FarmLine = pool.get('farm.specie.farm_line')
         Location = pool.get('stock.location')
-        Sequence = pool.get('ir.sequence')
         Specie = pool.get('farm.specie')
 
         if not specie_id or not farm_id or not animal_type:
@@ -269,7 +268,7 @@ class EventOrder(ModelSQL, ModelView):
                     specie=Specie(specie_id).rec_name,
                     ))
         farm_line, = farm_lines
-        return Sequence.get_id(farm_line.event_order_sequence.id)
+        return farm_line.event_order_sequence.get()
 
     @classmethod
     @ModelView.button

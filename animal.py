@@ -11,10 +11,6 @@ from trytond.wizard import Wizard, StateView, StateAction, Button, StateTransiti
 from trytond.exceptions import UserError
 from trytond.i18n import gettext
 
-__all__ = ['Tag', 'Animal', 'AnimalTag', 'AnimalWeight', 'Male', 'Female',
-    'FemaleCycle', 'CreateFemaleStart', 'CreateFemaleLine', 'CreateFemale',
-    'ChangeCycleObservationStart', 'ChangeCycleObservation', 'EventUnion']
-
 _STATES_MALE_FIELD = {
     'invisible': Not(Equal(Eval('type'), 'male')),
     }
@@ -407,7 +403,6 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
         pool = Pool()
         FarmLine = pool.get('farm.specie.farm_line')
         Location = pool.get('stock.location')
-        Sequence = pool.get('ir.sequence')
         Specie = pool.get('farm.specie')
 
         sequence_fieldname = '%s_sequence' % type
@@ -430,7 +425,7 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
                     sequence_field=getattr(FarmLine, sequence_fieldname).string,
                     farm_line=farm_line.rec_name,
                     ))
-        return Sequence.get_id(sequence.id)
+        return sequence.get()
 
     @classmethod
     def _get_lot_values(cls, animal_vals, create):

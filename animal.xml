@@ -208,8 +208,7 @@
 
         <!-- Sequences -->
         <record model="ir.sequence.type" id="sequence_type_animal">
-            <field name="name">Farm Animal</field>
-            <field name="code">farm.animal</field>
+            <field name="name">Animal</field>
         </record>
         <record model="ir.sequence.type-res.group"
             id="sequence_type_animal_group_farm">

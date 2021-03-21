@@ -10,9 +10,6 @@ from trytond.transaction import Transaction
 from trytond.exceptions import UserError
 from trytond.i18n import gettext
 
-__all__ = ['Specie', 'SpecieModel', 'SpecieFarmLine', 'Breed',
-    'UIMenu', 'ActionActWindow', 'ActionWizard']
-
 MODULE_NAME = 'farm'
 
 
@@ -564,38 +561,46 @@ class SpecieFarmLine(ModelSQL, ModelView):
         domain=[('type', '=', 'warehouse')])
     event_order_sequence = fields.Many2One('ir.sequence',
         "Events Orders' Sequence", required=True, domain=[
-            ('code', '=', 'farm.event.order')
+            ('sequence_type', '=', Id('farm', 'sequence_type_event_order')),
             ],
         help="Sequence used for the Event Orders in this farm.")
     has_male = fields.Boolean('Males', help="In this farm there are males.")
     male_sequence = fields.Many2One('ir.sequence', "Males' Sequence",
-        domain=[('code', '=', 'farm.animal')],
+        domain=[
+            ('sequence_type', '=', Id('farm', 'sequence_type_animal')),
+            ],
         states=_enabled_STATES('has_male'), depends=['has_male'],
         help='Sequence used for male lots and animals.')
     semen_lot_sequence = fields.Many2One('ir.sequence',
         "Extracted Semen Lots' Sequence", domain=[
-            ('code', '=', 'stock.lot'),
+            ('sequence_type', '=', Id('stock_lot', 'sequence_type_stock_lot')),
             ], states=_enabled_STATES('has_male'), depends=['has_male'])
     dose_lot_sequence = fields.Many2One('ir.sequence',
         "Semen Dose Lots' Sequence", domain=[
-            ('code', '=', 'stock.lot'),
+            ('sequence_type', '=', Id('stock_lot', 'sequence_type_stock_lot')),
             ], states=_enabled_STATES('has_male'), depends=['has_male'])
     has_female = fields.Boolean('Females',
         help="In this farm there are females.")
     female_sequence = fields.Many2One('ir.sequence', "Females' Sequence",
-        domain=[('code', '=', 'farm.animal')],
+        domain=[
+            ('sequence_type', '=', Id('farm', 'sequence_type_animal')),
+            ],
         states=_enabled_STATES('has_female'), depends=['has_female'],
         help='Sequence used for female production lots and animals.')
     has_individual = fields.Boolean('Individuals',
         help="In this farm there are individuals.")
     individual_sequence = fields.Many2One('ir.sequence',
-        "Individuals' Sequence", domain=[('code', '=', 'farm.animal')],
+        "Individuals' Sequence", domain=[
+            ('sequence_type', '=', Id('farm', 'sequence_type_animal')),
+            ],
         states=_enabled_STATES('has_individual'), depends=['has_individual'],
         help="Sequence used for individual lots and animals.")
     has_group = fields.Boolean('Groups',
         help="In this farm there are groups.")
     group_sequence = fields.Many2One('ir.sequence', "Groups' Sequence",
-        domain=[('code', '=', 'farm.animal.group')],
+        domain=[
+            ('sequence_type', '=', Id('farm', 'sequence_type_animal_group')),
+            ],
         states=_enabled_STATES('has_group'), depends=['has_group'],
         help='Sequence used for group production lots and animals.')
 

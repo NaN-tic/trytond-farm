@@ -9,9 +9,6 @@ from trytond.pyson import Equal, Eval, Not
 from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
 
-__all__ = ['Location', 'LocationSiloLocation', 'Lot', 'LotAnimal',
-    'LotAnimalGroup', 'Move', 'LotCostLine']
-
 
 class Lot(metaclass=PoolMeta):
     __name__ = 'stock.lot'

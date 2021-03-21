@@ -394,7 +394,6 @@ class SemenExtractionEvent(AbstractEvent):
         pool = Pool()
         FarmLine = pool.get('farm.specie.farm_line')
         Lot = pool.get('stock.lot')
-        Sequence = pool.get('ir.sequence')
 
         farm_line, = FarmLine.search([
                 ('specie', '=', self.specie.id),
@@ -402,7 +401,7 @@ class SemenExtractionEvent(AbstractEvent):
                 ('has_male', '=', True),
                 ])
         return Lot(
-            number=Sequence.get_id(farm_line.semen_lot_sequence.id),
+            number=farm_line.semen_lot_sequence.get(),
             product=self.specie.semen_product.id)
 
     @classmethod
@@ -650,7 +649,6 @@ class SemenExtractionDose(ModelSQL, ModelView):
         pool = Pool()
         FarmLine = pool.get('farm.specie.farm_line')
         Lot = pool.get('stock.lot')
-        Sequence = pool.get('ir.sequence')
 
         farm_line, = FarmLine.search([
                 ('specie', '=', self.event.specie.id),
@@ -663,7 +661,7 @@ class SemenExtractionDose(ModelSQL, ModelView):
         number.append(self.event.animal.rec_name)
         if self.event.reference:
             number.append(self.event.reference)
-        number.append(Sequence.get_id(farm_line.dose_lot_sequence.id))
+        number.append(farm_line.dose_lot_sequence.get())
         number = '/'.join(number)
         return Lot(number=number, product=self.dose_product.id,
             expiration_date=(self.event.timestamp +

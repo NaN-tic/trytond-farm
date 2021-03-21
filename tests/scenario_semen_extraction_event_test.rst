@@ -72,7 +72,7 @@ Create Quality Configuration and Semen Quality Test Template::
     >>> unit, = ProductUom.find([('name', '=', 'Unit')])
 
     >>> Sequence = Model.get('ir.sequence')
-    >>> quality_sequence, = Sequence.find([('code','=','quality.test')])
+    >>> quality_sequence, = Sequence.find([('name','=','Quality Control')])
     >>> Model_ = Model.get('ir.model')
     >>> product_model, = Model_.find([('model','=','product.product')])
     >>> lot_model, = Model_.find([('model','=','stock.lot')])

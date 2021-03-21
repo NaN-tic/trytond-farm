@@ -5,8 +5,7 @@
     <data>
         <!-- Sequences -->
         <record model="ir.sequence.type" id="sequence_type_event_order">
-            <field name="name">Farm Event Order</field>
-            <field name="code">farm.event.order</field>
+            <field name="name">Event Order</field>
         </record>
         <record model="ir.sequence.type-res.group"
             id="sequence_type_event_order_group_farm">

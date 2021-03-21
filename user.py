@@ -4,8 +4,6 @@ from trytond.model import fields, ModelSQL
 from trytond.pool import PoolMeta
 from trytond.pyson import Eval, Id, Not
 
-__all__ = ['User', 'UserLocation']
-
 
 class User(metaclass=PoolMeta):
     __name__ = 'res.user'

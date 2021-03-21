@@ -12,7 +12,6 @@ from trytond.i18n import gettext
 
 from .animal import AnimalMixin
 
-__all__ = ['AnimalGroup', 'AnimalGroupTag', 'AnimalGroupWeight']
 
 
 class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
@@ -417,7 +416,6 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
         pool = Pool()
         FarmLine = pool.get('farm.specie.farm_line')
         Location = pool.get('stock.location')
-        Sequence = pool.get('ir.sequence')
         Specie = pool.get('farm.specie')
 
         farm_lines = FarmLine.search([
@@ -432,7 +430,7 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
                     specie=Specie(specie_id).rec_name if specie_id else '-',
                     ))
         sequence = farm_lines[0].group_sequence
-        return sequence and Sequence.get_id(sequence.id) or ''
+        return sequence and sequence.get() or ''
 
     @classmethod
     def _get_lot_values(cls, group_vals, create):

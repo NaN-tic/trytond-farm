@@ -6,8 +6,6 @@ from trytond.pool import PoolMeta
 from trytond.exceptions import UserError
 from trytond.i18n import gettext
 
-__all__ = ['BOM']
-
 
 class BOM(metaclass=PoolMeta):
     __name__ = 'production.bom'

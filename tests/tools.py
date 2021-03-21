@@ -1,7 +1,6 @@
 from decimal import Decimal
 from proteus import Model
 
-__all__ = []
 
 def create_animal_product(name, list_price, cost_price, weaning_price=None):
     Template = Model.get('product.template')
@@ -61,40 +60,47 @@ def create_specie(name='Pig'):
     male_product = create_animal_product('Male %s' % name, 40, 25)
     semen_product = create_semen_product('%s Semen' % name, 400, 250)
 
+    SequenceType = Model.get('ir.sequence.type')
+    event_order_sequence_type, = SequenceType.find([('name', '=',
+                'Event Order')])
     Sequence = Model.get('ir.sequence')
     event_order_sequence = Sequence(
         name='Event Order Pig Warehouse 1',
-        code='farm.event.order',
+        sequence_type=event_order_sequence_type,
         padding=4)
     event_order_sequence.save()
+    animal_sequence_type, = SequenceType.find([('name', '=', 'Animal')])
     male_sequence = Sequence(
         name='Male Pig Warehouse 1',
-        code='farm.animal',
+        sequence_type=SequenceType(animal_sequence_type.id),
         padding=4)
     male_sequence.save()
+    lot_sequence_type, = SequenceType.find([('name', '=', 'Stock Lot')])
     semen_lot_sequence = Sequence(
         name='Semen Extracted Lot Pig Warehouse 1',
-        code='stock.lot',
+        sequence_type=SequenceType(lot_sequence_type.id),
         padding=4)
     semen_lot_sequence.save()
     semen_dose_lot_sequence = Sequence(
         name='Semen Dose Lot Pig Warehouse 1',
-        code='stock.lot',
+        sequence_type=SequenceType(lot_sequence_type.id),
         padding=4)
     semen_dose_lot_sequence.save()
     female_sequence = Sequence(
         name='Female Pig Warehouse 1',
-        code='farm.animal',
+        sequence_type=SequenceType(animal_sequence_type.id),
         padding=4)
     female_sequence.save()
     individual_sequence = Sequence(
         name='Individual Pig Warehouse 1',
-        code='farm.animal',
+        sequence_type=SequenceType(animal_sequence_type.id),
         padding=4)
     individual_sequence.save()
+    animal_group_sequence_type, = SequenceType.find([('name', '=',
+                'Animal Group')])
     group_sequence = Sequence(
         name='Groups Pig Warehouse 1',
-        code='farm.animal.group',
+        sequence_type=SequenceType(animal_group_sequence_type.id),
         padding=4)
     group_sequence.save()
 

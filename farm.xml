@@ -53,18 +53,14 @@
         </record>
 
         <!-- Sequences Lot TODO: moure a stock_lot -->
-        <record model="ir.sequence.type" id="sequence_type_lot">
-            <field name="name">Stock Lot</field>
-            <field name="code">stock.lot</field>
-        </record>
         <record model="ir.sequence.type-res.group"
             id="sequence_type_lot_group_farm">
-            <field name="sequence_type" ref="sequence_type_lot"/>
+            <field name="sequence_type" ref="stock_lot.sequence_type_stock_lot"/>
             <field name="group" ref="group_farm"/>
         </record>
         <record model="ir.sequence.type-res.group"
             id="sequence_type_group_group_lot_admin">
-            <field name="sequence_type" ref="sequence_type_lot"/>
+            <field name="sequence_type" ref="stock_lot.sequence_type_stock_lot"/>
             <field name="group" ref="group_farm"/>
         </record>
     </data>

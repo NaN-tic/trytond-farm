@@ -6,8 +6,6 @@ from trytond.pool import PoolMeta, Pool
 from trytond.exceptions import UserError
 from trytond.i18n import gettext
 
-__all__ = ['QualityTest', 'QualityTemplate']
-
 
 class QualityTemplate(metaclass=PoolMeta):
     __name__ = 'quality.template'
@@ -23,6 +21,7 @@ class QualityTemplate(metaclass=PoolMeta):
         for line in lines:
             res.append((line.document.model, line.document.name))
         return res
+
 
 class QualityTest(metaclass=PoolMeta):
     __name__ = 'quality.test'
