@@ -36,7 +36,7 @@ class InseminationEvent(AbstractEvent, ImportedEventMixin):
             ('quantity', '>', 0.0)
             ], states=_STATES_WRITE_DRAFT,
         depends=_DEPENDS_WRITE_DRAFT + ['dose_product'],
-        context={
+        search_context={
             'locations': [Eval('farm')],
             'stock_date_end': date.today(),
             })

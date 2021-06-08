@@ -85,7 +85,7 @@ class SemenExtractionEvent(AbstractEvent):
             ('quantity', '>', 0.0)
             ], states=_STATES_VALIDATED,
         depends=_DEPENDS_VALIDATED + ['semen_product'],
-        context={
+        search_context={
             'locations': [Eval('farm')],
             'stock_date_end': date.today(),
             })
