@@ -61,7 +61,7 @@ class FeedEventMixin(AbstractEvent):
                     Not(Equal(Eval('state'), 'draft'))),
                 },
         depends=_DEPENDS_WRITE_DRAFT + ['feed_product'],
-        context={
+        search_context={
             'locations': [Eval('farm')],
             'stock_date_end': date.today(),
             })
