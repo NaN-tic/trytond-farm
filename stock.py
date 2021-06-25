@@ -240,9 +240,11 @@ class Location(metaclass=PoolMeta):
             args += [[
                 'OR', [
                         ('parent', 'child_of', storage_locations),
-                    ], [
+                        ], [
                         ('id', 'in', [fl.farm.id for fl in farm_lines]),
-                    ],
+                        ], [
+                        ('type', 'not in', ['warehouse', 'storage']),
+                        ]
                 ]]
         res = super(Location, cls).search(args, offset=offset, limit=limit,
             order=order, count=count, query=query)
