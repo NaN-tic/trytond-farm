@@ -13,3 +13,7 @@ class Template(metaclass=PoolMeta):
     weaning_price = fields.Numeric('Weaning Price', digits=(16, 4),
         help=('Unitary cost for weaning events. It\'s only used when the '
             'product is a group product of a farm specie.'))
+
+
+class Product(metaclass=PoolMeta):
+    __name__ = 'product.product'
