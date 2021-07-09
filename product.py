@@ -3,7 +3,7 @@
 from trytond.model import fields
 from trytond.pool import PoolMeta
 
-__all__ = ['Template']
+__all__ = ['Template', 'Product']
 
 
 class Template(metaclass=PoolMeta):
@@ -15,3 +15,7 @@ class Template(metaclass=PoolMeta):
     weaning_price = fields.Numeric('Weaning Price', digits=(16, 4),
         help=('Unitary cost for weaning events. It\'s only used when the '
             'product is a group product of a farm specie.'))
+
+
+class Product(metaclass=PoolMeta):
+    __name__ = 'product.product'

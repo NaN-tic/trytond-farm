@@ -46,6 +46,7 @@ def register():
         user.User,
         user.UserLocation,
         product.Template,
+        product.Product,
         events.event_order.EventOrder,
         events.move_event.MoveEvent,
         events.feed_inventory.FeedInventory,
