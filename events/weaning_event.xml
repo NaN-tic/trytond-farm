@@ -82,6 +82,17 @@
             <field name="act_window" ref="act_farm_weaning_event"/>
         </record>
 
+        <record model="ir.ui.view" id="farm_weaning_event_animal_move_form_view">
+            <field name="model">farm.weaning.event-farm.animal</field>
+            <field name="type">form</field>
+            <field name="name">farm_weaning_event_animal_move_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="farm_weaning_event_animal_move_list_view">
+            <field name="model">farm.weaning.event-farm.animal</field>
+            <field name="type">tree</field>
+            <field name="name">farm_weaning_event_animal_move_list</field>
+        </record>
         <!-- Permissions -->
         <record model="ir.model.access" id="access_farm_weaning_event">
             <field name="model" search="[('model', '=', 'farm.weaning.event')]"/>

@@ -96,6 +96,10 @@ class Specie(ModelSQL, ModelView):
     menus = fields.One2Many('ir.ui.menu', 'specie', 'Menus')
     actions = fields.One2Many('ir.action.act_window', 'specie', 'Actions')
     wizards = fields.One2Many('ir.action.wizard', 'specie', 'Wizards')
+    produced_animal_type = fields.Selection([
+                ('individual', 'Individual'),
+                ('group', 'Group'),
+                ], 'Produced Animal Type')
 
     @classmethod
     def __setup__(cls):
@@ -110,6 +114,10 @@ class Specie(ModelSQL, ModelView):
                     'icon': 'tryton-ok',
                     }
                 })
+
+    @staticmethod
+    def default_produced_animal_type():
+        return 'group'
 
     @staticmethod
     def default_male_enabled():
