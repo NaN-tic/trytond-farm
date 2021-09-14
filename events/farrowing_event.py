@@ -145,12 +145,14 @@ class FarrowingEvent(AbstractEvent, ImportedEventMixin, ModelSQL, ModelView, Wor
     def on_change_with_dead(self, name=None):
         return (self.stillborn or 0) + (self.mummified or 0)
 
-    @fields.depends('animal_type', 'animal')
+    @fields.depends('animal_type', 'animal', 'produced_animal_type')
     def on_change_animal(self):
         if not self.animal:
             return
         super(FarrowingEvent, self).on_change_animal()
         self.female_cycle = self.animal.current_cycle
+        if self.produced_animal_type == 'individual':
+            self.live = 1
 
     def get_produced_animal_type(self, name):
         if self.specie.produced_animal_type:
