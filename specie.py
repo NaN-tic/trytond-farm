@@ -100,6 +100,9 @@ class Specie(ModelSQL, ModelView):
                 ('individual', 'Individual'),
                 ('group', 'Group'),
                 ], 'Produced Animal Type')
+    reclassification_products = fields.Many2Many(
+        'farm.specie-product.product', 'specie', 'product',
+        'Reclassification Products')
 
     @classmethod
     def __setup__(cls):
@@ -406,6 +409,10 @@ class Specie(ModelSQL, ModelView):
                 'farm.weaning.event': Menu(ModelData.get_id(MODULE_NAME,
                         'menu_farm_weaning_event')),
                 },
+            'individual': {
+                'farm.reclassification.event': Menu(ModelData.get_id(MODULE_NAME,
+                        'menu_farm_reclassification_event')),
+                }
         }
 
     def _duplicate_menu(self, original_menu, parent_menu, sequence,
@@ -639,3 +646,10 @@ class ActionActWindow(metaclass=PoolMeta):
 class ActionWizard(metaclass=PoolMeta):
     __name__ = 'ir.action.wizard'
     specie = fields.Many2One('farm.specie', 'Specie', ondelete='CASCADE')
+
+class SpecieProduct(ModelSQL):
+    'Specie - Product'
+    __name__ = 'farm.specie-product.product'
+    specie = fields.Many2One('farm.specie', 'Specie', ondelete='CASCADE',
+        required=True)
+    product = fields.Many2One('product.product', 'Product', required=True)

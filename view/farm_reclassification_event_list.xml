@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tree>
+    <field name="animal"/>
+    <field name="animal_group"/>
+    <field name="timestamp" widget="date"/>
+    <field name="timestamp" widget="time"/>
+    <field name="employee"/>
+    <field name="farm"/>
+    <field name="state"/>
+</tree>

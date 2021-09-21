@@ -215,6 +215,9 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
         depends=_DEPENDS_INDIVIDUAL_FIELD)
     active = fields.Boolean('Active')
 
+    lots_history = fields.One2Many(
+        'stock.lot', 'historic_animal', 'Lots History', readonly=True)
+
     # We can't use the 'required' attribute in field because it's
     # checked on view before execute 'create()' function where this
     # field is filled in.

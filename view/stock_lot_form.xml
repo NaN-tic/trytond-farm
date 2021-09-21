@@ -10,6 +10,8 @@
             <field name="animal"/>
             <label name="animal_group"/>
             <field name="animal_group"/>
+            <label name="historic_animal"/>
+            <field name="historic_animal"/>
         </group>
     </xpath>
 </data>

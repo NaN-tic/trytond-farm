@@ -32,6 +32,9 @@ class Lot(metaclass=PoolMeta):
         states={
             'invisible': Not(Equal(Eval('animal_type'), 'group')),
             }, depends=['animal_type'])
+    historic_animal = fields.Many2One('farm.animal', 'Historic Animal',
+        readonly=True, states={'invisible': Equal(Eval('animal_type'), 'group')},
+        depends=['animal_type'])
 
     #TODO aquestes restriccions les deixem aqui o les passem a 'animal'
     # (i group?). Afegir-ho a la tasca
@@ -377,6 +380,7 @@ class Move(metaclass=PoolMeta):
             'farm.farrowing.event',
             'farm.foster.event',
             'farm.weaning.event',
+            'farm.reclassification.event'
             ]
         return models
 
@@ -405,5 +409,6 @@ class LotCostLine(metaclass=PoolMeta):
             'farm.transformation.event',
             'farm.farrowing.event',
             'farm.weaning.event',
+            'farm.reclassification.event'
             ]
         return models
