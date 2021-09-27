@@ -372,6 +372,7 @@ class AnimalLocationStock():
 
 
 class FeedInventoryMixin(object):
+    __slots__ = ()
     specie = fields.Many2One('farm.specie', 'Specie', required=True,
         readonly=True, select=True)
     location = fields.Many2One('stock.location', 'Silo', required=True,

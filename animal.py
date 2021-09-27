@@ -57,6 +57,7 @@ class Tag(ModelSQL, ModelView):
 
 
 class AnimalMixin:
+    __slots__ = ()
     feed_unit_digits = fields.Function(fields.Integer('Feed Unit Digits'),
         'get_feed_unit_digits')
 

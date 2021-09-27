@@ -229,6 +229,7 @@ _DEPENDS_VALIDATED_ADMIN_BUT_IMPORTED = ['state', 'imported']
 
 
 class ImportedEventMixin:
+    __slots__ = ()
     imported = fields.Boolean('Imported', readonly=True)
 
     @staticmethod
