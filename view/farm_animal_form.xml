@@ -79,8 +79,8 @@
             <field name="current_weight"/>
             <field name="weights" colspan="4"/>
         </page>
-         <page name="lots_history">
-            <field name="lots_history" colspan="4"/>
+         <page name="lots">
+            <field name="lots" colspan="4"/>
         </page>
         <page string="Notes" id="notes">
             <field name="notes"/>

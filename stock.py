@@ -8,6 +8,8 @@ from trytond.model import ModelView, ModelSQL, fields, Workflow
 from trytond.pyson import Equal, Eval, Not
 from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
+from trytond import backend
+from sql import Table
 
 __all__ = ['Location', 'LocationSiloLocation', 'Lot', 'LotAnimal',
     'LotAnimalGroup', 'Move', 'LotCostLine']
@@ -23,8 +25,7 @@ class Lot(metaclass=PoolMeta):
             ('individual', 'Individual'),
             ('group', 'Group'),
             ], 'Animal Type', readonly=True)
-    animal = fields.One2One('stock.lot-farm.animal', 'lot', 'animal',
-        string='Animal', readonly=True,
+    animal = fields.Many2One('farm.animal', 'Animal', readonly=True,
         states={'invisible': Equal(Eval('animal_type'), 'group')},
         depends=['animal_type'])
     animal_group = fields.One2One('stock.lot-farm.animal.group', 'lot',
@@ -32,9 +33,6 @@ class Lot(metaclass=PoolMeta):
         states={
             'invisible': Not(Equal(Eval('animal_type'), 'group')),
             }, depends=['animal_type'])
-    historic_animal = fields.Many2One('farm.animal', 'Historic Animal',
-        readonly=True, states={'invisible': Equal(Eval('animal_type'), 'group')},
-        depends=['animal_type'])
 
     #TODO aquestes restriccions les deixem aqui o les passem a 'animal'
     # (i group?). Afegir-ho a la tasca
@@ -47,6 +45,29 @@ class Lot(metaclass=PoolMeta):
 
     # Consider making configurable per specie if that constraint should
     # apply to 'group' too but with more than one unit.
+
+    @classmethod
+    def __register__(cls, module_name):
+        TableHandler = backend.get('TableHandler')
+        table = cls.__table_handler__(module_name)
+        sql_table = cls.__table__()
+        sql_table_animal_lot = 'stock_lot-farm_animal'
+        if not TableHandler.table_exist(sql_table_animal_lot):
+            super(Lot, cls).__register__(module_name)
+            return
+        sql_table_animal_lot = Table(sql_table_animal_lot)
+        update_animal = False
+        if not table.column_exist('animal'):
+            update_animal = True
+        super(Lot, cls).__register__(module_name)
+        table = cls.__table_handler__(module_name)
+        cursor = Transaction().connection.cursor()
+        if update_animal:
+            cursor.execute(*sql_table_animal_lot.select(
+                sql_table_animal_lot.animal, sql_table_animal_lot.lot))
+            for animal_id, lot_id in cursor.fetchall():
+                cursor.execute(*sql_table.update(columns=[sql_table.animal],
+                    values=[animal_id], where=sql_table.id == lot_id))
 
     @staticmethod
     def default_animal_type():
@@ -136,16 +157,6 @@ class Lot(metaclass=PoolMeta):
                 else:
                     lot_quantities[warehouse_id] = quantity
         return res
-
-
-class LotAnimal(ModelSQL):
-    "Lot - Animal"
-    __name__ = 'stock.lot-farm.animal'
-
-    lot = fields.Many2One('stock.lot', 'Lot', required=True,
-        ondelete='RESTRICT', select=True)
-    animal = fields.Many2One('farm.animal', 'Animal', required=True,
-        ondelete='RESTRICT', select=True)
 
 
 class LotAnimalGroup(ModelSQL):

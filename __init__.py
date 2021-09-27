@@ -40,7 +40,6 @@ def register():
         animal_group.AnimalGroupWeight,
         stock.Location,
         stock.LocationSiloLocation,
-        stock.LotAnimal,
         stock.LotAnimalGroup,
         stock.Lot,
         stock.LotCostLine,

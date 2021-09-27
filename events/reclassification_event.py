@@ -1,10 +1,11 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
+from trytond.exceptions import UserError
 from trytond.model import fields, ModelView, Workflow
-from trytond.model.fields.field import depends
-from trytond.pyson import Bool, Equal, Eval, If, Not, Or
+from trytond.pyson import Equal, Eval, If, Not
 from trytond.pool import Pool
 from trytond.transaction import Transaction
+from trytond.i18n import gettext
 
 from .abstract_event import AbstractEvent, _STATES_VALIDATED_ADMIN, \
     _DEPENDS_VALIDATED_ADMIN
@@ -74,6 +75,13 @@ class ReclassficationEvent(AbstractEvent):
                 % (reclass_event.id,
                     reclass_event.in_move.id,
                     reclass_event.out_move.id))
+            if (reclass_event.animal.lot.product ==
+                    reclass_event.reclassification_product):
+                raise UserError(gettext(
+                    'farm.invalid_reclassification_product',
+                    event=reclass_event.id,
+                    product=reclass_event.reclassification_product
+                ))
 
             new_in_move = reclass_event._get_event_input_move()
             new_in_move.save()
@@ -148,17 +156,13 @@ class ReclassficationEvent(AbstractEvent):
         pool = Pool()
         Move = pool.get('stock.move')
         Lot = pool.get('stock.lot')
-        LotAnimal = pool.get('stock.lot-farm.animal')
         context = Transaction().context
-        old_lot = self.animal.lot
-        old_lot_animal = LotAnimal.search([('animal', '=', self.animal),
-            ('lot', '=', old_lot)], limit=1)
         lots = Lot.create([self._get_new_lot_values()])
-        LotAnimal.delete(old_lot_animal)
-        lot = lots[0]
-        lot.save()
-        old_lot.historic_animal = self.animal
-        old_lot.save()
+        if lots:
+            lot, = lots
+            lot.save()
+        self.animal.lot = lot
+        self.animal.save()
         production_location = self.farm.production_location
 
         return Move(
