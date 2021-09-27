@@ -67,14 +67,13 @@ class ReclassficationEvent(AbstractEvent):
 
         todo_moves = []
         for reclass_event in events:
-            assert (
-                not reclass_event.in_move and
-                not reclass_event.out_move), (
-                    'Reclassification Event '
-                '"%s" already has the related stock moves: IN:"%s", OUT:"%s"'
-                % (reclass_event.id,
-                    reclass_event.in_move.id,
-                    reclass_event.out_move.id))
+            if reclass_event.in_move and reclass_event.out_move:
+                raise UserError(gettext(
+                    'farm.related_stock_moves',
+                    event=reclass_event.id,
+                    in_move=reclass_event.in_move.id,
+                    out_move=reclass_event.out_move.id
+                ))
             if (reclass_event.animal.lot.product ==
                     reclass_event.reclassification_product):
                 raise UserError(gettext(
