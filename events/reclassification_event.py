@@ -50,6 +50,12 @@ class ReclassficationEvent(AbstractEvent):
         if 'farm' not in cls.animal.depends:
             cls.animal.depends.append('farm')
 
+        cls._buttons.update({
+            'draft': {
+                'invisible': True,
+                },
+        })
+
     def get_valid_products(self, name=None):
         if self.animal and self.animal.specie:
             return [p.id for p in self.animal.specie.reclassification_products]
