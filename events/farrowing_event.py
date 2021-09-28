@@ -43,10 +43,10 @@ class FarrowingEvent(AbstractEvent, ImportedEventMixin, ModelSQL, ModelView, Wor
         depends=_DEPENDS_WRITE_DRAFT + ['produced_animal_type'])
     dead = fields.Function(fields.Integer('Dead', states={
             'invisible': ~Equal(Eval('produced_animal_type'), 'group')
-        }), 'on_change_with_dead')
+        }, depends=['produced_animal_type']), 'on_change_with_dead')
     problem = fields.Many2One('farm.farrowing.problem', 'Problem',
         states=_STATES_WRITE_DRAFT,
-        depends=_DEPENDS_WRITE_DRAFT + ['produced_animal_type'])
+        depends=_DEPENDS_WRITE_DRAFT)
     female_cycle = fields.One2One(
         'farm.farrowing.event-farm.animal.female_cycle', 'event', 'cycle',
         string='Female Cycle', readonly=True, domain=[
