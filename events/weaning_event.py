@@ -26,6 +26,7 @@ __all__ = ['WeaningEvent', 'WeaningEventFemaleCycle']
 _INVISIBLE_NOT_GROUP = {
     'invisible': ~Equal(Eval('produced_animal_type'), 'group')
     }
+
 _REQUIRED_IF_GROUP = {'required': Equal(Eval('produced_animal_type'), 'group')}
 
 
@@ -320,6 +321,7 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
 
             if weaning_event.produced_animal_type == 'individual':
                 to_save = []
+
                 for animal in weaning_event.farrowing_animals:
                     animalMove = AnimalMove()
                     animalMove.event = weaning_event

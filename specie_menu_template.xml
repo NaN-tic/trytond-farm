@@ -88,6 +88,10 @@
             <field name="group" ref="group_farm_individuals"/>
         </record>
 
+        <menuitem id="menu_farm_reclassification_event"
+            action="act_farm_reclassification_event"
+            parent="menu_farm_animal_individuals" sequence="20"/>
+
         <!-- Groups -->
         <menuitem id="menu_farm_animal_groups"
             action="act_farm_animal_group"

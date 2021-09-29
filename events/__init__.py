@@ -15,6 +15,7 @@ from . import abort_event
 from . import farrowing_event
 from . import foster_event
 from . import weaning_event
+from . import reclassification_event
 
 from . import event_order
 
@@ -22,4 +23,4 @@ __all__ = ['abstract_event', 'move_event', 'feed_event', 'feed_inventory',
     'medication_event', 'transformation_event', 'removal_event',
     'semen_extraction_event', 'insemination_event',
     'pregnancy_diagnosis_event', 'abort_event', 'farrowing_event',
-    'foster_event', 'weaning_event', 'event_order']
+    'foster_event', 'weaning_event', 'reclassification_event', 'event_order']

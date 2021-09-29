@@ -10,6 +10,8 @@ from trytond.pool import Pool, PoolMeta
 from trytond.wizard import Wizard, StateView, StateAction, Button, StateTransition
 from trytond.exceptions import UserError
 from trytond.i18n import gettext
+from trytond import backend
+from sql import Table
 
 _STATES_MALE_FIELD = {
     'invisible': Not(Equal(Eval('type'), 'male')),
@@ -142,8 +144,8 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
             })
     breed = fields.Many2One('farm.specie.breed', 'Breed', required=True,
         domain=[('specie', '=', Eval('specie'))], depends=['specie'])
-    lot = fields.One2One('stock.lot-farm.animal', 'animal', 'lot',
-        string='Lot', required=True, readonly=True, domain=[
+    lot = fields.Many2One('stock.lot', 'Lot',
+        readonly=True, domain=[
             ('animal_type', '=', Eval('type')),
         ], depends=['type'])
     number = fields.Function(fields.Char('Number'),
@@ -211,10 +213,33 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
             ], 'Purpose', states=_STATES_INDIVIDUAL_FIELD,
         depends=_DEPENDS_INDIVIDUAL_FIELD)
     active = fields.Boolean('Active')
+    lots= fields.One2Many(
+        'stock.lot', 'animal', 'Lots', readonly=True)
 
     # We can't use the 'required' attribute in field because it's
     # checked on view before execute 'create()' function where this
     # field is filled in.
+
+    @classmethod
+    def __register__(cls, module_name):
+        TableHandler = backend.get('TableHandler')
+        table = cls.__table_handler__(module_name)
+        sql_table = cls.__table__()
+        update_lot = False
+        if not table.column_exist('lot'):
+            update_lot = True
+        super().__register__(module_name)
+        table = cls.__table_handler__(module_name)
+        if update_lot:
+            sql_table_animal_lot = 'stock_lot-farm_animal'
+            if TableHandler.table_exist(sql_table_animal_lot):
+                sql_table_animal_lot = Table(sql_table_animal_lot)
+                cursor = Transaction().connection.cursor()
+                cursor.execute(*sql_table_animal_lot.select(
+                    sql_table_animal_lot.animal, sql_table_animal_lot.lot))
+                for animal_id, lot_id in cursor.fetchall():
+                    cursor.execute(*sql_table.update(columns=[sql_table.lot],
+                        values=[lot_id], where=sql_table.id == animal_id))
 
     @staticmethod
     def default_specie():
@@ -388,13 +413,19 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
                 location = Location(vals['initial_location'])
                 vals['number'] = cls._calc_number(vals['specie'],
                         location.warehouse.id, vals['type'])
+
+        new_animals = super(Animal, cls).create(vlist)
+        for animal, vals in zip(new_animals, vlist):
+            vals['id'] = animal.id
             if vals.get('lot'):
                 lot = Lot(vals['lot'])
                 Lot.write([lot], cls._get_lot_values(vals, False))
+                animal.lot = lot
+                animal.save()
             else:
                 new_lot, = Lot.create([cls._get_lot_values(vals, True)])
-                vals['lot'] = new_lot.id
-        new_animals = super(Animal, cls).create(vlist)
+                animal.lot = new_lot
+                animal.save()
         if not context.get('no_create_stock_move'):
             cls._create_and_done_first_stock_move(new_animals)
         return new_animals
@@ -455,6 +486,7 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
             'number': animal_vals['number'],
             'product': product.id,
             'animal_type': animal_vals['type'],
+            'animal': animal_vals['id']
             }
         if Transaction().context.get('create_cost_lines', True):
             cost_lines = lot_tmp._on_change_product_cost_lines().get('add')

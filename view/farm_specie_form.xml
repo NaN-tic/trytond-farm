@@ -42,6 +42,7 @@
                 <label name="feed_lost_found_location"/>
                 <field name="feed_lost_found_location"/>
             </group>
+            <field name="reclassification_products" colspan="4"/>
             <field name="farm_lines" colspan="4"/>
         </page>
         <page string="Menus &amp; Actions" id="actions">
