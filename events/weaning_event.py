@@ -10,6 +10,7 @@ No possibility of creating individuals from here. Maybe in the future we
 - Farrowing creates groups and weaning is for individuals
 """
 from trytond.model import fields, ModelView, ModelSQL, Workflow, Unique
+from trytond.model.fields.field import depends
 from trytond.pyson import Eval, Id, If, And, Equal, Bool, Not, Or
 from trytond.pool import Pool
 from trytond.transaction import Transaction
@@ -23,7 +24,9 @@ from .abstract_event import AbstractEvent, ImportedEventMixin, \
 __all__ = ['WeaningEvent', 'WeaningEventFemaleCycle']
 
 _INVISIBLE_NOT_GROUP = {
-    'invisible': ~Equal(Eval('produced_animal_type'), 'group')}
+    'invisible': ~Equal(Eval('produced_animal_type'), 'group')
+    }
+
 _REQUIRED_IF_GROUP = {'required': Equal(Eval('produced_animal_type'), 'group')}
 
 
@@ -33,7 +36,8 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
     _table = 'farm_weaning_event'
 
     farrowing_group = fields.Function(fields.Many2One('farm.animal.group',
-            'Farrowing Group', states=_INVISIBLE_NOT_GROUP),
+            'Farrowing Group', states=_INVISIBLE_NOT_GROUP,
+            depends=['produced_animal_type']),
         'get_farrowing_group')
     farrowing_animals = fields.Function(fields.Many2Many('farm.animal', None,
         None, 'Farrowing Animals'), 'get_farrowing_animals')
@@ -41,9 +45,10 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
         'on_change_with_born_alive')
     quantity = fields.Integer('Quantity', required=True,
         states={**_STATES_WRITE_DRAFT, **_INVISIBLE_NOT_GROUP},
-        depends=_DEPENDS_WRITE_DRAFT)
+        depends=_DEPENDS_WRITE_DRAFT + ['produced_animal_type'])
     fostered = fields.Function(fields.Integer(
-            'Fostered', states=_INVISIBLE_NOT_GROUP),
+            'Fostered', states=_INVISIBLE_NOT_GROUP,
+            depends=['produced_animal_type']),
         'on_change_with_fostered')
     last_minute_fostered = fields.Integer(
         'Last minute fostered',
@@ -52,9 +57,10 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
             **_INVISIBLE_NOT_GROUP,
             **_REQUIRED_IF_GROUP
             },
-        depends=_DEPENDS_WRITE_DRAFT)
+        depends=_DEPENDS_WRITE_DRAFT+['produced_animal_type'])
     casualties = fields.Function(fields.Integer(
-            'Casualties', states=_INVISIBLE_NOT_GROUP),
+            'Casualties', states=_INVISIBLE_NOT_GROUP,
+            depends=['produced_animal_type']),
         'on_change_with_casualties')
     female_to_location = fields.Many2One('stock.location',
         'Female Destination', required=True, domain=[
@@ -75,7 +81,7 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
             ('farms', 'in', [Eval('farm')]),
             ],
         states={**_STATES_WRITE_DRAFT, **_INVISIBLE_NOT_GROUP},
-        depends=_DEPENDS_WRITE_DRAFT + ['farm'],
+        depends=_DEPENDS_WRITE_DRAFT + ['farm', 'produced_animal_type'],
         help='Group in which weaned animals should be added to. If left blank '
         'they will keep the same group.')
     female_cycle = fields.One2One(
@@ -314,11 +320,14 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
                 todo_moves.append(last_minute_fostered_move)
 
             if weaning_event.produced_animal_type == 'individual':
+                to_save = []
+
                 for animal in weaning_event.farrowing_animals:
                     animalMove = AnimalMove()
                     animalMove.event = weaning_event
                     animalMove.animal = animal
-                    animalMove.save()
+                    to_save.append(animalMove)
+                AnimalMove.save(to_save)
 
             if (weaning_event.quantity and weaning_event.weaned_group and
                     weaning_event.weaned_group !=

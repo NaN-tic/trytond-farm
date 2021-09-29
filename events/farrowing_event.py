@@ -16,7 +16,9 @@ __all__ = ['FarrowingProblem', 'FarrowingEvent', 'FarrowingEventFemaleCycle',
 
 
 _INVISIBLE_NOT_GROUP = {
-    'invisible': ~Equal(Eval('produced_animal_type'), 'group')}
+    'invisible': ~ (Eval('produced_animal_type') == 'group')
+    }
+
 
 
 class FarrowingProblem(ModelSQL, ModelView):
@@ -36,15 +38,16 @@ class FarrowingEvent(AbstractEvent, ImportedEventMixin, ModelSQL, ModelView, Wor
         depends=_DEPENDS_WRITE_DRAFT)
     stillborn = fields.Integer(
         'Stillborn', states={**_STATES_WRITE_DRAFT,**_INVISIBLE_NOT_GROUP},
-        depends=_DEPENDS_WRITE_DRAFT)
+        depends=_DEPENDS_WRITE_DRAFT + ['produced_animal_type'])
     mummified = fields.Integer(
         'Mummified', states={**_STATES_WRITE_DRAFT,**_INVISIBLE_NOT_GROUP},
-        depends=_DEPENDS_WRITE_DRAFT)
+        depends=_DEPENDS_WRITE_DRAFT + ['produced_animal_type'])
     dead = fields.Function(fields.Integer('Dead', states={
             'invisible': ~Equal(Eval('produced_animal_type'), 'group')
-        }), 'on_change_with_dead')
+        }, depends=['produced_animal_type']), 'on_change_with_dead')
     problem = fields.Many2One('farm.farrowing.problem', 'Problem',
-        states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
+        states=_STATES_WRITE_DRAFT,
+        depends=_DEPENDS_WRITE_DRAFT)
     female_cycle = fields.One2One(
         'farm.farrowing.event-farm.animal.female_cycle', 'event', 'cycle',
         string='Female Cycle', readonly=True, domain=[
@@ -60,9 +63,10 @@ class FarrowingEvent(AbstractEvent, ImportedEventMixin, ModelSQL, ModelView, Wor
             ('specie', '=', Eval('specie')),
             ],
         states={
-            'required': And(And(Equal(Eval('state'), 'validated'),
-                    Bool(Eval('live', 0))), Not(Eval('imported', False)),
-                    Equal(Eval('produced_animal_type'), 'individual')),
+            'required': (
+                (Eval('state') == 'validated') & (Bool(Eval('live', 0)))
+                & (Not(Eval('imported', False)))
+                ) & (Eval('produced_animal_type') == 'individual'),
             'invisible':  ~Equal(Eval('produced_animal_type'), 'individual')
             },
         depends=['specie', 'live', 'state', 'imported', 'produced_animal_type'])
@@ -157,7 +161,6 @@ class FarrowingEvent(AbstractEvent, ImportedEventMixin, ModelSQL, ModelView, Wor
     def get_produced_animal_type(self, name):
         if self.specie.produced_animal_type:
             return self.specie.produced_animal_type
-
 
     @classmethod
     @ModelView.button
