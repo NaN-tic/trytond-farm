@@ -10,7 +10,8 @@ No possibility of creating individuals from here. Maybe in the future we
 - Farrowing creates groups and weaning is for individuals
 """
 from trytond.model import fields, ModelView, ModelSQL, Workflow, Unique
-from trytond.pyson import Eval, Id, If
+from trytond.model.fields.field import depends
+from trytond.pyson import Eval, Id, If, And, Equal, Bool, Not, Or
 from trytond.pool import Pool
 from trytond.transaction import Transaction
 from trytond.exceptions import UserError
@@ -22,6 +23,11 @@ from .abstract_event import AbstractEvent, ImportedEventMixin, \
 
 __all__ = ['WeaningEvent', 'WeaningEventFemaleCycle']
 
+_INVISIBLE_NOT_GROUP = {
+    'invisible': ~Equal(Eval('produced_animal_type'), 'group')
+    }
+_REQUIRED_IF_GROUP = {'required': Equal(Eval('produced_animal_type'), 'group')}
+
 
 class WeaningEvent(AbstractEvent, ImportedEventMixin):
     '''Farm Weaning Event'''
@@ -29,17 +35,31 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
     _table = 'farm_weaning_event'
 
     farrowing_group = fields.Function(fields.Many2One('farm.animal.group',
-            'Farrowing Group'),
+            'Farrowing Group', states=_INVISIBLE_NOT_GROUP,
+            depends=['produced_animal_type']),
         'get_farrowing_group')
+    farrowing_animals = fields.Function(fields.Many2Many('farm.animal', None,
+        None, 'Farrowing Animals'), 'get_farrowing_animals')
     born_alive = fields.Function(fields.Integer('Born Alive'),
         'on_change_with_born_alive')
     quantity = fields.Integer('Quantity', required=True,
-        states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
-    fostered = fields.Function(fields.Integer('Fostered'),
+        states={**_STATES_WRITE_DRAFT, **_INVISIBLE_NOT_GROUP},
+        depends=_DEPENDS_WRITE_DRAFT + ['produced_animal_type'])
+    fostered = fields.Function(fields.Integer(
+            'Fostered', states=_INVISIBLE_NOT_GROUP,
+            depends=['produced_animal_type']),
         'on_change_with_fostered')
-    last_minute_fostered = fields.Integer('Last minute fostered', required=True,
-	states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
-    casualties = fields.Function(fields.Integer('Casualties'),
+    last_minute_fostered = fields.Integer(
+        'Last minute fostered',
+        states={
+            **_STATES_WRITE_DRAFT,
+            **_INVISIBLE_NOT_GROUP,
+            **_REQUIRED_IF_GROUP
+            },
+        depends=_DEPENDS_WRITE_DRAFT+['produced_animal_type'])
+    casualties = fields.Function(fields.Integer(
+            'Casualties', states=_INVISIBLE_NOT_GROUP,
+            depends=['produced_animal_type']),
         'on_change_with_casualties')
     female_to_location = fields.Many2One('stock.location',
         'Female Destination', required=True, domain=[
@@ -59,7 +79,8 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
         domain=[
             ('farms', 'in', [Eval('farm')]),
             ],
-        states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT + ['farm'],
+        states={**_STATES_WRITE_DRAFT, **_INVISIBLE_NOT_GROUP},
+        depends=_DEPENDS_WRITE_DRAFT + ['farm', 'produced_animal_type'],
         help='Group in which weaned animals should be added to. If left blank '
         'they will keep the same group.')
     female_cycle = fields.One2One(
@@ -68,6 +89,21 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
             ('animal', '=', Eval('animal')),
             ],
         states=_STATES_VALIDATED, depends=_DEPENDS_VALIDATED + ['animal'])
+    produced_animal_type = fields.Function(fields.Selection([
+                ('individual', 'Individual'),
+                ('group', 'Group'),
+                ], 'Produced Animal Type'), 'get_produced_animal_type')
+    weaned_animals = fields.One2Many(
+        'farm.weaning.event-farm.animal',
+        'event', 'Weaned Animals',
+        domain=[
+            ('specie', '=', Eval('specie')),
+            ('animal', 'in', Eval('farrowing_animals')),
+            ],
+        states={
+            'invisible':  ~Equal(Eval('produced_animal_type'), 'individual'),
+            }, readonly=True,
+        depends=['produced_animal_type', 'specie', 'farrowing_animals'])
     female_move = fields.Many2One('stock.move', 'Female Stock Move',
         readonly=True, domain=[
             ('lot', '=', Eval('lot')),
@@ -82,19 +118,22 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
             ('lot.animal_group', '=', Eval('farrowing_group', 0)),
             ],
         states={
-            'invisible': ~Eval('context', {}).get('groups', []).contains(
-                    Id('farm', 'group_farm_admin')),
+            'invisible': Or((~Eval('context', {}).get('groups', []).contains(
+                    Id('farm', 'group_farm_admin'))),
+                    (~Equal(Eval('produced_animal_type'), 'group'))),
             },
-        depends=['farrowing_group'])
+        depends=['farrowing_group', 'produced_animal_type'])
     weaned_move = fields.Many2One('stock.move', 'Weaned Stock Move',
         readonly=True, domain=[
             ('lot.animal_group', '=', Eval('farrowing_group', 0)),
             ],
         states={
-            'invisible': ~Eval('context', {}).get('groups', []).contains(
-                    Id('farm', 'group_farm_admin')),
+            'invisible': Or(
+                (~Eval('context', {}).get('groups', []).contains(
+                    Id('farm', 'group_farm_admin'))),
+                (~Equal(Eval('produced_animal_type'), 'group'))),
             },
-        depends=['farrowing_group'])
+        depends=['farrowing_group', 'produced_animal_type'])
     transformation_event = fields.Many2One('farm.transformation.event',
         'Transformation Event', readonly=True, states={
             'invisible': ~Eval('context', {}).get('groups', []).contains(
@@ -142,7 +181,11 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
                 self.timestamp)
         return super(WeaningEvent, self).get_rec_name(name)
 
-    def get_farrowing_group(self, name):
+    def get_produced_animal_type(self, name):
+        if self.specie.produced_animal_type:
+            return self.specie.produced_animal_type
+
+    def get_farrowing_group(self, name=None):
         '''
         Return the farm.animal.group produced on Farrowing Event of this event
         cycle
@@ -154,6 +197,18 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
                 farrowing_event.produced_group):
             return farrowing_event.produced_group.id
         return None
+
+    def get_farrowing_animals(self, name=None):
+        '''
+        Return the farm.animals produced on Farrowing Event of this event
+        cycle
+        '''
+        farrowing_event = (self.female_cycle and
+            self.female_cycle.farrowing_event or
+            self.animal.current_cycle.farrowing_event)
+        if (farrowing_event and farrowing_event.state == 'validated' and
+                farrowing_event.produced_animals):
+            return [a.animal.id for a in farrowing_event.produced_animals]
 
     @fields.depends('animal', 'farrowing_group', 'timestamp', 'quantity')
     def on_change_with_quantity(self):
@@ -187,7 +242,7 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
             current_cycle = self.animal.current_cycle
             return current_cycle.live or 0
 
-    @fields.depends('animal')
+    @fields.depends('animal', 'weaned_animals', 'farrowing_animals')
     def on_change_animal(self):
         if not self.animal:
             return
@@ -196,6 +251,8 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
         self.female_cycle = current_cycle
         self.quantity = current_cycle.live + current_cycle.fostered
         self.last_minute_fostered = 0
+        if not self.get_farrowing_group():
+            self.farrowing_group = None
 
     @classmethod
     @ModelView.button
@@ -219,6 +276,7 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
         pool = Pool()
         Move = pool.get('stock.move')
         TransformationEvent = pool.get('farm.transformation.event')
+        AnimalMove = pool.get('farm.weaning.event-farm.animal')
         todo_moves = []
         todo_trans_events = []
         for weaning_event in events:
@@ -260,6 +318,15 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
                 last_minute_fostered_move.save()
                 todo_moves.append(last_minute_fostered_move)
 
+            if weaning_event.produced_animal_type == 'individual':
+                to_save = []
+                for animal in weaning_event.farrowing_animals:
+                    animalMove = AnimalMove()
+                    animalMove.event = weaning_event
+                    animalMove.animal = animal
+                    to_save.append(animalMove)
+                AnimalMove.save(to_save)
+
             if (weaning_event.quantity and weaning_event.weaned_group and
                     weaning_event.weaned_group !=
                     weaning_event.farrowing_group):
@@ -271,17 +338,37 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
             elif (weaning_event.quantity and weaning_event.animal.location !=
                     weaning_event.weaned_to_location):
                 # same group but different locations
-                weaning_event.farrowing_group.check_allowed_location(
-                    weaning_event.weaned_to_location, weaning_event.rec_name)
+                if weaning_event.produced_animal_type == 'individual':
+                    for animalMove in weaning_event.weaned_animals:
+                        animal = animalMove.animal
+                        animal.check_allowed_location(
+                            weaning_event.weaned_to_location,
+                            weaning_event.rec_name)
+                        move = weaning_event._get_weaned_move(animal)
+                        move.save()
+                        animalMove.move = move
+                        animalMove.save()
+                        todo_moves.append(move)
+                else:
+                    weaning_event.farrowing_group.check_allowed_location(
+                        weaning_event.weaned_to_location,
+                        weaning_event.rec_name)
+                    weaned_move = weaning_event._get_weaned_move()
+                    weaned_move.save()
 
-                weaned_move = weaning_event._get_weaned_move()
-                weaned_move.save()
-                weaning_event.weaned_move = weaned_move
-                todo_moves.append(weaned_move)
-
-            cost_line = weaning_event._get_weaning_cost_line()
-            if cost_line:
-                cost_line.save()
+                    weaning_event.weaned_move = weaned_move
+                    todo_moves.append(weaned_move)
+            if weaning_event.produced_animal_type == 'individual':
+                for animal in weaning_event.weaned_animals:
+                    cost_line = (
+                        weaning_event._get_weaning_animal_cost_line(
+                            animal.animal))
+                    if cost_line:
+                        cost_line.save()
+            else:
+                cost_line = weaning_event._get_weaning_cost_line()
+                if cost_line:
+                    cost_line.save()
 
             weaning_event.save()
             current_cycle.update_state(weaning_event)
@@ -354,6 +441,23 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
             lot=self.farrowing_group.lot,
             origin=self)
 
+    def _get_weaning_animal_cost_line(self, animal):
+        pool = Pool()
+        ModelData = pool.get('ir.model.data')
+        LotCostLine = pool.get('stock.lot.cost_line')
+        category_id = ModelData.get_id('farm', 'cost_category_weaning_cost')
+
+        if (animal.lot and animal.lot.product.template.weaning_price and
+                animal.lot.product.template.weaning_price !=
+                animal.lot.cost_price):
+            cost_line = LotCostLine()
+            cost_line.lot = animal.lot
+            cost_line.category = category_id
+            cost_line.origin = str(self)
+            cost_line.unit_price = (animal.lot.product.template.weaning_price -
+                animal.lot.cost_price)
+            return cost_line
+
     def _get_weaning_cost_line(self):
         pool = Pool()
         ModelData = pool.get('ir.model.data')
@@ -372,21 +476,34 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
                 group.lot.cost_price)
             return cost_line
 
-    def _get_weaned_move(self):
+    def _get_weaned_move(self, animal=None):
         pool = Pool()
         Move = pool.get('stock.move')
         context = Transaction().context
-        return Move(
-            product=self.farrowing_group.lot.product,
-            uom=self.farrowing_group.lot.product.default_uom,
-            quantity=self.quantity,
-            from_location=self.animal.location,
-            to_location=self.weaned_to_location,
-            planned_date=self.timestamp.date(),
-            effective_date=self.timestamp.date(),
-            company=context.get('company'),
-            lot=self.farrowing_group.lot,
-            origin=self)
+        if animal:
+            return Move(
+                product=animal.lot.product,
+                uom=animal.lot.product.default_uom,
+                quantity=1,
+                from_location=self.animal.location,
+                to_location=self.weaned_to_location,
+                planned_date=self.timestamp.date(),
+                effective_date=self.timestamp.date(),
+                company=context.get('company'),
+                lot=animal.lot,
+                origin=self)
+        else:
+            return Move(
+                product=self.farrowing_group.lot.product,
+                uom=self.farrowing_group.lot.product.default_uom,
+                quantity=self.quantity,
+                from_location=self.animal.location,
+                to_location=self.weaned_to_location,
+                planned_date=self.timestamp.date(),
+                effective_date=self.timestamp.date(),
+                company=context.get('company'),
+                lot=self.farrowing_group.lot,
+                origin=self)
 
     def _get_transformation_event(self):
         TransformationEvent = Pool().get('farm.transformation.event')
@@ -436,3 +553,25 @@ class WeaningEventFemaleCycle(ModelSQL):
             ('event_unique', Unique(t, t.event), 'farm.weaning_event_unique'),
             ('cycle_unique', Unique(t, t.cycle), 'farm.weaning_cycle_unique'),
             ]
+
+
+class WeaningEventAnimal(ModelSQL, ModelView):
+    "Weaning Event - Animal"
+    __name__ = 'farm.weaning.event-farm.animal'
+
+    event = fields.Many2One('farm.weaning.event', 'Weaning Event',
+        required=True, ondelete='RESTRICT')
+    animal = fields.Many2One('farm.animal', 'Animal',
+        required=True, ondelete='RESTRICT')
+    specie = fields.Function(
+        fields.Many2One('farm.specie', 'Specie'), 'get_specie',
+        searcher='search_specie')
+    move = fields.Many2One('stock.move', 'Move', ondelete='RESTRICT')
+
+    def get_specie(self):
+        if self.animal and self.animal.specie:
+            return self.animal.specie
+
+    @classmethod
+    def search_specie(cls, name, clause):
+        return [('animal.specie',) + tuple(clause[1:])]
