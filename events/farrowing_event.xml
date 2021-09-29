@@ -160,6 +160,18 @@
             <field name="act_window" ref="act_farm_farrowing_event"/>
         </record>
 
+        <record model="ir.ui.view" id="farm_farrowing_animal_form_view">
+            <field name="model">farm.farrowing.event-farm.animal</field>
+            <field name="type">form</field>
+            <field name="name">farm_farrowing_animal_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="farm_farrowing_animal_list_view">
+            <field name="model">farm.farrowing.event-farm.animal</field>
+            <field name="type">tree</field>
+            <field name="name">farm_farrowing_animal_list</field>
+        </record>
+
         <!-- Permissions -->
         <record model="ir.model.access" id="access_farm_farrowing_event">
             <field name="model" search="[('model', '=', 'farm.farrowing.event')]"/>
