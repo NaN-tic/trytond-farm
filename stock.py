@@ -51,23 +51,21 @@ class Lot(metaclass=PoolMeta):
         TableHandler = backend.get('TableHandler')
         table = cls.__table_handler__(module_name)
         sql_table = cls.__table__()
-        sql_table_animal_lot = 'stock_lot-farm_animal'
-        if not TableHandler.table_exist(sql_table_animal_lot):
-            super(Lot, cls).__register__(module_name)
-            return
-        sql_table_animal_lot = Table(sql_table_animal_lot)
         update_animal = False
         if not table.column_exist('animal'):
             update_animal = True
-        super(Lot, cls).__register__(module_name)
+        super().__register__(module_name)
         table = cls.__table_handler__(module_name)
-        cursor = Transaction().connection.cursor()
         if update_animal:
-            cursor.execute(*sql_table_animal_lot.select(
-                sql_table_animal_lot.animal, sql_table_animal_lot.lot))
-            for animal_id, lot_id in cursor.fetchall():
-                cursor.execute(*sql_table.update(columns=[sql_table.animal],
-                    values=[animal_id], where=sql_table.id == lot_id))
+            sql_table_animal_lot = 'stock_lot-farm_animal'
+            if TableHandler.table_exist(sql_table_animal_lot):
+                sql_table_animal_lot = Table(sql_table_animal_lot)
+                cursor = Transaction().connection.cursor()
+                cursor.execute(*sql_table_animal_lot.select(
+                    sql_table_animal_lot.animal, sql_table_animal_lot.lot))
+                for animal_id, lot_id in cursor.fetchall():
+                    cursor.execute(*sql_table.update(columns=[sql_table.animal],
+                        values=[animal_id], where=sql_table.id == lot_id))
 
     @staticmethod
     def default_animal_type():

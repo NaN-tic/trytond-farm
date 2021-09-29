@@ -216,7 +216,6 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
             ], 'Purpose', states=_STATES_INDIVIDUAL_FIELD,
         depends=_DEPENDS_INDIVIDUAL_FIELD)
     active = fields.Boolean('Active')
-
     lots= fields.One2Many(
         'stock.lot', 'animal', 'Lots', readonly=True)
 
@@ -229,23 +228,21 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
         TableHandler = backend.get('TableHandler')
         table = cls.__table_handler__(module_name)
         sql_table = cls.__table__()
-        sql_table_animal_lot = 'stock_lot-farm_animal'
-        if not TableHandler.table_exist(sql_table_animal_lot):
-            super(Animal, cls).__register__(module_name)
-            return
-        sql_table_animal_lot = Table(sql_table_animal_lot)
         update_lot = False
         if not table.column_exist('lot'):
             update_lot = True
-        super(Animal, cls).__register__(module_name)
+        super().__register__(module_name)
         table = cls.__table_handler__(module_name)
-        cursor = Transaction().connection.cursor()
         if update_lot:
-            cursor.execute(*sql_table_animal_lot.select(
-                sql_table_animal_lot.animal, sql_table_animal_lot.lot))
-            for animal_id, lot_id in cursor.fetchall():
-                cursor.execute(*sql_table.update(columns=[sql_table.lot],
-                    values=[lot_id], where=sql_table.id == animal_id))
+            sql_table_animal_lot = 'stock_lot-farm_animal'
+            if TableHandler.table_exist(sql_table_animal_lot):
+                sql_table_animal_lot = Table(sql_table_animal_lot)
+                cursor = Transaction().connection.cursor()
+                cursor.execute(*sql_table_animal_lot.select(
+                    sql_table_animal_lot.animal, sql_table_animal_lot.lot))
+                for animal_id, lot_id in cursor.fetchall():
+                    cursor.execute(*sql_table.update(columns=[sql_table.lot],
+                        values=[lot_id], where=sql_table.id == animal_id))
 
     @staticmethod
     def default_specie():

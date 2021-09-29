@@ -23,7 +23,8 @@ class ReclassficationEvent(AbstractEvent):
             'readonly': Not(Equal(Eval('state'), 'draft')),
             }, depends=['animal_type', 'state', 'valid_products'])
     valid_products = fields.Function(fields.Many2Many(
-        'product.product', None, None, 'Valid Products'), 'get_valid_products')
+        'product.product', None, None, 'Valid Products'),
+        'on_change_with_valid_products')
     in_move = fields.Many2One(
         'stock.move', 'Input Stock Move', readonly=True,
         states=_STATES_VALIDATED_ADMIN, depends=_DEPENDS_VALIDATED_ADMIN)
@@ -56,7 +57,8 @@ class ReclassficationEvent(AbstractEvent):
                 },
         })
 
-    def get_valid_products(self, name=None):
+    @fields.depends('animal')
+    def on_change_with_valid_products(self, name=None):
         if self.animal and self.animal.specie:
             return [p.id for p in self.animal.specie.reclassification_products]
         return []
@@ -71,7 +73,6 @@ class ReclassficationEvent(AbstractEvent):
         pool = Pool()
         Move = pool.get('stock.move')
 
-        todo_moves = []
         for reclass_event in events:
             if reclass_event.in_move and reclass_event.out_move:
                 raise UserError(gettext(
@@ -96,7 +97,6 @@ class ReclassficationEvent(AbstractEvent):
             new_out_move.save()
             Move.assign([new_out_move])
             Move.do([new_out_move])
-            todo_moves += [new_in_move, new_out_move]
             reclass_event.in_move = new_in_move
             reclass_event.out_move = new_out_move
             reclass_event.save()
@@ -106,7 +106,6 @@ class ReclassficationEvent(AbstractEvent):
         super().on_change_animal()
         if not self.animal:
             return
-        self.valid_products = self.get_valid_products()
         self.to_location = self.animal.location
 
     def _get_new_lot_values(self):
@@ -145,15 +144,15 @@ class ReclassficationEvent(AbstractEvent):
             lot = self.animal.lot
         production_location = self.farm.production_location
         return Move(
-            product=lot.product.id,
-            uom=lot.product.default_uom.id,
+            product=lot.product,
+            uom=lot.product.default_uom,
             quantity=1,
-            from_location=self.animal.location.id,
-            to_location=production_location.id,
+            from_location=self.animal.location,
+            to_location=production_location,
             planned_date=self.timestamp.date(),
             effective_date=self.timestamp.date(),
             company=context.get('company'),
-            lot=lot.id,
+            lot=lot,
             origin=self,
             )
 
@@ -171,11 +170,11 @@ class ReclassficationEvent(AbstractEvent):
         production_location = self.farm.production_location
 
         return Move(
-            product=lot.product.id,
-            uom=lot.product.default_uom.id,
+            product=lot.product,
+            uom=lot.product.default_uom,
             quantity=1,
-            from_location=production_location.id,
-            to_location=self.to_location.id,
+            from_location=production_location,
+            to_location=self.to_location,
             planned_date=self.timestamp.date(),
             effective_date=self.timestamp.date(),
             company=context.get('company'),
