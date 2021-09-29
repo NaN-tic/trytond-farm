@@ -301,5 +301,12 @@ this repository contains the full copyright notices and license terms. -->
             <field name="text">In Transformation Events, the quantity must be 1 for Animals (not Groups).</field>
         </record>
 
+        <!-- events/reclassification_event.py -->
+        <record model="ir.message" id="invalid_reclassification_product">
+            <field name="text">In reclassification event "%(event)s", the product "%(product)s" is already set to the animal</field>
+        </record>
+         <record model="ir.message" id="related_stock_moves">
+            <field name="text">Reclassification Event "%(event)s" already has the related stock moves: IN: "%(in_move)s", OUT: "%(out_move)s"</field>
+        </record>
     </data>
 </tryton>

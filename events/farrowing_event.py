@@ -17,6 +17,7 @@ _INVISIBLE_NOT_GROUP = {
     }
 
 
+
 class FarrowingProblem(ModelSQL, ModelView):
     '''Farrowing Event Problem'''
     __name__ = 'farm.farrowing.problem'
