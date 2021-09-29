@@ -4,6 +4,8 @@
 <form>
     <label name="name"/>
     <field name="name"/>
+    <label name="produced_animal_type"/>
+    <field name="produced_animal_type"/>
     <notebook>
         <page string="General" id="general">
             <group colspan="2" id="products">

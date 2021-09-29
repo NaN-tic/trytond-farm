@@ -30,6 +30,7 @@
             <field name="mummified"/>
             <label name="dead"/>
             <field name="dead"/>
+            <newline/>
             <label name="problem"/>
             <field name="problem" colspan="3"/>
         </group>
@@ -38,6 +39,7 @@
         <field name="female_cycle"/>
         <label name="produced_group"/>
         <field name="produced_group"/>
+        <field name="produced_animals" colspan="2"/>
         <label name="move"/>
         <field name="move"/>
     </group>
