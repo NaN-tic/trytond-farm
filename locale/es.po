@@ -150,6 +150,10 @@ msgctxt "field:farm.animal,lot:"
 msgid "Lot"
 msgstr "Lote"
 
+msgctxt "field:farm.animal,lots:"
+msgid "Lots"
+msgstr "Lotes"
+
 msgctxt "field:farm.animal,notes:"
 msgid "Notes"
 msgstr "Notas"
@@ -655,6 +659,14 @@ msgctxt "field:farm.farrowing.event,problem:"
 msgid "Problem"
 msgstr "Problema"
 
+msgctxt "field:farm.farrowing.event,produced_animal_type:"
+msgid "Produced Animal Type"
+msgstr "Tipo de animal producido"
+
+msgctxt "field:farm.farrowing.event,produced_animals:"
+msgid "Produced Animals"
+msgstr "Animales producidos"
+
 msgctxt "field:farm.farrowing.event,produced_group:"
 msgid "Produced Group"
 msgstr "Grupo producido"
@@ -674,6 +686,22 @@ msgstr "Nacido muerto"
 msgctxt "field:farm.farrowing.event,timestamp:"
 msgid "Date & Time"
 msgstr "Fecha & Hora"
+
+msgctxt "field:farm.farrowing.event-farm.animal,animal:"
+msgid "Animal"
+msgstr "Animal"
+
+msgctxt "field:farm.farrowing.event-farm.animal,event:"
+msgid "Farrowing Event"
+msgstr "Evento de parto"
+
+msgctxt "field:farm.farrowing.event-farm.animal,move:"
+msgid "Move"
+msgstr "Movimiento"
+
+msgctxt "field:farm.farrowing.event-farm.animal,specie:"
+msgid "Specie"
+msgstr "Especie"
 
 msgctxt "field:farm.farrowing.event-farm.animal.female_cycle,cycle:"
 msgid "Female Cycle"
@@ -1299,6 +1327,70 @@ msgctxt "field:farm.pregnancy_diagnosis.event,timestamp:"
 msgid "Date & Time"
 msgstr "Fecha & Hora"
 
+msgctxt "field:farm.reclassification.event,animal:"
+msgid "Animal"
+msgstr "Animal"
+
+msgctxt "field:farm.reclassification.event,animal_group:"
+msgid "Group"
+msgstr "Grupo"
+
+msgctxt "field:farm.reclassification.event,animal_type:"
+msgid "Animal Type"
+msgstr "Tipo animal"
+
+msgctxt "field:farm.reclassification.event,employee:"
+msgid "Employee"
+msgstr "Empleado"
+
+msgctxt "field:farm.reclassification.event,farm:"
+msgid "Farm"
+msgstr "Granja"
+
+msgctxt "field:farm.reclassification.event,in_move:"
+msgid "Input Stock Move"
+msgstr "Movimiento de entrada"
+
+msgctxt "field:farm.reclassification.event,lot:"
+msgid "Lot"
+msgstr "Lote"
+
+msgctxt "field:farm.reclassification.event,notes:"
+msgid "Notes"
+msgstr "Notas"
+
+msgctxt "field:farm.reclassification.event,order:"
+msgid "Order"
+msgstr "Orden"
+
+msgctxt "field:farm.reclassification.event,out_move:"
+msgid "Output Stock Move"
+msgstr "Movimiento salida"
+
+msgctxt "field:farm.reclassification.event,reclassification_product:"
+msgid "Reclassification Product"
+msgstr "Producto de reclasificación"
+
+msgctxt "field:farm.reclassification.event,specie:"
+msgid "Specie"
+msgstr "Especie"
+
+msgctxt "field:farm.reclassification.event,state:"
+msgid "State"
+msgstr "Estado"
+
+msgctxt "field:farm.reclassification.event,timestamp:"
+msgid "Date & Time"
+msgstr "Fecha & Hora"
+
+msgctxt "field:farm.reclassification.event,to_location:"
+msgid "Destination"
+msgstr "Destino"
+
+msgctxt "field:farm.reclassification.event,valid_products:"
+msgid "Valid Products"
+msgstr "Productos válidos"
+
 msgctxt "field:farm.removal.event,animal:"
 msgid "Animal"
 msgstr "Animal"
@@ -1619,6 +1711,14 @@ msgctxt "field:farm.specie,name:"
 msgid "Name"
 msgstr "Nombre"
 
+msgctxt "field:farm.specie,produced_animal_type:"
+msgid "Produced Animal Type"
+msgstr "Tipo de animal producido"
+
+msgctxt "field:farm.specie,reclassification_products:"
+msgid "Reclassification Products"
+msgstr "Productos de reclasificación"
+
 msgctxt "field:farm.specie,removed_location:"
 msgid "Removed Location"
 msgstr "Ubicación eliminados"
@@ -1636,6 +1736,14 @@ msgid "Model"
 msgstr "Modelo"
 
 msgctxt "field:farm.specie-ir.model,specie:"
+msgid "Specie"
+msgstr "Especie"
+
+msgctxt "field:farm.specie-product.product,product:"
+msgid "Product"
+msgstr "Productos"
+
+msgctxt "field:farm.specie-product.product,specie:"
 msgid "Specie"
 msgstr "Especie"
 
@@ -1815,6 +1923,10 @@ msgctxt "field:farm.weaning.event,farm:"
 msgid "Farm"
 msgstr "Granja"
 
+msgctxt "field:farm.weaning.event,farrowing_animals:"
+msgid "Farrowing Animals"
+msgstr "Animales del parto"
+
 msgctxt "field:farm.weaning.event,farrowing_group:"
 msgid "Farrowing Group"
 msgstr "Grupo parido"
@@ -1859,6 +1971,10 @@ msgctxt "field:farm.weaning.event,order:"
 msgid "Order"
 msgstr "Orden"
 
+msgctxt "field:farm.weaning.event,produced_animal_type:"
+msgid "Produced Animal Type"
+msgstr "Tipo de animal producido"
+
 msgctxt "field:farm.weaning.event,quantity:"
 msgid "Quantity"
 msgstr "Cantidad"
@@ -1879,6 +1995,10 @@ msgctxt "field:farm.weaning.event,transformation_event:"
 msgid "Transformation Event"
 msgstr "Evento de transformación"
 
+msgctxt "field:farm.weaning.event,weaned_animals:"
+msgid "Weaned Animals"
+msgstr "Animales destetados"
+
 msgctxt "field:farm.weaning.event,weaned_group:"
 msgid "Weaned Group"
 msgstr "Grupo destete"
@@ -1890,6 +2010,22 @@ msgstr "Movimiento destetados"
 msgctxt "field:farm.weaning.event,weaned_to_location:"
 msgid "Weaned Destination"
 msgstr "Destino destete"
+
+msgctxt "field:farm.weaning.event-farm.animal,animal:"
+msgid "Animal"
+msgstr "Animal"
+
+msgctxt "field:farm.weaning.event-farm.animal,event:"
+msgid "Weaning Event"
+msgstr "Evento de destete"
+
+msgctxt "field:farm.weaning.event-farm.animal,move:"
+msgid "Move"
+msgstr "Movimiento"
+
+msgctxt "field:farm.weaning.event-farm.animal,specie:"
+msgid "Specie"
+msgstr "Especie"
 
 msgctxt "field:farm.weaning.event-farm.animal.female_cycle,cycle:"
 msgid "Female Cycle"
@@ -1923,6 +2059,26 @@ msgctxt "field:ir.ui.menu,specie:"
 msgid "Specie"
 msgstr "Especie"
 
+msgctxt "field:product.product,farrowing_price:"
+msgid "Farrowing Price"
+msgstr "Precio de parto"
+
+msgctxt "field:product.product,production_quality_template:"
+msgid "Production Quality Template"
+msgstr "Plantilla calidad de Producción"
+
+msgctxt "field:product.product,shipment_in_quality_template:"
+msgid "Shipment In Quality Template"
+msgstr "Plantilla calidad albarán de entrada"
+
+msgctxt "field:product.product,shipment_out_quality_template:"
+msgid "Shipment Out Quality Template"
+msgstr "Plantilla calidad albarán de salida"
+
+msgctxt "field:product.product,weaning_price:"
+msgid "Weaning Price"
+msgstr "Precio destete"
+
 msgctxt "field:product.template,farrowing_price:"
 msgid "Farrowing Price"
 msgstr "Precio de parto"
@@ -1938,6 +2094,10 @@ msgstr "Dosis de semen"
 msgctxt "field:production.bom,specie:"
 msgid "Dose Specie"
 msgstr "Dosis de una especie"
+
+msgctxt "field:quality.template,document:"
+msgid "Document"
+msgstr "Documento"
 
 msgctxt "field:quality.test,semen_extraction:"
 msgid "Semen Extraction"
@@ -1986,14 +2146,6 @@ msgstr "Grupo"
 msgctxt "field:stock.lot,animal_type:"
 msgid "Animal Type"
 msgstr "Tipo animal"
-
-msgctxt "field:stock.lot-farm.animal,animal:"
-msgid "Animal"
-msgstr "Animal"
-
-msgctxt "field:stock.lot-farm.animal,lot:"
-msgid "Lot"
-msgstr "Lote"
 
 msgctxt "field:stock.lot-farm.animal.group,animal_group:"
 msgid "Animal Group"
@@ -2212,6 +2364,10 @@ msgctxt "help:farm.pregnancy_diagnosis.event,employee:"
 msgid "Employee that did the job."
 msgstr "El empleado que ha realizado el trabajo."
 
+msgctxt "help:farm.reclassification.event,employee:"
+msgid "Employee that did the job."
+msgstr "El empleado que ha realizado el trabajo."
+
 msgctxt "help:farm.removal.event,employee:"
 msgid "Employee that did the job."
 msgstr "El empleado que ha realizado el trabajo."
@@ -2415,6 +2571,22 @@ msgstr ""
 "Grupo al que se añadirán los animales destetados. Si se deja en blanco se "
 "mantendrán en el mismo grupo."
 
+msgctxt "help:product.product,farrowing_price:"
+msgid ""
+"Unitary cost for farrowing events. It's only used when the product is a "
+"group product of a farm specie."
+msgstr ""
+"Coste unitario de los eventos de aparto. Solo se utiliza en caso que el "
+"producto se el definido como grupo de una especie de una granja."
+
+msgctxt "help:product.product,weaning_price:"
+msgid ""
+"Unitary cost for weaning events. It's only used when the product is a group "
+"product of a farm specie."
+msgstr ""
+"Coste unitario de los eventos de destete. Solo se utiliza en caso que el "
+"producto se el definido como grupo de una especie de una granja."
+
 msgctxt "help:product.template,farrowing_price:"
 msgid ""
 "Unitary cost for farrowing events. It's only used when the product is a "
@@ -2507,6 +2679,10 @@ msgctxt "model:farm.farrowing.event,name:"
 msgid "Farm Farrowing Event"
 msgstr "Evento de parto"
 
+msgctxt "model:farm.farrowing.event-farm.animal,name:"
+msgid "Farrowing Event - Animal"
+msgstr "Parto - Animal"
+
 msgctxt "model:farm.farrowing.event-farm.animal.female_cycle,name:"
 msgid "Farrowing Event - Female Cycle"
 msgstr "Evento de parto - Ciclo hembra"
@@ -2580,6 +2756,10 @@ msgstr "Evento de movimiento"
 msgctxt "model:farm.pregnancy_diagnosis.event,name:"
 msgid "Farm Pregnancy Diagnosis Event"
 msgstr "Evento de diagnosis de embarazo"
+
+msgctxt "model:farm.reclassification.event,name:"
+msgid "Farm Reclassification Event"
+msgstr "Evento de Reclasificación"
 
 msgctxt "model:farm.removal.event,name:"
 msgid "Farm Removal Event"
@@ -2657,6 +2837,10 @@ msgctxt "model:farm.specie-ir.model,name:"
 msgid "Specie - Model"
 msgstr "Especie - Modelo"
 
+msgctxt "model:farm.specie-product.product,name:"
+msgid "Specie - Product"
+msgstr "Especie - Producto"
+
 msgctxt "model:farm.specie.breed,name:"
 msgid "Breed of Specie"
 msgstr "Raza de una especie"
@@ -2676,6 +2860,10 @@ msgstr "Evento de transformación"
 msgctxt "model:farm.weaning.event,name:"
 msgid "Farm Weaning Event"
 msgstr "Evento de destete"
+
+msgctxt "model:farm.weaning.event-farm.animal,name:"
+msgid "Weaning Event - Animal"
+msgstr "Destete - Animal"
 
 msgctxt "model:farm.weaning.event-farm.animal.female_cycle,name:"
 msgid "Weaning Event - Female Cycle"
@@ -2760,6 +2948,10 @@ msgstr "Movimientos"
 msgctxt "model:ir.action,name:act_farm_pregnancy_diagnosis_event"
 msgid "Pregnancy Diagnosis"
 msgstr "Diagnósticos de gestación"
+
+msgctxt "model:ir.action,name:act_farm_reclassification_event"
+msgid "Reclassification"
+msgstr "Reclasificación"
 
 msgctxt "model:ir.action,name:act_farm_removal_event"
 msgid "Removals"
@@ -2892,6 +3084,16 @@ msgstr "Todos"
 
 msgctxt ""
 "model:ir.action.act_window.domain,name:act_farm_pregnancy_diagnosis_event_domain_draft"
+msgid "Draft"
+msgstr "Borrador"
+
+msgctxt ""
+"model:ir.action.act_window.domain,name:act_farm_reclassification_event_domain_all"
+msgid "All"
+msgstr "Todos"
+
+msgctxt ""
+"model:ir.action.act_window.domain,name:act_farm_reclassification_event_domain_draft"
 msgid "Draft"
 msgstr "Borrador"
 
@@ -3243,6 +3445,14 @@ msgstr ""
 "La cantidad especificada en el inventario de pienso \"%(inventory)s\" no es correcta.\n"
 "La cantidad disponible en el silo es %(curr_qty)s. La cantidad del inventario debe ser menor o igual a la disponible."
 
+msgctxt "model:ir.message,text:invalid_reclassification_product"
+msgid ""
+"In reclassification event \"%(event)s\", the product \"%(product)s\" is "
+"already set to the animal"
+msgstr ""
+"En la reclasificación \"%(event)s\", el producto \"%(product)s\" ya está "
+"asignado al animal"
+
 msgctxt "model:ir.message,text:invalid_state_to_delete"
 msgid "The event \"%(event)s\" can't be deleted because is not in \"Draft\" state."
 msgstr ""
@@ -3411,6 +3621,12 @@ msgctxt "model:ir.message,text:quality_test_unique"
 msgid "The Quality Test must be unique."
 msgstr "El test de calidad debe ser único."
 
+msgctxt "model:ir.message,text:related_stock_moves"
+msgid ""
+"Reclassification Event \"%(event)s\" already has the related stock moves: "
+"IN: \"%(in_move)s\", OUT: \"%(out_move)s\""
+msgstr ""
+
 msgctxt "model:ir.message,text:semen_extraction_event_unique"
 msgid "The Semen Extraction Event must be unique."
 msgstr "El evento de extracción de semen debe ser único."
@@ -3497,6 +3713,10 @@ msgstr "Está seguro que quiere validar el evento?"
 
 msgctxt ""
 "model:ir.model.button,confirm:validate_pregnancy_diagnosis_event_button"
+msgid "Are you sure to validate this event?"
+msgstr "Está seguro que quiere validar el evento?"
+
+msgctxt "model:ir.model.button,confirm:validate_reclassification_event_button"
 msgid "Are you sure to validate this event?"
 msgstr "Está seguro que quiere validar el evento?"
 
@@ -3591,6 +3811,10 @@ msgctxt "model:ir.model.button,string:draft_pregnancy_diagnosis_event_button"
 msgid "Draft"
 msgstr "Borrador"
 
+msgctxt "model:ir.model.button,string:draft_reclassification_event_button"
+msgid "Draft"
+msgstr "Borrador"
+
 msgctxt "model:ir.model.button,string:draft_removal_event_button"
 msgid "Draft"
 msgstr "Borrador"
@@ -3637,6 +3861,10 @@ msgstr "Validar"
 
 msgctxt ""
 "model:ir.model.button,string:validate_pregnancy_diagnosis_event_button"
+msgid "Validate"
+msgstr "Validar"
+
+msgctxt "model:ir.model.button,string:validate_reclassification_event_button"
 msgid "Validate"
 msgstr "Validar"
 
@@ -3768,6 +3996,10 @@ msgctxt "model:ir.ui.menu,name:menu_farm_pregnancy_diagnosis_event"
 msgid "Pregnancy Diagnosis"
 msgstr "Diagnósticos de gestación"
 
+msgctxt "model:ir.ui.menu,name:menu_farm_reclassification_event"
+msgid "Reclassification"
+msgstr "Reclasificación"
+
 msgctxt "model:ir.ui.menu,name:menu_farm_removal_event"
 msgid "Removals"
 msgstr "Eliminaciones"
@@ -3843,10 +4075,6 @@ msgstr "Usuario - Ubicación"
 msgctxt "model:stock.location.silo-stock.location,name:"
 msgid "Silo - Location"
 msgstr "Silo - Ubicación"
-
-msgctxt "model:stock.lot-farm.animal,name:"
-msgid "Lot - Animal"
-msgstr "Lote - Animal"
 
 msgctxt "model:stock.lot-farm.animal.group,name:"
 msgid "Lot - Animal Group"
@@ -4055,6 +4283,14 @@ msgstr "Individuo"
 msgctxt "selection:farm.farrowing.event,animal_type:"
 msgid "Male"
 msgstr "Macho"
+
+msgctxt "selection:farm.farrowing.event,produced_animal_type:"
+msgid "Group"
+msgstr "Grupo"
+
+msgctxt "selection:farm.farrowing.event,produced_animal_type:"
+msgid "Individual"
+msgstr "Individuo"
 
 msgctxt "selection:farm.farrowing.event,state:"
 msgid "Draft"
@@ -4276,6 +4512,30 @@ msgctxt "selection:farm.pregnancy_diagnosis.event,state:"
 msgid "Validated"
 msgstr "Validado"
 
+msgctxt "selection:farm.reclassification.event,animal_type:"
+msgid "Female"
+msgstr "Hembra"
+
+msgctxt "selection:farm.reclassification.event,animal_type:"
+msgid "Group"
+msgstr "Grupo"
+
+msgctxt "selection:farm.reclassification.event,animal_type:"
+msgid "Individual"
+msgstr "Individuo"
+
+msgctxt "selection:farm.reclassification.event,animal_type:"
+msgid "Male"
+msgstr "Macho"
+
+msgctxt "selection:farm.reclassification.event,state:"
+msgid "Draft"
+msgstr "Borrador"
+
+msgctxt "selection:farm.reclassification.event,state:"
+msgid "Validated"
+msgstr "Validado"
+
 msgctxt "selection:farm.removal.event,animal_type:"
 msgid "Female"
 msgstr "Hembra"
@@ -4332,6 +4592,14 @@ msgctxt "selection:farm.semen_extraction.event,state:"
 msgid "Validated"
 msgstr "Validado"
 
+msgctxt "selection:farm.specie,produced_animal_type:"
+msgid "Group"
+msgstr "Grupo"
+
+msgctxt "selection:farm.specie,produced_animal_type:"
+msgid "Individual"
+msgstr "Individuo"
+
 msgctxt "selection:farm.transformation.event,animal_type:"
 msgid "Female"
 msgstr "Hembra"
@@ -4371,6 +4639,14 @@ msgstr "Individuo"
 msgctxt "selection:farm.weaning.event,animal_type:"
 msgid "Male"
 msgstr "Macho"
+
+msgctxt "selection:farm.weaning.event,produced_animal_type:"
+msgid "Group"
+msgstr "Grupo"
+
+msgctxt "selection:farm.weaning.event,produced_animal_type:"
+msgid "Individual"
+msgstr "Individuo"
 
 msgctxt "selection:farm.weaning.event,state:"
 msgid "Draft"
@@ -4579,14 +4855,6 @@ msgstr "Configuración del silo"
 msgctxt "view:stock.lot:"
 msgid "Farm"
 msgstr "Granja"
-
-msgctxt "wizard_button:farm.create_breeding,start,create_:"
-msgid "Create"
-msgstr "Crear"
-
-msgctxt "wizard_button:farm.create_breeding,start,end:"
-msgid "Cancel"
-msgstr "Cancelar"
 
 msgctxt "wizard_button:farm.create_female,start,end:"
 msgid "Cancel"
