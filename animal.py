@@ -222,7 +222,6 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
 
     @classmethod
     def __register__(cls, module_name):
-        TableHandler = backend.get('TableHandler')
         table = cls.__table_handler__(module_name)
         sql_table = cls.__table__()
         update_lot = False
@@ -232,7 +231,7 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
         table = cls.__table_handler__(module_name)
         if update_lot:
             sql_table_animal_lot = 'stock_lot-farm_animal'
-            if TableHandler.table_exist(sql_table_animal_lot):
+            if table.table_exist(sql_table_animal_lot):
                 sql_table_animal_lot = Table(sql_table_animal_lot)
                 cursor = Transaction().connection.cursor()
                 cursor.execute(*sql_table_animal_lot.select(
