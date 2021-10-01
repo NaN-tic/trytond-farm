@@ -54,7 +54,8 @@ class FarrowingEvent(AbstractEvent, ImportedEventMixin, ModelSQL, ModelView, Wor
     produced_animal_type = fields.Function(fields.Selection([
                 ('individual', 'Individual'),
                 ('group', 'Group'),
-                ], 'Produced Animal Type'), 'get_produced_animal_type')
+                ], 'Produced Animal Type'),
+                'on_change_with_produced_animal_type')
     produced_animals = fields.One2Many('farm.farrowing.event-farm.animal',
         'event', 'Produced Animals', readonly=True, domain=[
             ('specie', '=', Eval('specie')),
@@ -146,18 +147,19 @@ class FarrowingEvent(AbstractEvent, ImportedEventMixin, ModelSQL, ModelView, Wor
     def on_change_with_dead(self, name=None):
         return (self.stillborn or 0) + (self.mummified or 0)
 
-    @fields.depends('animal_type', 'animal', 'produced_animal_type')
+    @fields.depends('animal_type', 'animal', 'produced_animal_type', 'live')
     def on_change_animal(self):
         if not self.animal:
             return
         super(FarrowingEvent, self).on_change_animal()
         self.female_cycle = self.animal.current_cycle
-        if self.produced_animal_type == 'individual':
+        if self.animal.specie.produced_animal_type == 'individual':
             self.live = 1
 
-    def get_produced_animal_type(self, name):
-        if self.specie.produced_animal_type:
-            return self.specie.produced_animal_type
+    @fields.depends('animal')
+    def on_change_with_produced_animal_type(self, name=None):
+        if self.animal and self.animal.specie:
+            return self.animal.specie.produced_animal_type
 
     @classmethod
     @ModelView.button
@@ -168,7 +170,7 @@ class FarrowingEvent(AbstractEvent, ImportedEventMixin, ModelSQL, ModelView, Wor
         EventAnimal = pool.get('farm.farrowing.event-farm.animal')
         todo_moves = []
         for farrowing_event in events:
-            if farrowing_event.dead == 0 and farrowing_event.live == 0:
+            if not farrowing_event.dead and not farrowing_event.live:
                 raise UserError(gettext('farm.event_without_dead_nor_live',
                     event=farrowing_event.rec_name))
             current_cycle = farrowing_event.animal.current_cycle
@@ -182,7 +184,8 @@ class FarrowingEvent(AbstractEvent, ImportedEventMixin, ModelSQL, ModelView, Wor
                         for i in range(farrowing_event.live):
                             produced_animal = farrowing_event._get_produced_animal()
                             produced_animal.save()
-                            move = farrowing_event._get_event_move(produced_animal)
+                            move = farrowing_event._get_event_move(
+                                produced_animal)
                             move.save()
                             todo_moves.append(move)
                             eventAnimal = EventAnimal()
