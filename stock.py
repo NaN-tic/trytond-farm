@@ -8,7 +8,6 @@ from trytond.model import ModelView, ModelSQL, fields, Workflow
 from trytond.pyson import Equal, Eval, Not
 from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
-from trytond import backend
 from sql import Table
 
 

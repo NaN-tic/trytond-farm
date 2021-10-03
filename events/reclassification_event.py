@@ -2,7 +2,7 @@
 # copyright notices and license terms.
 from trytond.exceptions import UserError
 from trytond.model import fields, ModelView, Workflow
-from trytond.pyson import Equal, Eval, If, Not
+from trytond.pyson import Equal, Eval, Not
 from trytond.pool import Pool
 from trytond.transaction import Transaction
 from trytond.i18n import gettext

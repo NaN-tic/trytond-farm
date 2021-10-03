@@ -10,8 +10,7 @@ No possibility of creating individuals from here. Maybe in the future we
 - Farrowing creates groups and weaning is for individuals
 """
 from trytond.model import fields, ModelView, ModelSQL, Workflow, Unique
-from trytond.model.fields.field import depends
-from trytond.pyson import Eval, Id, If, And, Equal, Bool, Not, Or
+from trytond.pyson import Eval, Id, If, Equal, Or
 from trytond.pool import Pool
 from trytond.transaction import Transaction
 from trytond.exceptions import UserError
