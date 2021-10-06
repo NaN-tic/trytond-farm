@@ -170,8 +170,8 @@ class EventOrder(ModelSQL, ModelView):
         pool = Pool()
         User = pool.get('res.user')
         user = User(Transaction().user)
-        if user.farms:
-            return user.farms[0].id
+        if user.warehouse:
+            return user.warehouse.id
 
     @classmethod
     def validate(cls, orders):

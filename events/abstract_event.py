@@ -5,6 +5,7 @@ from datetime import datetime, date
 from trytond.model import fields, ModelSQL, ModelView, Workflow
 from trytond.pyson import Equal, Eval, Id, Not
 from trytond.transaction import Transaction
+from trytond.pool import Pool
 from trytond.exceptions import UserError
 from trytond.i18n import gettext
 
@@ -130,6 +131,14 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
     @staticmethod
     def default_specie():
         return Transaction().context.get('specie')
+
+    @staticmethod
+    def default_farm():
+        pool = Pool()
+        User = pool.get('res.user')
+        user = User(Transaction().user)
+        if user.warehouse:
+            return user.warehouse.id
 
     @staticmethod
     def default_animal_type():
