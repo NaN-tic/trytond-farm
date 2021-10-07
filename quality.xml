@@ -9,5 +9,11 @@
                 ref="quality_control.quality_test_form_view"/>
             <field name="name">quality_test_form</field>
         </record>
+        <record model="ir.ui.view" id="quality_template_farm_view_form">
+            <field name="model">quality.template</field>
+            <field name="inherit"
+                ref="quality_control.quality_template_form_view"/>
+            <field name="name">quality_template_form</field>
+        </record>
     </data>
 </tryton>
