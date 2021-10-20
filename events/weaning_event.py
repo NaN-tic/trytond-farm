@@ -77,7 +77,7 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
         states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT + ['farm'])
     weaned_group = fields.Many2One('farm.animal.group', 'Weaned Group',
         domain=[
-            ('farms', 'in', [Eval('farm')]),
+            ('farms', 'in', [Eval('farm', -1)]),
             ],
         states={**_STATES_WRITE_DRAFT, **_INVISIBLE_NOT_GROUP},
         depends=_DEPENDS_WRITE_DRAFT + ['farm', 'produced_animal_type'],
