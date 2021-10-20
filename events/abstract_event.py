@@ -81,7 +81,7 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
         depends=['specie', 'animal_type', 'farm', 'state'])
     animal_group = fields.Many2One('farm.animal.group', 'Group', domain=[
             ('specie', '=', Eval('specie')),
-            ('farms', 'in', [Eval('farm')]),
+            ('farms', 'in', [Eval('farm', -1)]),
             ],
         select=True, states={
             'invisible': Not(Equal(Eval('animal_type'), 'group')),

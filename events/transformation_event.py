@@ -67,7 +67,7 @@ class TransformationEvent(AbstractEvent):
     to_animal_group = fields.Many2One('farm.animal.group', 'Destination Group',
         domain=[
             ('specie', '=', Eval('specie')),
-            ('farms', 'in', [Eval('farm')]),
+            ('farms', 'in', [Eval('farm', -1)]),
             ],
         select=True, states={
             'invisible': Not(Equal(Eval('to_animal_type'), 'group')),

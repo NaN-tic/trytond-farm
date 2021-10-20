@@ -70,8 +70,8 @@ class FarrowingEvent(AbstractEvent, ImportedEventMixin, ModelSQL, ModelView, Wor
         depends=['specie', 'live', 'state', 'imported', 'produced_animal_type'])
     produced_group = fields.One2One('farm.farrowing.event-farm.animal.group',
         'event', 'animal_group', string='Produced Group', domain=[
-            ('specie', '=', Eval('specie')),
-            ('initial_quantity', '=', Eval('live')),
+            ('specie', '=', Eval('specie', -1)),
+            ('initial_quantity', '=', Eval('live', -1)),
             ], readonly=True,
         states={
             'required': And(And(Equal(Eval('state'), 'validated'),

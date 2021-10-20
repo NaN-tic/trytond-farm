@@ -28,7 +28,7 @@ class FosterEvent(AbstractEvent, ImportedEventMixin):
             ('specie', '=', Eval('specie')),
             ('type', '=', 'female'),
             ('farm', '=', Eval('farm')),
-            ('id', '!=', Eval('animal')),
+            ('id', '!=', Eval('animal', -1)),
             ('current_cycle', '!=', None),
             If(Equal(Eval('state'), 'draft'),
                 ('current_cycle.state', '=', 'lactating'),
@@ -38,7 +38,7 @@ class FosterEvent(AbstractEvent, ImportedEventMixin):
     pair_event = fields.Many2One('farm.foster.event', 'Pair Foster Event',
         readonly=True, domain=[
             ('animal', '=', Eval('pair_female')),
-            ('id', '!=', Eval('id')),
+            ('id', '!=', Eval('id', -1)),
             ],
         states={
             'required': And(Equal(Eval('state'), 'validated'),
