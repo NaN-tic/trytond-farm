@@ -92,7 +92,7 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
     produced_animal_type = fields.Function(fields.Selection([
                 ('individual', 'Individual'),
                 ('group', 'Group'),
-                ], 'Produced Animal Type'), 'get_produced_animal_type')
+                ], 'Produced Animal Type'), 'on_change_with_produced_animal_type')
     weaned_animals = fields.One2Many(
         'farm.weaning.event-farm.animal',
         'event', 'Weaned Animals',
@@ -181,8 +181,9 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
                 self.timestamp)
         return super(WeaningEvent, self).get_rec_name(name)
 
-    def get_produced_animal_type(self, name):
-        if self.specie.produced_animal_type:
+    @fields.depends('specie')
+    def on_change_with_produced_animal_type(self, name=None):
+        if self.specie and self.specie.produced_animal_type:
             return self.specie.produced_animal_type
 
     def get_farrowing_group(self, name=None):
