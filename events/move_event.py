@@ -162,7 +162,7 @@ class MoveEvent(AbstractEvent):
 
     @fields.depends('to_location')
     def on_change_with_to_location_warehouse(self, name=None):
-        if self.to_location:
+        if self.to_location and self.to_location.warehouse:
             return self.to_location.warehouse.id
 
     @classmethod
