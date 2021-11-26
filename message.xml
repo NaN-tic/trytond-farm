@@ -68,6 +68,9 @@ this repository contains the full copyright notices and license terms. -->
         <record model="ir.message" id="tag_must_be_unique">
             <field name="text">The Name of the Tag must be unique.</field>
         </record>
+        <record model="ir.message" id="location_without_warehouse">
+            <field name="text">The location "%(location)s" don't have a warehouse.</field>
+        </record>
 
         <!-- production.py -->
         <record model="ir.message" id="missing_semen_input">

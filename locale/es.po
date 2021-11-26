@@ -3467,6 +3467,10 @@ msgstr ""
 "El inventario \"%(inventory)s\" no puede eliminarse porque no está en estado"
 " \"Borrador\" o \"Cancelado\"."
 
+msgctxt "model:ir.message,text:location_without_warehouse"
+msgid "The location \"%(location)s\" don't have a warehouse."
+msgstr "La ubicación \"%(location)s\" no tiene un almacén."
+
 msgctxt "model:ir.message,text:missing_previous_inventory"
 msgid ""
 "There isn't any Feed Inventory before the feed provisional inventory "
