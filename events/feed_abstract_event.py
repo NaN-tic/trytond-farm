@@ -207,7 +207,7 @@ class FeedEventMixin(AbstractEvent):
                     self.timestamp, self.quantity):
                 raise UserError(gettext('farm.group_not_in_location',
                         group=self.animal_group.rec_name,
-                        location=self.location.rec_name,
+                        from_location=self.location.rec_name,
                         quantity=self.quantity,
                         timestamp=self.timestamp,
                         ))
@@ -218,7 +218,7 @@ class FeedEventMixin(AbstractEvent):
                         start_timestamp, self.quantity):
                     raise UserError(gettext('farm.group_not_in_location',
                             group=self.animal_group.rec_name,
-                            location=self.location.rec_name,
+                            from_location=self.location.rec_name,
                             quantity=self.quantity,
                             timestamp=start_timestamp,
                             ))

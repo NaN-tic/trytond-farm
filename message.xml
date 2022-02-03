@@ -198,6 +198,9 @@ this repository contains the full copyright notices and license terms. -->
         <record model="ir.message" id="weaning_cycle_unique">
             <field name="text">The Female Cycle must be unique.</field>
         </record>
+        <record model="ir.message" id="not_farrowing_group">
+            <field name="text">The event "%(event)s" has no farrowing group".</field>
+        </record>
 
         <!-- events/foster_event.py -->
         <record model="ir.message" id="farrowing_group_not_in_location">

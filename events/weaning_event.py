@@ -431,6 +431,8 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
             # recover lost units
             from_location = self.specie.lost_found_location
             to_location = self.animal.location
+        if not self.farrowing_group:
+            raise UserError(gettext('farm.not_farrowing_group', event=self))
         return Move(
             product=self.farrowing_group.lot.product,
             uom=self.farrowing_group.lot.product.default_uom,
