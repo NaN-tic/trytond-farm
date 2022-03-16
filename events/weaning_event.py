@@ -408,6 +408,9 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
             # recover lost units
             from_location = self.specie.foster_location
             to_location = self.animal.location
+
+        if not self.farrowing_group:
+            raise UserError(gettext('farm.not_farrowing_group', event=self))
         return Move(
             product=self.farrowing_group.lot.product,
             uom=self.farrowing_group.lot.product.default_uom,
@@ -469,6 +472,8 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
         category_id = ModelData.get_id('farm', 'cost_category_weaning_cost')
         group = (self.weaned_group if self.weaned_group
             else self.farrowing_group)
+        if not group:
+            raise UserError(gettext('farm.not_farrowing_group', event=self))
         if (group.lot and group.lot.product.template.weaning_price and
                 group.lot.product.template.weaning_price !=
                 group.lot.cost_price):
@@ -497,6 +502,8 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
                 lot=animal.lot,
                 origin=self)
         else:
+            if not self.farrowing_group:
+                raise UserError(gettext('farm.not_farrowing_group', event=self))
             return Move(
                 product=self.farrowing_group.lot.product,
                 uom=self.farrowing_group.lot.product.default_uom,

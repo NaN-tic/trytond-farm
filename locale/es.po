@@ -3379,11 +3379,11 @@ msgstr ""
 
 msgctxt "model:ir.message,text:group_not_in_location"
 msgid ""
-"The event of group \"%(group)s\" is trying to move %(quantity)s animals from"
+"The event of group \"%(group)s\" is trying to move \"%(quantity)s\" animals from"
 " location \"%(from_location)s\" but there isn't enough there at "
 "\"%(timestamp)s\"."
 msgstr ""
-"El evento de medicación \"%(event)s\" está intentando mover %(quantity)s del"
+"El evento de medicación \"%(event)s\" está intentando mover \"%(quantity)s\" del"
 " lote \"%(lot)s\" desde el silo \"%(location)s\" pero no hay suficiente "
 "cantidad el \"%(timestamp)s\"."
 

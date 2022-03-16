@@ -158,7 +158,7 @@ this repository contains the full copyright notices and license terms. -->
             <field name="text">The event of animal "%(animal)s" is trying to move it from location "%(from_location)s" but it isn't there at "%(timestamp)s".</field>
         </record>
         <record model="ir.message" id="group_not_in_location">
-            <field name="text">The event of group "%(group)s" is trying to move %(quantity)s animals from location "%(from_location)s" but there isn't enough there at "%(timestamp)s".</field>
+            <field name="text">The event of group "%(group)s" is trying to move "%(quantity)s" animals from location "%(from_location)s" but there isn't enough there at "%(timestamp)s".</field>
         </record>
         <record model="ir.message" id="check_medication_quantity_non_zero">
             <field name="text">In Medication Events, the quantity can't be zero.</field>
