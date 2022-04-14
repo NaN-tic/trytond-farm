@@ -9,13 +9,10 @@
     <field name="specie"/>
     <field name="event_type"/>
     <newline/>
-	<label name="farm"/>
-	<field name="farm"/>
-	<label name="timestamp"/>
-        <group col="2" id="timestamp">
-            <field name="timestamp" widget="date"/>
-            <field name="timestamp" widget="time"/>
-        </group>
+  	<label name="farm"/>
+  	<field name="farm"/>
+  	<label name="timestamp"/>
+    <field name="timestamp"/>
     <label name="employee"/>
     <field name="employee"/>
     <separator id="events" string="" colspan="4"/>
