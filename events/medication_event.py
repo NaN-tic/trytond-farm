@@ -19,7 +19,7 @@ class MedicationEvent(FeedEventMixin):
     medication_start_date = fields.Function(fields.Date('Start Date'),
         'on_change_with_medication_start_date')
     medication_end_date = fields.Date('End Date', domain=[
-            ('medication_end_date', '>=', Eval('medication_start_date')),
+            ('medication_end_date', '>=', Eval('medication_start_date', None)),
             ], depends=['medication_start_date'])
 
     @classmethod
@@ -56,5 +56,9 @@ class MedicationEvent(FeedEventMixin):
             return self.feed_product.default_uom_category.id
 
     @fields.depends('timestamp')
-    def on_change_with_medication_start_date(self):
-        return self.on_change_with_end_date('medication_start_date')
+    def on_change_with_medication_start_date(self, name=None):
+        if self.timestamp is None:
+            timestamp = self.default_timestamp()
+        else:
+            timestamp = self.timestamp
+        return timestamp.date()
