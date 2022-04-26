@@ -183,7 +183,10 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
             return
 
         today = date.today()
-        set_date = self.timestamp.date()
+        if isinstance(self.timestamp, datetime):
+            set_date = self.timestamp.date()
+        else:
+            set_date = self.timestamp
         if set_date > today:
             raise UserError(gettext('farm.abstract_invalid_date'))
 

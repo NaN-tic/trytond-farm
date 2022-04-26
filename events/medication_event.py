@@ -17,9 +17,9 @@ class MedicationEvent(FeedEventMixin):
         fields.Many2One('product.uom.category', 'Feed Uom Category'),
         'on_change_with_feed_product_uom_category')
     medication_start_date = fields.Function(fields.Date('Start Date'),
-        'on_change_with_end_date')
+        'on_change_with_medication_start_date')
     medication_end_date = fields.Date('End Date', domain=[
-            ('medication_end_date', '>=', Eval('medication_start_date')),
+            ('medication_end_date', '>=', Eval('medication_start_date', None)),
             ], depends=['medication_start_date'])
 
     @classmethod
@@ -54,3 +54,11 @@ class MedicationEvent(FeedEventMixin):
     def on_change_with_feed_product_uom_category(self, name=None):
         if self.feed_product:
             return self.feed_product.default_uom_category.id
+
+    @fields.depends('timestamp')
+    def on_change_with_medication_start_date(self, name=None):
+        if self.timestamp is None:
+            timestamp = self.default_timestamp()
+        else:
+            timestamp = self.timestamp
+        return timestamp.date()
