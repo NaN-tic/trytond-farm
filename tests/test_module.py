@@ -1,12 +1,10 @@
-# The COPYRIGHT file at the top level of this repository contains the full
-# copyright notices and license terms.
-import doctest
-import unittest
+
+# This file is part of Tryton.  The COPYRIGHT file at the top level of
+# this repository contains the full copyright notices and license terms.
 
 from trytond import backend
-import trytond.tests.test_tryton
 from trytond.tests.test_tryton import ModuleTestCase, with_transaction
-from trytond.tests.test_tryton import doctest_setup, doctest_teardown
+from trytond.modules.company.tests import CompanyTestMixin
 
 SCENARIOS = [
     'scenario_move_event_test.rst',
@@ -25,7 +23,7 @@ SCENARIOS = [
     ]
 
 
-class FarmTestCase(ModuleTestCase):
+class FarmTestCase(CompanyTestMixin, ModuleTestCase):
     'Test Farm module'
     module = 'farm'
 
@@ -41,11 +39,5 @@ class FarmTestCase(ModuleTestCase):
             return
         super().test_ir_action_window()
 
-def suite():
-    suite = trytond.tests.test_tryton.suite()
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(FarmTestCase))
-    for scenario in SCENARIOS:
-        suite.addTests(doctest.DocFileSuite(scenario, setUp=doctest_setup,
-                tearDown=doctest_teardown, encoding='utf-8',
-                optionflags=doctest.REPORT_ONLY_FIRST_FAILURE))
-    return suite
+
+del ModuleTestCase
