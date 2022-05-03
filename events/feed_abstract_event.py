@@ -101,9 +101,9 @@ class FeedEventMixin(AbstractEvent):
         #         ()),
         #     ]
         # if 'state' not in cls.animal.depends:
-        #     cls.animal.depends.append('state')
+        #     cls.animal.depends.add('state')
         # if 'location' not in cls.animal.depends:
-        #     cls.animal.depends.append('location')
+        #     cls.animal.depends.add('location')
         t = cls.__table__()
         cls._sql_constraints += [
             ('check_start_date_timestamp',

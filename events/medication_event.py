@@ -36,7 +36,7 @@ class MedicationEvent(FeedEventMixin):
         else:
             cls.uom.domain.append(uom_clause)
         if 'feed_product_uom_category' not in cls.uom.depends:
-            cls.uom.depends.append('feed_product_uom_category')
+            cls.uom.depends.add('feed_product_uom_category')
 
         t = cls.__table__()
         cls._sql_constraints += [

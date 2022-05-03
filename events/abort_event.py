@@ -31,7 +31,7 @@ class AbortEvent(AbstractEvent, ImportedEventMixin):
                 ()),
             ]
         if 'imported' not in cls.animal.depends:
-            cls.animal.depends.append('imported')
+            cls.animal.depends.add('imported')
 
     @staticmethod
     def default_animal_type():

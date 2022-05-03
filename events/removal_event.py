@@ -78,9 +78,9 @@ class RemovalEvent(AbstractEvent):
                 ('location.type', '=', 'lost_found')),
             ]
         if 'from_location' not in cls.animal.depends:
-            cls.animal.depends.append('from_location')
+            cls.animal.depends.add('from_location')
         if 'farm' not in cls.animal.depends:
-            cls.animal.depends.append('farm')
+            cls.animal.depends.add('farm')
         t = cls.__table__()
         cls._sql_constraints += [
             ('quantity_positive', Check(t, t.quantity != 0),

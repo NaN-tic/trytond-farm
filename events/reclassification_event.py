@@ -49,7 +49,7 @@ class ReclassficationEvent(AbstractEvent):
             ('type', '=', 'individual'),
             ]
         if 'farm' not in cls.animal.depends:
-            cls.animal.depends.append('farm')
+            cls.animal.depends.add('farm')
 
         cls._buttons.update({
             'draft': {

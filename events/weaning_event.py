@@ -154,9 +154,9 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
                 ()),
             ]
         if 'farm' not in cls.animal.depends:
-            cls.animal.depends.append('farm')
+            cls.animal.depends.add('farm')
         if 'imported' not in cls.animal.depends:
-            cls.animal.depends.append('imported')
+            cls.animal.depends.add('imported')
         # TODO: not added constraint for non negative quantity but negative
         # quantities are not suported
 

@@ -99,11 +99,11 @@ class MoveEvent(AbstractEvent):
                 ('location', '=', Eval('to_location'))),
             ]
         if 'state' not in cls.animal.depends:
-            cls.animal.depends.append('state')
+            cls.animal.depends.add('state')
         if 'from_location' not in cls.animal.depends:
-            cls.animal.depends.append('from_location')
+            cls.animal.depends.add('from_location')
         if 'to_location' not in cls.animal.depends:
-            cls.animal.depends.append('to_location')
+            cls.animal.depends.add('to_location')
         t = cls.__table__()
         cls._sql_constraints += [
             ('quantity_positive', Check(t, t.quantity != 0),

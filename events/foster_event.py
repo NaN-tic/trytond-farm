@@ -67,9 +67,9 @@ class FosterEvent(AbstractEvent, ImportedEventMixin):
                 ()),
             ]
         if 'farm' not in cls.animal.depends:
-            cls.animal.depends.append('farm')
+            cls.animal.depends.add('farm')
         if 'imported' not in cls.animal.depends:
-            cls.animal.depends.append('imported')
+            cls.animal.depends.add('imported')
 
     @staticmethod
     def default_animal_type():

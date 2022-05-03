@@ -107,7 +107,7 @@ class FarrowingEvent(AbstractEvent, ImportedEventMixin, ModelSQL, ModelView, Wor
                 ()),
             ]
         if 'imported' not in cls.animal.depends:
-            cls.animal.depends.append('imported')
+            cls.animal.depends.add('imported')
         t = cls.__table__()
         cls._sql_constraints += [
             ('live_not_negative', Check(t, t.live >= 0),

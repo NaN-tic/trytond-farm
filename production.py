@@ -27,7 +27,7 @@ class BOM(metaclass=PoolMeta):
             else:
                 states['required'] = Bool(Eval('semen_dose', 0))
             field.states = states
-            field.depends.append('semen_dose')
+            field.depends.add('semen_dose')
         cls.outputs.size = If(Bool(Eval('semen_dose', 0)), 1,
                 cls.outputs.size or -1)
         cls.outputs.domain.append(If(Bool(Eval('semen_dose', 0)),
