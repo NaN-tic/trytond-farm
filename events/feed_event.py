@@ -47,7 +47,7 @@ class FeedEvent(FeedEventMixin, ModelSQL, ModelView, Workflow):
             ('silo', '=', True),
             ('locations_to_fed', 'in', [Eval('location', -1)]),
             ]
-        cls.feed_location.depends += ['location']
+        cls.feed_location.depends.add('location')
 
         t = cls.__table__()
         cls._sql_constraints += [
