@@ -218,7 +218,6 @@ second Lot of Feed 3 days before::
     >>> provisioning_move1.company = company
     >>> provisioning_move1.unit_price = feed_product.template.list_price
     >>> provisioning_move1.save()
-    >>> provisioning_move1.click('assign')
     >>> provisioning_move1.click('do')
 
     >>> provisioning_move2 = Move()
@@ -233,7 +232,6 @@ second Lot of Feed 3 days before::
     >>> provisioning_move2.company = company
     >>> provisioning_move2.unit_price = feed_product.template.list_price
     >>> provisioning_move2.save()
-    >>> provisioning_move2.click('assign')
     >>> provisioning_move2.click('do')
 
 Create initial (real) feed inventory for silo S1 and silo's locations to fed at

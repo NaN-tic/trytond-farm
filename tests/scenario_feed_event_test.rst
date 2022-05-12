@@ -100,7 +100,6 @@ Put 5,1 Kg of feed into the silo location::
     >>> provisioning_move.lot = feed_lot
     >>> provisioning_move.unit_price = feed_product.template.list_price
     >>> provisioning_move.save()
-    >>> provisioning_move.click('assign')
     >>> provisioning_move.click('do')
 
 Set animal_type and specie in context to work as in the menus::

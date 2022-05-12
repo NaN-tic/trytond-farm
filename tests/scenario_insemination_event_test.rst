@@ -127,7 +127,6 @@ Put two units of dose and one of semen in farm storage location::
     >>> provisioning_move1.lot = dose_lot
     >>> provisioning_move1.unit_price = dose_product.template.list_price
     >>> provisioning_move1.save()
-    >>> provisioning_move1.click('assign')
     >>> provisioning_move1.click('do')
 
     >>> provisioning_move2 = Move()
@@ -141,7 +140,6 @@ Put two units of dose and one of semen in farm storage location::
     >>> provisioning_move2.company = company
     >>> provisioning_move2.unit_price = semen_product.template.list_price
     >>> provisioning_move2.save()
-    >>> provisioning_move2.click('assign')
     >>> provisioning_move2.click('do')
 
 Set user and context::
