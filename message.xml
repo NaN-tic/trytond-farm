@@ -226,7 +226,8 @@ this repository contains the full copyright notices and license terms. -->
             <field name="text">The inventory "%(inventory)s" can't be deleted because is not in "Draft" or "Cancelled" state.</field>
         </record>
         <record model="ir.message" id="invalid_inventory_quantity">
-            <field name="text">The quantity specified in feed inventory "%(inventory)s" is not correct.\nThe current stock of this silo is %(curr_qty)s. The quantity in the inventory must to be less than the current stock.</field>
+            <field name="text">The quantity specified in feed inventory "%(inventory)s" is not correct.
+The current stock of this silo is %(curr_qty)s. The quantity in the inventory must to be less than the current stock.</field>
         </record>
         <record model="ir.message" id="invalid_inventory_date">
             <field name="text">The date of feed inventory "%(inventory)s" is too soon. This should be at least two days after the previous inventory to have enough data.</field>
@@ -266,13 +267,16 @@ this repository contains the full copyright notices and license terms. -->
             <field name="text">The sum of semen quantity in the doses of semen extraction event "%(event)s" is greater than the semen produced quantity.</field>
         </record>
         <record model="ir.message" id="dose_already_defined">
-            <field name="text">The semen extraction event "%(event)s" already has defined doses.\nPlease empty the list before click to calculate them by the system.</field>
+            <field name="text">The semen extraction event "%(event)s" already has defined doses.
+Please empty the list before click to calculate them by the system.</field>
         </record>
         <record model="ir.message" id="no_doses_on_validate">
-            <field name="text">The semen extraction event "%(event)s" doesn't have any produced dose defined.\nIt can't be validated.</field>
+            <field name="text">The semen extraction event "%(event)s" doesn't have any produced dose defined.
+It can't be validated.</field>
         </record>
         <record model="ir.message" id="quality_test_not_succeeded">
-            <field name="text">The Quality Test "%(test)s" of semen extraction event "%(event)s" did not succeed.\nPlease, check its values and try to it again.</field>
+            <field name="text">The Quality Test "%(test)s" of semen extraction event "%(event)s" did not succeed.
+Please, check its values and try to it again.</field>
         </record>
         <record model="ir.message" id="missing_quality_template_for_semen">
             <field name="text">Missing Quality Template for product "%(product)s".</field>
