@@ -8,12 +8,15 @@
         <label name="timestamp"/>
         <field name="timestamp"/>
     </group>
-    <group id="animal_or_group" colspan="2" col="2">
+    <group id="animal_or_group" colspan="4" col="6">
         <label name="animal"/>
         <field name="animal"/>
+        <label name="weight"/>
+        <field name="weight"/>
     </group>
     <label name="employee"/>
     <field name="employee"/>
+    <newline/>
     <label name="reclassification_product"/>
     <field name="reclassification_product"/>
     <label name="to_location"/>
