@@ -39,6 +39,11 @@ class ReclassficationEvent(AbstractEvent):
             ('type', '=', 'storage'),
             ('silo', '=', False),
             ], depends=['state'])
+    unit_digits = fields.Function(fields.Integer('Unit Digits'),
+        'on_change_with_unit_digits')
+    weight = fields.Numeric('Weight',
+        digits=(16, Eval('unit_digits', 2)),
+        depends=['unit_digits'])
 
     @classmethod
     def __setup__(cls):
@@ -72,6 +77,7 @@ class ReclassficationEvent(AbstractEvent):
         """
         pool = Pool()
         Move = pool.get('stock.move')
+        FarmAnimalWeightRecord = pool.get('farm.animal.weight')
 
         for reclass_event in events:
             if reclass_event.in_move and reclass_event.out_move:
@@ -97,6 +103,12 @@ class ReclassficationEvent(AbstractEvent):
             new_out_move.save()
             Move.assign([new_out_move])
             Move.do([new_out_move])
+            if reclass_event.weight:
+                weight_record = FarmAnimalWeightRecord()
+                weight_record.animal = reclass_event.animal
+                weight_record.weight = reclass_event.weight
+                weight_record.timestamp = reclass_event.timestamp
+                weight_record.save()
             reclass_event.in_move = new_in_move
             reclass_event.out_move = new_out_move
             reclass_event.save()
@@ -107,6 +119,15 @@ class ReclassficationEvent(AbstractEvent):
         if not self.animal:
             return
         self.to_location = self.animal.location
+
+    @fields.depends('animal')
+    def on_change_with_unit_digits(self, name=None):
+        pool = Pool()
+        UOM = pool.get('product.uom')
+        if Pool().get('ir.model.data').get_id('product', 'uom_kilogram'):
+            return UOM(Pool().get('ir.model.data').get_id(
+                'product', 'uom_kilogram')).digits
+        return 2
 
     def _get_new_lot_values(self):
         """
@@ -194,5 +215,6 @@ class ReclassficationEvent(AbstractEvent):
                 'to_location': None,
                 'in_move': None,
                 'out_move': None,
+                'weight': None,
                 })
         return super().copy(records, default=default)
