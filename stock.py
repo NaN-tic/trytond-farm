@@ -157,15 +157,15 @@ class LotAnimalGroup(ModelSQL):
     __name__ = 'stock.lot-farm.animal.group'
 
     lot = fields.Many2One('stock.lot', 'Lot', required=True,
-        ondelete='RESTRICT', select=True)
+        ondelete='RESTRICT')
     animal_group = fields.Many2One('farm.animal.group', 'Animal Group',
-        required=True, ondelete='RESTRICT', select=True)
+        required=True, ondelete='RESTRICT')
 
 
 class Location(metaclass=PoolMeta):
     __name__ = 'stock.location'
 
-    silo = fields.Boolean('Silo', select=True,
+    silo = fields.Boolean('Silo',
         help='Indicates that the location is a silo.')
     current_lot = fields.Function(fields.Many2One('stock.lot',
             'Current Lot', states={
@@ -362,9 +362,9 @@ class LocationSiloLocation(ModelSQL):
     'Silo - Location'
     __name__ = 'stock.location.silo-stock.location'
     silo = fields.Many2One('stock.location', 'Silo', ondelete='CASCADE',
-        required=True, select=True)
+        required=True)
     location = fields.Many2One('stock.location', 'Location',
-        ondelete='CASCADE', required=True, select=True)
+        ondelete='CASCADE', required=True)
 
 
 class Move(metaclass=PoolMeta):

@@ -374,7 +374,7 @@ class AnimalLocationStock():
 class FeedInventoryMixin(object):
     __slots__ = ()
     specie = fields.Many2One('farm.specie', 'Specie', required=True,
-        readonly=True, select=True)
+        readonly=True)
     location = fields.Many2One('stock.location', 'Silo', required=True,
         domain=[
             ('silo', '=', True),
@@ -402,7 +402,7 @@ class FeedInventoryMixin(object):
         'Feed Events', readonly=True)
     # inventory, feed_inventory
     state = fields.Selection(_INVENTORY_STATES, 'State', required=True,
-        readonly=True, select=True)
+        readonly=True)
 
     @classmethod
     def __setup__(cls):
@@ -514,9 +514,8 @@ class FeedInventoryLocation(ModelSQL):
     __name__ = 'farm.feed.inventory-stock.location'
 
     inventory = fields.Reference('Inventory', selection='get_inventory',
-        required=True, select=True)
-    location = fields.Many2One('stock.location', 'Location', required=True,
-        select=True)
+        required=True)
+    location = fields.Many2One('stock.location', 'Location', required=True)
 
     @classmethod
     def get_inventory(cls):
@@ -960,23 +959,23 @@ class FeedAnimalLocationDate(ModelSQL, ModelView):
         ('female', 'Female'),
         ('individual', 'Individual'),
         ('group', 'Group'),
-        ], "Animal Type", required=True, readonly=True, select=True)
+        ], "Animal Type", required=True, readonly=True)
     animal = fields.Many2One('farm.animal', 'Animal', states={
             'invisible': Equal(Eval('animal_type'), 'group'),
-            }, depends=['animal_type'], select=True)
+            }, depends=['animal_type'])
     animal_group = fields.Many2One('farm.animal.group', 'Group', states={
             'invisible': Not(Equal(Eval('animal_type'), 'group')),
-            }, depends=['animal_type'], select=True)
-    location = fields.Many2One('stock.location', 'Location fed', select=True)
+            }, depends=['animal_type'])
+    location = fields.Many2One('stock.location', 'Location fed')
     animals_qty = fields.Integer('Num. Animals', states={
             'invisible': Not(Equal(Eval('animal_type'), 'group')),
             }, depends=['animal_type'])
-    date = fields.Date('Date', select=True)
+    date = fields.Date('Date')
     # uom = fields.Many2One('product.uom', "UOM", readonly=True)
     # unit_digits = fields.Function(fields.Integer('Unit Digits'),
     #     'get_unit_digits')
     consumed_qty_animal = fields.Float('Consumed Qty. per Animal',
-        digits=(16, 2), select=True)  # depends=['unit_digits'])
+        digits=(16, 2))  # depends=['unit_digits'])
     consumed_qty = fields.Float('Consumed Qty.', digits=(16, 2))
     inventory_qty = fields.Integer('Inventories',
         help='Number of Inventories which include this date.')

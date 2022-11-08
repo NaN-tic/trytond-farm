@@ -60,7 +60,7 @@ class TransformationEvent(AbstractEvent):
             },
         depends=['animal_type', 'to_animal_type', 'state'])
     to_animal = fields.Many2One('farm.animal', 'Destination Animal',
-        select=True, readonly=True, states={
+        readonly=True, states={
             'invisible': Equal(Eval('to_animal_type'), 'group'),
             },
         depends=['specie', 'animal_type', 'to_animal_type'])
@@ -68,8 +68,7 @@ class TransformationEvent(AbstractEvent):
         domain=[
             ('specie', '=', Eval('specie')),
             ('farms', 'in', [Eval('farm', -1)]),
-            ],
-        select=True, states={
+            ], states={
             'invisible': Not(Equal(Eval('to_animal_type'), 'group')),
             'readonly': Not(Equal(Eval('state'), 'draft')),
             },

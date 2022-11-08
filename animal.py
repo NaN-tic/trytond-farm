@@ -134,11 +134,11 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
             ('male', 'Male'),
             ('female', 'Female'),
             ('individual', 'Individual'),
-            ], 'Type', required=True, select=True, states={
-            'readonly': True,
+            ], 'Type', required=True, states={
+                'readonly': True,
             })
     specie = fields.Many2One('farm.specie', 'Specie', required=True,
-        select=True, states={
+        states={
             'readonly': True,
             })
     breed = fields.Many2One('farm.specie.breed', 'Breed', required=True,
@@ -510,9 +510,8 @@ class AnimalTag(ModelSQL):
     'Animal - Tag'
     __name__ = 'farm.animal-farm.tag'
     animal = fields.Many2One('farm.animal', 'Animal', ondelete='CASCADE',
-        required=True, select=True)
-    tag = fields.Many2One('farm.tag', 'Tag', ondelete='CASCADE', required=True,
-        select=True)
+        required=True)
+    tag = fields.Many2One('farm.tag', 'Tag', ondelete='CASCADE', required=True)
 
 
 class AnimalWeight(ModelSQL, ModelView):

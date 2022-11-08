@@ -31,6 +31,6 @@ class UserLocation(ModelSQL):
     'User - Location'
     __name__ = 'res.user-stock.location'
     user = fields.Many2One('res.user', 'User', ondelete='CASCADE',
-        required=True, select=True)
+        required=True)
     location = fields.Many2One('stock.location', 'Location',
-        ondelete='CASCADE', required=True, select=True)
+        ondelete='CASCADE', required=True)

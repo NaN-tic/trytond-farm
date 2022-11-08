@@ -45,18 +45,18 @@ class EventOrder(ModelSQL, ModelView):
     __name__ = 'farm.event.order'
     _order = [('name', 'ASC')]
 
-    name = fields.Char("Reference", select=True)
+    name = fields.Char("Reference")
     animal_type = fields.Selection([
             ('male', 'Male'),
             ('female', 'Female'),
             ('individual', 'Individual'),
             ('group', 'Group'),
-            ], "Animal Type", required=True, readonly=True, select=True,
+            ], "Animal Type", required=True, readonly=True,
         states={
             'invisible': Bool(Get(Eval('context', {}), 'animal_type')),
             })
     specie = fields.Many2One('farm.specie', 'Specie', required=True,
-        readonly=True, select=True, states={
+        readonly=True, states={
             'invisible': Bool(Get(Eval('context', {}), 'specie')),
             })
     event_type = fields.Selection([
@@ -68,7 +68,7 @@ class EventOrder(ModelSQL, ModelView):
             ('farrowing', 'Farrowings'),
             ('foster', 'Fosters'),
             ('weaning', 'Weanings'),
-            ], "Event Type", required=True, readonly=True, select=True,
+            ], "Event Type", required=True, readonly=True,
         states={
             'invisible': Bool(Get(Eval('context', {}), 'event_type')),
             })

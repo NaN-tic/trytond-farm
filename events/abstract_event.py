@@ -48,11 +48,10 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
             ('female', 'Female'),
             ('individual', 'Individual'),
             ('group', 'Group'),
-            ], 'Animal Type', required=True, select=True, states={
+            ], 'Animal Type', required=True, states={
             'readonly': True,
             })
-    specie = fields.Many2One('farm.specie', 'Specie', required=True,
-        select=True, states={
+    specie = fields.Many2One('farm.specie', 'Specie', required=True, states={
             'readonly': True,
             })
     farm = fields.Many2One('stock.location', 'Farm', required=True,
@@ -72,8 +71,7 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
             # If(Equal(Eval('state', ''), 'draft'),
             #     ('farm', '=', Eval('farm')),
             #     ()),
-            ],
-        select=True, states={
+            ], states={
             'invisible': Equal(Eval('animal_type'), 'group'),
             'required': Not(Equal(Eval('animal_type'), 'group')),
             'readonly': Not(Equal(Eval('state'), 'draft')),
@@ -82,8 +80,7 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
     animal_group = fields.Many2One('farm.animal.group', 'Group', domain=[
             ('specie', '=', Eval('specie')),
             ('farms', 'in', [Eval('farm', -1)]),
-            ],
-        select=True, states={
+            ], states={
             'invisible': Not(Equal(Eval('animal_type'), 'group')),
             'required': Equal(Eval('animal_type'), 'group'),
             'readonly': Not(Equal(Eval('state'), 'draft')),
@@ -103,7 +100,7 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
         help='Employee that did the job.')
     notes = fields.Text('Notes')
     state = fields.Selection(_EVENT_STATES, 'State', required=True,
-        readonly=True, select=True)
+        readonly=True)
 
     @classmethod
     def __setup__(cls):
