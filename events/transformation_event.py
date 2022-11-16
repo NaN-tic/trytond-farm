@@ -290,7 +290,10 @@ class TransformationEvent(AbstractEvent):
     def _get_event_input_move(self):
         pool = Pool()
         Move = pool.get('stock.move')
+        Company = pool.get('company.company')
+
         context = Transaction().context
+        company = Company(context['company'])
 
         if self.animal_type == 'group':
             lot = self.animal_group.lot
@@ -306,7 +309,7 @@ class TransformationEvent(AbstractEvent):
             to_location=production_location.id,
             planned_date=self.timestamp.date(),
             effective_date=self.timestamp.date(),
-            company=context.get('company'),
+            company=company,
             lot=lot.id,
             origin=self,
             )
@@ -314,7 +317,10 @@ class TransformationEvent(AbstractEvent):
     def _get_event_output_move(self):
         pool = Pool()
         Move = pool.get('stock.move')
+        Company = pool.get('company.company')
+
         context = Transaction().context
+        company = Company(context['company'])
 
         if self.to_animal_type == 'group':
             lot = self.to_animal_group.lot
@@ -331,9 +337,10 @@ class TransformationEvent(AbstractEvent):
             to_location=self.to_location.id,
             planned_date=self.timestamp.date(),
             effective_date=self.timestamp.date(),
-            company=context.get('company'),
+            company=company,
             lot=lot,
             unit_price=lot.product.cost_price,
+            currency=company.currency,
             origin=self,
             )
 

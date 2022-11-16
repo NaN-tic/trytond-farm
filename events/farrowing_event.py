@@ -236,8 +236,12 @@ class FarrowingEvent(AbstractEvent, ImportedEventMixin, ModelSQL, ModelView, Wor
         Move = pool.get('stock.move')
         ModelData = pool.get('ir.model.data')
         LotCostLine = pool.get('stock.lot.cost_line')
+        Company = pool.get('company.company')
+
         category_id = ModelData.get_id('farm', 'cost_category_farrowing_cost')
+
         context = Transaction().context
+        company = Company(context['company'])
 
         if self.produced_animal_type == 'individual':
             lot = animal.lot
@@ -269,9 +273,10 @@ class FarrowingEvent(AbstractEvent, ImportedEventMixin, ModelSQL, ModelView, Wor
             to_location=self.animal.location.id,
             planned_date=self.timestamp.date(),
             effective_date=self.timestamp.date(),
-            company=context.get('company'),
+            company=company,
             lot=lot.id,
             unit_price=lot.product.cost_price,
+            currency=company.currency,
             origin=self)
 
     @classmethod

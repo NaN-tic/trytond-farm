@@ -369,8 +369,13 @@ class SemenExtractionEvent(AbstractEvent):
         Production.done(todo_productions)
 
     def _get_semen_move(self):
-        Move = Pool().get('stock.move')
+        pool = Pool()
+        Move = pool.get('stock.move')
+        Company = pool.get('company.company')
+
         context = Transaction().context
+        company = Company(context['company'])
+
         semen_lot = self._get_semen_lot()
         semen_lot.save()
 
@@ -382,9 +387,10 @@ class SemenExtractionEvent(AbstractEvent):
             to_location=self.dose_location,
             planned_date=self.timestamp.date(),
             effective_date=self.timestamp.date(),
-            company=context.get('company'),
+            company=company,
             lot=semen_lot,
             unit_price=self.specie.semen_product.cost_price,
+            currency=company.currency,
             origin=self)
 
     def _get_semen_lot(self):

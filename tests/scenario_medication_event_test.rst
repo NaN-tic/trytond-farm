@@ -106,6 +106,7 @@ Put 500 g of medication into the laboratory location::
     >>> provisioning_move.company = company
     >>> provisioning_move.lot = medication_lot
     >>> provisioning_move.unit_price = medication_product.template.list_price
+    >>> provisioning_move.currency = company.currency
     >>> provisioning_move.save()
     >>> provisioning_move.click('do')
 

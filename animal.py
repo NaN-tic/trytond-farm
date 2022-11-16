@@ -123,6 +123,7 @@ class AnimalMixin:
             company=company,
             lot=self.lot,
             unit_price=self.lot.product.cost_price,
+            currency=company.currency,
             origin=self)
 
 

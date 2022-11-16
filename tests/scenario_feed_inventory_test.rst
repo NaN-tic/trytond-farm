@@ -217,6 +217,7 @@ second Lot of Feed 3 days before::
     >>> provisioning_move1.effective_date = now.date() - datetime.timedelta(days=8)
     >>> provisioning_move1.company = company
     >>> provisioning_move1.unit_price = feed_product.template.list_price
+    >>> provisioning_move1.currency = company.currency
     >>> provisioning_move1.save()
     >>> provisioning_move1.click('do')
 
@@ -231,6 +232,7 @@ second Lot of Feed 3 days before::
     >>> provisioning_move2.effective_date = now.date() - datetime.timedelta(days=3)
     >>> provisioning_move2.company = company
     >>> provisioning_move2.unit_price = feed_product.template.list_price
+    >>> provisioning_move2.currency = company.currency
     >>> provisioning_move2.save()
     >>> provisioning_move2.click('do')
 

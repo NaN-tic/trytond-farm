@@ -99,6 +99,7 @@ Put 5,1 Kg of feed into the silo location::
     >>> provisioning_move.company = company
     >>> provisioning_move.lot = feed_lot
     >>> provisioning_move.unit_price = feed_product.template.list_price
+    >>> provisioning_move.currency = company.currency
     >>> provisioning_move.save()
     >>> provisioning_move.click('do')
 
