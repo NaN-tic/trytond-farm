@@ -239,9 +239,13 @@ class MoveEvent(AbstractEvent):
         Move = pool.get('stock.move')
         ModelData = pool.get('ir.model.data')
         LotCostLine = pool.get('stock.lot.cost_line')
+        Company = pool.get('company.company')
+
         category_id = ModelData.get_id('stock_lot_cost',
             'cost_category_standard_price')
+
         context = Transaction().context
+        company = Company(context['company'])
 
         lot = (self.animal_type != 'group' and self.animal.lot or
             self.animal_group.lot)
@@ -263,9 +267,10 @@ class MoveEvent(AbstractEvent):
             to_location=self.to_location,
             planned_date=self.timestamp.date(),
             effective_date=self.timestamp.date(),
-            company=context.get('company'),
+            company=company,
             lot=lot,
             unit_price=self.unit_price,
+            currency=company.currency,
             origin=self)
 
     def _get_weight_record(self):

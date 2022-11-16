@@ -230,7 +230,10 @@ class RemovalEvent(AbstractEvent):
     def _get_event_move(self):
         pool = Pool()
         Move = pool.get('stock.move')
+        Company = pool.get('company.company')
+
         context = Transaction().context
+        company = Company(context['company'])
 
         lot = (self.animal_type != 'group' and self.animal.lot or
             self.animal_group.lot)
@@ -242,7 +245,7 @@ class RemovalEvent(AbstractEvent):
             to_location=self.specie.removed_location.id,
             planned_date=self.timestamp.date(),
             effective_date=self.timestamp.date(),
-            company=context.get('company'),
+            company=company,
             lot=lot.id,
             origin=self,
             )

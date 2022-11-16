@@ -157,7 +157,10 @@ class ReclassficationEvent(AbstractEvent):
     def _get_event_input_move(self):
         pool = Pool()
         Move = pool.get('stock.move')
+        Company = pool.get('company.company')
+
         context = Transaction().context
+        company = Company(context['company'])
 
         if self.animal_type == 'group':
             lot = self.animal_group.lot
@@ -172,7 +175,7 @@ class ReclassficationEvent(AbstractEvent):
             to_location=production_location,
             planned_date=self.timestamp.date(),
             effective_date=self.timestamp.date(),
-            company=context.get('company'),
+            company=company,
             lot=lot,
             origin=self,
             )
@@ -181,7 +184,11 @@ class ReclassficationEvent(AbstractEvent):
         pool = Pool()
         Move = pool.get('stock.move')
         Lot = pool.get('stock.lot')
+        Company = pool.get('company.company')
+
         context = Transaction().context
+        company = Company(context['company'])
+
         lots = Lot.create([self._get_new_lot_values()])
         if lots:
             lot, = lots
@@ -198,7 +205,7 @@ class ReclassficationEvent(AbstractEvent):
             to_location=self.to_location,
             planned_date=self.timestamp.date(),
             effective_date=self.timestamp.date(),
-            company=context.get('company'),
+            company=company,
             lot=lot,
             unit_price=lot.product.cost_price,
             origin=self,

@@ -384,7 +384,11 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
     def _get_female_move(self):
         pool = Pool()
         Move = pool.get('stock.move')
+        Company = pool.get('company.company')
+
         context = Transaction().context
+        company = Company(context['company'])
+
         return Move(
             product=self.lot.product,
             uom=self.lot.product.default_uom,
@@ -393,14 +397,18 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
             to_location=self.female_to_location,
             planned_date=self.timestamp.date(),
             effective_date=self.timestamp.date(),
-            company=context.get('company'),
+            company=company,
             lot=self.lot,
             origin=self)
 
     def _get_last_minute_fostered_move(self, last_minute_fostered):
         pool = Pool()
         Move = pool.get('stock.move')
+        Company = pool.get('company.company')
+
         context = Transaction().context
+        company = Company(context['company'])
+
         if last_minute_fostered < 0:
             from_location = self.animal.location
             to_location = self.specie.foster_location
@@ -411,6 +419,7 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
 
         if not self.farrowing_group:
             raise UserError(gettext('farm.not_farrowing_group', event=self))
+
         return Move(
             product=self.farrowing_group.lot.product,
             uom=self.farrowing_group.lot.product.default_uom,
@@ -419,14 +428,18 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
             to_location=to_location,
             planned_date=self.timestamp.date(),
             effective_date=self.timestamp.date(),
-            company=context.get('company'),
+            company=company,
             lot=self.farrowing_group.lot,
             origin=self)
 
     def _get_lost_move(self, lost_qty):
         pool = Pool()
         Move = pool.get('stock.move')
+        Company = pool.get('company.company')
+
         context = Transaction().context
+        company = Company(context['company'])
+
         if lost_qty > 0:
             from_location = self.animal.location
             to_location = self.specie.lost_found_location
@@ -436,6 +449,7 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
             to_location = self.animal.location
         if not self.farrowing_group:
             raise UserError(gettext('farm.not_farrowing_group', event=self))
+
         return Move(
             product=self.farrowing_group.lot.product,
             uom=self.farrowing_group.lot.product.default_uom,
@@ -444,7 +458,7 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
             to_location=to_location,
             planned_date=self.timestamp.date(),
             effective_date=self.timestamp.date(),
-            company=context.get('company'),
+            company=company,
             lot=self.farrowing_group.lot,
             origin=self)
 
@@ -488,7 +502,11 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
     def _get_weaned_move(self, animal=None):
         pool = Pool()
         Move = pool.get('stock.move')
+        Company = pool.get('company.company')
+
         context = Transaction().context
+        company = Company(context['company'])
+
         if animal:
             return Move(
                 product=animal.lot.product,
@@ -498,12 +516,13 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
                 to_location=self.weaned_to_location,
                 planned_date=self.timestamp.date(),
                 effective_date=self.timestamp.date(),
-                company=context.get('company'),
+                company=company,
                 lot=animal.lot,
                 origin=self)
         else:
             if not self.farrowing_group:
                 raise UserError(gettext('farm.not_farrowing_group', event=self))
+
             return Move(
                 product=self.farrowing_group.lot.product,
                 uom=self.farrowing_group.lot.product.default_uom,
@@ -512,7 +531,7 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
                 to_location=self.weaned_to_location,
                 planned_date=self.timestamp.date(),
                 effective_date=self.timestamp.date(),
-                company=context.get('company'),
+                company=company,
                 lot=self.farrowing_group.lot,
                 origin=self)
 

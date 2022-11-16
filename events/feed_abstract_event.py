@@ -266,7 +266,10 @@ class FeedEventMixin(AbstractEvent):
     def _get_event_move(self):
         pool = Pool()
         Move = pool.get('stock.move')
+        Company = pool.get('company.company')
+
         context = Transaction().context
+        company = Company(context['company'])
 
         move = Move(
             product=self.feed_product.id,
@@ -276,7 +279,7 @@ class FeedEventMixin(AbstractEvent):
             to_location=self.farm.production_location,
             planned_date=self.timestamp.date(),
             effective_date=self.timestamp.date(),
-            company=context.get('company'),
+            company=company,
             origin=self)
         if self.feed_lot:
             move.lot = self.feed_lot

@@ -185,7 +185,11 @@ class FosterEvent(AbstractEvent, ImportedEventMixin):
     def _get_event_move(self):
         pool = Pool()
         Move = pool.get('stock.move')
+        Company = pool.get('company.company')
+
         context = Transaction().context
+        company = Company(context['company'])
+
         if self.quantity > 0:  # Foster In
             from_location = self.specie.foster_location
             to_location = self.animal.location
@@ -200,7 +204,7 @@ class FosterEvent(AbstractEvent, ImportedEventMixin):
             to_location=to_location,
             planned_date=self.timestamp.date(),
             effective_date=self.timestamp.date(),
-            company=context.get('company'),
+            company=company,
             lot=self.farrowing_group.lot,
             origin=self)
 

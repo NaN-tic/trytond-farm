@@ -616,13 +616,17 @@ class SemenExtractionDose(ModelSQL, ModelView):
         ExtractionEvent.validate(events)
 
     def _get_production(self, semen_lot):
-        Production = Pool().get('production')
+        pool = Pool()
+        Production = pool.get('production')
+        Company = pool.get('company.company')
+
         context = Transaction().context
+        company = Company(context['company'])
 
         production = Production(
             reference=self.rec_name,
             effective_date=self.event.timestamp.date(),
-            company=context.get('company'),
+            company=company,
             warehouse=self.event.farm,
             location=self.event.farm.production_location,
             product=self.bom.output_products[0],

@@ -196,7 +196,10 @@ class InseminationEvent(AbstractEvent, ImportedEventMixin):
     def _get_event_move(self):
         pool = Pool()
         Move = pool.get('stock.move')
+        Company = pool.get('company.company')
+
         context = Transaction().context
+        company = Company(context['company'])
 
         if self.dose_bom:
             return Move(
@@ -207,7 +210,7 @@ class InseminationEvent(AbstractEvent, ImportedEventMixin):
                 to_location=self.farm.production_location.id,
                 planned_date=self.timestamp.date(),
                 effective_date=self.timestamp.date(),
-                company=context.get('company'),
+                company=company,
                 lot=self.dose_lot and self.dose_lot.id or None,
                 origin=self,
                 )
@@ -220,7 +223,7 @@ class InseminationEvent(AbstractEvent, ImportedEventMixin):
                 to_location=self.farm.production_location.id,
                 planned_date=self.timestamp.date(),
                 effective_date=self.timestamp.date(),
-                company=context.get('company'),
+                company=company,
                 origin=self,
                 )
 
