@@ -893,7 +893,6 @@ class FeedProvisionalInventory(FeedInventoryMixin, ModelSQL, ModelView,
             inventory_events += inventory.feed_events
 
         deny_modify_done_cancel_bak = StockMove._deny_modify_done_cancel.copy()
-        StockMove._deny_modify_done_cancel.remove('state')
         StockMove._deny_modify_done_cancel.remove('effective_date')
         today = Date.today()
         for move in todo_stock_moves:
