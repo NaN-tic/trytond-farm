@@ -879,6 +879,8 @@ class Female(metaclass=PoolMeta):
 
     @classmethod
     def write(cls, *args):
+        pool = Pool()
+        Animal = pool.get('farm.animal')
         actions = iter(args)
 
         for females, values in zip(actions, actions):
