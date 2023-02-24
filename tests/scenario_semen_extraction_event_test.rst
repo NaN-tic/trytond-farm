@@ -262,7 +262,6 @@ Process shipment to check doe lots are in expected location::
 
     >>> shipment.click('wait')
     >>> shipment.click('assign_try')
-    True
     >>> shipment.click('done')
     >>> shipment.reload()
     >>> shipment.state
