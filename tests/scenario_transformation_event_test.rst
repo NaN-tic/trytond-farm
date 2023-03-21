@@ -14,8 +14,6 @@ Imports::
     >>> from trytond.modules.account.tests.tools import create_fiscalyear, \
     ...     create_chart, get_accounts
     >>> from trytond.modules.farm.tests.tools import create_specie, create_users
-    >>> now = datetime.datetime.now()
-    >>> today = datetime.date.today()
 
 Install module::
 
@@ -63,6 +61,11 @@ Create male to be transformed to individual::
     'STO'
     >>> male_to_individual.farm.code
     'WH'
+
+Compute today and now::
+
+    >>> now = datetime.datetime.now()
+    >>> today = datetime.date.today()
 
 Create transformation event::
 
