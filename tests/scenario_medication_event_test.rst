@@ -14,12 +14,15 @@ Imports::
     >>> from trytond.modules.account.tests.tools import create_fiscalyear, \
     ...     create_chart, get_accounts
     >>> from trytond.modules.farm.tests.tools import create_specie, create_users
-    >>> now = datetime.datetime.now()
-    >>> today = datetime.date.today()
 
 Install module::
 
     >>> config = activate_modules('farm')
+
+Compute now and today::
+
+    >>> now = datetime.datetime.now()
+    >>> today = datetime.date.today()
 
 Create company::
 
