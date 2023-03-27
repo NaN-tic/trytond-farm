@@ -521,7 +521,9 @@ class AnimalGroupWeight(ModelSQL, ModelView):
     @classmethod
     def search_rec_name(cls, name, clause):
         operand = clause[2]
-        operand = operand.replace('%', '')
+        if isinstance(operand, str):
+            # May be None
+            operand = operand.replace('%', '')
         try:
             operand = Decimal(operand)
         except:
