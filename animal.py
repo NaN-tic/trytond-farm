@@ -486,10 +486,6 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
             'animal_type': animal_vals['type'],
             'animal': animal_vals['id']
             }
-        if Transaction().context.get('create_cost_lines', True):
-            cost_lines = lot_tmp._on_change_product_cost_lines().get('add')
-            if cost_lines:
-                res['cost_lines'] = [('create', [cl[1] for cl in cost_lines])]
         return res
 
     @classmethod

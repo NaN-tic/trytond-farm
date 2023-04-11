@@ -136,12 +136,6 @@ Create individual move event changing cost price::
     >>> individual.reload()
     >>> individual.location == location1
     True
-    >>> individual.lot.cost_price
-    Decimal('30.0')
-    >>> move_cost_line, = [x for x in individual.lot.cost_lines
-    ...     if x.origin == move_individual]
-    >>> move_cost_line.unit_price
-    Decimal('5.0')
 
 Create group::
 
