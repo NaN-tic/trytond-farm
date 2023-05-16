@@ -402,19 +402,3 @@ class Move(metaclass=PoolMeta):
             move.lot.animal.location = move.to_location.id
             move.lot.animal.save()
         return res
-
-
-class LotCostLine(metaclass=PoolMeta):
-    __name__ = 'stock.lot.cost_line'
-
-    @classmethod
-    def _get_origin(cls):
-        models = super(LotCostLine, cls)._get_origin()
-        models += [
-            'farm.move.event',
-            'farm.transformation.event',
-            'farm.farrowing.event',
-            'farm.weaning.event',
-            'farm.reclassification.event'
-            ]
-        return models
