@@ -234,6 +234,9 @@ the weaning event doesn't have female, weaned nor lost moves::
     >>> female1.current_cycle.weaning_event.female_move
     >>> female1.current_cycle.weaning_event.weaned_move
     >>> female1.current_cycle.weaning_event.lost_move
+    >>> lot = weaning_event1.farrowing_group.lot
+    >>> lot.cost_price == Decimal('20.0000')
+    True
 
 Create a weaning event for second female (7 lives) with 6 as quantity, with
 current female location as destination of weaned group but not for destination
@@ -362,3 +365,6 @@ weaned group moves::
     2.0
     >>> female4.current_cycle.weaning_event.transformation_event.state
     'validated'
+    >>> lot = weaning_event4.weaned_group.lot
+    >>> lot.cost_price == Decimal('20.0000')
+    True
