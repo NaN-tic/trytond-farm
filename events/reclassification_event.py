@@ -148,10 +148,6 @@ class ReclassficationEvent(AbstractEvent):
             'animal_type': self.animal.type,
             'animal': self.animal,
             }
-        if Transaction().context.get('create_cost_lines', True):
-            cost_lines = lot_tmp._on_change_product_cost_lines().get('add')
-            if cost_lines:
-                res['cost_lines'] = [('create', [cl[1] for cl in cost_lines])]
         return res
 
     def _get_event_input_move(self):

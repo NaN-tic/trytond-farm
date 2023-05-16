@@ -42,7 +42,6 @@ def register():
         stock.LocationSiloLocation,
         stock.LotAnimalGroup,
         stock.Lot,
-        stock.LotCostLine,
         user.User,
         user.UserLocation,
         product.Template,

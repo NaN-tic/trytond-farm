@@ -119,7 +119,7 @@ Validate individual move event::
 Create individual move event changing cost price::
 
     >>> individual.lot.cost_price
-    Decimal('25')
+    Decimal('25.0000')
     >>> config.user = individual_user.id
     >>> move_individual = MoveEvent()
     >>> move_individual.animal_type = 'individual'
@@ -140,11 +140,7 @@ Create individual move event changing cost price::
     >>> individual.location == location1
     True
     >>> individual.lot.cost_price
-    Decimal('30.0')
-    >>> move_cost_line, = [x for x in individual.lot.cost_lines
-    ...     if x.origin == move_individual]
-    >>> move_cost_line.unit_price
-    Decimal('5.0')
+    Decimal('25.0000')
 
 Create group::
 
