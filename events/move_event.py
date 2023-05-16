@@ -237,27 +237,12 @@ class MoveEvent(AbstractEvent):
     def _get_event_move(self):
         pool = Pool()
         Move = pool.get('stock.move')
-        ModelData = pool.get('ir.model.data')
-        LotCostLine = pool.get('stock.lot.cost_line')
         Company = pool.get('company.company')
-
-        category_id = ModelData.get_id('stock_lot_cost',
-            'cost_category_standard_price')
-
         context = Transaction().context
         company = Company(context['company'])
 
         lot = (self.animal_type != 'group' and self.animal.lot or
             self.animal_group.lot)
-
-        if lot and self.unit_price and lot.cost_price != self.unit_price:
-            cost_line = LotCostLine()
-            cost_line.lot = lot
-            cost_line.category = category_id
-            cost_line.origin = str(self)
-            cost_line.unit_price = (self.unit_price - lot.cost_price
-                if lot.cost_price else self.unit_price)
-            cost_line.save()
 
         return Move(
             product=lot.product,

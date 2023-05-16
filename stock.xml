@@ -80,14 +80,4 @@
             <field name="perm_delete" eval="True"/>
         </record>
     </data>
-    <data noupdate="1">
-        <record model="stock.lot.cost_category"
-                id="cost_category_farrowing_cost">
-            <field name="name">Farrowing Cost</field>
-        </record>
-        <record model="stock.lot.cost_category"
-                id="cost_category_weaning_cost">
-            <field name="name">Weaning Cost</field>
-        </record>
-    </data>
 </tryton>

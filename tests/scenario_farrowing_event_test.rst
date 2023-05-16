@@ -263,7 +263,5 @@ it is 'mated' and check female functional fields values::
 Female childs must have the farrowing cost::
 
     >>> group = farrow_event2.produced_group
-    >>> len(group.lot.cost_lines)
-    1
     >>> group.lot.cost_price == Decimal('20.0')
     True

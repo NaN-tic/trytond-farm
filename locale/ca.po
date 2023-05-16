@@ -4483,14 +4483,6 @@ msgctxt "model:stock.lot-farm.animal.group,name:"
 msgid "Lot - Animal Group"
 msgstr "Lot - Animal Group"
 
-msgctxt "model:stock.lot.cost_category,name:cost_category_farrowing_cost"
-msgid "Farrowing Cost"
-msgstr "Cost del part"
-
-msgctxt "model:stock.lot.cost_category,name:cost_category_weaning_cost"
-msgid "Weaning Cost"
-msgstr "Weaning Cost"
-
 msgctxt "selection:farm.abort.event,animal_type:"
 msgid "Female"
 msgstr "Femella"

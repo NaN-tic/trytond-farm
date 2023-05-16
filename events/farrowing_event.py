@@ -177,9 +177,7 @@ class FarrowingEvent(AbstractEvent, ImportedEventMixin, ModelSQL, ModelView, Wor
             farrowing_event.female_cycle = current_cycle
 
             if farrowing_event.live != 0:
-                with Transaction().set_context(
-                        no_create_stock_move=True,
-                        create_cost_lines=False):
+                with Transaction().set_context(no_create_stock_move=True):
                     if farrowing_event.produced_animal_type == 'individual':
                         for i in range(farrowing_event.live):
                             produced_animal = farrowing_event._get_produced_animal()
@@ -234,13 +232,8 @@ class FarrowingEvent(AbstractEvent, ImportedEventMixin, ModelSQL, ModelView, Wor
     def _get_event_move(self, animal=None):
         pool = Pool()
         Move = pool.get('stock.move')
-        ModelData = pool.get('ir.model.data')
-        LotCostLine = pool.get('stock.lot.cost_line')
-        Company = pool.get('company.company')
-
-        category_id = ModelData.get_id('farm', 'cost_category_farrowing_cost')
-
         context = Transaction().context
+        Company = pool.get('company.company')
         company = Company(context['company'])
 
         if self.produced_animal_type == 'individual':
@@ -253,17 +246,6 @@ class FarrowingEvent(AbstractEvent, ImportedEventMixin, ModelSQL, ModelView, Wor
             product = self.specie.group_product.id
             uom = self.specie.group_product.default_uom.id
             live = self.live
-
-        if lot and lot.product.template.farrowing_price:
-            if lot.cost_lines:
-                cost_line = lot.cost_lines[0]
-            else:
-                cost_line = LotCostLine()
-                cost_line.lot = lot
-            cost_line.category = category_id
-            cost_line.origin = str(self)
-            cost_line.unit_price = lot.product.template.farrowing_price
-            cost_line.save()
 
         return Move(
             product=product,

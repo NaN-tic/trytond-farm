@@ -360,17 +360,6 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
 
                     weaning_event.weaned_move = weaned_move
                     todo_moves.append(weaned_move)
-            if weaning_event.produced_animal_type == 'individual':
-                for animal in weaning_event.weaned_animals:
-                    cost_line = (
-                        weaning_event._get_weaning_animal_cost_line(
-                            animal.animal))
-                    if cost_line:
-                        cost_line.save()
-            else:
-                cost_line = weaning_event._get_weaning_cost_line()
-                if cost_line:
-                    cost_line.save()
 
             weaning_event.save()
             current_cycle.update_state(weaning_event)
@@ -378,8 +367,7 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
             Move.assign(todo_moves)
             Move.do(todo_moves)
         if todo_trans_events:
-            with Transaction().set_context(create_cost_lines=False):
-                TransformationEvent.validate_event(todo_trans_events)
+            TransformationEvent.validate_event(todo_trans_events)
 
     def _get_female_move(self):
         pool = Pool()
@@ -461,43 +449,6 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
             company=company,
             lot=self.farrowing_group.lot,
             origin=self)
-
-    def _get_weaning_animal_cost_line(self, animal):
-        pool = Pool()
-        ModelData = pool.get('ir.model.data')
-        LotCostLine = pool.get('stock.lot.cost_line')
-        category_id = ModelData.get_id('farm', 'cost_category_weaning_cost')
-
-        if (animal.lot and animal.lot.product.template.weaning_price and
-                animal.lot.product.template.weaning_price !=
-                animal.lot.cost_price):
-            cost_line = LotCostLine()
-            cost_line.lot = animal.lot
-            cost_line.category = category_id
-            cost_line.origin = str(self)
-            cost_line.unit_price = (animal.lot.product.template.weaning_price -
-                animal.lot.cost_price)
-            return cost_line
-
-    def _get_weaning_cost_line(self):
-        pool = Pool()
-        ModelData = pool.get('ir.model.data')
-        LotCostLine = pool.get('stock.lot.cost_line')
-        category_id = ModelData.get_id('farm', 'cost_category_weaning_cost')
-        group = (self.weaned_group if self.weaned_group
-            else self.farrowing_group)
-        if not group:
-            raise UserError(gettext('farm.not_farrowing_group', event=self))
-        if (group.lot and group.lot.product.template.weaning_price and
-                group.lot.product.template.weaning_price !=
-                group.lot.cost_price):
-            cost_line = LotCostLine()
-            cost_line.lot = group.lot
-            cost_line.category = category_id
-            cost_line.origin = str(self)
-            cost_line.unit_price = (group.lot.product.template.weaning_price -
-                group.lot.cost_price)
-            return cost_line
 
     def _get_weaned_move(self, animal=None):
         pool = Pool()
