@@ -7,7 +7,7 @@
     <field name="animals_qty"/>
     <field name="location"/>
     <field name="date"/>
-    <field name="consumed_qty_animal" sum="Consumed Qty. per Animal"/>
+    <field name="consumed_qty_animal" sum="1"/>
     <field name="consumed_qty"/>
     <field name="inventory_qty"/>
 </tree>
