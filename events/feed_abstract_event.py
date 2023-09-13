@@ -273,7 +273,7 @@ class FeedEventMixin(AbstractEvent):
 
         move = Move(
             product=self.feed_product.id,
-            uom=self.uom.id,
+            unit=self.uom.id,
             quantity=float(self.feed_quantity),
             from_location=self.feed_location,
             to_location=self.farm.production_location,

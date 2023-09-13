@@ -100,7 +100,7 @@ Put 500 g of medication into the laboratory location::
     >>> now = datetime.datetime.now()
     >>> provisioning_move = Move()
     >>> provisioning_move.product = medication_product
-    >>> provisioning_move.uom = g
+    >>> provisioning_move.unit = g
     >>> provisioning_move.quantity = 500
     >>> provisioning_move.from_location = company.party.supplier_location
     >>> provisioning_move.to_location = lab1

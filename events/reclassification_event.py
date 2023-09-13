@@ -165,7 +165,7 @@ class ReclassficationEvent(AbstractEvent):
         production_location = self.farm.production_location
         return Move(
             product=lot.product,
-            uom=lot.product.default_uom,
+            unit=lot.product.default_uom,
             quantity=1,
             from_location=self.animal.location,
             to_location=production_location,
@@ -195,7 +195,7 @@ class ReclassficationEvent(AbstractEvent):
 
         return Move(
             product=lot.product,
-            uom=lot.product.default_uom,
+            unit=lot.product.default_uom,
             quantity=1,
             from_location=production_location,
             to_location=self.to_location,

@@ -86,17 +86,17 @@ Create dose Product, BoM and Lot::
     ...     inputs=[
     ...         BomInput(
     ...             product=blister_product,
-    ...             uom=unit,
+    ...             unit=unit,
     ...             quantity=1),
     ...         BomInput(
     ...             product=semen_product,
-    ...             uom=cm3,
+    ...             unit=cm3,
     ...             quantity=100.00),
     ...         ],
     ...     outputs=[
     ...         BomOutput(
     ...             product=dose_product,
-    ...             uom=unit,
+    ...             unit=unit,
     ...             quantity=1.00),
     ...         ],
     ...     )
@@ -120,7 +120,7 @@ Put two units of dose and one of semen in farm storage location::
     >>> now = datetime.datetime.now()
     >>> provisioning_move1 = Move()
     >>> provisioning_move1.product = dose_product
-    >>> provisioning_move1.uom = unit
+    >>> provisioning_move1.unit = unit
     >>> provisioning_move1.quantity = 2.0
     >>> provisioning_move1.from_location = production_location
     >>> provisioning_move1.to_location = warehouse.storage_location
@@ -135,7 +135,7 @@ Put two units of dose and one of semen in farm storage location::
 
     >>> provisioning_move2 = Move()
     >>> provisioning_move2.product = semen_product
-    >>> provisioning_move2.uom = cm3
+    >>> provisioning_move2.unit = cm3
     >>> provisioning_move2.quantity = 1.0
     >>> provisioning_move2.from_location = production_location
     >>> provisioning_move2.to_location = warehouse.storage_location

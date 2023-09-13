@@ -31,7 +31,7 @@ class BOM(metaclass=PoolMeta):
         cls.outputs.size = If(Bool(Eval('semen_dose', 0)), 1,
                 cls.outputs.size or -1)
         cls.outputs.domain.append(If(Bool(Eval('semen_dose', 0)),
-                ('uom', '=', Id('product', 'uom_unit')), ()))
+                ('unit', '=', Id('product', 'uom_unit')), ()))
 
     @classmethod
     def validate(cls, boms):

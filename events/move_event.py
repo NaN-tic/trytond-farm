@@ -246,7 +246,7 @@ class MoveEvent(AbstractEvent):
 
         return Move(
             product=lot.product,
-            uom=lot.product.default_uom,
+            unit=lot.product.default_uom,
             quantity=self.quantity,
             from_location=self.from_location,
             to_location=self.to_location,

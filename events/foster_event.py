@@ -198,7 +198,7 @@ class FosterEvent(AbstractEvent, ImportedEventMixin):
             to_location = self.specie.foster_location
         return Move(
             product=self.farrowing_group.lot.product,
-            uom=self.farrowing_group.lot.product.default_uom,
+            unit=self.farrowing_group.lot.product.default_uom,
             quantity=abs(self.quantity),
             from_location=from_location,
             to_location=to_location,

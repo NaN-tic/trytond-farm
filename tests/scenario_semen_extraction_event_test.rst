@@ -131,17 +131,17 @@ Create dose Product and BoM::
     ...     inputs=[
     ...         BomInput(
     ...             product=blister_product,
-    ...             uom=unit,
+    ...             unit=unit,
     ...             quantity=1),
     ...         BomInput(
     ...             product=semen_product,
-    ...             uom=cm3,
+    ...             unit=cm3,
     ...             quantity=100.00),
     ...         ],
     ...     outputs=[
     ...         BomOutput(
     ...             product=dose_product,
-    ...             uom=unit,
+    ...             unit=unit,
     ...             quantity=1),
     ...         ],
     ...     )

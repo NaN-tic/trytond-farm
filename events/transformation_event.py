@@ -303,7 +303,7 @@ class TransformationEvent(AbstractEvent):
 
         return Move(
             product=lot.product.id,
-            uom=lot.product.default_uom.id,
+            unit=lot.product.default_uom.id,
             quantity=self.quantity,
             from_location=self.from_location.id,
             to_location=production_location.id,
@@ -331,7 +331,7 @@ class TransformationEvent(AbstractEvent):
 
         return Move(
             product=lot.product.id,
-            uom=lot.product.default_uom.id,
+            unit=lot.product.default_uom.id,
             quantity=self.quantity,
             from_location=production_location.id,
             to_location=self.to_location.id,

@@ -50,8 +50,7 @@ class SemenExtractionEvent(AbstractEvent):
             'invisible': ~Eval('test_required', True),
             }, depends=['semen_product', 'id'])
     formula_uom = fields.Function(fields.Many2One('product.uom',
-            'Formula UOM'),
-        'get_formula_uom')
+            'Formula UOM'), 'get_formula_uom')
     formula_unit_digits = fields.Function(
         fields.Integer('Formula Unit Digits'), 'get_formula_unit_digits')
     formula_result = fields.Function(fields.Float('Formula Result',
@@ -92,7 +91,7 @@ class SemenExtractionEvent(AbstractEvent):
     semen_move = fields.Many2One('stock.move', 'Semen Move', readonly=True,
         domain=[
             ('lot', '=', Eval('semen_lot')),
-            ('uom', '=', Eval('formula_uom')),
+            ('unit', '=', Eval('formula_uom')),
             ], states=_STATES_VALIDATED_ADMIN,
         depends=_DEPENDS_VALIDATED_ADMIN + ['semen_lot', 'formula_uom'])
     dose_location = fields.Many2One('stock.location', 'Doses Location',
@@ -218,7 +217,7 @@ class SemenExtractionEvent(AbstractEvent):
 
         semen_product = self.specie.semen_product
         dose_product = self.dose_bom.output_products[0]
-        dose_uom = self.dose_bom.outputs[0].uom
+        dose_uom = self.dose_bom.outputs[0].unit
         factor = self.dose_bom.compute_factor(dose_product, 1.0, dose_uom)
         consumed_semen_qty = 0.0  # by 1 unit of dose
         for input_ in self.dose_bom.inputs:
@@ -227,7 +226,7 @@ class SemenExtractionEvent(AbstractEvent):
                 if not self.formula_uom:
                     continue
                 consumed_semen_qty = Uom.compute_qty(self.formula_uom,
-                    consumed_semen_qty, input_.uom)
+                    consumed_semen_qty, input_.unit)
                 break
         assert consumed_semen_qty > 0.0, ('BOM of semen extraction event "%s" '
             'generetes 0.0 consumed semen qty' % self.id)
@@ -381,7 +380,7 @@ class SemenExtractionEvent(AbstractEvent):
 
         return Move(
             product=self.specie.semen_product,
-            uom=self.formula_uom,
+            unit=self.formula_uom,
             quantity=self.semen_qty,
             from_location=self.farm.production_location,
             to_location=self.dose_location,
@@ -591,7 +590,7 @@ class SemenExtractionDose(ModelSQL, ModelView):
             return
         semen_product = self.event.specie.semen_product
         dose_product = self.bom.output_products[0]
-        dose_uom = self.bom.outputs[0].uom
+        dose_uom = self.bom.outputs[0].unit
         factor = self.bom.compute_factor(dose_product, self.quantity, dose_uom)
         semen_qty = 0.0  # by 1 unit of dose
         for input_ in self.bom.inputs:
@@ -600,7 +599,7 @@ class SemenExtractionDose(ModelSQL, ModelView):
                 if not self.event.formula_uom:
                     continue
                 semen_qty = Uom.compute_qty(self.event.formula_uom, semen_qty,
-                    input_.uom)
+                    input_.unit)
                 break
         return semen_qty
 
@@ -631,7 +630,7 @@ class SemenExtractionDose(ModelSQL, ModelView):
             location=self.event.farm.production_location,
             product=self.bom.output_products[0],
             bom=self.bom,
-            uom=self.bom.outputs[0].uom,
+            unit=self.bom.outputs[0].unit,
             quantity=self.quantity,
             state='draft')
 

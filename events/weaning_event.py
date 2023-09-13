@@ -379,7 +379,7 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
 
         return Move(
             product=self.lot.product,
-            uom=self.lot.product.default_uom,
+            unit=self.lot.product.default_uom,
             quantity=1.0,
             from_location=self.animal.location,
             to_location=self.female_to_location,
@@ -410,7 +410,7 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
 
         return Move(
             product=self.farrowing_group.lot.product,
-            uom=self.farrowing_group.lot.product.default_uom,
+            unit=self.farrowing_group.lot.product.default_uom,
             quantity=abs(last_minute_fostered),
             from_location=from_location,
             to_location=to_location,
@@ -440,7 +440,7 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
 
         return Move(
             product=self.farrowing_group.lot.product,
-            uom=self.farrowing_group.lot.product.default_uom,
+            unit=self.farrowing_group.lot.product.default_uom,
             quantity=abs(lost_qty),
             from_location=from_location,
             to_location=to_location,
@@ -461,7 +461,7 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
         if animal:
             return Move(
                 product=animal.lot.product,
-                uom=animal.lot.product.default_uom,
+                unit=animal.lot.product.default_uom,
                 quantity=1,
                 from_location=self.animal.location,
                 to_location=self.weaned_to_location,
@@ -476,7 +476,7 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
 
             return Move(
                 product=self.farrowing_group.lot.product,
-                uom=self.farrowing_group.lot.product.default_uom,
+                unit=self.farrowing_group.lot.product.default_uom,
                 quantity=self.quantity,
                 from_location=self.animal.location,
                 to_location=self.weaned_to_location,

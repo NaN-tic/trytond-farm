@@ -249,7 +249,7 @@ class FarrowingEvent(AbstractEvent, ImportedEventMixin, ModelSQL, ModelView, Wor
 
         return Move(
             product=product,
-            uom=uom,
+            unit=uom,
             quantity=live,
             from_location=self.farm.production_location.id,
             to_location=self.animal.location.id,

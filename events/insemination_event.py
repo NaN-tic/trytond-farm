@@ -204,7 +204,7 @@ class InseminationEvent(AbstractEvent, ImportedEventMixin):
         if self.dose_bom:
             return Move(
                 product=self.dose_product.id,
-                uom=self.dose_product.default_uom.id,
+                unit=self.dose_product.default_uom.id,
                 quantity=1,
                 from_location=self.farm.storage_location.id,
                 to_location=self.farm.production_location.id,
@@ -217,7 +217,7 @@ class InseminationEvent(AbstractEvent, ImportedEventMixin):
         else:
             return Move(
                 product=self.specie.semen_product.id,
-                uom=self.specie.semen_product.default_uom.id,
+                unit=self.specie.semen_product.default_uom.id,
                 quantity=1,
                 from_location=self.farm.storage_location.id,
                 to_location=self.farm.production_location.id,

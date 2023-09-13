@@ -114,7 +114,7 @@ class AnimalMixin:
         move_date = self.arrival_date or date.today()
         return Move(
             product=self.lot.product,
-            uom=self.lot.product.default_uom,
+            unit=self.lot.product.default_uom,
             quantity=getattr(self, 'initial_quantity', 1),
             from_location=from_location,
             to_location=self.initial_location,

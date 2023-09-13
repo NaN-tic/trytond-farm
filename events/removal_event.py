@@ -239,7 +239,7 @@ class RemovalEvent(AbstractEvent):
             self.animal_group.lot)
         return Move(
             product=lot.product.id,
-            uom=lot.product.default_uom.id,
+            unit=lot.product.default_uom.id,
             quantity=self.quantity,
             from_location=self.from_location.id,
             to_location=self.specie.removed_location.id,

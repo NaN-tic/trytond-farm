@@ -212,7 +212,7 @@ second Lot of Feed 3 days before::
     >>> provisioning_move1 = Move()
     >>> provisioning_move1.product = feed_product
     >>> provisioning_move1.lot = feed_lot1
-    >>> provisioning_move1.uom = feed_product.default_uom
+    >>> provisioning_move1.unit = feed_product.default_uom
     >>> provisioning_move1.quantity = 2000.00
     >>> provisioning_move1.from_location = company.party.supplier_location
     >>> provisioning_move1.to_location = silo1
@@ -227,7 +227,7 @@ second Lot of Feed 3 days before::
     >>> provisioning_move2 = Move()
     >>> provisioning_move2.product = feed_product
     >>> provisioning_move2.lot = feed_lot2
-    >>> provisioning_move2.uom = feed_product.default_uom
+    >>> provisioning_move2.unit = feed_product.default_uom
     >>> provisioning_move2.quantity = 1500.00
     >>> provisioning_move2.from_location = company.party.supplier_location
     >>> provisioning_move2.to_location = silo1
