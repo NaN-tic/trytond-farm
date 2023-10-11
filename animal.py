@@ -466,7 +466,6 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
         It returns a dictionary with values to create stock.lot
         """
         pool = Pool()
-        Lot = pool.get('stock.lot')
         Specie = pool.get('farm.specie')
 
         if not animal_vals:
@@ -480,7 +479,6 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
                     specie=specie.rec_name,
                     ))
 
-        lot_tmp = Lot(product=product)
         res = {
             'number': animal_vals['number'],
             'product': product.id,
