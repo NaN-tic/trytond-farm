@@ -440,7 +440,6 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
         It returns a dictionary with values to create stock.lot
         """
         pool = Pool()
-        Lot = pool.get('stock.lot')
         Specie = pool.get('farm.specie')
 
         if not group_vals:

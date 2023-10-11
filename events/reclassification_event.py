@@ -134,12 +134,9 @@ class ReclassficationEvent(AbstractEvent):
         Prepare values to create the new stock.lot for the reclassificated
         animal. It returns a dictionary with values to create stock.lot
         """
-        pool = Pool()
-        Lot = pool.get('stock.lot')
         if not self.animal:
             return {}
         product = self.reclassification_product
-        lot_tmp = Lot(product=product)
         # TODO Improve the manage of animal/lot number, currently using
         # the animal number to create the new lot
         res = {
