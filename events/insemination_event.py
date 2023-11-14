@@ -37,7 +37,7 @@ class InseminationEvent(AbstractEvent, ImportedEventMixin):
             ], states=_STATES_WRITE_DRAFT,
         depends=_DEPENDS_WRITE_DRAFT + ['dose_product'],
         search_context={
-            'locations': [Eval('farm')],
+            'locations': If(Bool(Eval('farm')), [Eval('farm')], []),
             'stock_date_end': date.today(),
             })
     female_cycle = fields.Many2One('farm.animal.female_cycle', 'Female Cycle',

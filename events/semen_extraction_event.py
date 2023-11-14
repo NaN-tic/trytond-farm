@@ -4,7 +4,7 @@ import math
 from datetime import datetime, date, timedelta
 from decimal import Decimal
 from trytond.model import fields, ModelView, ModelSQL, Workflow, Check, Unique
-from trytond.pyson import Bool, Equal, Eval, Id
+from trytond.pyson import Bool, Equal, Eval, Id, If
 from trytond.pool import Pool
 from trytond.transaction import Transaction
 from trytond.exceptions import UserError
@@ -86,7 +86,7 @@ class SemenExtractionEvent(AbstractEvent):
             ], states=_STATES_VALIDATED,
         depends=_DEPENDS_VALIDATED + ['semen_product'],
         search_context={
-            'locations': [Eval('farm')],
+            'locations': If(Bool(Eval('farm')), [Eval('farm')], []),
             'stock_date_end': date.today(),
             })
     semen_move = fields.Many2One('stock.move', 'Semen Move', readonly=True,
