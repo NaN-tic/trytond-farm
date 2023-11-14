@@ -3,7 +3,7 @@
 from datetime import datetime, date
 
 from trytond.model import fields, ModelView, Workflow, Check
-from trytond.pyson import Bool, Equal, Eval, Not, Or
+from trytond.pyson import Bool, Equal, Eval, Not, If, Or
 from trytond.pool import Pool
 from trytond.transaction import Transaction
 from trytond.exceptions import UserError
@@ -62,7 +62,7 @@ class FeedEventMixin(AbstractEvent):
                 },
         depends=_DEPENDS_WRITE_DRAFT + ['feed_product'],
         search_context={
-            'locations': [Eval('farm')],
+            'locations': If(Bool(Eval('farm')), [Eval('farm')], []),
             'stock_date_end': date.today(),
             })
     uom = fields.Many2One('product.uom', "UOM", required=True,
