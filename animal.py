@@ -855,6 +855,7 @@ class Female(metaclass=PoolMeta):
         pool = Pool()
         Animal = pool.get('farm.animal')
         Location = pool.get('stock.location')
+        vlist = [x.copy() for x in vlist]
         for vals in vlist:
             if vals.get('type', '') == 'female' and not vals.get('state'):
                 vals['state'] = 'prospective'
