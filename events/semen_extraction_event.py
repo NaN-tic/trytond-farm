@@ -415,6 +415,7 @@ class SemenExtractionEvent(AbstractEvent):
         Specie = pool.get('farm.specie')
 
         todo_tests = []
+        vlist = [x.copy() for x in vlist]
         for values in vlist:
             if values.get('test'):
                 continue
