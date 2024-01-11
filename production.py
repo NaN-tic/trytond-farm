@@ -14,7 +14,7 @@ class BOM(metaclass=PoolMeta):
     specie = fields.Many2One('farm.specie', 'Dose Specie', states={
             'required': Bool(Eval('semen_dose', 0)),
             'invisible': Not(Bool(Eval('semen_dose', 0))),
-            }, depends=['semen_dose'])
+            })
 
     @classmethod
     def __setup__(cls):

@@ -15,8 +15,7 @@ from trytond.transaction import Transaction
 from trytond.exceptions import UserError
 from trytond.i18n import gettext
 
-from .abstract_event import _STATES_WRITE_DRAFT, \
-    _DEPENDS_WRITE_DRAFT, _STATES_VALIDATED_ADMIN, _DEPENDS_VALIDATED_ADMIN
+from .abstract_event import _STATES_WRITE_DRAFT, _STATES_VALIDATED_ADMIN
 
 _INVENTORY_STATES = [
     ('draft', 'Draft'),
@@ -379,25 +378,25 @@ class FeedInventoryMixin(object):
         domain=[
             ('silo', '=', True),
             ],
-        states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
+        states=_STATES_WRITE_DRAFT)
     dest_locations = fields.Many2Many('farm.feed.inventory-stock.location',
         'inventory', 'location', 'Locations to fed', required=True,
         domain=[
             ('type', '=', 'storage'),
             ('silo', '=', False),
             ],
-        states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
+        states=_STATES_WRITE_DRAFT)
     timestamp = fields.DateTime('Date & Time', required=True,
-        states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
+        states=_STATES_WRITE_DRAFT)
     # prev_inventory/prev_inventory_date
     uom = fields.Many2One('product.uom', "UOM", domain=[
             ('category', '=', Id('product', 'uom_cat_weight')),
-            ], states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
+            ], states=_STATES_WRITE_DRAFT)
     unit_digits = fields.Function(fields.Integer('Unit Digits'),
         'on_change_with_unit_digits')
     quantity = fields.Numeric('Quantity', digits=(16, Eval('unit_digits', 2)),
         required=True, states=_STATES_WRITE_DRAFT,
-        depends=_DEPENDS_WRITE_DRAFT + ['unit_digits'])
+        depends=['unit_digits'])
     feed_events = fields.One2Many('farm.feed.event', 'feed_inventory',
         'Feed Events', readonly=True)
     # inventory, feed_inventory
@@ -704,10 +703,9 @@ class FeedProvisionalInventory(FeedInventoryMixin, ModelSQL, ModelView,
 
     prev_inventory_date = fields.Date('Previous Inventory Date', readonly=True)
     inventory = fields.Many2One('stock.inventory', 'Standard Inventory',
-        readonly=True, states=_STATES_VALIDATED_ADMIN,
-        depends=_DEPENDS_VALIDATED_ADMIN)
+        readonly=True, states=_STATES_VALIDATED_ADMIN)
     feed_inventory = fields.Many2One('farm.feed.inventory', 'Inventory',
-        readonly=True, depends=['location'])
+        readonly=True)
 
     @classmethod
     def __setup__(cls):
@@ -961,20 +959,20 @@ class FeedAnimalLocationDate(ModelSQL, ModelView):
         ], "Animal Type", required=True, readonly=True)
     animal = fields.Many2One('farm.animal', 'Animal', states={
             'invisible': Equal(Eval('animal_type'), 'group'),
-            }, depends=['animal_type'])
+            })
     animal_group = fields.Many2One('farm.animal.group', 'Group', states={
             'invisible': Not(Equal(Eval('animal_type'), 'group')),
-            }, depends=['animal_type'])
+            })
     location = fields.Many2One('stock.location', 'Location fed')
     animals_qty = fields.Integer('Num. Animals', states={
             'invisible': Not(Equal(Eval('animal_type'), 'group')),
-            }, depends=['animal_type'])
+            })
     date = fields.Date('Date')
     # uom = fields.Many2One('product.uom', "UOM", readonly=True)
     # unit_digits = fields.Function(fields.Integer('Unit Digits'),
     #     'get_unit_digits')
     consumed_qty_animal = fields.Float('Consumed Qty. per Animal',
-        digits=(16, 2))  # depends=['unit_digits'])
+        digits=(16, 2))
     consumed_qty = fields.Float('Consumed Qty.', digits=(16, 2))
     inventory_qty = fields.Integer('Inventories',
         help='Number of Inventories which include this date.')

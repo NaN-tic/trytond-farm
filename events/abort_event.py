@@ -4,7 +4,7 @@ from trytond.model import fields, ModelView, ModelSQL, Workflow, Unique
 from trytond.pyson import Equal, Eval, If
 
 from .abstract_event import AbstractEvent, ImportedEventMixin, \
-    _STATES_VALIDATED, _DEPENDS_VALIDATED
+    _STATES_VALIDATED
 
 
 class AbortEvent(AbstractEvent, ImportedEventMixin):
@@ -15,8 +15,7 @@ class AbortEvent(AbstractEvent, ImportedEventMixin):
     female_cycle = fields.One2One('farm.abort.event-farm.animal.female_cycle',
         'event', 'cycle', string='Female Cycle', readonly=True, domain=[
             ('animal', '=', Eval('animal')),
-            ], states=_STATES_VALIDATED,
-        depends=_DEPENDS_VALIDATED + ['animal'])
+            ], states=_STATES_VALIDATED)
 
     @classmethod
     def __setup__(cls):

@@ -4,7 +4,7 @@ from trytond.model import fields, ModelView, Workflow
 from trytond.pyson import Equal, Eval, If
 
 from .abstract_event import AbstractEvent, _STATES_WRITE_DRAFT, \
-    _DEPENDS_WRITE_DRAFT, _STATES_VALIDATED, _DEPENDS_VALIDATED
+    _STATES_VALIDATED
 
 __all__ = ['PregnancyDiagnosisEvent']
 
@@ -20,10 +20,10 @@ class PregnancyDiagnosisEvent(AbstractEvent):
             ('nonconclusive', 'Non conclusive'),
             ('not-pregnant', 'Observed not Pregnant'),
             ], 'Result', required=True,
-        states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
+        states=_STATES_WRITE_DRAFT)
     female_cycle = fields.Many2One('farm.animal.female_cycle', 'Female Cycle',
         readonly=True, domain=[('animal', '=', Eval('animal'))],
-        states=_STATES_VALIDATED, depends=_DEPENDS_VALIDATED + ['animal'])
+        states=_STATES_VALIDATED)
 
     @classmethod
     def __setup__(cls):

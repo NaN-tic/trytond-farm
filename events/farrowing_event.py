@@ -8,14 +8,11 @@ from trytond.exceptions import UserError
 from trytond.i18n import gettext
 
 from .abstract_event import AbstractEvent, ImportedEventMixin, \
-    _STATES_WRITE_DRAFT, _DEPENDS_WRITE_DRAFT, \
-    _STATES_VALIDATED, _DEPENDS_VALIDATED
-
+    _STATES_WRITE_DRAFT, _STATES_VALIDATED
 
 _INVISIBLE_NOT_GROUP = {
     'invisible': ~ (Eval('produced_animal_type') == 'group')
     }
-
 
 
 class FarrowingProblem(ModelSQL, ModelView):
@@ -31,26 +28,22 @@ class FarrowingEvent(AbstractEvent, ImportedEventMixin, ModelSQL, ModelView, Wor
     __name__ = 'farm.farrowing.event'
     _table = 'farm_farrowing_event'
 
-    live = fields.Integer('Live', states=_STATES_WRITE_DRAFT,
-        depends=_DEPENDS_WRITE_DRAFT)
+    live = fields.Integer('Live', states=_STATES_WRITE_DRAFT)
     stillborn = fields.Integer(
-        'Stillborn', states={**_STATES_WRITE_DRAFT,**_INVISIBLE_NOT_GROUP},
-        depends=_DEPENDS_WRITE_DRAFT + ['produced_animal_type'])
+        'Stillborn', states={**_STATES_WRITE_DRAFT,**_INVISIBLE_NOT_GROUP})
     mummified = fields.Integer(
-        'Mummified', states={**_STATES_WRITE_DRAFT,**_INVISIBLE_NOT_GROUP},
-        depends=_DEPENDS_WRITE_DRAFT + ['produced_animal_type'])
+        'Mummified', states={**_STATES_WRITE_DRAFT,**_INVISIBLE_NOT_GROUP})
     dead = fields.Function(fields.Integer('Dead', states={
             'invisible': ~Equal(Eval('produced_animal_type'), 'group')
-        }, depends=['produced_animal_type']), 'on_change_with_dead')
+        }), 'on_change_with_dead')
     problem = fields.Many2One('farm.farrowing.problem', 'Problem',
-        states=_STATES_WRITE_DRAFT,
-        depends=_DEPENDS_WRITE_DRAFT)
+        states=_STATES_WRITE_DRAFT)
     female_cycle = fields.One2One(
         'farm.farrowing.event-farm.animal.female_cycle', 'event', 'cycle',
         string='Female Cycle', readonly=True, domain=[
             ('animal', '=', Eval('animal')),
             ],
-        states=_STATES_VALIDATED, depends=_DEPENDS_VALIDATED + ['animal'])
+        states=_STATES_VALIDATED)
     produced_animal_type = fields.Function(fields.Selection([
                 ('individual', 'Individual'),
                 ('group', 'Group'),
@@ -66,8 +59,7 @@ class FarrowingEvent(AbstractEvent, ImportedEventMixin, ModelSQL, ModelView, Wor
                 & (Not(Eval('imported', False)))
                 ) & (Eval('produced_animal_type') == 'individual'),
             'invisible':  ~Equal(Eval('produced_animal_type'), 'individual')
-            },
-        depends=['specie', 'live', 'state', 'imported', 'produced_animal_type'])
+            })
     produced_group = fields.One2One('farm.farrowing.event-farm.animal.group',
         'event', 'animal_group', string='Produced Group', domain=[
             ('specie', '=', Eval('specie', -1)),
@@ -78,8 +70,7 @@ class FarrowingEvent(AbstractEvent, ImportedEventMixin, ModelSQL, ModelView, Wor
                     Bool(Eval('live', 0))), Not(Eval('imported', False)),
                     Equal(Eval('produced_animal_type'), 'group')),
             'invisible': ~Equal(Eval('produced_animal_type'), 'group')
-            },
-        depends=['specie', 'live', 'state', 'imported', 'produced_animal_type'])
+            })
     move = fields.Many2One('stock.move', 'Stock Move', readonly=True, domain=[
                 ('lot.animal_group', '=', Eval('produced_group')),
             ],
@@ -90,9 +81,7 @@ class FarrowingEvent(AbstractEvent, ImportedEventMixin, ModelSQL, ModelView, Wor
             'invisible': Or(~Eval('context', {}).get('groups', []).contains(
                     Id('farm', 'group_farm_admin')),
                     ~Equal(Eval('produced_animal_type'), 'group')),
-            },
-        depends=['produced_group', 'live', 'state', 'imported',
-            'produced_animal_type'])
+            })
 
     @classmethod
     def __setup__(cls):

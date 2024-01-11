@@ -10,9 +10,7 @@ from trytond.exceptions import UserError
 from trytond.i18n import gettext
 
 from .abstract_event import AbstractEvent, _STATES_WRITE_DRAFT, \
-    _DEPENDS_WRITE_DRAFT, _STATES_WRITE_DRAFT_VALIDATED, \
-    _DEPENDS_WRITE_DRAFT_VALIDATED, _STATES_VALIDATED_ADMIN, \
-    _DEPENDS_VALIDATED_ADMIN
+    _STATES_WRITE_DRAFT_VALIDATED, _STATES_VALIDATED_ADMIN
 
 
 # It mustn't to be *registered* because of 'ir.model' nor 'ir.model.field' was
@@ -31,14 +29,12 @@ class FeedEventMixin(AbstractEvent):
                 Not(Bool(Eval('farm', 0))),
                 Not(Equal(Eval('state'), 'draft')),
                 ),
-            }, depends=['farm', 'state'],
-        context={'restrict_by_specie_animal_type': True})
+            }, context={'restrict_by_specie_animal_type': True})
     quantity = fields.Integer('Num. of animals', required=True,
         states={
             'invisible': Not(Equal(Eval('animal_type'), 'group')),
             'readonly': Not(Equal(Eval('state'), 'draft')),
-            },
-        depends=['animal_type', 'animal_group', 'location', 'state'])
+            })
     feed_location = fields.Many2One('stock.location', 'Feed Source',
         required=True, domain=[
             ('type', '=', 'storage'),
@@ -49,10 +45,9 @@ class FeedEventMixin(AbstractEvent):
                 Not(Bool(Eval('farm', 0))),
                 Not(Equal(Eval('state'), 'draft')),
                 ),
-            }, depends=['farm', 'state'])
+            })
     feed_product = fields.Many2One('product.product', 'Feed',
-        states=_STATES_WRITE_DRAFT_VALIDATED,
-        depends=_DEPENDS_WRITE_DRAFT_VALIDATED)
+        states=_STATES_WRITE_DRAFT_VALIDATED)
     feed_lot = fields.Many2One('stock.lot', 'Feed Lot', domain=[
             ('product', '=', Eval('feed_product')),
             ('quantity', '>', 0.0)
@@ -60,19 +55,17 @@ class FeedEventMixin(AbstractEvent):
                 'readonly': (Not(Bool(Eval('farm'))) |
                     Not(Equal(Eval('state'), 'draft'))),
                 },
-        depends=_DEPENDS_WRITE_DRAFT + ['feed_product'],
         search_context={
             'locations': If(Bool(Eval('farm')), [Eval('farm')], []),
             'stock_date_end': date.today(),
             })
     uom = fields.Many2One('product.uom', "UOM", required=True,
-        states=_STATES_WRITE_DRAFT,
-        depends=_DEPENDS_WRITE_DRAFT + ['feed_product'])
+        states=_STATES_WRITE_DRAFT)
     unit_digits = fields.Function(fields.Integer('Unit Digits'),
         'on_change_with_unit_digits')
     feed_quantity = fields.Numeric('Consumed Quantity', required=True,
         digits=(16, Eval('unit_digits', 2)), states=_STATES_WRITE_DRAFT,
-        depends=_DEPENDS_WRITE_DRAFT + ['unit_digits'])
+        depends=['unit_digits'])
     # TODO: start/end_date required?
     start_date = fields.Date('Start Date', states=_STATES_WRITE_DRAFT,
         help='Start date of the period in which the given quantity of product '
@@ -80,13 +73,13 @@ class FeedEventMixin(AbstractEvent):
             'OR',
                 [('start_date', '=', None)],
                 [('start_date', '<=', Eval('end_date'))],
-            ], depends=['end_date'])
+            ])
     end_date = fields.Function(fields.Date('End Date',
             help='End date of the period in which the given quantity of '
             'product was consumed. It is the date of event\'s timestamp.'),
         'on_change_with_end_date')
     move = fields.Many2One('stock.move', 'Stock Move', readonly=True,
-        states=_STATES_VALIDATED_ADMIN, depends=_DEPENDS_VALIDATED_ADMIN)
+        states=_STATES_VALIDATED_ADMIN)
 
     @classmethod
     def __setup__(cls):

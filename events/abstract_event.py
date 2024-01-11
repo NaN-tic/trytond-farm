@@ -17,22 +17,12 @@ _EVENT_STATES = [
 _STATES_WRITE_DRAFT = {
     'readonly': Not(Equal(Eval('state'), 'draft')),
     }
-_DEPENDS_WRITE_DRAFT = ['state']
-_STATES_VALIDATED = {
-    'required': Equal(Eval('state'), 'validated'),
-    }
-_DEPENDS_VALIDATED = ['state']
-_STATES_WRITE_DRAFT_VALIDATED = {
-    'readonly': Not(Equal(Eval('state'), 'draft')),
-    'required': Equal(Eval('state'), 'validated'),
-    }
-_DEPENDS_WRITE_DRAFT_VALIDATED = ['state']
+
 _STATES_VALIDATED_ADMIN = {
     'required': Equal(Eval('state'), 'validated'),
     'invisible': ~Eval('context', {}).get('groups', []).contains(
         Id('farm', 'group_farm_admin')),
     }
-_DEPENDS_VALIDATED_ADMIN = ['state']
 
 
 class AbstractEvent(ModelSQL, ModelView, Workflow):
@@ -55,8 +45,7 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
             'readonly': True,
             })
     farm = fields.Many2One('stock.location', 'Farm', required=True,
-        states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT,
-        domain=[
+        states=_STATES_WRITE_DRAFT, domain=[
             ('type', '=', 'warehouse'),
             ],
         context={
@@ -75,8 +64,7 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
             'invisible': Equal(Eval('animal_type'), 'group'),
             'required': Not(Equal(Eval('animal_type'), 'group')),
             'readonly': Not(Equal(Eval('state'), 'draft')),
-            },
-        depends=['specie', 'animal_type', 'farm', 'state'])
+            })
     animal_group = fields.Many2One('farm.animal.group', 'Group', domain=[
             ('specie', '=', Eval('specie')),
             ('farms', 'in', [Eval('farm', -1)]),
@@ -84,8 +72,7 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
             'invisible': Not(Equal(Eval('animal_type'), 'group')),
             'required': Equal(Eval('animal_type'), 'group'),
             'readonly': Not(Equal(Eval('state'), 'draft')),
-            },
-        depends=['specie', 'animal_type', 'farm', 'state'])
+            })
     lot = fields.Function(fields.Many2One('stock.lot', 'Lot'),
         'get_lot')
     # TODO: Used for permission management and filtering. If dot notation
@@ -94,10 +81,9 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
     #            None, None, 'Current Farms', help='The farms (warehouses) '
     #            'where the animal or group is now.'), 'get_current_warehouse')
     timestamp = fields.DateTime('Date & Time', required=True,
-        states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
+        states=_STATES_WRITE_DRAFT)
     employee = fields.Many2One('party.party', 'Employee',
-        states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT,
-        help='Employee that did the job.')
+        states=_STATES_WRITE_DRAFT, help='Employee that did the job.')
     notes = fields.Text('Notes')
     state = fields.Selection(_EVENT_STATES, 'State', required=True,
         readonly=True)
@@ -234,7 +220,6 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
 _STATES_VALIDATED_ADMIN_BUT_IMPORTED = _STATES_VALIDATED_ADMIN.copy()
 _STATES_VALIDATED_ADMIN_BUT_IMPORTED['required'] &= Not(Eval('imported',
         False))
-_DEPENDS_VALIDATED_ADMIN_BUT_IMPORTED = ['state', 'imported']
 
 
 class ImportedEventMixin:

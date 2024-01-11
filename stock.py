@@ -22,13 +22,12 @@ class Lot(metaclass=PoolMeta):
             ('group', 'Group'),
             ], 'Animal Type', readonly=True)
     animal = fields.Many2One('farm.animal', 'Animal', readonly=True,
-        states={'invisible': Equal(Eval('animal_type'), 'group')},
-        depends=['animal_type'])
+        states={'invisible': Equal(Eval('animal_type'), 'group')})
     animal_group = fields.One2One('stock.lot-farm.animal.group', 'lot',
         'animal_group', string='Group', readonly=True,
         states={
             'invisible': Not(Equal(Eval('animal_type'), 'group')),
-            }, depends=['animal_type'])
+            })
 
     #TODO aquestes restriccions les deixem aqui o les passem a 'animal'
     # (i group?). Afegir-ho a la tasca
@@ -170,7 +169,7 @@ class Location(metaclass=PoolMeta):
     current_lot = fields.Function(fields.Many2One('stock.lot',
             'Current Lot', states={
                 'invisible': Not(Eval('silo', False)),
-                }, depends=['silo']),
+                }),
         'get_current_lot')
     locations_to_fed = fields.Many2Many('stock.location.silo-stock.location',
         'silo', 'location', 'Locations to fed', domain=[
@@ -179,7 +178,7 @@ class Location(metaclass=PoolMeta):
             ],
         states={
             'invisible': Not(Eval('silo', False)),
-            }, depends=['silo'],
+            },
         help='Indicates the locations the silo feeds. Note that this will '
         'only be a default value.')
 

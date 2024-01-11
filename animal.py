@@ -15,15 +15,12 @@ from sql import Table
 _STATES_MALE_FIELD = {
     'invisible': Not(Equal(Eval('type'), 'male')),
     }
-_DEPENDS_MALE_FIELD = ['type']
 _STATES_FEMALE_FIELD = {
     'invisible': Not(Equal(Eval('type'), 'female')),
     }
-_DEPENDS_FEMALE_FIELD = ['type']
 _STATES_INDIVIDUAL_FIELD = {
     'invisible': Not(Equal(Eval('type'), 'individual')),
     }
-_DEPENDS_INDIVIDUAL_FIELD = ['type']
 
 ANIMAL_ORIGIN = [
     ('purchased', 'Purchased'),
@@ -143,11 +140,11 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
             'readonly': True,
             })
     breed = fields.Many2One('farm.specie.breed', 'Breed', required=True,
-        domain=[('specie', '=', Eval('specie'))], depends=['specie'])
+        domain=[('specie', '=', Eval('specie'))])
     lot = fields.Many2One('stock.lot', 'Lot',
         readonly=True, domain=[
             ('animal_type', '=', Eval('type')),
-        ], depends=['type'])
+        ])
     number = fields.Function(fields.Char('Number'),
         'get_number', 'set_number', searcher='search_number')
     # location is updated in do() of stock.move
@@ -164,19 +161,18 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
         'it was purchased.')
     arrival_date = fields.Date('Arrival Date', states={
             'readonly': Greater(Eval('id', 0), 0),
-            }, depends=['id'],
+            },
         help="The date this animal arrived (if it was purchased) or when it "
         "was born.")
     purchase_shipment = fields.Many2One('stock.shipment.in',
         'Purchase Shipment', readonly=True,
-        states={'invisible': Not(Equal(Eval('origin'), 'purchased'))},
-        depends=['origin'])
+        states={'invisible': Not(Equal(Eval('origin'), 'purchased'))})
     initial_location = fields.Many2One('stock.location', 'Initial Location',
         required=True, domain=[
             ('type', '=', 'storage'),
             ('silo', '=', False),
             ],
-        states={'readonly': Greater(Eval('id', 0), 0)}, depends=['id'],
+        states={'readonly': Greater(Eval('id', 0), 0)},
         context={'restrict_by_specie_animal_type': True},
         help="The Location where the animal was reached or where it was "
         "allocated when it was purchased.\nIt is used as historical "
@@ -203,15 +199,13 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
             ('male', "Male"),
             ('female', "Female"),
             ('undetermined', "Undetermined"),
-            ], 'Sex', required=True, states=_STATES_INDIVIDUAL_FIELD,
-        depends=_DEPENDS_INDIVIDUAL_FIELD)
+            ], 'Sex', required=True, states=_STATES_INDIVIDUAL_FIELD)
     purpose = fields.Selection([
             (None, ''),
             ('sale', 'Sale'),
             ('replacement', 'Replacement'),
             ('unknown', 'Unknown'),
-            ], 'Purpose', states=_STATES_INDIVIDUAL_FIELD,
-        depends=_DEPENDS_INDIVIDUAL_FIELD)
+            ], 'Purpose', states=_STATES_INDIVIDUAL_FIELD)
     active = fields.Boolean('Active')
     lots= fields.One2Many(
         'stock.lot', 'animal', 'Lots', readonly=True)
@@ -568,10 +562,9 @@ class Male(metaclass=PoolMeta):
     __name__ = 'farm.animal'
 
     extractions = fields.One2Many('farm.semen_extraction.event',
-        'animal', 'Semen Extractions', states=_STATES_MALE_FIELD,
-        depends=_DEPENDS_MALE_FIELD)
+        'animal', 'Semen Extractions', states=_STATES_MALE_FIELD)
     last_extraction = fields.Date('Last Extraction', readonly=True,
-        states=_STATES_MALE_FIELD, depends=_DEPENDS_MALE_FIELD)
+        states=_STATES_MALE_FIELD)
 
     def update_last_extraction(self, validated_event=None):
         if not self.extractions:
@@ -598,14 +591,11 @@ class Female(metaclass=PoolMeta):
         readonly=True, order=[
             ('sequence', 'ASC'),
             ('ordination_date', 'ASC'),
-            ],
-        states=_STATES_FEMALE_FIELD, depends=_DEPENDS_FEMALE_FIELD)
+            ], states=_STATES_FEMALE_FIELD)
     current_cycle = fields.Many2One('farm.animal.female_cycle',
-        'Current Cycle', readonly=True, states=_STATES_FEMALE_FIELD,
-        depends=_DEPENDS_FEMALE_FIELD)
+        'Current Cycle', readonly=True, states=_STATES_FEMALE_FIELD)
     current_cycle_state = fields.Selection([(None, '')] + FEMALE_CICLE_STATES,
-        'Current Cycle State', readonly=True, states=_STATES_FEMALE_FIELD,
-        depends=_DEPENDS_FEMALE_FIELD)
+        'Current Cycle State', readonly=True, states=_STATES_FEMALE_FIELD)
     state = fields.Selection([
             (None, ''),
             ('prospective', 'Prospective'),
@@ -614,12 +604,11 @@ class Female(metaclass=PoolMeta):
             ('removed', 'Removed'),
             ],
         'Status', readonly=True, states=_STATES_FEMALE_FIELD,
-        depends=_DEPENDS_FEMALE_FIELD,
         help='According to NPPC Production and Financial Standards there are '
         'four status for breeding sows. The status change is event driven: '
         'arrival date, entry date mating event and removal event')
     first_mating = fields.Function(fields.Date('First Mating',
-            states=_STATES_FEMALE_FIELD, depends=_DEPENDS_FEMALE_FIELD,
+            states=_STATES_FEMALE_FIELD,
             help='Date of first mating. This will change the status of the '
             'sow to "mated"'),
         'get_first_mating')
@@ -630,8 +619,7 @@ class Female(metaclass=PoolMeta):
     last_produced_group = fields.Function(fields.Many2One('farm.animal.group',
             'Last Produced Group', domain=[
                 ('specie', '=', Eval('specie')),
-                ], depends=['specie']),
-        'get_last_produced_group')
+                ]), 'get_last_produced_group')
     days_from_farrowing = fields.Function(fields.Integer('Unpregnant Days',
             help='Number of days from last farrowing. -1 if there '
             'isn\'t any farrowing.'),
@@ -942,12 +930,12 @@ class FemaleCycle(ModelSQL, ModelView):
     abort_event = fields.One2One('farm.abort.event-farm.animal.female_cycle',
         'cycle', 'event', string='Abort', readonly=True, domain=[
             ('animal', '=', Eval('animal')),
-            ], depends=['animal'])
+            ])
     farrowing_event = fields.One2One(
         'farm.farrowing.event-farm.animal.female_cycle', 'cycle', 'event',
         string='Farrowing', readonly=True, domain=[
             ('animal', '=', Eval('animal')),
-            ], depends=['animal'])
+            ])
     live = fields.Function(fields.Integer('Live'),
         'get_farrowing_event_field')
     dead = fields.Function(fields.Integer('Dead'),
@@ -962,7 +950,7 @@ class FemaleCycle(ModelSQL, ModelView):
         'farm.weaning.event-farm.animal.female_cycle', 'cycle', 'event',
         string='Weaning', readonly=True, domain=[
             ('animal', '=', Eval('animal')),
-            ], depends=['animal'])
+            ])
     weaned = fields.Function(fields.Integer('Weaned Quantity'),
         'get_weaned')
     removed = fields.Function(fields.Integer('Removed Quantity',
@@ -1213,9 +1201,7 @@ class ChangeCycleObservationStart(ModelView):
             ],
         states={
             'required': True,
-        },
-        depends=['animal'],
-        )
+        })
     observation = fields.Text('Observation', required=True)
     animal = fields.Many2One('farm.animal', 'Current animal',
         readonly=True, states={
@@ -1264,8 +1250,7 @@ class CreateFemaleStart(ModelView):
     birthdate = fields.Date('Birthdate',
         states={
             'readonly': Eval('origin') == 'raised',
-            },
-        depends=['origin'])
+            })
     initial_location = fields.Many2One('stock.location', 'Current Location',
         required=True,
         domain=[
@@ -1280,8 +1265,7 @@ class CreateFemaleStart(ModelView):
     breed = fields.Many2One('farm.specie.breed', 'Breed', required=True,
         domain=[
             ('specie', '=', Eval('specie')),
-            ],
-        depends=['specie'])
+            ])
     cycles = fields.One2Many('farm.create_female.line', 'start', 'Cycles',
         order=[('insemination_date', 'ASC')])
     last_cycle_active = fields.Boolean('Last cycle active',
@@ -1318,36 +1302,36 @@ class CreateFemaleLine(ModelView):
     abort = fields.Boolean('Aborted?')
     abort_date = fields.Date('Abort Date', states={
             'invisible': ~Eval('abort', False),
-            }, depends=['abort'])
+            })
     farrowing_date = fields.Date('Farrowing Date', states={
             'required': Bool(Eval('weaning_date')),
             'invisible': Bool(Eval('abort')),
-            }, depends=['weaning_date', 'abort'])
+            })
     live = fields.Integer('Live', states={
             'required': Bool(Eval('farrowing_date')),
             'invisible': Bool(Eval('abort')),
-            }, depends=['farrowing_date', 'abort'])
+            })
     stillborn = fields.Integer('Stillborn', states={
             'invisible': Bool(Eval('abort')),
-            }, depends=['abort'])
+            })
     mummified = fields.Integer('Mummified', states={
             'invisible': Bool(Eval('abort')),
-            }, depends=['abort'])
+            })
     fostered = fields.Integer('Fostered', states={
             'invisible': Bool(Eval('abort')),
-            }, depends=['abort'])
+            })
     to_weaning_quantity = fields.Function(
         fields.Integer('To Weaning Quantity'),
         'on_change_with_to_weaning_quantity')
     weaning_date = fields.Date('Weaning Date', states={
             'invisible': (Eval('abort', False) |
                 (Eval('to_weaning_quantity', 0) == 0)),
-            }, depends=['abort', 'to_weaning_quantity'])
+            })
     weaned_quantity = fields.Integer('Weaned Quantity', states={
             'required': Bool(Eval('weaning_date')),
             'invisible': (Eval('abort', False) |
                 (Eval('to_weaning_quantity', 0) == 0)),
-            }, depends=['weaning_date', 'abort', 'to_weaning_quantity'])
+            })
 
     @fields.depends('live', 'fostered')
     def on_change_with_to_weaning_quantity(self, name=None):

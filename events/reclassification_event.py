@@ -7,8 +7,7 @@ from trytond.pool import Pool
 from trytond.transaction import Transaction
 from trytond.i18n import gettext
 
-from .abstract_event import AbstractEvent, _STATES_VALIDATED_ADMIN, \
-    _DEPENDS_VALIDATED_ADMIN
+from .abstract_event import AbstractEvent, _STATES_VALIDATED_ADMIN
 
 
 class ReclassficationEvent(AbstractEvent):
@@ -21,24 +20,23 @@ class ReclassficationEvent(AbstractEvent):
         domain=[('id', 'in', Eval('valid_products'))],
         states={
             'readonly': Not(Equal(Eval('state'), 'draft')),
-            }, depends=['animal_type', 'state', 'valid_products'])
+            })
     valid_products = fields.Function(fields.Many2Many(
         'product.product', None, None, 'Valid Products'),
         'on_change_with_valid_products')
     in_move = fields.Many2One(
         'stock.move', 'Input Stock Move', readonly=True,
-        states=_STATES_VALIDATED_ADMIN, depends=_DEPENDS_VALIDATED_ADMIN)
+        states=_STATES_VALIDATED_ADMIN)
     out_move = fields.Many2One(
         'stock.move', 'Output Stock Move',
-        readonly=True, states=_STATES_VALIDATED_ADMIN,
-        depends=_DEPENDS_VALIDATED_ADMIN)
+        readonly=True, states=_STATES_VALIDATED_ADMIN)
     to_location = fields.Many2One('stock.location', 'Destination',
         required=True, states={
             'readonly': Not(Equal(Eval('state'), 'draft')),
             }, domain=[
             ('type', '=', 'storage'),
             ('silo', '=', False),
-            ], depends=['state'])
+            ])
     unit_digits = fields.Function(fields.Integer('Unit Digits'),
         'on_change_with_unit_digits')
     weight = fields.Numeric('Weight',

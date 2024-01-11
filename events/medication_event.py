@@ -20,7 +20,7 @@ class MedicationEvent(FeedEventMixin):
         'on_change_with_medication_start_date')
     medication_end_date = fields.Date('End Date', domain=[
             ('medication_end_date', '>=', Eval('medication_start_date', None)),
-            ], depends=['medication_start_date'])
+            ])
 
     @classmethod
     def __setup__(cls):

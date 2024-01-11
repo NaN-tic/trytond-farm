@@ -18,7 +18,7 @@ class FeedEvent(FeedEventMixin, ModelSQL, ModelView, Workflow):
         digits=(16, 4), readonly=True,
         states={
             'required': Eval('state').in_(['validated', 'provisional']),
-            }, depends=['unit_digits', 'state'])
+            })
     feed_inventory = fields.Reference('Inventory', selection='get_inventory',
         readonly=True,
         help='The inventory that generated this event automatically.')

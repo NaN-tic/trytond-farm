@@ -9,9 +9,8 @@ from trytond.exceptions import UserError
 from trytond.i18n import gettext
 
 from .abstract_event import AbstractEvent, ImportedEventMixin, \
-    _STATES_WRITE_DRAFT, _DEPENDS_WRITE_DRAFT, \
-    _STATES_VALIDATED, _DEPENDS_VALIDATED, \
-    _STATES_VALIDATED_ADMIN_BUT_IMPORTED, _DEPENDS_VALIDATED_ADMIN_BUT_IMPORTED
+    _STATES_WRITE_DRAFT, _STATES_VALIDATED, \
+    _STATES_VALIDATED_ADMIN_BUT_IMPORTED
 
 
 class InseminationEvent(AbstractEvent, ImportedEventMixin):
@@ -22,10 +21,9 @@ class InseminationEvent(AbstractEvent, ImportedEventMixin):
     dose_bom = fields.Many2One('production.bom', 'Dose', domain=[
             ('semen_dose', '=', True),
             ('specie', '=', Eval('specie')),
-            ], states=_STATES_WRITE_DRAFT,
-        depends=_DEPENDS_WRITE_DRAFT + ['specie'])
+            ], states=_STATES_WRITE_DRAFT,)
     dose_product = fields.Function(fields.Many2One('product.product',
-            'Dose Product', depends=['dose_bom']),
+            'Dose Product'),
         'on_change_with_dose_product')
     # TODO: (no fer) add flag in context to restrict lots with stock in 'farm'
     # locations
@@ -35,7 +33,6 @@ class InseminationEvent(AbstractEvent, ImportedEventMixin):
                 ())),
             ('quantity', '>', 0.0)
             ], states=_STATES_WRITE_DRAFT,
-        depends=_DEPENDS_WRITE_DRAFT + ['dose_product'],
         search_context={
             'locations': If(Bool(Eval('farm')), [Eval('farm')], []),
             'stock_date_end': date.today(),
@@ -44,10 +41,9 @@ class InseminationEvent(AbstractEvent, ImportedEventMixin):
         readonly=True, domain=[
             ('animal', '=', Eval('animal')),
             ],
-        states=_STATES_VALIDATED, depends=_DEPENDS_VALIDATED + ['animal'])
+        states=_STATES_VALIDATED)
     move = fields.Many2One('stock.move', 'Stock Move', readonly=True,
-        states=_STATES_VALIDATED_ADMIN_BUT_IMPORTED,
-        depends=_DEPENDS_VALIDATED_ADMIN_BUT_IMPORTED + ['dose_lot'])
+        states=_STATES_VALIDATED_ADMIN_BUT_IMPORTED)
 
     @classmethod
     def __setup__(cls):

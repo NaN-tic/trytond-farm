@@ -8,8 +8,7 @@ from trytond.transaction import Transaction
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
 
-from .abstract_event import AbstractEvent, _STATES_VALIDATED_ADMIN, \
-    _DEPENDS_VALIDATED_ADMIN
+from .abstract_event import AbstractEvent, _STATES_VALIDATED_ADMIN
 
 
 class TransformationEvent(AbstractEvent):
@@ -28,13 +27,12 @@ class TransformationEvent(AbstractEvent):
                 Not(Bool(Eval('farm', 0))),
                 Not(Equal(Eval('state'), 'draft')),
                 ),
-            }, depends=['farm', 'state'],
-        context={'restrict_by_specie_animal_type': True})
+            }, context={'restrict_by_specie_animal_type': True})
     to_animal_type = fields.Selection('get_to_animal_types',
         "Animal Type to Transform", required=True, states={
             'readonly': Or(Not(Equal(Eval('state'), 'draft')),
                 Bool(Eval('to_location'))),
-            }, depends=['animal_type', 'state'])
+            })
     to_location = fields.Many2One('stock.location', 'Destination',
         required=True, domain=[
             ('type', '=', 'storage'),
@@ -51,19 +49,17 @@ class TransformationEvent(AbstractEvent):
             'restrict_by_specie_animal_type': True,
             'animal_type': Eval('to_animal_type'),
             },
-        depends=['from_location', 'state', 'to_animal_type'])
+        depends=['to_animal_type'])
     quantity = fields.Integer('Quantity', required=True,
         states={
             'invisible': Or(Not(Equal(Eval('animal_type'), 'group')),
                 Not(Equal(Eval('to_animal_type'), 'group'))),
             'readonly': Not(Equal(Eval('state'), 'draft')),
-            },
-        depends=['animal_type', 'to_animal_type', 'state'])
+            })
     to_animal = fields.Many2One('farm.animal', 'Destination Animal',
         readonly=True, states={
             'invisible': Equal(Eval('to_animal_type'), 'group'),
-            },
-        depends=['specie', 'animal_type', 'to_animal_type'])
+            })
     to_animal_group = fields.Many2One('farm.animal.group', 'Destination Group',
         domain=[
             ('specie', '=', Eval('specie')),
@@ -72,14 +68,12 @@ class TransformationEvent(AbstractEvent):
             'invisible': Not(Equal(Eval('to_animal_type'), 'group')),
             'readonly': Not(Equal(Eval('state'), 'draft')),
             },
-        depends=['specie', 'farm', 'to_animal_type', 'state'],
         help='Select a Destination Group if you want to add the transformed '
         'animals to this group. To create a new group leave it empty.')
     in_move = fields.Many2One('stock.move', 'Input Stock Move', readonly=True,
-        states=_STATES_VALIDATED_ADMIN, depends=_DEPENDS_VALIDATED_ADMIN)
+        states=_STATES_VALIDATED_ADMIN)
     out_move = fields.Many2One('stock.move', 'Output Stock Move',
-        readonly=True, states=_STATES_VALIDATED_ADMIN,
-        depends=_DEPENDS_VALIDATED_ADMIN)
+        readonly=True, states=_STATES_VALIDATED_ADMIN)
 
     @classmethod
     def __setup__(cls):

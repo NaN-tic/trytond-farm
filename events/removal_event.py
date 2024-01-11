@@ -8,7 +8,7 @@ from trytond.exceptions import UserError
 from trytond.i18n import gettext
 
 from .abstract_event import AbstractEvent, _STATES_WRITE_DRAFT, \
-    _DEPENDS_WRITE_DRAFT, _STATES_VALIDATED_ADMIN, _DEPENDS_VALIDATED_ADMIN
+    _STATES_VALIDATED_ADMIN
 
 
 class RemovalType(ModelSQL, ModelView):
@@ -43,24 +43,20 @@ class RemovalEvent(AbstractEvent):
                 Not(Bool(Eval('farm', 0))),
                 Not(Equal(Eval('state'), 'draft')),
                 ),
-            }, depends=['farm', 'state'],
-        context={'restrict_by_specie_animal_type': True})
+            }, context={'restrict_by_specie_animal_type': True})
     quantity = fields.Integer('Quantity', required=True,
         states={
             'invisible': Not(Equal(Eval('animal_type'), 'group')),
             'readonly': Not(Equal(Eval('state'), 'draft')),
-            },
-        depends=['animal_type', 'animal_group', 'timestamp', 'from_location',
-            'state'])
+            })
     removal_type = fields.Many2One('farm.removal.type', 'Type',
-        states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
+        states=_STATES_WRITE_DRAFT)
     reason = fields.Many2One('farm.removal.reason', 'Reason',
-        states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
+        states=_STATES_WRITE_DRAFT)
     move = fields.Many2One('stock.move', 'Stock Move', readonly=True, domain=[
             ('lot', '=', Eval('lot')),
             ],
-        states=_STATES_VALIDATED_ADMIN,
-        depends=_DEPENDS_VALIDATED_ADMIN + ['lot'])
+        states=_STATES_VALIDATED_ADMIN)
 
 #    # TODO: Extra
 #    customer = fields.Many2One('party.party', 'Customer',

@@ -17,8 +17,7 @@ from trytond.exceptions import UserError
 from trytond.i18n import gettext
 
 from .abstract_event import AbstractEvent, ImportedEventMixin, \
-    _STATES_WRITE_DRAFT, _DEPENDS_WRITE_DRAFT, \
-    _STATES_VALIDATED, _DEPENDS_VALIDATED
+    _STATES_WRITE_DRAFT, _STATES_VALIDATED
 
 __all__ = ['WeaningEvent', 'WeaningEventFemaleCycle']
 
@@ -35,19 +34,16 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
     _table = 'farm_weaning_event'
 
     farrowing_group = fields.Function(fields.Many2One('farm.animal.group',
-            'Farrowing Group', states=_INVISIBLE_NOT_GROUP,
-            depends=['produced_animal_type']),
+            'Farrowing Group', states=_INVISIBLE_NOT_GROUP),
         'get_farrowing_group')
     farrowing_animals = fields.Function(fields.Many2Many('farm.animal', None,
         None, 'Farrowing Animals'), 'get_farrowing_animals')
     born_alive = fields.Function(fields.Integer('Born Alive'),
         'on_change_with_born_alive')
     quantity = fields.Integer('Quantity', required=True,
-        states={**_STATES_WRITE_DRAFT, **_INVISIBLE_NOT_GROUP},
-        depends=_DEPENDS_WRITE_DRAFT + ['produced_animal_type'])
+        states={**_STATES_WRITE_DRAFT, **_INVISIBLE_NOT_GROUP})
     fostered = fields.Function(fields.Integer(
-            'Fostered', states=_INVISIBLE_NOT_GROUP,
-            depends=['produced_animal_type']),
+            'Fostered', states=_INVISIBLE_NOT_GROUP),
         'on_change_with_fostered')
     last_minute_fostered = fields.Integer(
         'Last minute fostered',
@@ -55,11 +51,9 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
             **_STATES_WRITE_DRAFT,
             **_INVISIBLE_NOT_GROUP,
             **_REQUIRED_IF_GROUP
-            },
-        depends=_DEPENDS_WRITE_DRAFT+['produced_animal_type'])
+            })
     casualties = fields.Function(fields.Integer(
-            'Casualties', states=_INVISIBLE_NOT_GROUP,
-            depends=['produced_animal_type']),
+            'Casualties', states=_INVISIBLE_NOT_GROUP),
         'on_change_with_casualties')
     female_to_location = fields.Many2One('stock.location',
         'Female Destination', required=True, domain=[
@@ -67,20 +61,19 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
             ('silo', '=', False),
             ('warehouse', '=', Eval('farm')),
             ],
-        states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT + ['farm'])
+        states=_STATES_WRITE_DRAFT)
     weaned_to_location = fields.Many2One('stock.location',
         'Weaned Destination', required=True, domain=[
             ('type', '=', 'storage'),
             ('silo', '=', False),
             ('warehouse', '=', Eval('farm')),
             ],
-        states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT + ['farm'])
+        states=_STATES_WRITE_DRAFT)
     weaned_group = fields.Many2One('farm.animal.group', 'Weaned Group',
         domain=[
             ('farms', 'in', [Eval('farm', -1)]),
             ],
         states={**_STATES_WRITE_DRAFT, **_INVISIBLE_NOT_GROUP},
-        depends=_DEPENDS_WRITE_DRAFT + ['farm', 'produced_animal_type'],
         help='Group in which weaned animals should be added to. If left blank '
         'they will keep the same group.')
     female_cycle = fields.One2One(
@@ -88,7 +81,7 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
         string='Female Cycle', readonly=True, domain=[
             ('animal', '=', Eval('animal')),
             ],
-        states=_STATES_VALIDATED, depends=_DEPENDS_VALIDATED + ['animal'])
+        states=_STATES_VALIDATED)
     produced_animal_type = fields.Function(fields.Selection([
                 ('individual', 'Individual'),
                 ('group', 'Group'),
@@ -102,8 +95,7 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
             ],
         states={
             'invisible':  ~Equal(Eval('produced_animal_type'), 'individual'),
-            }, readonly=True,
-        depends=['produced_animal_type', 'specie', 'farrowing_animals'])
+            }, readonly=True)
     female_move = fields.Many2One('stock.move', 'Female Stock Move',
         readonly=True, domain=[
             ('lot', '=', Eval('lot')),
@@ -111,8 +103,7 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
         states={
             'invisible': ~Eval('context', {}).get('groups', []).contains(
                     Id('farm', 'group_farm_admin')),
-            },
-        depends=['lot'])
+            })
     lost_move = fields.Many2One('stock.move', 'Lost Stock Move',
         readonly=True, domain=[
             ('lot.animal_group', '=', Eval('farrowing_group', 0)),
@@ -121,8 +112,7 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
             'invisible': Or((~Eval('context', {}).get('groups', []).contains(
                     Id('farm', 'group_farm_admin'))),
                     (~Equal(Eval('produced_animal_type'), 'group'))),
-            },
-        depends=['farrowing_group', 'produced_animal_type'])
+            })
     weaned_move = fields.Many2One('stock.move', 'Weaned Stock Move',
         readonly=True, domain=[
             ('lot.animal_group', '=', Eval('farrowing_group', 0)),
@@ -132,8 +122,7 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
                 (~Eval('context', {}).get('groups', []).contains(
                     Id('farm', 'group_farm_admin'))),
                 (~Equal(Eval('produced_animal_type'), 'group'))),
-            },
-        depends=['farrowing_group', 'produced_animal_type'])
+            })
     transformation_event = fields.Many2One('farm.transformation.event',
         'Transformation Event', readonly=True, states={
             'invisible': ~Eval('context', {}).get('groups', []).contains(

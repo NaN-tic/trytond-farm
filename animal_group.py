@@ -23,7 +23,7 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
             'readonly': True,
             })
     breed = fields.Many2One('farm.specie.breed', 'Breed', required=True,
-        domain=[('specie', '=', Eval('specie'))], depends=['specie'])
+        domain=[('specie', '=', Eval('specie'))])
     lot = fields.One2One('stock.lot-farm.animal.group', 'animal_group',
         'lot', 'Lot', required=True, readonly=True,
         domain=[('animal_type', '=', 'group')])
@@ -48,26 +48,24 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
         help='Raised means that this group was born in the farm. Otherwise, '
         'it was purchased.')
     arrival_date = fields.Date('Arrival Date', states={
-            'readonly': Greater(Eval('id', 0), 0),
-            }, depends=['id'],
+            'readonly': Greater(Eval('id', 0), 0),},
         help="The date this group arrived (if it was purchased) or when it "
         "was born.")
     purchase_shipment = fields.Many2One('stock.shipment.in',
         'Purchase Shipment', readonly=True,
-        states={'invisible': Not(Equal(Eval('origin'), 'purchased'))},
-        depends=['origin'])
+        states={'invisible': Not(Equal(Eval('origin'), 'purchased'))})
     initial_location = fields.Many2One('stock.location', "Initial Location",
         required=True, domain=[
             ('type', '=', 'storage'),
             ('silo', '=', False),
             ],
-        states={'readonly': Greater(Eval('id', 0), 0)}, depends=['id'],
-        context={'restrict_by_specie_animal_type': True},
+        states={'readonly': Greater(Eval('id', 0), 0)}, context={
+            'restrict_by_specie_animal_type': True},
         help="The Location where the group was reached or where it was "
         "allocated when it was purchased.\nIt is used as historical "
         "information and to get Serial Number.")
     initial_quantity = fields.Integer('Initial Quantity', required=True,
-        states={'readonly': Greater(Eval('id', 0), 0)}, depends=['id'],
+        states={'readonly': Greater(Eval('id', 0), 0)},
         help="The number of animals in group when it was reached or "
         "purchased.\nIt is used as historical information and to create the "
         "initial move.")

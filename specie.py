@@ -28,14 +28,14 @@ class Specie(ModelSQL, ModelView):
         help='Name of the specie. ie. "Pig"')
     male_product = fields.Many2One('product.product', "Male's Product",
         domain=[('default_uom.category', '=', Id('product', 'uom_cat_unit'))],
-        states=_enabled_STATES('male_enabled'), depends=['male_enabled'])
+        states=_enabled_STATES('male_enabled'))
     male_enabled = fields.Boolean('Males Enabled', help="If checked the menus "
         "to manage this kind of animal will be generated. If you don't want "
         "it, uncheck and put a generic product or other type of animal "
         "because it is required.")
     female_product = fields.Many2One('product.product', "Female's Product",
         domain=[('default_uom.category', '=', Id('product', 'uom_cat_unit'))],
-        states=_enabled_STATES('female_enabled'), depends=['female_enabled'])
+        states=_enabled_STATES('female_enabled'))
     female_enabled = fields.Boolean('Females Enabled', help="If checked the "
         "menus to manage this kind of animal will be generated. If you don't "
         "want it, uncheck and put a generic product or other type of animal "
@@ -43,15 +43,14 @@ class Specie(ModelSQL, ModelView):
     individual_product = fields.Many2One('product.product',
         "Individual's Product",
         domain=[('default_uom.category', '=', Id('product', 'uom_cat_unit'))],
-        states=_enabled_STATES('individual_enabled'),
-        depends=['individual_enabled'])
+        states=_enabled_STATES('individual_enabled'))
     individual_enabled = fields.Boolean('Individuals Enabled', help="If "
         "checked the menus to manage this kind of animal will be generated. "
         "If you don't want it, uncheck and put a generic product or other "
         "type of animal because it is required.")
     group_product = fields.Many2One('product.product', "Group's Product",
         domain=[('default_uom.category', '=', Id('product', 'uom_cat_unit'))],
-        states=_enabled_STATES('group_enabled'), depends=['group_enabled'])
+        states=_enabled_STATES('group_enabled'))
     group_enabled = fields.Boolean('Groups Enabled', help="If checked the "
         "menus to manage this kind of animal will be generated. If you don't "
         "want it, uncheck and put a generic product or other type of animal "
@@ -66,7 +65,7 @@ class Specie(ModelSQL, ModelView):
                     Bool(Eval('female_enabled')))),
             'required': Or(Bool(Eval('male_enabled')),
                     Bool(Eval('female_enabled'))),
-            }, depends=['male_enabled', 'female_enabled'],
+            },
         help="Product for the mixture of semen to raise the expected "
         "quality.\nIt is used in the Production lots produced in the "
         "Extraction Events and in the BoM containers for doses used in "
@@ -584,23 +583,23 @@ class SpecieFarmLine(ModelSQL, ModelView):
         domain=[
             ('sequence_type', '=', Id('farm', 'sequence_type_animal')),
             ],
-        states=_enabled_STATES('has_male'), depends=['has_male'],
+        states=_enabled_STATES('has_male'),
         help='Sequence used for male lots and animals.')
     semen_lot_sequence = fields.Many2One('ir.sequence',
         "Extracted Semen Lots' Sequence", domain=[
             ('sequence_type', '=', Id('stock_lot', 'sequence_type_stock_lot')),
-            ], states=_enabled_STATES('has_male'), depends=['has_male'])
+            ], states=_enabled_STATES('has_male'))
     dose_lot_sequence = fields.Many2One('ir.sequence',
         "Semen Dose Lots' Sequence", domain=[
             ('sequence_type', '=', Id('stock_lot', 'sequence_type_stock_lot')),
-            ], states=_enabled_STATES('has_male'), depends=['has_male'])
+            ], states=_enabled_STATES('has_male'))
     has_female = fields.Boolean('Females',
         help="In this farm there are females.")
     female_sequence = fields.Many2One('ir.sequence', "Females' Sequence",
         domain=[
             ('sequence_type', '=', Id('farm', 'sequence_type_animal')),
             ],
-        states=_enabled_STATES('has_female'), depends=['has_female'],
+        states=_enabled_STATES('has_female'),
         help='Sequence used for female production lots and animals.')
     has_individual = fields.Boolean('Individuals',
         help="In this farm there are individuals.")
@@ -608,7 +607,7 @@ class SpecieFarmLine(ModelSQL, ModelView):
         "Individuals' Sequence", domain=[
             ('sequence_type', '=', Id('farm', 'sequence_type_animal')),
             ],
-        states=_enabled_STATES('has_individual'), depends=['has_individual'],
+        states=_enabled_STATES('has_individual'),
         help="Sequence used for individual lots and animals.")
     has_group = fields.Boolean('Groups',
         help="In this farm there are groups.")
@@ -616,7 +615,7 @@ class SpecieFarmLine(ModelSQL, ModelView):
         domain=[
             ('sequence_type', '=', Id('farm', 'sequence_type_animal_group')),
             ],
-        states=_enabled_STATES('has_group'), depends=['has_group'],
+        states=_enabled_STATES('has_group'),
         help='Sequence used for group production lots and animals.')
 
     @classmethod

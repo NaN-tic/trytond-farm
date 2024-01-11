@@ -8,9 +8,8 @@ from trytond.exceptions import UserError
 from trytond.i18n import gettext
 
 from .abstract_event import AbstractEvent, ImportedEventMixin, \
-    _STATES_WRITE_DRAFT, _DEPENDS_WRITE_DRAFT, \
-    _STATES_VALIDATED, _DEPENDS_VALIDATED, \
-    _STATES_VALIDATED_ADMIN_BUT_IMPORTED, _DEPENDS_VALIDATED_ADMIN_BUT_IMPORTED
+    _STATES_WRITE_DRAFT, _STATES_VALIDATED, \
+    _STATES_VALIDATED_ADMIN_BUT_IMPORTED
 
 
 class FosterEvent(AbstractEvent, ImportedEventMixin):
@@ -22,7 +21,7 @@ class FosterEvent(AbstractEvent, ImportedEventMixin):
             'Farrowing Group'),
         'get_farrowing_group')
     quantity = fields.Integer('Fosters',
-        states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT,
+        states=_STATES_WRITE_DRAFT,
         help='If this quantity is negative it is a Foster Out.')
     pair_female = fields.Many2One('farm.animal', 'Pair Female', domain=[
             ('specie', '=', Eval('specie')),
@@ -33,8 +32,7 @@ class FosterEvent(AbstractEvent, ImportedEventMixin):
             If(Equal(Eval('state'), 'draft'),
                 ('current_cycle.state', '=', 'lactating'),
                 ()),
-            ], states=_STATES_WRITE_DRAFT,
-        depends=_DEPENDS_WRITE_DRAFT + ['specie', 'farm', 'animal'])
+            ], states=_STATES_WRITE_DRAFT)
     pair_event = fields.Many2One('farm.foster.event', 'Pair Foster Event',
         readonly=True, domain=[
             ('animal', '=', Eval('pair_female')),
@@ -43,15 +41,14 @@ class FosterEvent(AbstractEvent, ImportedEventMixin):
         states={
             'required': And(Equal(Eval('state'), 'validated'),
                     Bool(Eval('pair_female', 0))),
-            }, depends=['pair_female', 'id', 'state'])
+            })
     female_cycle = fields.Many2One('farm.animal.female_cycle', 'Female Cycle',
         readonly=True, domain=[
             ('animal', '=', Eval('animal')),
             ],
-        states=_STATES_VALIDATED, depends=_DEPENDS_VALIDATED + ['animal'])
+        states=_STATES_VALIDATED)
     move = fields.Many2One('stock.move', 'Stock Move', readonly=True,
-        states=_STATES_VALIDATED_ADMIN_BUT_IMPORTED,
-        depends=_DEPENDS_VALIDATED_ADMIN_BUT_IMPORTED)
+        states=_STATES_VALIDATED_ADMIN_BUT_IMPORTED)
 
     @classmethod
     def __setup__(cls):

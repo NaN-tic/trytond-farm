@@ -8,7 +8,7 @@ from trytond.exceptions import UserError
 from trytond.i18n import gettext
 
 from .abstract_event import AbstractEvent, _STATES_WRITE_DRAFT, \
-    _DEPENDS_WRITE_DRAFT, _STATES_VALIDATED_ADMIN, _DEPENDS_VALIDATED_ADMIN
+    _STATES_VALIDATED_ADMIN
 
 __all__ = ['MoveEvent']
 
@@ -29,8 +29,7 @@ class MoveEvent(AbstractEvent):
                 Not(Bool(Eval('farm', 0))),
                 Not(Equal(Eval('state'), 'draft')),
                 ),
-            }, depends=['farm', 'state'],
-        context={'restrict_by_specie_animal_type': True})
+            }, context={'restrict_by_specie_animal_type': True})
     to_location = fields.Many2One('stock.location', 'Destination',
         required=True, domain=[
             ('type', 'in', ['storage', 'customer']),
@@ -42,8 +41,7 @@ class MoveEvent(AbstractEvent):
                 Not(Bool(Eval('from_location', 0))),
                 Not(Equal(Eval('state'), 'draft')),
                 ),
-            }, depends=['from_location', 'state'],
-        context={'restrict_by_specie_animal_type': True})
+            }, context={'restrict_by_specie_animal_type': True})
     to_location_warehouse = fields.Function(fields.Many2One('stock.location',
         'Destination warehouse',
             states={
@@ -54,30 +52,27 @@ class MoveEvent(AbstractEvent):
         states={
             'invisible': Not(Equal(Eval('animal_type'), 'group')),
             'readonly': Not(Equal(Eval('state'), 'draft')),
-            },
-        depends=['animal_type', 'animal_group', 'from_location', 'state'])
+            })
     unit_price = fields.Numeric('Unit Price', required=True, digits=(16, 4),
         states={
             'readonly': Not(Equal(Eval('state'), 'draft')),
             'invisible': Equal(Eval('to_location_warehouse'), Eval('farm')),
-            }, depends=['state', 'to_location'],
+            },
         help='Unitary cost of Animal or Group for analytical accounting.')
     uom = fields.Many2One('product.uom', "UOM",
         domain=[('category', '=', Id('product', 'uom_cat_weight'))],
         states={
             'readonly': Not(Equal(Eval('state'), 'draft')),
             'required': Bool(Eval('weight')),
-            }, depends=['state', 'weight'])
+            })
     unit_digits = fields.Function(fields.Integer('Unit Digits'),
         'on_change_with_unit_digits')
     weight = fields.Numeric('Weight', digits=(16, Eval('unit_digits', 2)),
-        states=_STATES_WRITE_DRAFT,
-        depends=_DEPENDS_WRITE_DRAFT + ['unit_digits'])
+        states=_STATES_WRITE_DRAFT, depends=['unit_digits'])
     move = fields.Many2One('stock.move', 'Stock Move', readonly=True, domain=[
             ('lot', '=', Eval('lot')),
             ],
-        states=_STATES_VALIDATED_ADMIN,
-        depends=_DEPENDS_VALIDATED_ADMIN + ['lot'])
+        states=_STATES_VALIDATED_ADMIN)
     weight_record = fields.Reference('Weight Record', selection=[
             (None, ''),
             ('farm.animal.weight', 'Animal Weight'),
@@ -86,7 +81,7 @@ class MoveEvent(AbstractEvent):
         readonly=True, states={
             'invisible': ~Eval('context', {}).get('groups', []).contains(
                     Id('farm', 'group_farm_admin')),
-            }, depends=['state', 'weight'])
+            })
 
     @classmethod
     def __setup__(cls):

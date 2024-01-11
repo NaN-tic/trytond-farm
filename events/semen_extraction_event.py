@@ -11,8 +11,7 @@ from trytond.exceptions import UserError
 from trytond.i18n import gettext
 
 from .abstract_event import AbstractEvent, _EVENT_STATES, _STATES_WRITE_DRAFT,\
-    _DEPENDS_WRITE_DRAFT, _STATES_VALIDATED, _DEPENDS_VALIDATED, \
-    _STATES_VALIDATED_ADMIN, _DEPENDS_VALIDATED_ADMIN
+    _STATES_VALIDATED, _STATES_VALIDATED_ADMIN
 
 
 class SemenExtractionEvent(AbstractEvent):
@@ -27,14 +26,14 @@ class SemenExtractionEvent(AbstractEvent):
     untreated_semen_uom = fields.Many2One('product.uom', 'Semen Extracted UOM',
         domain=[('category', '=', Id('product', 'uom_cat_volume'))],
         required=True,
-        states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
+        states=_STATES_WRITE_DRAFT)
     untreated_semen_unit_digits = fields.Function(
         fields.Integer('Semen Extracted Unit Digits'),
         'on_change_with_untreated_semen_unit_digits')
     untreated_semen_qty = fields.Float('Semen Extracted Qty.',
         digits=(16, Eval('untreated_semen_unit_digits', 3)), required=True,
         states=_STATES_WRITE_DRAFT,
-        depends=_DEPENDS_WRITE_DRAFT + ['untreated_semen_unit_digits'],
+        depends=['untreated_semen_unit_digits'],
         help='The amount of untreated semen taken from male.')
     test_required = fields.Boolean('Test Required',
         help='Check to require quality test')
@@ -48,7 +47,7 @@ class SemenExtractionEvent(AbstractEvent):
         states={
             'required': Eval('test_required', True) & (Eval('id', 0) > 0),
             'invisible': ~Eval('test_required', True),
-            }, depends=['semen_product', 'id'])
+            })
     formula_uom = fields.Function(fields.Many2One('product.uom',
             'Formula UOM'), 'get_formula_uom')
     formula_unit_digits = fields.Function(
@@ -82,9 +81,7 @@ class SemenExtractionEvent(AbstractEvent):
         domain=[
             ('product', '=', Eval('semen_product')),
             ('quantity', '>', 0.0)
-            ], states=_STATES_VALIDATED,
-        depends=_DEPENDS_VALIDATED + ['semen_product'],
-        search_context={
+            ], states=_STATES_VALIDATED, search_context={
             'locations': If(Bool(Eval('farm')), [Eval('farm')], []),
             'stock_date_end': date.today(),
             })
@@ -92,21 +89,18 @@ class SemenExtractionEvent(AbstractEvent):
         domain=[
             ('lot', '=', Eval('semen_lot')),
             ('unit', '=', Eval('formula_uom')),
-            ], states=_STATES_VALIDATED_ADMIN,
-        depends=_DEPENDS_VALIDATED_ADMIN + ['semen_lot', 'formula_uom'])
+            ], states=_STATES_VALIDATED_ADMIN)
     dose_location = fields.Many2One('stock.location', 'Doses Location',
         domain=[
             ('warehouse', '=', Eval('farm')),
             ('type', '=', 'storage'),
             ('silo', '=', False),
             ], required=True, states=_STATES_WRITE_DRAFT,
-        depends=_DEPENDS_WRITE_DRAFT + ['farm'],
         help="Destination location of semen doses")
     dose_bom = fields.Many2One('production.bom', 'Dose Container', domain=[
             ('semen_dose', '=', True),
             ('specie', '=', Eval('specie')),
-            ], states=_STATES_WRITE_DRAFT,
-        depends=_DEPENDS_WRITE_DRAFT + ['specie'])
+            ], states=_STATES_WRITE_DRAFT)
     dose_calculated_units = fields.Function(fields.Float('Calculated Doses',
             digits=(16, 2),
             help='Calculates the number of doses based on Container (BoM) and '
@@ -115,18 +109,18 @@ class SemenExtractionEvent(AbstractEvent):
             'You have to save the event to see this calculated value.'),
         'on_change_with_dose_calculated_units')
     doses = fields.One2Many('farm.semen_extraction.dose', 'event', 'Doses',
-        states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
+        states=_STATES_WRITE_DRAFT)
     doses_semen_qty = fields.Function(fields.Float('Dose Semen Qty.',
             digits=(16, Eval('formula_unit_digits', 2)), states={
                 'invisible': Equal(Eval('state'), 'validated'),
-                }, depends=['formula_unit_digits', 'state'],
+                }, depends=['formula_unit_digits'],
             help='Total quantity of semen in the doses of list (expressed in '
             'the UoM of the formula).'),
         'on_change_with_doses_semen_qty')
     semen_remaining_qty = fields.Function(fields.Float('Remaining Semen',
             digits=(16, Eval('formula_unit_digits', 2)), states={
                 'invisible': Equal(Eval('state'), 'validated'),
-                }, depends=['formula_unit_digits', 'state'],
+                }, depends=['formula_unit_digits'],
             help='The remaining quantity of semen of the specified doses '
             '(expressed in the UoM of the formula).'),
         'on_change_with_semen_remaining_qty')
@@ -520,14 +514,13 @@ class SemenExtractionDose(ModelSQL, ModelView):
         domain=[
             ('semen_dose', '=', True),
             ('specie', '=', Eval('specie')),
-        ], states=_STATES_WRITE_DRAFT,
-        depends=_DEPENDS_WRITE_DRAFT + ['specie'])
+        ], states=_STATES_WRITE_DRAFT)
     quantity = fields.Integer('Quantity (Units)', required=True,
-        states=_STATES_WRITE_DRAFT, depends=_DEPENDS_WRITE_DRAFT)
+        states=_STATES_WRITE_DRAFT)
     semen_qty = fields.Function(fields.Float('Semen Qty.',
             digits=(16, Eval('semen_unit_digits', 2)), states={
                 'invisible': Equal(Eval('state'), 'validated'),
-                }, depends=['semen_unit_digits', 'state'],
+                }, depends=['semen_unit_digits'],
             help='Total quantity of semen in the dose (expressed in Formula '
             'UoM).'),
         'on_change_with_semen_qty')
@@ -535,12 +528,10 @@ class SemenExtractionDose(ModelSQL, ModelView):
             "dose_product"),
         'on_change_with_dose_product')
     production = fields.Many2One('production', 'Dose Production',
-        readonly=True, states=_STATES_VALIDATED_ADMIN,
-        depends=_DEPENDS_VALIDATED_ADMIN)
+        readonly=True, states=_STATES_VALIDATED_ADMIN)
     lot = fields.Many2One('stock.lot', 'Lot', readonly=True, domain=[
             ('product', '=', Eval('dose_product')),
-        ], states=_STATES_VALIDATED,
-        depends=_DEPENDS_VALIDATED + ['dose_product'])
+        ], states=_STATES_VALIDATED)
 
     @classmethod
     def __setup__(cls):
