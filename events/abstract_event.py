@@ -17,7 +17,13 @@ _EVENT_STATES = [
 _STATES_WRITE_DRAFT = {
     'readonly': Not(Equal(Eval('state'), 'draft')),
     }
-
+_STATES_VALIDATED = {
+    'required': Equal(Eval('state'), 'validated'),
+    }
+_STATES_WRITE_DRAFT_VALIDATED = {
+    'readonly': Not(Equal(Eval('state'), 'draft')),
+    'required': Equal(Eval('state'), 'validated'),
+    }
 _STATES_VALIDATED_ADMIN = {
     'required': Equal(Eval('state'), 'validated'),
     'invisible': ~Eval('context', {}).get('groups', []).contains(
