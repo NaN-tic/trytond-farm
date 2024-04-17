@@ -27,7 +27,7 @@
 
         <!-- Permissions -->
         <record model="ir.model.access" id="access_stock_lot_farm">
-            <field name="model" search="[('model', '=', 'stock.lot')]"/>
+            <field name="model">stock.lot</field>
             <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
@@ -36,7 +36,7 @@
         </record>
 
         <record model="ir.model.access" id="access_stock_lot_admin">
-            <field name="model" search="[('model', '=', 'stock.lot')]"/>
+            <field name="model">stock.lot</field>
             <field name="group" ref="group_farm_admin"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
@@ -45,7 +45,7 @@
         </record>
 
         <record model="ir.model.access" id="access_stock_lot_males">
-            <field name="model" search="[('model', '=', 'stock.lot')]"/>
+            <field name="model">stock.lot</field>
             <field name="group" ref="group_farm_males"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
@@ -54,7 +54,7 @@
         </record>
 
         <record model="ir.model.access" id="access_stock_lot_females">
-            <field name="model" search="[('model', '=', 'stock.lot')]"/>
+            <field name="model">stock.lot</field>
             <field name="group" ref="group_farm_females"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
@@ -63,7 +63,7 @@
         </record>
 
         <record model="ir.model.access" id="access_stock_lot_individuals">
-            <field name="model" search="[('model', '=', 'stock.lot')]"/>
+            <field name="model">stock.lot</field>
             <field name="group" ref="group_farm_individuals"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
@@ -72,7 +72,7 @@
         </record>
 
         <record model="ir.model.access" id="access_stock_lot_groups">
-            <field name="model" search="[('model', '=', 'stock.lot')]"/>
+            <field name="model">stock.lot</field>
             <field name="group" ref="group_farm_groups"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>

@@ -23,7 +23,7 @@
         <record model="ir.model.button" id="create_menu_entries_button">
             <field name="name">create_menu_entries</field>
             <field name="string">Create Menu Entries</field>
-            <field name="model" search="[('model', '=', 'farm.specie')]"/>
+            <field name="model">farm.specie</field>
         </record>
         <record model="ir.model.button-res.group" id="farm_menu_entries_button_group_farm_admin">
             <field name="button" ref="create_menu_entries_button"/>
@@ -51,7 +51,7 @@
 
         <!-- Permissions -->
         <record model="ir.model.access" id="access_farm_specie">
-            <field name="model" search="[('model', '=', 'farm.specie')]"/>
+            <field name="model">farm.specie</field>
             <field name="perm_read" eval="False"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
@@ -59,7 +59,7 @@
         </record>
 
         <record model="ir.model.access" id="access_farm_specie_farm">
-            <field name="model" search="[('model', '=', 'farm.specie')]"/>
+            <field name="model">farm.specie</field>
             <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
@@ -68,7 +68,7 @@
         </record>
 
         <record model="ir.model.access" id="access_farm_specie_admin">
-            <field name="model" search="[('model', '=', 'farm.specie')]"/>
+            <field name="model">farm.specie</field>
             <field name="group" ref="group_farm_admin"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
@@ -113,7 +113,7 @@
 
         <!-- Permissions -->
         <record model="ir.model.access" id="access_farm_specie_breed">
-            <field name="model" search="[('model', '=', 'farm.specie.breed')]"/>
+            <field name="model">farm.specie.breed</field>
             <field name="perm_read" eval="False"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
@@ -121,7 +121,7 @@
         </record>
 
         <record model="ir.model.access" id="access_farm_specie_breed_farm">
-            <field name="model" search="[('model', '=', 'farm.specie.breed')]"/>
+            <field name="model">farm.specie.breed</field>
             <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
@@ -130,7 +130,7 @@
         </record>
 
         <record model="ir.model.access" id="access_farm_specie_breed_admin">
-            <field name="model" search="[('model', '=', 'farm.specie.breed')]"/>
+            <field name="model">farm.specie.breed</field>
             <field name="group" ref="group_farm_admin"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
@@ -156,7 +156,7 @@
 
         <!-- Permissions -->
         <record model="ir.model.access" id="access_farm_specie_farm_line">
-            <field name="model" search="[('model', '=', 'farm.specie.farm_line')]"/>
+            <field name="model">farm.specie.farm_line</field>
             <field name="perm_read" eval="False"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
@@ -164,7 +164,7 @@
         </record>
 
         <record model="ir.model.access" id="access_farm_specie_farm_line_farm">
-            <field name="model" search="[('model', '=', 'farm.specie.farm_line')]"/>
+            <field name="model">farm.specie.farm_line</field>
             <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
@@ -173,7 +173,7 @@
         </record>
 
         <record model="ir.model.access" id="access_farm_specie_farm_line_admin">
-            <field name="model" search="[('model', '=', 'farm.specie.farm_line')]"/>
+            <field name="model">farm.specie.farm_line</field>
             <field name="group" ref="group_farm_admin"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>

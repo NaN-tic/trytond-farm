@@ -40,7 +40,7 @@
 
         <!-- Permissions -->
         <record model="ir.model.access" id="access_farm_animal_group">
-            <field name="model" search="[('model', '=', 'farm.animal.group')]"/>
+            <field name="model">farm.animal.group</field>
             <field name="group" eval="None"/>
             <field name="perm_read" eval="False"/>
             <field name="perm_write" eval="False"/>
@@ -49,7 +49,7 @@
         </record>
 
         <record model="ir.model.access" id="access_farm_animal_group_farm">
-            <field name="model" search="[('model', '=', 'farm.animal.group')]"/>
+            <field name="model">farm.animal.group</field>
             <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
@@ -58,7 +58,7 @@
         </record>
 
         <record model="ir.model.access" id="access_farm_animal_group_admin">
-            <field name="model" search="[('model', '=', 'farm.animal.group')]"/>
+            <field name="model">farm.animal.group</field>
             <field name="group" ref="group_farm_admin"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
@@ -67,7 +67,7 @@
         </record>
 
         <record model="ir.model.access" id="access_farm_animal_group_groups">
-            <field name="model" search="[('model', '=', 'farm.animal.group')]"/>
+            <field name="model">farm.animal.group</field>
             <field name="group" ref="group_farm_groups"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
@@ -108,7 +108,7 @@
 
         <!-- Permissions -->
         <record model="ir.model.access" id="access_farm_animal_group_weight">
-            <field name="model" search="[('model', '=', 'farm.animal.group.weight')]"/>
+            <field name="model">farm.animal.group.weight</field>
             <field name="group" eval="None"/>
             <field name="perm_read" eval="False"/>
             <field name="perm_write" eval="False"/>
@@ -117,7 +117,7 @@
         </record>
 
         <record model="ir.model.access" id="access_farm_animal_group_weight_farm">
-            <field name="model" search="[('model', '=', 'farm.animal.group.weight')]"/>
+            <field name="model">farm.animal.group.weight</field>
             <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
@@ -126,7 +126,7 @@
         </record>
 
         <record model="ir.model.access" id="access_farm_animal_group_weight_admin">
-            <field name="model" search="[('model', '=', 'farm.animal.group.weight')]"/>
+            <field name="model">farm.animal.group.weight</field>
             <field name="group" ref="group_farm_admin"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
@@ -135,7 +135,7 @@
         </record>
 
         <record model="ir.model.access" id="access_farm_animal_group_weight_farm_groups">
-            <field name="model" search="[('model', '=', 'farm.animal.group.weight')]"/>
+            <field name="model">farm.animal.group.weight</field>
             <field name="group" ref="group_farm_groups"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
