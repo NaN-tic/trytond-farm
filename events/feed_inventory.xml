@@ -18,7 +18,7 @@
         <record model="ir.model.button" id="confirm_feed_inventory_button">
             <field name="string">Confirm</field>
             <field name="name">confirm</field>
-            <field name="model" search="[('model', '=', 'farm.feed.inventory')]"/>
+            <field name="model">farm.feed.inventory</field>
         </record>
         <record model="ir.model.button-res.group" id="confirm_feed_inventory_button_group_farm_admin">
             <field name="button" ref="confirm_feed_inventory_button"/>
@@ -70,7 +70,7 @@
         </record>
 
         <record model="ir.model.access" id="access_farm_feed_inventory">
-            <field name="model" search="[('model', '=', 'farm.feed.inventory')]"/>
+            <field name="model">farm.feed.inventory</field>
             <field name="perm_read" eval="False"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
@@ -78,7 +78,7 @@
         </record>
 
         <record model="ir.model.access" id="access_farm_feed_inventory_farm">
-            <field name="model" search="[('model', '=', 'farm.feed.inventory')]"/>
+            <field name="model">farm.feed.inventory</field>
             <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
@@ -103,7 +103,7 @@
         <record model="ir.model.button" id="draft_feed_provisional_inventory_button">
             <field name="string">Draft</field>
             <field name="name">draft</field>
-            <field name="model" search="[('model', '=', 'farm.feed.provisional_inventory')]"/>
+            <field name="model">farm.feed.provisional_inventory</field>
         </record>
         <record model="ir.model.button-res.group" id="draft_feed_provisional_inventory_button_group_farm_admin">
             <field name="button" ref="draft_feed_provisional_inventory_button"/>
@@ -129,7 +129,7 @@
         <record model="ir.model.button" id="confirm_feed_provisional_inventory_button">
             <field name="string">Confirm</field>
             <field name="name">confirm</field>
-            <field name="model" search="[('model', '=', 'farm.feed.provisional_inventory')]"/>
+            <field name="model">farm.feed.provisional_inventory</field>
         </record>
         <record model="ir.model.button-res.group" id="confirm_feed_provisional_inventory_button_group_farm_admin">
             <field name="button" ref="confirm_feed_provisional_inventory_button"/>
@@ -155,7 +155,7 @@
         <record model="ir.model.button" id="cancel_feed_provisional_inventory_button">
             <field name="string">Cancel</field>
             <field name="name">cancel</field>
-            <field name="model" search="[('model', '=', 'farm.feed.provisional_inventory')]"/>
+            <field name="model">farm.feed.provisional_inventory</field>
         </record>
         <record model="ir.model.button-res.group" id="cancel_feed_provisional_inventory_button_group_farm_admin">
             <field name="button" ref="cancel_feed_provisional_inventory_button"/>
@@ -195,7 +195,7 @@
         </record>
 
         <record model="ir.model.access" id="access_farm_feed_provisional_inventory">
-            <field name="model" search="[('model', '=', 'farm.feed.provisional_inventory')]"/>
+            <field name="model">farm.feed.provisional_inventory</field>
             <field name="perm_read" eval="False"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
@@ -203,7 +203,7 @@
         </record>
 
         <record model="ir.model.access" id="access_farm_feed_provisional_inventory_farm">
-            <field name="model" search="[('model', '=', 'farm.feed.provisional_inventory')]"/>
+            <field name="model">farm.feed.provisional_inventory</field>
             <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
@@ -225,7 +225,7 @@
         </record>
 
         <record model="ir.model.access" id="access_farm_feed_animal_location_date">
-            <field name="model" search="[('model', '=', 'farm.feed.animal_location_date')]"/>
+            <field name="model">farm.feed.animal_location_date</field>
             <field name="perm_read" eval="False"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
@@ -233,7 +233,7 @@
         </record>
 
         <record model="ir.model.access" id="access_farm_feed_animal_location_date_farm">
-            <field name="model" search="[('model', '=', 'farm.feed.animal_location_date')]"/>
+            <field name="model">farm.feed.animal_location_date</field>
             <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>

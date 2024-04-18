@@ -28,7 +28,7 @@
         <record model="ir.model.button" id="draft_insemination_event_button">
             <field name="string">Draft</field>
             <field name="name">draft</field>
-            <field name="model" search="[('model', '=', 'farm.insemination.event')]"/>
+            <field name="model">farm.insemination.event</field>
         </record>
         <record model="ir.model.button-res.group" id="draft_insemination_event_button_group_farm_admin">
             <field name="button" ref="draft_insemination_event_button"/>
@@ -42,7 +42,7 @@
         <record model="ir.model.button" id="validate_insemination_event_button">
             <field name="string">Validate</field>
             <field name="name">validate_event</field>
-            <field name="model" search="[('model', '=', 'farm.insemination.event')]"/>
+            <field name="model">farm.insemination.event</field>
             <field name="confirm">Are you sure to validate this event?</field>
         </record>
         <record model="ir.model.button-res.group" id="validate_insemination_event_button_group_farm_admin">
@@ -84,7 +84,7 @@
 
         <!-- Permissions -->
         <record model="ir.model.access" id="access_farm_insemination_event">
-            <field name="model" search="[('model', '=', 'farm.insemination.event')]"/>
+            <field name="model">farm.insemination.event</field>
             <field name="group" eval="None"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
@@ -93,7 +93,7 @@
         </record>
 
         <record model="ir.model.access" id="access_farm_insemination_event_farm">
-            <field name="model" search="[('model', '=', 'farm.insemination.event')]"/>
+            <field name="model">farm.insemination.event</field>
             <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
@@ -102,7 +102,7 @@
         </record>
 
         <record model="ir.model.access" id="access_farm_insemination_event_females">
-            <field name="model" search="[('model', '=', 'farm.insemination.event')]"/>
+            <field name="model">farm.insemination.event</field>
             <field name="group" ref="group_farm_females"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>

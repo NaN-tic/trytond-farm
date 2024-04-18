@@ -53,7 +53,7 @@
         <record model="ir.model.button" id="draft_farm_event_order_button">
             <field name="name">draft</field>
             <field name="string">Draft</field>
-            <field name="model" search="[('model', '=', 'farm.event.order')]"/>
+            <field name="model">farm.event.order</field>
         </record>
         <record model="ir.model.button-res.group" id="draft_farm_event_order_button_group_farm_admin">
             <field name="button" ref="draft_farm_event_order_button"/>
@@ -79,7 +79,7 @@
         <record model="ir.model.button" id="confirm_farm_event_order_button">
             <field name="name">confirm</field>
             <field name="string">Confirm</field>
-            <field name="model" search="[('model', '=', 'farm.event.order')]"/>
+            <field name="model">farm.event.order</field>
         </record>
         <record model="ir.model.button-res.group" id="confirm_farm_event_order_button_group_farm_admin">
             <field name="button" ref="confirm_farm_event_order_button"/>
@@ -105,7 +105,7 @@
         <record model="ir.model.button" id="cancel_farm_event_order_button">
             <field name="name">cancel</field>
             <field name="string">Cancel</field>
-            <field name="model" search="[('model', '=', 'farm.event.order')]"/>
+            <field name="model">farm.event.order</field>
         </record>
         <record model="ir.model.button-res.group" id="cancel_farm_event_order_button_group_farm_admin">
             <field name="button" ref="cancel_farm_event_order_button"/>
@@ -145,14 +145,14 @@
         </record>
 
         <record model="ir.model.access" id="access_farm_event_order">
-            <field name="model" search="[('model', '=', 'farm.event.order')]"/>
+            <field name="model">farm.event.order</field>
             <field name="perm_read" eval="False"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
             <field name="perm_delete" eval="False"/>
         </record>
         <record model="ir.model.access" id="access_farm_event_order_farm">
-            <field name="model" search="[('model', '=', 'farm.event.order')]"/>
+            <field name="model">farm.event.order</field>
             <field name="group" ref="group_farm"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
@@ -160,7 +160,7 @@
             <field name="perm_delete" eval="False"/>
         </record>
         <record model="ir.model.access" id="access_farm_event_order_admin">
-            <field name="model" search="[('model', '=', 'farm.event.order')]"/>
+            <field name="model">farm.event.order</field>
             <field name="group" ref="group_farm_admin"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
@@ -168,7 +168,7 @@
             <field name="perm_delete" eval="True"/>
         </record>
         <record model="ir.model.access" id="access_farm_event_order_males">
-            <field name="model" search="[('model', '=', 'farm.event.order')]"/>
+            <field name="model">farm.event.order</field>
             <field name="group" ref="group_farm_males"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
@@ -176,7 +176,7 @@
             <field name="perm_delete" eval="True"/>
         </record>
         <record model="ir.model.access" id="access_farm_event_order_females">
-            <field name="model" search="[('model', '=', 'farm.event.order')]"/>
+            <field name="model">farm.event.order</field>
             <field name="group" ref="group_farm_females"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
@@ -184,7 +184,7 @@
             <field name="perm_delete" eval="True"/>
         </record>
         <record model="ir.model.access" id="access_farm_event_order_individuals">
-            <field name="model" search="[('model', '=', 'farm.event.order')]"/>
+            <field name="model">farm.event.order</field>
             <field name="group" ref="group_farm_individuals"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
@@ -192,7 +192,7 @@
             <field name="perm_delete" eval="True"/>
         </record>
         <record model="ir.model.access" id="access_farm_event_order_groups">
-            <field name="model" search="[('model', '=', 'farm.event.order')]"/>
+            <field name="model">farm.event.order</field>
             <field name="group" ref="group_farm_groups"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
