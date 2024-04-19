@@ -359,7 +359,7 @@ class SemenExtractionEvent(AbstractEvent):
         Production.wait(todo_productions)
         Production.assign_try(todo_productions)
         Production.run(todo_productions)
-        Production.done(todo_productions)
+        Production.do(todo_productions)
 
     def _get_semen_move(self):
         pool = Pool()
