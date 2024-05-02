@@ -460,7 +460,7 @@ class FeedInventoryMixin(object):
     def get_rec_name(self, name):
         return "%s (%s)" % (self.location.rec_name, self.timestamp)
 
-    @fields.depends('location')
+    @fields.depends('location', 'dest_locations')
     def on_change_location(self, name=None):
         if not self.location:
             self.dest_locations = None
