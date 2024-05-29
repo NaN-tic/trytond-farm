@@ -307,7 +307,7 @@ class AnimalLocationStock():
                             open_event['timestamp'] = timestamp
 
                             qty_to_feed -= current_feed_qty
-                            current_feed_qty = Decimal('0.0')
+                            current_feed_qty = Decimal(0)
 
                         # close open event current event
                         self._close_event(key, open_event, uom)
@@ -350,7 +350,7 @@ class AnimalLocationStock():
             'feed_location': self.silo_id,
             'feed_product': feed_lot.product.id if feed_lot else None,
             'feed_lot': feed_lot.id if feed_lot else None,
-            'feed_quantity': Decimal('0.0'),
+            'feed_quantity': Decimal(0),
             'uom': uom.id,
             'start_date': start_date,
             'feed_quantity_animal_day': consumed_per_animal_day.quantize(

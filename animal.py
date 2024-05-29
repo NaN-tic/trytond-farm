@@ -334,7 +334,7 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
         kg, = Uom.search([
                 ('symbol', '=', 'kg'),
                 ])
-        consumed_feed = Decimal('0.0')
+        consumed_feed = Decimal(0)
         for event in feed_events:
             # TODO: it uses compute_price() because quantity is a Decimal
             # quantity in feed_product default uom. The method is not for

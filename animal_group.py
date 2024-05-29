@@ -329,7 +329,7 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
                 ])
 
         kg, = Uom.search([('symbol', '=', 'kg')], limit=1)
-        consumed_feed = Decimal('0.0')
+        consumed_feed = Decimal(0)
         for event in feed_events:
             if event.start_date and event.timestamp > now:
                 event_feed_quantity = (event.feed_quantity_animal_day *

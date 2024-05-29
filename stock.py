@@ -342,7 +342,7 @@ class Location(metaclass=PoolMeta):
         with Transaction().set_context(stock_date_end=stock_date):
             pbl = Product.products_by_location([self.id], with_childs=False)
 
-        total_quantity = Decimal('0.0')
+        total_quantity = Decimal(0)
         for (location_id, product_id), quantity in pbl.items():
             product = Product(product_id)
             if to_uom is not None and product.default_uom.id != to_uom.id:
