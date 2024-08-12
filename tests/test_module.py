@@ -6,22 +6,6 @@ from trytond import backend
 from trytond.tests.test_tryton import ModuleTestCase, with_transaction
 from trytond.modules.company.tests import CompanyTestMixin
 
-SCENARIOS = [
-    'scenario_move_event_test.rst',
-    'scenario_feed_event_test.rst',
-    'scenario_medication_event_test.rst',
-    'scenario_transformation_event_test.rst',
-    'scenario_removal_event_test.rst',
-    'scenario_semen_extraction_event_test.rst',
-    'scenario_insemination_event_test.rst',
-    'scenario_pregnancy_diagnosis_event_test.rst',
-    'scenario_abort_event_test.rst',
-    'scenario_farrowing_event_test.rst',
-    'scenario_foster_event_test.rst',
-    'scenario_weaning_event_test.rst',
-    'scenario_feed_inventory_test.rst',
-    ]
-
 
 class FarmTestCase(CompanyTestMixin, ModuleTestCase):
     'Test Farm module'
