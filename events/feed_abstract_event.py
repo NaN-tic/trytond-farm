@@ -276,6 +276,7 @@ class FeedEventMixin(AbstractEvent):
             origin=self)
         if self.feed_lot:
             move.lot = self.feed_lot
+        if move.unit_price_required:
             move.unit_price = self.feed_lot.cost_price
         return move
 

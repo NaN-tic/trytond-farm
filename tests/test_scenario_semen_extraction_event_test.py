@@ -197,7 +197,6 @@ class Test(unittest.TestCase):
         move.product = dose_product
         move.lot = extraction1.doses[0].lot
         move.quantity = 5
-        move.unit_price = blister_product.template.cost_price
         shipment.save()
 
         # Process shipment to check doe lots are in expected location
