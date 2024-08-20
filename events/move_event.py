@@ -239,7 +239,7 @@ class MoveEvent(AbstractEvent):
         lot = (self.animal_type != 'group' and self.animal.lot or
             self.animal_group.lot)
 
-        return Move(
+        move = Move(
             product=lot.product,
             unit=lot.product.default_uom,
             quantity=self.quantity,
@@ -249,9 +249,11 @@ class MoveEvent(AbstractEvent):
             effective_date=self.timestamp.date(),
             company=company,
             lot=lot,
-            unit_price=self.unit_price,
-            currency=company.currency,
             origin=self)
+        if move.unit_price_required:
+            move.unit_price = self.unit_price
+            move.currency = company.currency
+        return move
 
     def _get_weight_record(self):
         pool = Pool()
