@@ -372,15 +372,10 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
             default = {}
         else:
             default = default.copy()
-        default.update({
-            'lot': False,
-            'farms': False,
-            'origin': False,
-            'arrival_date': False,
-            'purchase_shipment': False,
-            'removal_date': False,
-            'weights': False,
-            })
+        default.setdefault('arrival_date', None)
+        default.setdefault('purchase_shipment', None)
+        default.setdefault('removal_date', None)
+        default.setdefault('weights', None)
         return super(AnimalGroup, cls).copy(records, default)
 
     @classmethod
