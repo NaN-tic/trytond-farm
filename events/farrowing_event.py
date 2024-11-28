@@ -267,12 +267,10 @@ class FarrowingEvent(AbstractEvent, ImportedEventMixin, ModelSQL, ModelView, Wor
             default = {}
         else:
             default = default.copy()
-        default.update({
-                'female_cycle': None,
-                'produced_animal': None,
-                'produced_group': None,
-                'move': None,
-                })
+        default.setdefault('female_cycle', None)
+        default.setdefault('produced_animals', None)
+        default.setdefault('produced_group', None)
+        default.setdefault('move', None)
         return super(FarrowingEvent, cls).copy(records, default=default)
 
 
@@ -329,10 +327,11 @@ class FarmFarrowingEventAnimal(ModelSQL, ModelView):
     move = fields.Many2One('stock.move', 'Move', required=True,
         ondelete='RESTRICT')
     specie = fields.Function(
-        fields.Many2One('farm.specie', 'Specie'), 'get_specie',
+        fields.Many2One('farm.specie', 'Specie'), 'on_change_with_specie',
         searcher='search_specie')
 
-    def get_specie(self):
+    @fields.depends('animal')
+    def on_change_with_specie(self, name=None):
         if self.animal and self.animal.specie:
             return self.animal.specie
 

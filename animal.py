@@ -847,8 +847,10 @@ class Female(metaclass=PoolMeta):
         Return the farm.animal.group produced for current cycle
         '''
         if not self.current_cycle or self.current_cycle.state != 'lactating':
-            return None
-        return self.current_cycle.farrowing_event.produced_group.id
+            return
+        if (self.current_cycle.farrowing_event
+                and self.current_cycle.farrowing_event.produced_group):
+            return self.current_cycle.farrowing_event.produced_group.id
 
     @classmethod
     def create(cls, vlist):

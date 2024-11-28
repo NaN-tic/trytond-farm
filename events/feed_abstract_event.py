@@ -199,7 +199,7 @@ class FeedEventMixin(AbstractEvent):
                     self.timestamp):
                 raise UserError(gettext('farm.animal_not_in_location',
                         animal=self.animal.rec_name,
-                        location=self.location.rec_name,
+                        from_location=self.location.rec_name,
                         timestamp=self.timestamp,
                         ))
         else:

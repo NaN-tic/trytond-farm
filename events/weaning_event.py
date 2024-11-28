@@ -545,11 +545,12 @@ class WeaningEventAnimal(ModelSQL, ModelView):
     animal = fields.Many2One('farm.animal', 'Animal',
         required=True, ondelete='RESTRICT')
     specie = fields.Function(
-        fields.Many2One('farm.specie', 'Specie'), 'get_specie',
+        fields.Many2One('farm.specie', 'Specie'), 'on_change_with_specie',
         searcher='search_specie')
     move = fields.Many2One('stock.move', 'Move', ondelete='RESTRICT')
 
-    def get_specie(self):
+    @fields.depends('animal')
+    def on_change_with_specie(self, name=None):
         if self.animal and self.animal.specie:
             return self.animal.specie
 
