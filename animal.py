@@ -79,7 +79,7 @@ class AnimalMixin:
             new_moves = []
             for record in records:
                 move = record._get_first_move()
-                new_moves.append(move._save_values)
+                new_moves.append(move._save_values())
             new_moves = Move.create(new_moves)
             Move.assign(new_moves)
             Move.do(new_moves)
