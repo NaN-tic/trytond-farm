@@ -520,10 +520,10 @@ class FeedInventoryLocation(ModelSQL):
     def get_inventory(cls):
         IrModel = Pool().get('ir.model')
         models = IrModel.search([
-                ('model', 'in', ['farm.feed.inventory',
+                ('name', 'in', ['farm.feed.inventory',
                         'farm.feed.provisional_inventory']),
                 ])
-        return [(m.model, m.name) for m in models]
+        return [(m.name, m.string) for m in models]
 
 
 class FeedInventory(FeedInventoryMixin, ModelSQL, ModelView, Workflow):

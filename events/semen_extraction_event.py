@@ -614,9 +614,13 @@ class SemenExtractionDose(ModelSQL, ModelView):
         context = Transaction().context
         company = Company(context['company'])
 
+        production_date = self.event.timestamp.date()
+
         production = Production(
             reference=self.rec_name,
-            effective_date=self.event.timestamp.date(),
+            effective_date=production_date,
+            planned_date=production_date,
+            planned_start_date=production_date,
             company=company,
             warehouse=self.event.farm,
             location=self.event.farm.production_location,

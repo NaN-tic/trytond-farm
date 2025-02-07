@@ -87,7 +87,7 @@ class Specie(ModelSQL, ModelView):
         'Feed Lost Location', domain=[('type', '=', 'lost_found')],
         required=True)
     events = fields.Many2Many('farm.specie-ir.model', 'specie', 'model',
-        'Events', domain=[('model', 'like', 'farm.%.event')],
+        'Events', domain=[('name', 'like', 'farm.%.event')],
         help='Type of events available for this specie')
     menus = fields.One2Many('ir.ui.menu', 'specie', 'Menus')
     actions = fields.One2Many('ir.action.act_window', 'specie', 'Actions')

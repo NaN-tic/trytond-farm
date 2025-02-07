@@ -59,8 +59,8 @@ class Test(unittest.TestCase):
         Sequence = Model.get('ir.sequence')
         quality_sequence, = Sequence.find([('name', '=', 'Quality Control')])
         Model_ = Model.get('ir.model')
-        product_model, = Model_.find([('model', '=', 'product.product')])
-        lot_model, = Model_.find([('model', '=', 'stock.lot')])
+        product_model, = Model_.find([('name', '=', 'product.product')])
+        lot_model, = Model_.find([('name', '=', 'stock.lot')])
         QualityConfiguration = Model.get('quality.configuration')
         QualityConfigLine = Model.get('quality.configuration.line')
         QualityConfiguration(allowed_documents=[

@@ -1154,9 +1154,9 @@ class EventUnion(UnionMixin, ModelSQL, ModelView):
         Model = pool.get('ir.model')
         models = cls._get_fieldname()
         models = Model.search([
-                ('model', 'in', models),
+                ('name', 'in', models),
                 ])
-        return [('', '')] + [(m.model, m.name) for m in models]
+        return [('', '')] + [(m.name, m.string) for m in models]
 
     def _get_event(self):
         cls = self.__class__
@@ -1167,7 +1167,7 @@ class EventUnion(UnionMixin, ModelSQL, ModelView):
         pool = Pool()
         Model = pool.get('ir.model')
         model, = Model.search([
-                ('model', '=', self._get_event().__class__.__name__),
+                ('name', '=', self._get_event().__class__.__name__),
                 ], limit=1)
         return model.name
 
