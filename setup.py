@@ -9,7 +9,13 @@ from configparser import ConfigParser
 
 MODULE = 'farm'
 PREFIX = 'nantic'
-MODULE2PREFIX = {}
+MODULE2PREFIX = {
+    'stock_lot_deactivatable': 'nantic',
+    'stock_lot_cost': 'nantic',
+    'stock_warehouse_search': 'nantic',
+    'quality_control': 'nantic',
+    'quality_control_formula': 'nantic',
+}
 
 
 def read(fname):
@@ -64,12 +70,12 @@ if minor_version % 2:
 
 setup(name='%s_%s' % (PREFIX, MODULE),
     version=version,
-    description='',
+    description='%s' % MODULE,
     long_description=read('README'),
     author='NaN·tic',
     author_email='info@nan-tic.com',
     url='http://www.nan-tic.com/',
-    download_url="https://bitbucket.org/nantic/trytond-%s" % MODULE,
+    download_url="https://github.com/Nan-tic/trytond-%s" % MODULE,
     package_dir={'trytond.modules.%s' % MODULE: '.'},
     packages=[
         'trytond.modules.%s' % MODULE,
@@ -77,7 +83,7 @@ setup(name='%s_%s' % (PREFIX, MODULE),
         ],
     package_data={
         'trytond.modules.%s' % MODULE: (info.get('xml', [])
-            + ['tryton.cfg', 'locale/*.po', 'tests/*.rst']),
+            + ['tryton.cfg', 'view/*.xml', 'locale/*.po', 'tests/*.rst']),
         },
     classifiers=[
         'Development Status :: 5 - Production/Stable',
