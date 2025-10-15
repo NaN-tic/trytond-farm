@@ -378,7 +378,6 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
             default = default.copy()
         default.update({
             'lot': None,
-            'number': None,
             'location': None,
             'purchase_shipment': None,
             'removal_reason': None,
