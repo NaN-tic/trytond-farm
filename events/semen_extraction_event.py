@@ -8,6 +8,7 @@ from trytond.pyson import Bool, Equal, Eval, Id, If
 from trytond.pool import Pool
 from trytond.transaction import Transaction
 from trytond.exceptions import UserError
+from trytond.model.exceptions import ValidationError
 from trytond.i18n import gettext
 
 from .abstract_event import AbstractEvent, _EVENT_STATES, _STATES_WRITE_DRAFT,\
@@ -265,7 +266,7 @@ class SemenExtractionEvent(AbstractEvent):
         if self.state == 'valid':
             return
         if self.semen_remaining_qty < 0.0:
-            raise UserError(gettext('farm.more_semen_in_doses_than_produced',
+            raise ValidationError(gettext('farm.more_semen_in_doses_than_produced',
                     event=self.rec_name))
 
     @classmethod
