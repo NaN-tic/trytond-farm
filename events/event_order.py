@@ -8,6 +8,7 @@ from trytond.pyson import Bool, Equal, Eval, Get, Not
 from trytond.pool import Pool
 from trytond.transaction import Transaction
 from trytond.exceptions import UserError
+from trytond.model.exceptions import ValidationError
 from trytond.i18n import gettext
 
 # The fields of the header are readonly if there are lines defined because they
@@ -176,7 +177,7 @@ class EventOrder(ModelSQL, ModelView):
     def check_animal_and_event_type(self):
         if self.event_type not in self.event_types_by_animal_type(
                 self.animal_type, True):
-            raise UserError(gettext('farm.incompatible_animal_and_event_type',
+            raise ValidationError(gettext('farm.incompatible_animal_and_event_type',
                 order=self.rec_name))
 
     @staticmethod
