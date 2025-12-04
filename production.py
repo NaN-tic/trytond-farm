@@ -3,7 +3,7 @@
 from trytond.model import fields
 from trytond.pyson import Bool, Eval, Id, If, Not, Or
 from trytond.pool import PoolMeta
-from trytond.exceptions import UserError
+from trytond.model.exceptions import ValidationError
 from trytond.i18n import gettext
 
 
@@ -43,7 +43,7 @@ class BOM(metaclass=PoolMeta):
         if not self.semen_dose:
             return
         if not self.check_specie_semen_in_inputs_recursive():
-            raise UserError(gettext('farm.missing_semen_input',
+            raise ValidationError(gettext('farm.missing_semen_input',
                     bom=self.rec_name))
 
     def check_specie_semen_in_inputs_recursive(self):
