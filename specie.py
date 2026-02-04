@@ -220,7 +220,7 @@ class Specie(ModelSQL, ModelView):
 
                 animal_submenu_seq = 1
                 for event in enabled_events:
-                    model_name = event.model
+                    model_name = event.name
                     event_menu = None
                     if model_name in menus_by_event_type['generic']:
                         event_menu = menus_by_event_type['generic'][model_name]
