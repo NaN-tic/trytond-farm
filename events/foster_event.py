@@ -163,7 +163,7 @@ class FosterEvent(AbstractEvent, ImportedEventMixin):
         Move.do(todo_moves)
 
     def _get_pair_event(self):
-        pair_event, = FosterEvent.copy([self], {
+        pair_event, = type(self).copy([self], {
                 'animal': self.pair_female.id,
                 'quantity': - self.quantity,
                 'pair_female': self.animal.id,
