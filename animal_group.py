@@ -213,12 +213,12 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
                 warehouses = Location.search([
                     ('id', 'in', specie_warehouse_ids),
                     ('type', '=', 'warehouse'),
-                    ('warehouse',) + tuple(domain[1:]),
+                    ('warehouse_',) + tuple(domain[1:]),
                     ])
             else:
                 warehouses = Location.search([
                     ('type', '=', 'warehouse'),
-                    ('warehouse',) + tuple(domain[1:]),
+                    ('warehouse_',) + tuple(domain[1:]),
                     ])
             if not warehouses:
                 return []
@@ -232,7 +232,7 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
                 domain)
             if specie_warehouse_ids:
                 location_domain.append(
-                    ('warehouse', 'in', specie_warehouse_ids))
+                    ('warehouse_', 'in', specie_warehouse_ids))
             warehouse_locations = Location.search(location_domain)
             qbl = Lot.quantity_by_location(None,
                 [l.id for l in warehouse_locations],
@@ -268,7 +268,7 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
                 ]
             farm_ids = context.get('farms')
             if farm_ids:
-                domain.append(('warehouse', 'in', farm_ids))
+                domain.append(('warehouse_', 'in', farm_ids))
             warehouses = Location.search(domain)
             location_ids = [x.id for x in warehouses]
             with_children = True

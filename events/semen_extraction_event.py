@@ -93,7 +93,7 @@ class SemenExtractionEvent(AbstractEvent):
             ], states=_STATES_VALIDATED_ADMIN)
     dose_location = fields.Many2One('stock.location', 'Doses Location',
         domain=[
-            ('warehouse', '=', Eval('farm')),
+            ('warehouse_', '=', Eval('farm')),
             ('type', '=', 'storage'),
             ('silo', '=', False),
             ], required=True, states=_STATES_WRITE_DRAFT,

@@ -20,7 +20,7 @@ class MoveEvent(AbstractEvent):
 
     from_location = fields.Many2One('stock.location', 'Origin',
         required=True, domain=[
-            ('warehouse', '=', Eval('farm', -1)),
+            ('warehouse_', '=', Eval('farm', -1)),
             ('type', '=', 'storage'),
             ('silo', '=', False),
             ],

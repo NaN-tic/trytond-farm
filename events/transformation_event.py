@@ -18,7 +18,7 @@ class TransformationEvent(AbstractEvent):
 
     from_location = fields.Many2One('stock.location', 'Origin',
         required=True, domain=[
-            ('warehouse', '=', Eval('farm')),
+            ('warehouse_', '=', Eval('farm')),
             ('type', '=', 'storage'),
             ('silo', '=', False),
             ],

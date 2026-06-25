@@ -22,7 +22,7 @@ class FeedEventMixin(AbstractEvent):
         domain=[
             ('type', '=', 'storage'),
             ('silo', '=', False),
-            ('warehouse', '=', Eval('farm')),
+            ('warehouse_', '=', Eval('farm')),
             ],
         states={
             'readonly': Or(
@@ -38,7 +38,7 @@ class FeedEventMixin(AbstractEvent):
     feed_location = fields.Many2One('stock.location', 'Feed Source',
         required=True, domain=[
             ('type', '=', 'storage'),
-            ('warehouse', '=', Eval('farm', -1)),
+            ('warehouse_', '=', Eval('farm', -1)),
             ],
         states={
             'readonly': Or(

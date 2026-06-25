@@ -59,14 +59,14 @@ class WeaningEvent(AbstractEvent, ImportedEventMixin):
         'Female Destination', required=True, domain=[
             ('type', '=', 'storage'),
             ('silo', '=', False),
-            ('warehouse', '=', Eval('farm')),
+            ('warehouse_', '=', Eval('farm')),
             ],
         states=_STATES_WRITE_DRAFT)
     weaned_to_location = fields.Many2One('stock.location',
         'Weaned Destination', required=True, domain=[
             ('type', '=', 'storage'),
             ('silo', '=', False),
-            ('warehouse', '=', Eval('farm')),
+            ('warehouse_', '=', Eval('farm')),
             ],
         states=_STATES_WRITE_DRAFT)
     weaned_group = fields.Many2One('farm.animal.group', 'Weaned Group',
