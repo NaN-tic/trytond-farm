@@ -306,7 +306,7 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
 
     @classmethod
     def search_farm(cls, name, clause):
-        return [('location.warehouse',) + tuple(clause[1:])]
+        return [('location.warehouse_',) + tuple(clause[1:])]
 
     @fields.depends('weights')
     def on_change_with_current_weight(self, name=None):
@@ -856,7 +856,7 @@ class Female(metaclass=PoolMeta):
                     location=location))
             duplicate = Animal.search([
                     ('number', '=', number),
-                    ('farm', '=', location.warehouse.id),
+                    ('farm', '=', location.warehouse_.id),
                     ('active', '=', True),
                     ], limit=1)
 
