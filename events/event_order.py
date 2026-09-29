@@ -49,12 +49,14 @@ class EventOrder(ModelSQL, ModelView):
             ('female', 'Female'),
             ('individual', 'Individual'),
             ('group', 'Group'),
-            ], "Animal Type", required=True, readonly=True,
+            ], "Animal Type", required=True,
         states={
+            'editable': False,
             'invisible': Bool(Get(Eval('context', {}), 'animal_type')),
             })
     specie = fields.Many2One('farm.specie', 'Specie', required=True,
-        readonly=True, states={
+        states={
+            'editable': False,
             'invisible': Bool(Get(Eval('context', {}), 'specie')),
             })
     event_type = fields.Selection([
@@ -66,8 +68,9 @@ class EventOrder(ModelSQL, ModelView):
             ('farrowing', 'Farrowings'),
             ('foster', 'Fosters'),
             ('weaning', 'Weanings'),
-            ], "Event Type", required=True, readonly=True,
+            ], "Event Type", required=True,
         states={
+            'editable': False,
             'invisible': Bool(Get(Eval('context', {}), 'event_type')),
             })
     farm = fields.Many2One('stock.location', 'Farm', required=True,
@@ -198,18 +201,20 @@ class EventOrder(ModelSQL, ModelView):
         return res
 
     @classmethod
-    def create(cls, vlist):
-        vlist = [x.copy() for x in vlist]
-        for vals in vlist:
-            logging.getLogger(cls.__name__).debug("Create vals: %s" % vals)
-            if not vals.get('specie'):
-                vals['specie'] = cls.default_specie()
-            if not vals.get('animal_type'):
-                vals['animal_type'] = cls.default_animal_type()
-            if not vals.get('name'):
-                vals['name'] = cls._calc_name(vals['specie'], vals['farm'],
-                    vals['animal_type'])
-        return super(EventOrder, cls).create(vlist)
+    def preprocess_values(cls, mode, values):
+        values = super().preprocess_values(mode, values)
+        if mode != 'create':
+            return values
+
+        logging.getLogger(cls.__name__).debug("Create vals: %s" % values)
+        if not values.get('specie'):
+            values['specie'] = cls.default_specie()
+        if not values.get('animal_type'):
+            values['animal_type'] = cls.default_animal_type()
+        if not values.get('name'):
+            values['name'] = cls._calc_name(
+                values['specie'], values['farm'], values['animal_type'])
+        return values
 
     @classmethod
     def copy(cls, orders, default=None):

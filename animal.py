@@ -5,7 +5,7 @@ from decimal import Decimal
 from trytond.rpc import RPC
 from trytond.model import ModelView, ModelSQL, fields, UnionMixin, Unique
 from trytond.pyson import Equal, Eval, Greater, Id, Not, Bool
-from trytond.transaction import Transaction
+from trytond.transaction import Transaction, without_check_access
 from trytond.pool import Pool, PoolMeta
 from trytond.wizard import Wizard, StateView, StateAction, Button, StateTransition
 from trytond.exceptions import UserError
@@ -133,11 +133,11 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
             ('female', 'Female'),
             ('individual', 'Individual'),
             ], 'Type', required=True, states={
-                'readonly': True,
+                'editable': False,
             })
     specie = fields.Many2One('farm.specie', 'Specie', required=True,
         states={
-            'readonly': True,
+            'editable': False,
             })
     breed = fields.Many2One('farm.specie.breed', 'Breed', required=True,
         domain=[('specie', '=', Eval('specie'))])
@@ -156,7 +156,7 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
     farm = fields.Function(fields.Many2One('stock.location', 'Current Farm'),
         'on_change_with_farm', searcher='search_farm')
     origin = fields.Selection(ANIMAL_ORIGIN, 'Origin', required=True,
-        readonly=True,
+        states={'editable': False},
         help='Raised means that this animal was born in the farm. Otherwise, '
         'it was purchased.')
     arrival_date = fields.Date('Arrival Date', states={
@@ -394,29 +394,30 @@ class Animal(ModelSQL, ModelView, AnimalMixin):
 
         context = Transaction().context
         vlist = [x.copy() for x in vlist]
-        for vals in vlist:
-            if not vals.get('specie'):
-                vals['specie'] = cls.default_specie()
-            if not vals.get('type'):
-                vals['type'] = cls.default_type()
-            if vals['type'] in ('male', 'female'):
-                vals['sex'] = vals['type']
-            if not vals.get('number'):
-                location = Location(vals['initial_location'])
-                vals['number'] = cls._calc_number(vals['specie'],
-                        location.warehouse.id, vals['type'])
+        for values in vlist:
+            if not values.get('specie'):
+                values['specie'] = cls.default_specie()
+            if not values.get('type'):
+                values['type'] = cls.default_type()
+            if values['type'] in ('male', 'female'):
+                values['sex'] = values['type']
+            if not values.get('number'):
+                location = Location(values['initial_location'])
+                values['number'] = cls._calc_number(
+                    values['specie'], location.warehouse.id, values['type'])
 
         new_animals = super(Animal, cls).create(vlist)
-        for animal, vals in zip(new_animals, vlist):
-            vals['id'] = animal.id
-            if vals.get('lot'):
-                lot = Lot(vals['lot'])
-                Lot.write([lot], cls._get_lot_values(vals, False))
-                animal.lot = lot
-                animal.save()
+        for animal, values in zip(new_animals, vlist):
+            values['id'] = animal.id
+            if values.get('lot'):
+                lot = Lot(values['lot'])
+                with without_check_access():
+                    Lot.write([lot], cls._get_lot_values(values, False))
             else:
-                new_lot, = Lot.create([cls._get_lot_values(vals, True)])
-                animal.lot = new_lot
+                with without_check_access():
+                    lot, = Lot.create([cls._get_lot_values(values, True)])
+            animal.lot = lot
+            with without_check_access():
                 animal.save()
         if not context.get('no_create_stock_move'):
             cls._create_and_done_first_stock_move(new_animals)
@@ -568,7 +569,8 @@ class Male(metaclass=PoolMeta):
     def update_last_extraction(self, validated_event=None):
         if not self.extractions:
             self.last_extraction = None
-            self.save()
+            with without_check_access():
+                self.save()
             return None
         last_extraction = None
         reversed_extractions = list(self.extractions)
@@ -579,7 +581,8 @@ class Male(metaclass=PoolMeta):
                 last_extraction = extraction_event.timestamp.date()
                 break
         self.last_extraction = last_extraction
-        self.save()
+        with without_check_access():
+            self.save()
         return last_extraction
 
 
@@ -602,7 +605,10 @@ class Female(metaclass=PoolMeta):
             ('mated', 'Mated'),
             ('removed', 'Removed'),
             ],
-        'Status', readonly=True, states=_STATES_FEMALE_FIELD,
+        'Status', states={
+            **_STATES_FEMALE_FIELD,
+            'editable': False,
+            },
         help='According to NPPC Production and Financial Standards there are '
         'four status for breeding sows. The status change is event driven: '
         'arrival date, entry date mating event and removal event')
@@ -664,7 +670,8 @@ class Female(metaclass=PoolMeta):
         self.current_cycle = current_cycle
         self.current_cycle_state = (current_cycle.state
             if current_cycle else None)
-        self.save()
+        with without_check_access():
+            self.save()
         return current_cycle
 
     def get_state(self):
@@ -688,7 +695,8 @@ class Female(metaclass=PoolMeta):
         self.state = self.get_state()
         self.current_cycle_state = (self.current_cycle.state
             if self.current_cycle else None)
-        self.save()
+        with without_check_access():
+            self.save()
         return self.state
 
     def get_first_mating(self, name):
@@ -1049,7 +1057,8 @@ class FemaleCycle(ModelSQL, ModelView):
                     state = 'mated'
                     break
         self.state = state
-        self.save()
+        with without_check_access():
+            self.save()
         self.animal.update_state()
         return state
 

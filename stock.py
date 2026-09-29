@@ -21,11 +21,14 @@ class Lot(metaclass=PoolMeta):
             ('individual', 'Individual'),
             ('group', 'Group'),
             ], 'Animal Type', readonly=True)
-    animal = fields.Many2One('farm.animal', 'Animal', readonly=True,
-        states={'invisible': Equal(Eval('animal_type'), 'group')})
+    animal = fields.Many2One('farm.animal', 'Animal', states={
+            'editable': False,
+            'invisible': Equal(Eval('animal_type'), 'group'),
+            })
     animal_group = fields.One2One('stock.lot-farm.animal.group', 'lot',
-        'animal_group', string='Group', readonly=True,
+        'animal_group', string='Group',
         states={
+            'editable': False,
             'invisible': Not(Equal(Eval('animal_type'), 'group')),
             })
 

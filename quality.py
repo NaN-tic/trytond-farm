@@ -28,7 +28,8 @@ class QualityTest(metaclass=PoolMeta):
 
     semen_extraction = fields.One2One(
         'farm.semen_extraction.event-quality.test', 'test', 'event',
-        string="Semen Extraction", readonly=True, states={
+        string="Semen Extraction", states={
+            'editable': False,
             'invisible': Not(Bool(Eval('semen_extraction', 0))),
             })
 

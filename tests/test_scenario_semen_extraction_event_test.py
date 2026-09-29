@@ -62,13 +62,14 @@ class Test(unittest.TestCase):
         product_model, = Model_.find([('name', '=', 'product.product')])
         lot_model, = Model_.find([('name', '=', 'stock.lot')])
         QualityConfiguration = Model.get('quality.configuration')
-        QualityConfigLine = Model.get('quality.configuration.line')
-        QualityConfiguration(allowed_documents=[
-            QualityConfigLine(quality_sequence=quality_sequence,
-                              document=product_model),
-            QualityConfigLine(quality_sequence=quality_sequence,
-                              document=lot_model),
-        ]).save()
+        quality_configuration = QualityConfiguration(1)
+        product_line = quality_configuration.allowed_documents.new()
+        product_line.quality_sequence = quality_sequence
+        product_line.document = product_model
+        lot_line = quality_configuration.allowed_documents.new()
+        lot_line.quality_sequence = quality_sequence
+        lot_line.document = lot_model
+        quality_configuration.save()
         QualityTemplate = Model.get('quality.template')
         quality_template = QualityTemplate(name='Semen Quality Template',
                                            document=semen_product,

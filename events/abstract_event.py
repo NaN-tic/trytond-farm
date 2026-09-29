@@ -45,10 +45,10 @@ class AbstractEvent(ModelSQL, ModelView, Workflow):
             ('individual', 'Individual'),
             ('group', 'Group'),
             ], 'Animal Type', required=True, states={
-            'readonly': True,
+            'editable': False,
             })
     specie = fields.Many2One('farm.specie', 'Specie', required=True, states={
-            'readonly': True,
+            'editable': False,
             })
     farm = fields.Many2One('stock.location', 'Farm', required=True,
         states=_STATES_WRITE_DRAFT, domain=[

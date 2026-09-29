@@ -1,7 +1,7 @@
 #The COPYRIGHT file at the top level of this repository contains the full
 #copyright notices and license terms.
 from trytond.model import fields, ModelView, Workflow, Check
-from trytond.pyson import Bool, Equal, Eval, If, Not, Or
+from trytond.pyson import And, Bool, Equal, Eval, If, Not, Or
 from trytond.pool import Pool
 from trytond.rpc import RPC
 from trytond.transaction import Transaction
@@ -30,8 +30,8 @@ class TransformationEvent(AbstractEvent):
             }, context={'restrict_by_specie_animal_type': True})
     to_animal_type = fields.Selection('get_to_animal_types',
         "Animal Type to Transform", required=True, states={
-            'readonly': Or(Not(Equal(Eval('state'), 'draft')),
-                Bool(Eval('to_location'))),
+            'editable': And(Equal(Eval('state'), 'draft'),
+                Not(Bool(Eval('to_location')))),
             })
     to_location = fields.Many2One('stock.location', 'Destination',
         required=True, domain=[

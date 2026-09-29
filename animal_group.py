@@ -20,7 +20,7 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
 
     specie = fields.Many2One('farm.specie', 'Specie', required=True,
         states={
-            'readonly': True,
+            'editable': False,
             })
     breed = fields.Many2One('farm.specie.breed', 'Breed', required=True,
         domain=[('specie', '=', Eval('specie'))])
@@ -44,7 +44,7 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
     origin = fields.Selection([
             ('purchased', 'Purchased'),
             ('raised', 'Raised'),
-            ], 'Origin', required=True, readonly=True,
+            ], 'Origin', required=True, states={'editable': False},
         help='Raised means that this group was born in the farm. Otherwise, '
         'it was purchased.')
     arrival_date = fields.Date('Arrival Date', states={
@@ -379,26 +379,33 @@ class AnimalGroup(ModelSQL, ModelView, AnimalMixin):
         return super(AnimalGroup, cls).copy(records, default)
 
     @classmethod
-    def create(cls, vlist):
+    def preprocess_values(cls, mode, values):
+        values = super().preprocess_values(mode, values)
+        if mode != 'create':
+            return values
+
         pool = Pool()
         Location = pool.get('stock.location')
         Lot = pool.get('stock.lot')
-
         context = Transaction().context
-        vlist = [x.copy() for x in vlist]
-        for vals in vlist:
-            if not vals.get('specie'):
-                vals['specie'] = context.get('specie')
-            if not vals.get('number'):
-                location = Location(vals['initial_location'])
-                vals['number'] = cls._calc_number(vals['specie'],
-                        location.warehouse.id, vals)
-            if vals.get('lot'):
-                lot = Lot(vals['lot'])
-                Lot.write([lot], cls._get_lot_values(vals, False))
-            else:
-                new_lot, = Lot.create([cls._get_lot_values(vals, True)])
-                vals['lot'] = new_lot.id
+
+        if not values.get('specie'):
+            values['specie'] = context.get('specie')
+        if not values.get('number'):
+            location = Location(values['initial_location'])
+            values['number'] = cls._calc_number(
+                values['specie'], location.warehouse.id, values)
+        if values.get('lot'):
+            lot = Lot(values['lot'])
+            Lot.write([lot], cls._get_lot_values(values, False))
+        else:
+            lot, = Lot.create([cls._get_lot_values(values, True)])
+            values['lot'] = lot.id
+        return values
+
+    @classmethod
+    def create(cls, vlist):
+        context = Transaction().context
         new_groups = super(AnimalGroup, cls).create(vlist)
         if not context.get('no_create_stock_move'):
             cls._create_and_done_first_stock_move(new_groups)
