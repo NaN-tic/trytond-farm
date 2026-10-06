@@ -478,7 +478,7 @@ class FeedInventoryMixin(object):
         if default is None:
             default = {}
         default.update({
-                'feed_events': False,
+                'feed_events': None,
                 'state': 'draft',
                 })
         return super(FeedInventoryMixin, cls).copy(inventories, default)
@@ -539,7 +539,7 @@ class FeedInventory(FeedInventoryMixin, ModelSQL, ModelView, Workflow):
         if default is None:
             default = {}
         default.update({
-                'prev_inventory': False,
+                'prev_inventory': None,
                 })
         return super(FeedInventory, cls).copy(inventories, default)
 
@@ -920,9 +920,9 @@ class FeedProvisionalInventory(FeedInventoryMixin, ModelSQL, ModelView,
         if default is None:
             default = {}
         default.update({
-                'prev_inventory_date': False,
-                'inventory': False,
-                'feed_inventory': False,
+                'prev_inventory_date': None,
+                'inventory': None,
+                'feed_inventory': None,
                 })
         return super(FeedProvisionalInventory, cls).copy(inventories, default)
 
