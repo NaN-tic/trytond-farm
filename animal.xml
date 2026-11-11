@@ -382,4 +382,14 @@
         <menuitem action="act_farm_tag" id="menu_farm_tag"
             parent="menu_configuration" sequence="2"/>
     </data>
+    <data>
+        <record model="ir.action-res.group" id="cycle_observation_group_farm_females">
+            <field name="action" ref="wizard_farm_cycle_observation_female"/>
+            <field name="group" ref="group_farm_females"/>
+        </record>
+        <record model="ir.action-res.group" id="cycle_observation_group_farm_admin">
+            <field name="action" ref="wizard_farm_cycle_observation_female"/>
+            <field name="group" ref="group_farm_admin"/>
+        </record>
+    </data>
 </tryton>
